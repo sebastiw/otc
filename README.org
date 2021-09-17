@@ -1,7 +1,5 @@
-* SigErl
+* ErlUMTS
 
-  This library tries to implement encoding and decoding for Sigtran protocols.
+  This library tries to implement encoding and decoding for different UMTS protocols.
 
   It aims to support the newest version of each spec.
-
-
