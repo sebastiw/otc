@@ -1,0 +1,889 @@
+* Overview
+
+  3GPP TS 24.301 v16.8.0
+  Non-Access-Stratum (NAS) protocol for Evolved Packet System (EPS); Stage 3
+
+* Chapter 8 Message functional definitions and contents
+
+** 8.2 EPS Mobility Management Messages
+*** 8.2.1 Attach accept
+
+ | IEI | Information Element                        | Type/Reference                                      | Presence | Format |  Length |
+ |-----+--------------------------------------------+-----------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                     | Protocol discriminator 9.2                          | M        | V      |     1/2 |
+ |     | Security header type                       | Security header type 9.3.1                          | M        | V      |     1/2 |
+ |     | Attach accept message identity             | Message type 9.8                                    | M        | V      |       1 |
+ |     | EPS attach result                          | EPS attach result 9.9.3.10                          | M        | V      |     1/2 |
+ |     | Spare half octet                           | Spare half octet 9.9.2.9                            | M        | V      |     1/2 |
+ |     | T3412 value                                | GPRS timer 9.9.3.16                                 | M        | V      |       1 |
+ |     | TAI list                                   | Tracking area identity list 9.9.3.33                | M        | LV     |    7-97 |
+ |     | ESM message container                      | ESM message container 9.9.3.15                      | M        | LV-E   |     5-n |
+ |  50 | GUTI                                       | EPS mobile identity 9.9.3.12                        | O        | TLV    |      13 |
+ |  13 | Location area identification               | Location area identification 9.9.2.2                | O        | TV     |       6 |
+ |  23 | MS identity                                | Mobile identity 9.9.2.3                             | O        | TLV    |    7-10 |
+ |  53 | EMM cause                                  | EMM cause 9.9.3.9                                   | O        | TV     |       2 |
+ |  17 | T3402 value                                | GPRS timer 9.9.3.16                                 | O        | TV     |       2 |
+ |  59 | T3423 value                                | GPRS timer 9.9.3.16                                 | O        | TV     |       2 |
+ |  4A | Equivalent PLMNs                           | PLMN list 9.9.2.8                                   | O        | TLV    |    5-47 |
+ |  34 | Emergency number list                      | Emergency number list 9.9.3.37                      | O        | TLV    |    5-50 |
+ |  64 | EPS network feature support                | EPS network feature support 9.9.3.12A               | O        | TLV    |     3-4 |
+ |  F- | Additional update result                   | Additional update result 9.9.3.0A                   | O        | TV     |       1 |
+ |  5E | T3412 extended value                       | GPRS timer 3 9.9.3.16B                              | O        | TLV    |       3 |
+ |  6A | T3324 value                                | GPRS timer 2 9.9.3.16A                              | O        | TLV    |       3 |
+ |  6E | Extended DRX parameters                    | Extended DRX parameters 9.9.3.46                    | O        | TLV    |       3 |
+ |  65 | DCN-ID                                     | DCN-ID 9.9.3.48                                     | O        | TLV    |       4 |
+ |  E- | SMS services status                        | SMS services status 9.9.3.4B                        | O        | TV     |       1 |
+ |  D- | Non-3GPP NW provided policies              | Non-3GPP NW provided policies 9.9.3.49              | O        | TV     |       1 |
+ |  6B | T3448 value                                | GPRS timer 2 9.9.3.16A                              | O        | TLV    |       3 |
+ |  C- | Network policy                             | Network policy 9.9.3.52                             | O        | TV     |       1 |
+ |  6C | T3447 value                                | GPRS timer 3 9.9.3.16B                              | O        | TLV    |       3 |
+ |  7A | Extended emergency number list             | Extended emergency number list 9.9.3.37A            | O        | TLV-E  | 7-65538 |
+ |  7C | Ciphering key data                         | Ciphering key data 9.9.3.56                         | O        | TLV-E  | 35-2291 |
+ |  66 | UE radio capability ID                     | UE radio capability ID 9.9.3.60                     | O        | TLV    |     3-n |
+ |  B- | UE radio capability ID deletion indication | UE radio capability ID deletion indication 9.9.3.61 | O        | TV     |       1 |
+ |  35 | Negotiated WUS assistance information      | WUS assistance information 9.9.3.62                 | O        | TLV    |     3-n |
+ |  36 | Negotiated DRX parameter in NB-S1 mode     | NB-S1 DRX parameter 9.9.3.63                        | O        | TLV    |       3 |
+
+*** 8.2.2 Attach complete
+
+ | IEI | Information Element              | Type/Reference                 | Presence | Format | Length |
+ |-----+----------------------------------+--------------------------------+----------+--------+--------|
+ |     | Protocol discriminator           | Protocol discriminator 9.2     | M        | V      | 1/2    |
+ |     | Security header type             | Security header type 9.3.1     | M        | V      | 1/2    |
+ |     | Attach complete message identity | Message type 9.8               | M        | V      | 1      |
+ |     | ESM message container            | ESM message container 9.9.3.15 | M        | LV-E   | 5-n    |
+
+*** 8.2.3 Attach reject
+
+ | IEI | Information Element            | Type/Reference                 | Presence | Format | Length |
+ |-----+--------------------------------+--------------------------------+----------+--------+--------|
+ |     | Protocol discriminator         | Protocol discriminator 9.2     | M        | V      |    1/2 |
+ |     | Security header type           | Security header type 9.3.1     | M        | V      |    1/2 |
+ |     | Attach reject message identity | Message type 9.8               | M        | V      |      1 |
+ |     | EMM cause                      | EMM cause 9.9.3.9              | M        | V      |      1 |
+ | 78  | ESM message container          | ESM message container 9.9.3.15 | O        | TLV-E  |    6-n |
+ | 5F  | T3346 value                    | GPRS timer 2 9.9.3.16A         | O        | TLV    |      3 |
+ | 16  | T3402 value                    | GPRS timer 2 9.9.3.16A         | O        | TLV    |      3 |
+ | A-  | Extended EMM cause             | Extended EMM cause 9.9.3.26A   | O        | TV     |      1 |
+
+*** 8.2.4 Attach request
+
+ | IEI | Information Element                            | Type/Reference                                          | Presence | Format | Length |
+ |-----+------------------------------------------------+---------------------------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                         | Protocol discriminator 9.2                              | M        | V      |    1/2 |
+ |     | Security header type                           | Security header type 9.3.1                              | M        | V      |    1/2 |
+ |     | Attach request message identity                | Message type 9.8                                        | M        | V      |      1 |
+ |     | EPS attach type                                | EPS attach type 9.9.3.11                                | M        | V      |    1/2 |
+ |     | NAS key set identifier                         | NAS key set identifier 9.9.3.21                         | M        | V      |    1/2 |
+ |     | EPS mobile identity                            | EPS mobile identity 9.9.3.12                            | M        | LV     |   5-12 |
+ |     | UE network capability                          | UE network capability 9.9.3.34                          | M        | LV     |   3-14 |
+ |     | ESM message container                          | ESM message container 9.9.3.15                          | M        | LV-E   |    5-n |
+ |  19 | Old P-TMSI signature                           | P-TMSI signature 9.9.3.26                               | O        | TV     |      4 |
+ |  50 | Additional GUTI                                | EPS mobile identity 9.9.3.12                            | O        | TLV    |     13 |
+ |  52 | Last visited registered TAI                    | Tracking area identity 9.9.3.32                         | O        | TV     |      6 |
+ |  5C | DRX parameter                                  | DRX parameter 9.9.3.8                                   | O        | TV     |      3 |
+ |  31 | MS network capability                          | MS network capability 9.9.3.20                          | O        | TLV    |   4-10 |
+ |  13 | Old location area identification               | Location area identification 9.9.2.2                    | O        | TV     |      6 |
+ |  9- | TMSI status                                    | TMSI status 9.9.3.31                                    | O        | TV     |      1 |
+ |  11 | Mobile station classmark 2                     | Mobile station classmark 2 9.9.2.4                      | O        | TLV    |      5 |
+ |  20 | Mobile station classmark 3                     | Mobile station classmark 3 9.9.2.5                      | O        | TLV    |   2-34 |
+ |  40 | Supported Codecs                               | Supported Codec List 9.9.2.10                           | O        | TLV    |    5-n |
+ |  F- | Additional update type                         | Additional update type 9.9.3.0B                         | O        | TV     |      1 |
+ |  5D | Voice domain preference and UE's usage setting | Voice domain preference and UE's usage setting 9.9.3.44 | O        | TLV    |      3 |
+ |  D- | Device properties                              | Device properties 9.9.2.0A                              | O        | TV     |      1 |
+ |  E- | Old GUTI type                                  | GUTI type 9.9.3.45                                      | O        | TV     |      1 |
+ |  C- | MS network feature support                     | MS network feature support 9.9.3.20A                    | O        | TV     |      1 |
+ |  10 | TMSI based NRI container                       | Network resource identifier container 9.9.3.24A         | O        | TLV    |      4 |
+ |  6A | T3324 value                                    | GPRS timer 2 9.9.3.16A                                  | O        | TLV    |      3 |
+ |  5E | T3412 extended value                           | GPRS timer 3 9.9.3.16B                                  | O        | TLV    |      3 |
+ |  6E | Extended DRX parameters                        | Extended DRX parameters 9.9.3.46                        | O        | TLV    |      3 |
+ |  6F | UE additional security capability              | UE additional security capability 9.9.3.53              | O        | TLV    |      6 |
+ |  6D | UE status                                      | UE status 9.9.3.54                                      | O        | TLV    |      3 |
+ |  17 | Additional information requested               | Additional information requested 9.9.3.55               | O        | TV     |      2 |
+ |  32 | N1 UE network capability                       | N1 UE network capability 9.9.3.57                       | O        | TLV    |   3-15 |
+ |  34 | UE radio capability ID availability            | UE radio capability ID availability 9.9.3.58            | O        | TLV    |      3 |
+ |  35 | Requested WUS assistance information           | WUS assistance information 9.9.3.62                     | O        | TLV    |    3-n |
+ |  36 | DRX parameter in NB-S1 mode                    | NB-S1 DRX parameter 9.9.3.63                            | O        | TLV    |      3 |
+
+*** 8.2.5 Authentication failure
+
+ | IEI | Information Element                 | Type/Reference                           | Presence | Format | Length |
+ |-----+-------------------------------------+------------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator              | Protocol discriminator 9.2               | M        | V      |    1/2 |
+ |     | Security header type                | Security header type 9.3.1               | M        | V      |    1/2 |
+ |     | Authentication failure message type | Message type  9.8                        | M        | V      |      1 |
+ |     | EMM cause                           | EMM cause 9.9.3.9                        | M        | V      |      1 |
+ |  30 | Authentication failure parameter    | Authentication failure parameter 9.9.3.1 | O        | TLV    |     16 |
+
+*** 8.2.6 Authentication reject
+
+ | IEI | Information Element                | Type/Reference             | Presence | Format | Length |
+ |-----+------------------------------------+----------------------------+----------+--------+--------+
+ |     | Protocol discriminator             | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type               | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Authentication reject message type | Message type 9.8           | M        | V      | 1      |
+
+*** 8.2.7 Authentication request
+
+ | IEI | Information Element                           | Type/Reference                        | Presence | Format | Length |
+ |-----+-----------------------------------------------+---------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                        | Protocol discriminator 9.2            | M        | V      | 1/2    |
+ |     | Security header type                          | Security header type 9.3.1            | M        | V      | 1/2    |
+ |     | Authentication request message type           | Message type 9.8                      | M        | V      | 1      |
+ |     | NAS key set identifierASME                    | NAS key set identifier 9.9.3.21       | M        | V      | 1/2    |
+ |     | Spare half octet                              | Spare half octet 9.9.2.9              | M        | V      | 1/2    |
+ |     | Authentication parameter RAND (EPS challenge) | Authentication parameter RAND 9.9.3.3 | M        | V      | 16     |
+ |     | Authentication parameter AUTN (EPS challenge) | Authentication parameter AUTN 9.9.3.2 | M        | LV     | 17     |
+
+*** 8.2.8 Authentication response
+
+ | IEI | Information Element                  | Type/Reference                            | Presence | Format | Length |
+ |-----+--------------------------------------+-------------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator               | Protocol discriminator 9.2                | M        | V      | 1/2    |
+ |     | Security header type                 | Security header type 9.3.1                | M        | V      | 1/2    |
+ |     | Authentication response message type | Message type 9.8                          | M        | V      | 1      |
+ |     | Authentication response parameter    | Authentication response parameter 9.9.3.4 | M        | LV     | 5-17   |
+
+*** 8.2.9 CS service notification
+
+ | IEI | Information Element                      | Type/Reference               | Presence | Format | Length |
+ |-----+------------------------------------------+------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                   | Protocol discriminator 9.2   | M        | V      |    1/2 |
+ |     | Security header type                     | Security header type 9.3.1   | M        | V      |    1/2 |
+ |     | CS service notification message identity | Message type 9.8             | M        | V      |      1 |
+ |     | Paging identity                          | Paging identity 9.9.3.25A    | M        | V      |      1 |
+ |  60 | CLI                                      | CLI 9.9.3.38                 | O        | TLV    |   3-14 |
+ |  61 | SS Code                                  | SS Code 9.9.3.39             | O        | TV     |      2 |
+ |  62 | LCS indicator                            | LCS indicator 9.9.3.40       | O        | TV     |      2 |
+ |  63 | LCS client identity                      | LCS client identity 9.9.3.41 | O        | TLV    |  3-257 |
+
+*** 8.2.10.1 Detach accept UE originating detach
+
+ | IEI | Information Element            | Type/Reference             | Presence | Format | Length |
+ |-----+--------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator         | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type           | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Detach accept message identity | Message type 9.8           | M        | V      | 1      |
+
+*** 8.2.10.2 Detach accept UE terminated detach
+
+ | IEI | Information Element            | Type/Reference             | Presence | Format | Length |
+ |-----+--------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator         | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type           | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Detach accept message identity | Message type 9.8           | M        | V      | 1      |
+
+*** 8.2.11.1 Detach request UE originating detach
+
+ | IEI | Information Element             | Type/Reference                  | Presence | Format | Length |
+ |-----+---------------------------------+---------------------------------+----------+--------+--------|
+ |     | Protocol discriminator          | Protocol discriminator 9.2      | M        | V      | 1/2    |
+ |     | Security header type            | Security header type 9.3.1      | M        | V      | 1/2    |
+ |     | Detach request message identity | Message type 9.8                | M        | V      | 1      |
+ |     | Detach type                     | Detach type 9.9.3.7             | M        | V      | 1/2    |
+ |     | NAS key set identifier          | NAS key set identifier 9.9.3.21 | M        | V      | 1/2    |
+ |     | EPS mobile identity             | EPS mobile identity 9.9.3.12    | M        | LV     | 5-12   |
+
+*** 8.2.11.2 Detach request UE terminated detach
+
+ | IEI | Information Element             | Type/Reference             | Presence | Format | Length |
+ |-----+---------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator          | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type            | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Detach request message identity | Message type 9.8           | M        | V      | 1      |
+ |     | Detach type                     | Detach type 9.9.3.7        | M        | V      | 1/2    |
+ |     | Spare half octet                | Spare half octet 9.9.2.9   | M        | V      | 1/2    |
+ |  53 | EMM cause                       | EMM cause 9.9.3.9          | O        | TV     | 2      |
+
+*** 8.2.12 Downlink NAS Transport
+
+ | IEI | Information Element                     | Type/Reference                 | Presence | Format | Length |
+ |-----+-----------------------------------------+--------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                  | Protocol discriminator 9.2     | M        | V      | 1/2    |
+ |     | Security header type                    | Security header type 9.3.1     | M        | V      | 1/2    |
+ |     | Downlink NAS transport message identity | Message type 9.8               | M        | V      | 1      |
+ |     | NAS message container                   | NAS message container 9.9.3.22 | M        | LV     | 3-252  |
+
+*** 8.2.13 EMM information
+
+ | IEI | Information Element                | Type/Reference               | Presence | Format | Length |
+ |-----+------------------------------------+------------------------------+----------+--------+--------|
+ |     | Protocol discriminator             | Protocol discriminator 9.2   | M        | V      | 1/2    |
+ |     | Security header type               | Security header type 9.3.1   | M        | V      | 1/2    |
+ |     | EMM information message identity   | Message type 9.8             | M        | V      | 1      |
+ |  43 | Full name for network              | Network name 9.9.3.24        | O        | TLV    | 3-n    |
+ |  45 | Short name for network             | Network name 9.9.3.24        | O        | TLV    | 3-n    |
+ |  46 | Local time zone                    | Time zone 9.9.3.29           | O        | TV     | 2      |
+ |  47 | Universal time and local time zone | Time zone and time 9.9.3.30  | O        | TV     | 8      |
+ |  49 | Network daylight saving time       | Daylight saving time 9.9.3.6 | O        | TLV    | 3      |
+
+*** 8.2.14 EMM status
+
+ | IEI | Information Element         | Type/Reference             | Presence | Format | Length |
+ |-----+-----------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator      | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type        | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | EMM status message identity | Message type 9.8           | M        | V      | 1      |
+ |     | EMM cause                   | EMM cause 9.9.3.9          | M        | V      | 1      |
+
+*** 8.2.15 Extended service request
+
+ | IEI | Information Element                       | Type/Reference                    | Presence | Format | Length |
+ |-----+-------------------------------------------+-----------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                    | Protocol discriminator 9.2        | M        | V      |    1/2 |
+ |     | Security header type                      | Security header type 9.3.1        | M        | V      |    1/2 |
+ |     | Extended service request message identity | Message type 9.8                  | M        | V      |      1 |
+ |     | Service type                              | Service type 9.9.3.27             | M        | V      |    1/2 |
+ |     | NAS key set identifier                    | NAS key set identifier 9.9.3.21   | M        | V      |    1/2 |
+ |     | M-TMSI                                    | Mobile identity 9.9.2.3           | M        | LV     |      6 |
+ | B-  | CSFB response                             | CSFB response 9.9.3.5             | C        | TV     |      1 |
+ | 57  | EPS bearer context status                 | EPS bearer context status 9.9.2.1 | O        | TLV    |      4 |
+ | D-  | Device properties                         | Device properties 9.9.2.0A        | O        | TV     |      1 |
+
+*** 8.2.16 GUTI reallocation command
+
+ | IEI | Information Element                        | Type/Reference                                      | Presence | Format | Length |
+ |-----+--------------------------------------------+-----------------------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                     | Protocol discriminator 9.2                          | M        | V      |    1/2 |
+ |     | Security header type                       | Security header type 9.3.1                          | M        | V      |    1/2 |
+ |     | GUTI reallocation command message identity | Message type 9.8                                    | M        | V      |      1 |
+ |     | GUTI                                       | EPS mobile identity 9.9.3.12                        | M        | LV     |     12 |
+ |  54 | TAI list                                   | Tracking area identity list 9.9.3.33                | O        | TLV    |   8-98 |
+ |  65 | DCN-ID                                     | DCN-ID 9.9.3.48                                     | O        | TLV    |      4 |
+ |  66 | UE radio capability ID                     | UE radio capability ID 9.9.3.60                     | O        | TLV    |    3-n |
+ |  B- | UE radio capability ID deletion indication | UE radio capability ID deletion indication 9.9.3.61 | O        | TV     |      1 |
+
+*** 8.2.17 GUTI reallocation complete
+
+ | IEI | Information Element                         | Type/Reference             | Presence | Format | Length |
+ |-----+---------------------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator                      | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type                        | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | GUTI reallocation complete message identity | Message type 9.8           | M        | V      | 1      |
+
+*** 8.2.18 Identity request
+
+ | IEI | Information Element               | Type/Reference             | Presence | Format | Length |
+ |-----+-----------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator            | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type              | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Identity request message identity | Message type 9.8           | M        | V      | 1      |
+ |     | Identity type                     | Identity type 2 9.9.3.17   | M        | V      | 1/2    |
+ |     | Spare half octet                  | Spare half octet 9.9.2.9   | M        | V      | 1/2    |
+
+*** 8.2.19 Identity response
+
+ | IEI | Information Element       | Type/Reference             | Presence | Format | Length |
+ |-----+---------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator    | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type      | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Identity response message | Message type 9.8           | M        | V      | 1      |
+ |     | Mobile identity           | Mobile identity 9.9.2.3    | M        | LV     | 4-10   |
+
+*** 8.2.20 Security mode command
+
+ | IEI | Information Element                        | Type/Reference                             | Presence | Format | Length |
+ |-----+--------------------------------------------+--------------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                     | Protocol discriminator 9.2                 | M        | V      |    1/2 |
+ |     | Security header type                       | Security header type 9.3.1                 | M        | V      |    1/2 |
+ |     | Security mode command message identity     | Message type 9.8                           | M        | V      |      1 |
+ |     | Selected NAS security algorithms           | NAS security algorithms 9.9.3.23           | M        | V      |      1 |
+ |     | NAS key set identifier                     | NAS key set identifier 9.9.3.21            | M        | V      |    1/2 |
+ |     | Spare half octet                           | Spare half octet 9.9.2.9                   | M        | V      |    1/2 |
+ |     | Replayed UE security capabilities          | UE security capability 9.9.3.36            | M        | LV     |    3-6 |
+ | C-  | IMEISV request                             | IMEISV request 9.9.3.18                    | O        | TV     |      1 |
+ | 55  | Replayed nonceUE                           | Nonce 9.9.3.25                             | O        | TV     |      5 |
+ | 56  | NonceMME                                   | Nonce 9.9.3.25                             | O        | TV     |      5 |
+ | 4F  | HashMME                                    | HashMME 9.9.3.50                           | O        | TLV    |     10 |
+ | 6F  | Replayed UE additional security capability | UE additional security capability 9.9.3.53 | O        | TLV    |      6 |
+ | 37  | UE radio capability ID request             | UE radio capability ID request 9.9.3.59    | O        | TLV    |      3 |
+
+*** 8.2.21 Security mode complete
+
+ | IEI | Information Element                     | Type/Reference                          | Presence | Format | Length |
+ |-----+-----------------------------------------+-----------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                  | Protocol discriminator 9.2              | M        | V      | 1/2    |
+ |     | Security header type                    | Security header type 9.3.1              | M        | V      | 1/2    |
+ |     | Security mode complete message identity | Message type 9.8                        | M        | V      | 1      |
+ |  23 | IMEISV                                  | Mobile identity 9.9.2.3                 | O        | TLV    | 11     |
+ |  79 | Replayed NAS message container          | Replayed NAS message container 9.9.3.51 | O        | TLV-E  | 3-n    |
+ |  66 | UE radio capability ID                  | UE radio capability ID 9.9.3.60         | O        | TLV    | 3-n    |
+
+*** 8.2.22 Security mode reject
+
+ | IEI | Information Element                   | Type/Reference             | Presence | Format | Length |
+ |-----+---------------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator                | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type                  | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Security mode reject message identity | Message type 9.8           | M        | V      | 1      |
+ |     | EMM cause                             | EMM cause 9.9.3.9          | M        | V      | 1      |
+
+*** 8.2.23 Security protected NAS message
+
+ | IEI | Information Element         | Type/Reference                  | Presence | Format | Length |
+ |-----+-----------------------------+---------------------------------+----------+--------+--------|
+ |     | Protocol discriminator      | Protocol discriminator 9.2      | M        | V      | 1/2    |
+ |     | Security header type        | Security header type 9.3.1      | M        | V      | 1/2    |
+ |     | Message authentication code | Message authentication code 9.5 | M        | V      | 4      |
+ |     | Sequence number             | Sequence number 9.6             | M        | V      | 1      |
+ |     | NAS message                 | NAS message 9.7                 | M        | V      | 1-n    |
+
+*** 8.2.24 Service reject
+
+ | IEI | Information Element             | Type/Reference             | Presence | Format | Length |
+ |-----+---------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator          | Protocol discriminator 9.2 | M        | V      |    1/2 |
+ |     | Security header type            | Security header type 9.3.1 | M        | V      |    1/2 |
+ |     | Service reject message identity | Message type 9.8           | M        | V      |      1 |
+ |     | EMM cause                       | EMM cause 9.9.3.9          | M        | V      |      1 |
+ | 5B  | T3442 value                     | GPRS timer 9.9.3.16        | C        | TV     |      2 |
+ | 5F  | T3346 value                     | GPRS timer 2 9.9.3.16A     | O        | TLV    |      3 |
+ | 6B  | T3448 value                     | GPRS timer 2 9.9.3.16A     | O        | TLV    |      3 |
+
+*** 8.2.25 Service request
+
+ | IEI | Information Element                 | Type/Reference                   | Presence | Format | Length |
+ |-----+-------------------------------------+----------------------------------+----------+--------+--------|
+ |     | Protocol discriminator              | Protocol discriminator 9.2       | M        | V      | 1/2    |
+ |     | Security header type                | Security header type 9.3.1       | M        | V      | 1/2    |
+ |     | KSI and sequence number             | KSI and sequence number 9.9.3.19 | M        | V      | 1      |
+ |     | Message authentication code (short) | Short MAC 9.9.3.28               | M        | V      | 2      |
+
+*** 8.2.26 Tracking area update accept
+
+ | IEI | Information Element                          | Type/Reference                                      | Presence | Format |  Length |
+ |-----+----------------------------------------------+-----------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                       | Protocol discriminator 9.2                          | M        | V      |     1/2 |
+ |     | Security header type                         | Security header type 9.3.1                          | M        | V      |     1/2 |
+ |     | Tracking area update accept message identity | Message type 9.8                                    | M        | V      |       1 |
+ |     | EPS update result                            | EPS update result 9.9.3.13                          | M        | V      |     1/2 |
+ |     | Spare half octet                             | Spare half octet 9.9.2.9                            | M        | V      |     1/2 |
+ |  5A | T3412 value                                  | GPRS timer 9.9.3.16                                 | O        | TV     |       2 |
+ |  50 | GUTI                                         | EPS mobile identity 9.9.3.12                        | O        | TLV    |      13 |
+ |  54 | TAI list                                     | Tracking area identity list 9.9.3.33                | O        | TLV    |    8-98 |
+ |  57 | EPS bearer context status                    | EPS bearer context status 9.9.2.1                   | O        | TLV    |       4 |
+ |  13 | Location area identification                 | Location area identification 9.9.2.2                | O        | TV     |       6 |
+ |  23 | MS identity                                  | Mobile identity 9.9.2.3                             | O        | TLV    |    7-10 |
+ |  53 | EMM cause                                    | EMM cause 9.9.3.9                                   | O        | TV     |       2 |
+ |  17 | T3402 value                                  | GPRS timer 9.9.3.16                                 | O        | TV     |       2 |
+ |  59 | T3423 value                                  | GPRS timer 9.9.3.16                                 | O        | TV     |       2 |
+ |  4A | Equivalent PLMNs                             | PLMN list 9.9.2.8                                   | O        | TLV    |    5-47 |
+ |  34 | Emergency number list                        | Emergency number list 9.9.3.37                      | O        | TLV    |    5-50 |
+ |  64 | EPS network feature support                  | EPS network feature support 9.9.3.12A               | O        | TLV    |     3-4 |
+ |  F- | Additional update result                     | Additional update result 9.9.3.0A                   | O        | TV     |       1 |
+ |  5E | T3412 extended value                         | GPRS timer 3 9.9.3.16B                              | O        | TLV    |       3 |
+ |  6A | T3324 value                                  | GPRS timer 2 9.9.3.16A                              | O        | TLV    |       3 |
+ |  6E | Extended DRX parameters                      | Extended DRX parameters 9.9.3.46                    | O        | TLV    |       3 |
+ |  68 | Header compression configuration status      | Header compression configuration status 9.9.4.27    | O        | TLV    |       4 |
+ |  65 | DCN-ID                                       | DCN-ID 9.9.3.48                                     | O        | TLV    |       4 |
+ |  E- | SMS services status                          | SMS services status 9.9.3.4B                        | O        | TV     |       1 |
+ |  D- | Non-3GPP NW policies                         | Non-3GPP NW provided policies 9.9.3.49              | O        | TV     |       1 |
+ |  6B | T3448 value                                  | GPRS timer 2 9.9.3.16A                              | O        | TLV    |       3 |
+ |  C- | Network policy                               | Network policy 9.9.3.52                             | O        | TV     |       1 |
+ |  6C | T3447 value                                  | GPRS timer 3 9.9.3.16B                              | O        | TLV    |       3 |
+ |  7A | Extended emergency number list               | Extended emergency number list 9.9.3.37A            | O        | TLV-E  | 7-65538 |
+ |  7C | Ciphering key data                           | Ciphering key data 9.9.3.56                         | O        | TLV-E  | 35-2291 |
+ |  66 | UE radio capability ID                       | UE radio capability ID 9.9.3.60                     | O        | TLV    |     3-n |
+ |  B- | UE radio capability ID deletion indication   | UE radio capability ID deletion indication 9.9.3.61 | O        | TV     |       1 |
+ |  35 | Negotiated WUS assistance information        | WUS assistance information 9.9.3.62                 | O        | TLV    |     3-n |
+ |  36 | Negotiated DRX parameter in NB-S1 mode       | NB-S1 DRX parameter 9.9.3.63                        | O        | TLV    |       3 |
+
+*** 8.2.27 Tracking area update complete
+
+ | IEI | Information Element                            | Type/Reference             | Presence | Format | Length |
+ |-----+------------------------------------------------+----------------------------+----------+--------+--------|
+ |     | Protocol discriminator                         | Protocol discriminator 9.2 | M        | V      | 1/2    |
+ |     | Security header type                           | Security header type 9.3.1 | M        | V      | 1/2    |
+ |     | Tracking area update complete message identity | Message type 9.8           | M        | V      | 1      |
+
+*** 8.2.28 Tracking area update reject
+
+ | IEI | Information Element                          | Type/Reference               | Presence | Format | Length |
+ |-----+----------------------------------------------+------------------------------+----------+--------+--------+
+ |     | Protocol discriminator                       | Protocol discriminator 9.2   | M        | V      |    1/2 |
+ |     | Security header type                         | Security header type 9.3.1   | M        | V      |    1/2 |
+ |     | Tracking area update reject message identity | Message type 9.8             | M        | V      |      1 |
+ |     | EMM cause                                    | EMM cause 9.9.3.9            | M        | V      |      1 |
+ | 5F  | T3346 value                                  | GPRS timer 2 9.9.3.16A       | O        | TLV    |      3 |
+ | A-  | Extended EMM cause                           | Extended EMM cause 9.9.3.26A | O        | TV     |      1 |
+
+*** 8.2.29 Tracking area update request
+
+ | IEI | Information Element                            | Type/Reference                                          | Presence | Format | Length |
+ |-----+------------------------------------------------+---------------------------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                         | Protocol discriminator 9.2                              | M        | V      |    1/2 |
+ |     | Security header type                           | Security header type 9.3.1                              | M        | V      |    1/2 |
+ |     | Tracking area update request message identity  | Message type 9.8                                        | M        | V      |      1 |
+ |     | EPS update type                                | EPS update type 9.9.3.14                                | M        | V      |    1/2 |
+ |     | NAS key set identifier                         | NAS key set identifier 9.9.3.21                         | M        | V      |    1/2 |
+ |     | Old GUTI                                       | EPS mobile identity 9.9.3.12                            | M        | LV     |     12 |
+ |  B- | Non-current native NAS key set identifier      | NAS key set identifier 9.9.3.21                         | O        | TV     |      1 |
+ |  8- | GPRS ciphering key sequence number             | Ciphering key sequence number 9.9.3.4a                  | O        | TV     |      1 |
+ |  19 | Old P-TMSI signature                           | P-TMSI signature 9.9.3.26                               | O        | TV     |      4 |
+ |  50 | Additional GUTI                                | EPS mobile identity 9.9.3.12                            | O        | TLV    |     13 |
+ |  55 | NonceUE                                        | Nonce 9.9.3.25                                          | O        | TV     |      5 |
+ |  58 | UE network capability                          | UE network capability 9.9.3.34                          | O        | TLV    |   4-15 |
+ |  52 | Last visited registered TAI                    | Tracking area identity 9.9.3.32                         | O        | TV     |      6 |
+ |  5C | DRX parameter                                  | DRX parameter 9.9.3.8                                   | O        | TV     |      3 |
+ |  A- | UE radio capability information update needed  | UE radio capability information update needed 9.9.3.35  | O        | TV     |      1 |
+ |  57 | EPS bearer context status                      | EPS bearer context status 9.9.2.1                       | O        | TLV    |      4 |
+ |  31 | MS network capability                          | MS network capability 9.9.3.20                          | O        | TLV    |   4-10 |
+ |  13 | Old location area identification               | Location area identification 9.9.2.2                    | O        | TV     |      6 |
+ |  9- | TMSI status                                    | TMSI status 9.9.3.31                                    | O        | TV     |      1 |
+ |  11 | Mobile station classmark 2                     | Mobile station classmark 2 9.9.2.4                      | O        | TLV    |      5 |
+ |  20 | Mobile station classmark 3                     | Mobile station classmark 3 9.9.2.5                      | O        | TLV    |   2-34 |
+ |  40 | Supported Codecs                               | Supported Codec List 9.9.2.10                           | O        | TLV    |    5-n |
+ |  F- | Additional update type                         | Additional update type 9.9.3.0B                         | O        | TV     |      1 |
+ |  5D | Voice domain preference and UE's usage setting | Voice domain preference and UE's usage setting 9.9.3.44 | O        | TLV    |      3 |
+ |  E- | Old GUTI type                                  | GUTI type 9.9.3.45                                      | O        | TV     |      1 |
+ |  D- | Device properties                              | Device properties 9.9.2.0A                              | O        | TV     |      1 |
+ |  C- | MS network feature support                     | MS network feature support 9.9.3.20A                    | O        | TV     |      1 |
+ |  10 | TMSI based NRI container                       | Network resource identifier container 9.9.3.24A         | O        | TLV    |      4 |
+ |  6A | T3324 value                                    | GPRS timer 2 9.9.3.16                                   | O        | TLV    |      3 |
+ |  5E | T3412 extended value                           | GPRS timer 3 9.9.3.16B                                  | O        | TLV    |      3 |
+ |  6E | Extended DRX parameters                        | Extended DRX parameters 9.9.3.46                        | O        | TLV    |      3 |
+ |  6F | UE additional security capability              | UE additional security capability 9.9.3.53              | O        | TLV    |      6 |
+ |  6D | UE status                                      | UE status 9.9.3.54                                      | O        | TLV    |      3 |
+ |  17 | Additional information requested               | Additional information requested 9.9.3.55               | O        | TV     |      2 |
+ |  32 | N1 UE network capability                       | N1 UE network capability 9.9.3.57                       | O        | TLV    |   3-15 |
+ |  34 | UE radio capability ID availability            | UE radio capability ID availability 9.9.3.58            | O        | TLV    |      3 |
+ |  35 | Requested WUS assistance information           | WUS assistance information 9.9.3.62                     | O        | TLV    |    3-n |
+ |  36 | DRX parameter in NB-S1 mode                    | NB-S1 DRX parameter 9.9.3.63                            | O        | TLV    |      3 |
+
+*** 8.2.30 Uplink NAS Transport
+
+ | IEI | Information Element                   | Type/Reference                 | Presence | Format | Length |
+ |-----+---------------------------------------+--------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                | Protocol discriminator 9.2     | M        | V      | 1/2    |
+ |     | Security header type                  | Security header type 9.3.1     | M        | V      | 1/2    |
+ |     | Uplink NAS transport message identity | Message type 9.8               | M        | V      | 1      |
+ |     | NAS message container                 | NAS message container 9.9.3.22 | M        | LV     | 3-252  |
+
+*** 8.2.31 Downlink generic NAS transport
+
+ | IEI | Information Element                             | Type/Reference                          | Presence | Format | Length |
+ |-----+-------------------------------------------------+-----------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                          | Protocol discriminator 9.2              | M        | V      | 1/2    |
+ |     | Security header type                            | Security header type 9.3.1              | M        | V      | 1/2    |
+ |     | Downlink generic NAS transport message identity | Message type 9.8                        | M        | V      | 1      |
+ |     | Generic message container type                  | Generic message container type 9.9.3.42 | M        | V      | 1      |
+ |     | Generic message container                       | Generic message container 9.9.3.43      | M        | LV-E   | 3-n    |
+ |  65 | Additional information                          | Additional information 9.9.2.0          | O        | TLV    | 3-n    |
+
+*** 8.2.32 Uplink generic NAS transport
+
+ | IEI | Information Element                           | Type/Reference                          | Presence | Format | Length |
+ |-----+-----------------------------------------------+-----------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                        | Protocol discriminator 9.2              | M        | V      | 1/2    |
+ |     | Security header type                          | Security header type 9.3.1              | M        | V      | 1/2    |
+ |     | Uplink generic NAS transport message identity | Message type 9.8                        | M        | V      | 1      |
+ |     | Generic message container type                | Generic message container type 9.9.3.42 | M        | V      | 1      |
+ |     | Generic message container                     | Generic message container 9.9.3.43      | M        | LV-E   | 3-n    |
+ |  65 | Additional information                        | Additional information 9.9.2.0          | O        | TLV    | 3-n    |
+
+*** 8.2.33 CONTROL PLANE SERVICE REQUEST
+
+ | IEI | Information Element                            | Type/Reference                      | Presence | Format | Length |
+ |-----+------------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                         | Protocol discriminator 9.2          | M        | V      |    1/2 |
+ |     | Security header type                           | Security header type 9.3.1          | M        | V      |    1/2 |
+ |     | Control plane service request message identity | Message type 9.8                    | M        | V      |      1 |
+ |     | Control plane service type                     | Control plane service type 9.9.3.47 | M        | V      |    1/2 |
+ |     | NAS key set identifier                         | NAS key set identifier 9.9.3.21     | M        | V      |    1/2 |
+ | 78  | ESM message container                          | ESM message container 9.9.3.15      | O        | TLV-E  |    3-n |
+ | 67  | NAS message container                          | NAS message container 9.9.3.22      | O        | TLV    |  4-253 |
+ | 57  | EPS bearer context status                      | EPS bearer context status 9.9.2.1   | O        | TLV    |      4 |
+ | D-  | Device properties                              | Device properties 9.9.2.0A          | O        | TV     |      1 |
+
+*** 8.2.34 Service Accept
+
+ | IEI | Information Element             | Type/Reference                    | Presence | Format | Length |
+ |-----+---------------------------------+-----------------------------------+----------+--------+--------|
+ |     | Protocol discriminator          | Protocol discriminator 9.2        | M        | V      |    1/2 |
+ |     | Security header type            | Security header type 9.3.1        | M        | V      |    1/2 |
+ |     | Service accept message identity | Message type 9.8                  | M        | V      |      1 |
+ | 57  | EPS bearer context status       | EPS bearer context status 9.9.2.1 | O        | TLV    |      4 |
+ | 6B  | T3448 value                     | GPRS timer 2 9.9.3.16A            | O        | TLV    |      3 |
+
+** 8.3 EPS Session Management Messages
+*** 8.3.1 Activate dedicated EPS bearer context accept
+
+ | IEI | Information Element                                           | Type/Reference                                   | Presence | Format |  Length |
+ |-----+---------------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                        | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                           | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                                | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Activate dedicated EPS bearer context accept message identity | Message type 9.8                                 | M        | V      |       1 |
+ |  27 | Protocol configuration options                                | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  33 | NBIFOM container                                              | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options                       | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.2 Activate dedicated EPS bearer context reject
+
+ | IEI | Information Element                                           | Type/Reference                                   | Presence | Format |  Length |
+ |-----+---------------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                        | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                           | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                                | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Activate dedicated EPS bearer context reject message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                                                     | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ |  27 | Protocol configuration options                                | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  33 | NBIFOM container                                              | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options                       | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.3 Activate dedicated EPS bearer context request
+
+ | IEI | Information Element                                            | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                         | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                            | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                                 | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Activate dedicated EPS bearer context request message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | Linked EPS bearer identity                                     | Linked EPS bearer identity 9.9.4.6               | M        | V      |     1/2 |
+ |     | Spare half octet                                               | Spare half octet 9.9.2.9                         | M        | V      |     1/2 |
+ |     | EPS QoS                                                        | EPS quality of service 9.9.4.3                   | M        | LV     |    2-14 |
+ |     | TFT                                                            | Traffic flow template 9.9.4.16                   | M        | LV     |   2-256 |
+ |  5D | Transaction identifier                                         | Transaction identifier 9.9.4.17                  | O        | TLV    |     3-4 |
+ |  30 | Negotiated QoS                                                 | Quality of service 9.9.4.12                      | O        | TLV    |   14-22 |
+ |  32 | Negotiated LLC SAPI                                            | LLC service access point identifier 9.9.4.7      | O        | TV     |       2 |
+ |  8- | Radio priority                                                 | Radio priority 9.9.4.13                          | O        | TV     |       1 |
+ |  34 | Packet flow Identifier                                         | Packet flow Identifier 9.9.4.8                   | O        | TLV    |       3 |
+ |  27 | Protocol configuration options                                 | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  C- | WLAN offload indication                                        | WLAN offload acceptability 9.9.4.18              | O        | TV     |       1 |
+ |  33 | NBIFOM container                                               | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options                        | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+ |  5C | Extended EPS QoS                                               | Extended quality of service 9.9.4.30             | O        | TLV    |      12 |
+
+*** 8.3.4 Activate default EPS bearer context accept
+
+ | IEI | Information Element                                         | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-------------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                      | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                         | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                              | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Activate default EPS bearer context accept message identity | Message type 9.8                                 | M        | V      |       1 |
+ | 27  | Protocol configuration options                              | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ | 7B  | Extended protocol configuration options                     | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.5 Activate default EPS bearer context reject
+
+ | IEI | Information Element                                         | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-------------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                      | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                         | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                              | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Activate default EPS bearer context reject message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                                                   | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ | 27  | Protocol configuration options                              | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ | 7B  | Extended protocol configuration options                     | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.6 Activate default EPS bearer context request
+
+ | IEI | Information Element                                          | Type/Reference                                   | Presence | Format |  Length |
+ |-----+--------------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                       | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                          | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                               | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Activate default EPS bearer context request message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | EPS QoS                                                      | EPS quality of service 9.9.4.3                   | M        | LV     |    2-14 |
+ |     | Access point name                                            | Access point name 9.9.4.1                        | M        | LV     |   2-101 |
+ |     | PDN address                                                  | PDN address 9.9.4.9                              | M        | LV     |    6-14 |
+ |  5D | Transaction identifier                                       | Transaction identifier 9.9.4.17                  | O        | TLV    |     3-4 |
+ |  30 | Negotiated QoS                                               | Quality of service 9.9.4.12                      | O        | TLV    |   14-22 |
+ |  32 | Negotiated LLC SAPI                                          | LLC service access point identifier 9.9.4.7      | O        | TV     |       2 |
+ |  8- | Radio priority                                               | Radio priority 9.9.4.13                          | O        | TV     |       1 |
+ |  34 | Packet flow Identifier                                       | Packet flow Identifier 9.9.4.8                   | O        | TLV    |       3 |
+ |  5E | APN-AMBR                                                     | APN aggregate maximum bit rate 9.9.4.2           | O        | TLV    |     4-8 |
+ |  58 | ESM cause                                                    | ESM cause 9.9.4.4                                | O        | TV     |       2 |
+ |  27 | Protocol configuration options                               | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  B- | Connectivity type                                            | Connectivity type 9.9.4.2A                       | O        | TV     |       1 |
+ |  C- | WLAN offload indication                                      | WLAN offload acceptability 9.9.4.18              | O        | TV     |       1 |
+ |  33 | NBIFOM container                                             | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  66 | Header compression configuration                             | Header compression configuration 9.9.4.22        | O        | TLV    |   5-257 |
+ |  9- | Control plane only indication                                | Control plane only indication 9.9.4.23           | O        | TV     |       1 |
+ |  7B | Extended protocol configuration options                      | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+ |  6E | Serving PLMN rate control                                    | Serving PLMN rate control 9.9.4.28               | O        | TLV    |       4 |
+ |  5F | Extended APN-AMBR                                            | Extended APN aggregate maximum bit rate 9.9.4.29 | O        | TLV    |       8 |
+
+*** 8.3.7 Bearer resource allocation reject
+
+ | IEI | Information Element                                | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                             | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                     | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Bearer resource allocation reject message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                                          | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ |  27 | Protocol configuration options                     | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  37 | Back-off timer value                               | GPRS timer 3 9.9.3.16B                           | O        | TLV    |       3 |
+ |  6B | Re-attempt indicator                               | Re-attempt indicator 9.9.4.13A                   | O        | TLV    |       3 |
+ |  33 | NBIFOM container                                   | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options            | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.8 Bearer resource allocation request
+
+ | IEI | Information Element                                 | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-----------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                              | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                 | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                      | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Bearer resource allocation request message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | Linked EPS bearer identity                          | Linked EPS bearer identity 9.9.4.6               | M        | V      |     1/2 |
+ |     | Spare half octet                                    | Spare half octet 9.9.2.9                         | M        | V      |     1/2 |
+ |     | Traffic flow aggregate                              | Traffic flow aggregate description 9.9.4.15      | M        | LV     |   2-256 |
+ |     | Required traffic flow QoS                           | EPS quality of service 9.9.4.3                   | M        | LV     |    2-14 |
+ | 27  | Protocol configuration options                      | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ | C-  | Device properties                                   | Device properties 9.9.2.0A                       | O        | TV     |       1 |
+ | 33  | NBIFOM container                                    | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ | 7B  | Extended protocol configuration options             | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+ | 5C  | Extended EPS QoS                                    | Extended quality of service 9.9.4.30             | O        | TLV    |      12 |
+
+*** 8.3.9 Bearer resource modification reject
+
+ | IEI | Information Element                                  | Type/Reference                                   | Presence | Format |  Length |
+ |-----+------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                               | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                  | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                       | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Bearer resource modification reject message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                                            | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ |  27 | Protocol configuration options                       | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  37 | Back-off timer value                                 | GPRS timer 3 9.9.3.16B                           | O        | TLV    |       3 |
+ |  6B | Re-attempt indicator                                 | Re-attempt indicator 9.9.4.13A                   | O        | TLV    |       3 |
+ |  33 | NBIFOM container                                     | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options              | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.10 Bearer resource modification request
+
+ | IEI | Information Element                                   | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                   | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                        | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Bearer resource modification request message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | EPS bearer identity for packet filter                 | Linked EPS bearer identity 9.9.4.6               | M        | V      |     1/2 |
+ |     | Spare half octet                                      | Spare half octet 9.9.2.9                         | M        | V      |     1/2 |
+ |     | Traffic flow aggregate                                | Traffic flow aggregate description 9.9.4.15      | M        | LV     |   2-256 |
+ | 5B  | Required traffic flow QoS                             | EPS quality of service 9.9.4.3                   | O        | TLV    |    3-15 |
+ | 58  | ESM cause                                             | ESM cause 9.9.4.4                                | O        | TV     |       2 |
+ | 27  | Protocol configuration options                        | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ | C-  | Device properties                                     | Device properties 9.9.2.0A                       | O        | TV     |       1 |
+ | 33  | NBIFOM container                                      | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ | 66  | Header compression configuration                      | Header compression configuration 9.9.4.22        | O        | TLV    |   5-257 |
+ | 7B  | Extended protocol configuration options               | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+ | 5C  | Extended EPS QoS                                      | Extended quality of service 9.9.4.30             | O        | TLV    |      12 |
+
+*** 8.3.11 Deactivate EPS bearer context accept
+
+ | IEI | Information Element                                   | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                   | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                        | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Deactivate EPS bearer context accept message identity | Message type 9.8                                 | M        | V      |       1 |
+ | 27  | Protocol configuration options                        | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ | 7B  | Extended protocol configuration options               | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.12 Deactivate EPS bearer context request
+
+ | IEI | Information Element                                    | Type/Reference                                   | Presence | Format |  Length |
+ |-----+--------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                                 | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                    | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                         | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Deactivate EPS bearer context request message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                                              | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ |  27 | Protocol configuration options                         | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  37 | T3396 value                                            | GPRS timer 3 9.9.3.16B                           | O        | TLV    |       3 |
+ |  C- | WLAN offload indication                                | WLAN offload acceptability 9.9.4.18              | O        | TV     |       1 |
+ |  33 | NBIFOM container                                       | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options                | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.12A ESM dummy message
+
+ | IEI | Information Element                | Type/Reference                     | Presence | Format | Length |
+ |-----+------------------------------------+------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator             | Protocol discriminator 9.2         | M        | V      | 1/2    |
+ |     | EPS bearer identity                | EPS bearer identity 9.3.2          | M        | V      | 1/2    |
+ |     | Procedure transaction identity     | Procedure transaction identity 9.4 | M        | V      | 1      |
+ |     | ESM dummy message message identity | Message type 9.8                   | M        | V      | 1      |
+
+*** 8.3.13 ESM information request
+
+ | IEI | Information Element                      | Type/Reference                     | Presence | Format | Length |
+ |-----+------------------------------------------+------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                   | Protocol discriminator 9.2         | M        | V      | 1/2    |
+ |     | EPS bearer identity                      | EPS bearer identity 9.3.2          | M        | V      | 1/2    |
+ |     | Procedure transaction identity           | Procedure transaction identity 9.4 | M        | V      | 1      |
+ |     | ESM information request message identity | Message type 9.8                   | M        | V      | 1      |
+
+*** 8.3.14 ESM information response
+
+ | IEI | Information Element                       | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                    | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                       | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity            | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | ESM information response message identity | Message type 9.8                                 | M        | V      |       1 |
+ |  28 | Access point name                         | Access point name 9.9.4.1                        | O        | TLV    |   3-102 |
+ |  27 | Protocol configuration options            | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  7B | Extended protocol configuration options   | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.15 ESM status
+
+ | IEI | Information Element            | Type/Reference                     | Presence | Format | Length |
+ |-----+--------------------------------+------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator         | Protocol discriminator 9.2         | M        | V      |    1/2 |
+ |     | EPS bearer identity            | EPS bearer identity 9.3.2          | M        | V      |    1/2 |
+ |     | Procedure transaction identity | Procedure transaction identity 9.4 | M        | V      |      1 |
+ |     | ESM status message identity    | Message type 9.8                   | M        | V      |      1 |
+ |     | ESM cause                      | ESM cause 9.9.4.4                  | M        | V      |      1 |
+
+*** 8.3.16 Modify EPS bearer context accept
+
+ | IEI | Information Element                               | Type/Reference                                   | Presence | Format |  Length |
+ |-----+---------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                            | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                               | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                    | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Modify EPS bearer context accept message identity | Message type 9.8                                 | M        | V      |       1 |
+ |  27 | Protocol configuration options                    | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  33 | NBIFOM container                                  | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options           | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.17 Modify EPS bearer context reject
+
+ | IEI | Information Element                               | Type/Reference                                   | Presence | Format |  Length |
+ |-----+---------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                            | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                               | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                    | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Modify EPS bearer context reject message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                                         | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ |  27 | Protocol configuration options                    | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  33 | NBIFOM container                                  | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options           | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.18 Modify EPS bearer context request
+
+ | IEI | Information Element                                | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                             | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                                | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity                     | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | Modify EPS bearer context request message identity | Message type 9.8                                 | M        | V      |       1 |
+ |  5B | New EPS QoS                                        | EPS quality of service 9.9.4.3                   | O        | TLV    |    3-15 |
+ |  36 | TFT                                                | Traffic flow template 9.9.4.16                   | O        | TLV    |   3-257 |
+ |  30 | New QoS                                            | Quality of service 9.9.4.12                      | O        | TLV    |   14-22 |
+ |  32 | Negotiated LLC SAPI                                | LLC service access point identifier 9.9.4.7      | O        | TV     |       2 |
+ |  8- | Radio priority                                     | Radio priority 9.9.4.13                          | O        | TV     |       1 |
+ |  34 | Packet flow Identifier                             | Packet flow Identifier 9.9.4.8                   | O        | TLV    |       3 |
+ |  5E | APN-AMBR                                           | APN aggregate maximum bit rate 9.9.4.2           | O        | TLV    |     4-8 |
+ |  27 | Protocol configuration options                     | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  C- | WLAN offload indication                            | WLAN offload acceptability 9.9.4.18              | O        | TV     |       1 |
+ |  33 | NBIFOM container                                   | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  66 | Header compression configuration                   | Header compression configuration 9.9.4.22        | O        | TLV    |   5-257 |
+ |  7B | Extended protocol configuration options            | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+ |  5F | Extended APN-AMBR                                  | Extended APN aggregate maximum bit rate 9.9.4.29 | O        | TLV    |       8 |
+ |  5C | Extended EPS QoS                                   | Extended quality of service 9.9.4.30             | O        | TLV    |      12 |
+
+*** 8.3.18A Notification
+
+ | IEI | Information Element            | Type/Reference                     | Presence | Format | Length |
+ |-----+--------------------------------+------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator         | Protocol discriminator 9.2         | M        | V      |    1/2 |
+ |     | EPS bearer identity            | EPS bearer identity 9.3.2          | M        | V      |    1/2 |
+ |     | Procedure transaction identity | Procedure transaction identity 9.4 | M        | V      |      1 |
+ |     | Notification message identity  | Message type 9.8                   | M        | V      |      1 |
+ |     | Notification indicator         | Notification indicator 9.9.4.7A    | M        | LV     |      2 |
+
+*** 8.3.19 PDN connectivity reject
+
+ | IEI | Information Element                      | Type/Reference                                   | Presence | Format |  Length |
+ |-----+------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                   | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                      | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity           | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | PDN connectivity reject message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                                | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ |  27 | Protocol configuration options           | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  37 | Back-off timer value                     | GPRS timer 3 9.9.3.16B                           | O        | TLV    |       3 |
+ |  6B | Re-attempt indicator                     | Re-attempt indicator 9.9.4.13A                   | O        | TLV    |       3 |
+ |  33 | NBIFOM container                         | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  7B | Extended protocol configuration options  | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.20 PDN connectivity request
+
+ | IEI | Information Element                       | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                    | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                       | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity            | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | PDN connectivity request message identity | Message type 9.8                                 | M        | V      |       1 |
+ |     | Request type                              | Request type 9.9.4.14                            | M        | V      |     1/2 |
+ |     | PDN type                                  | PDN type 9.9.4.10                                | M        | V      |     1/2 |
+ |  D- | ESM information transfer flag             | ESM information transfer flag 9.9.4.5            | O        | TV     |       1 |
+ |  28 | Access point name                         | Access point name 9.9.4.1                        | O        | TLV    |   3-102 |
+ |  27 | Protocol configuration options            | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ |  C- | Device properties                         | Device properties 9.9.2.0A                       | O        | TV     |       1 |
+ |  33 | NBIFOM container                          | NBIFOM container 9.9.4.19                        | O        | TLV    |   3-257 |
+ |  66 | Header compression configuration          | Header compression configuration 9.9.4.22        | O        | TLV    |   5-257 |
+ |  7B | Extended protocol configuration options   | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.21 PDN disconnect reject
+
+ | IEI | Information Element                     | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-----------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                  | Protocol discriminator 9.2                       | M        | V      |     1/2 |
+ |     | EPS bearer identity                     | EPS bearer identity 9.3.2                        | M        | V      |     1/2 |
+ |     | Procedure transaction identity          | Procedure transaction identity 9.4               | M        | V      |       1 |
+ |     | PDN disconnect reject message identity  | Message type 9.8                                 | M        | V      |       1 |
+ |     | ESM cause                               | ESM cause 9.9.4.4                                | M        | V      |       1 |
+ | 27  | Protocol configuration options          | Protocol configuration options 9.9.4.11          | O        | TLV    |   3-253 |
+ | 7B  | Extended protocol configuration options | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.22 PDN disconnect request
+
+ | IEI | Information Element                     | Type/Reference                                   | Presence | Format | Length  |
+ |-----+-----------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                  | Protocol discriminator 9.2                       | M        | V      | 1/2     |
+ |     | EPS bearer identity                     | EPS bearer identity 9.3.2                        | M        | V      | 1/2     |
+ |     | Procedure transaction identity          | Procedure transaction identity 9.4               | M        | V      | 1       |
+ |     | PDN disconnect request message identity | Message type 9.8                                 | M        | V      | 1       |
+ |     | Linked EPS bearer identity              | Linked EPS bearer identity 9.9.4.6               | M        | V      | 1/2     |
+ |     | Spare half octet                        | Spare half octet 9.9.2.9                         | M        | V      | 1/2     |
+ | 27  | Protocol configuration options          | Protocol configuration options 9.9.4.11          | O        | TLV    | 3-253   |
+ | 7B  | Extended protocol configuration options | Extended protocol configuration options 9.9.4.26 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.23 Remote UE report
+
+ | IEI | Information Element                   | Type/Reference                     | Presence | Format |  Length |
+ |-----+---------------------------------------+------------------------------------+----------+--------+---------|
+ |     | Protocol discriminator                | Protocol discriminator 9.2         | M        | V      |     1/2 |
+ |     | EPS bearer identity                   | EPS bearer identity 9.3.2          | M        | V      |     1/2 |
+ |     | Procedure transaction identity        | Procedure transaction identity 9.4 | M        | V      |       1 |
+ |     | Remote UE report message identity     | Message type 9.8                   | M        | V      |       1 |
+ | 79  | Remote UE Context Connected           | Remote UE context list IE 9.9.4.20 | O        | TLV-E  | 3-65538 |
+ | 7A  | Remote UE Context Disconnected        | Remote UE context list IE 9.9.4.20 | O        | TLV-E  | 3-65538 |
+ | 6F  | ProSe Key Management Function address | PKMF address IE 9.9.4.21           | O        | TLV    |    3-19 |
+
+*** 8.3.24 Remote UE report response
+
+ | IEI | Information Element                        | Type/Reference                     | Presence | Format | Length |
+ |-----+--------------------------------------------+------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator                     | Protocol discriminator 9.2         | M        | V      | 1/2    |
+ |     | EPS bearer identity                        | EPS bearer identity 9.3.2          | M        | V      | 1/2    |
+ |     | Procedure transaction identity             | Procedure transaction identity 9.4 | M        | V      | 1      |
+ |     | Remote UE report response message identity | Message type 9.8                   | M        | V      | 1      |
+
+*** 8.3.25 ESM DATA TRANSPORT
+
+ | IEI | Information Element                 | Type/Reference                         | Presence | Format | Length |
+ |-----+-------------------------------------+----------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator              | Protocol discriminator 9.2             | M        | V      | 1/2    |
+ |     | EPS bearer identity                 | EPS bearer identity 9.3.2              | M        | V      | 1/2    |
+ |     | Procedure transaction identity      | Procedure transaction identity 9.4     | M        | V      | 1      |
+ |     | ESM data transport message identity | Message type 9.8                       | M        | V      | 1      |
+ |     | User data container                 | User data container 9.9.4.24           | M        | LV-E   | 2-n    |
+ | F-  | Release assistance indication       | Release assistance indication 9.9.4.25 | O        | TV     | 1      |
+
