@@ -1,5 +1,6 @@
 * ErlUMTS
 
-  This library tries to implement encoding and decoding for different UMTS protocols.
+  This library tries to implement encoding and decoding for different
+  UMTS (Universal Mobile Telecommunications System) protocols.
 
-  It aims to support the newest version of each spec.
+  It aims to support the newest release of each spec.

@@ -1,0 +1,9 @@
+{application, erlumts,
+ [{description, "Erlang codec for Universal Mobile Telecommunications System specifations"},
+  {vsn, "1.0.0"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]}
+ ]}.

@@ -1,5 +1,5 @@
 %% 3GPP TS 24.301 version 16.8.0
--module(sigerl_nas_codec).
+-module(erlumts_nas_codec).
 
 -include("include/nas.hrl").
 -include("include/l3.hrl").
@@ -7,7 +7,7 @@
 -export([decode/1, encode/1]).
 
 decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
-    ProtocolDiscriminator = sigerl_l3_codec:parse_protocol_discriminator(PD),
+    ProtocolDiscriminator = erlumts_l3_codec:parse_protocol_discriminator(PD),
     case ProtocolDiscriminator of
         eps_mobility_management_messages -> %% security protected
             % Security Header Type
@@ -202,7 +202,7 @@ decode_emm_msg(attach_accept, Bin0) ->
             {negotiated_wus_assistance_information, 16#35, tlv, {3, n}},
             {negotiated_drx_parameter_in_nb_s1_mode, 16#36, tlv, 3}
            ],
-    {Optionals, _Unknown} = sigerl_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     #nas_msg_attach_accept{
        eps_attach_result = AttachRes,
        spare_half_octet = Spare,
