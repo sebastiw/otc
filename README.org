@@ -4,3 +4,14 @@
   UMTS (Universal Mobile Telecommunications System) protocols.
 
   It aims to support the newest release of each spec.
+
+* Linguistics
+
+  decode - function that converts from binary format to an Erlang map
+
+  parse - function that converts from UMTS magic number to Erlang atom
+
+  encode - function that converts from Erlang map to binary format
+
+  compose - function that converts from Erlang atom to UMTS magic number
+

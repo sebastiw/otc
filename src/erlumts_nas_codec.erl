@@ -6,34 +6,36 @@
 
 -export([decode/1, encode/1]).
 
+-spec decode(binary()) -> map() | unsupported | undefined.
 decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
     ProtocolDiscriminator = erlumts_l3_codec:parse_protocol_discriminator(PD),
     case ProtocolDiscriminator of
         eps_mobility_management_messages -> %% security protected
-            % Security Header Type
+            %% Security Header Type
             SecurityHeaderType = parse_security_header_type(EBI_SHT),
-            parse_emm_content(SecurityHeaderType, Rest);
+            decode_emm_content(SecurityHeaderType, Rest);
         eps_session_management_messages ->
-            % EPS Bearer Identity
-            parse_esm_content(EBI_SHT, Rest);
+            %% EPS Bearer Identity
+            decode_esm_content(EBI_SHT, Rest);
         _ ->
-            undefined
+            unsupported
     end.
 
+-spec encode(map()) -> binary().
 encode(Nas) ->
-    Nas.
+    <<>>.
 
-parse_emm_content(_, <<>>) ->
+decode_emm_content(_, <<>>) ->
     undefined;
-parse_emm_content(plain_nas_message, Bin) ->
+decode_emm_content(plain_nas_message, Bin) ->
     <<MT:1/binary, OIE/binary>> = Bin,
     MsgType = parse_msg_type(MT),
     decode_emm_msg(MsgType, OIE);
-parse_emm_content(_, Bin) ->
+decode_emm_content(_, Bin) ->
     <<MAC:3/binary, SN:1/binary, NMSG/binary>> = Bin,
-    ok.
+    undefined.
 
-parse_esm_content(EPSBearerIdentity, Bin) ->
+decode_esm_content(EPSBearerIdentity, Bin) ->
     <<PTI:1/binary, MT:1/binary, OIE/binary>> = Bin,
     MsgType = parse_msg_type(MT),
     decode_esm_msg(MsgType, OIE).
