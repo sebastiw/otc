@@ -6,6 +6,7 @@
 
 -export([parse_protocol_discriminator/1]).
 -export([decode_v/2, decode_lv/1, decode_lve/1]).
+-export([decode_iei_list/2]).
 
 -type iei_type() :: t | v | tv | lv | tlv | lve | tlve.
 -type iei_fixed_length() :: half | pos_integer().
