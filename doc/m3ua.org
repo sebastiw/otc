@@ -1,0 +1,248 @@
+* Overview
+
+  IETF RFC 4666
+  September 2006
+
+  Signaling System 7 (SS7) Message Transfer Part 3 (MTP3) - User Adaptation Layer (M3UA)
+
+* 3.2 Variable-Length Parameters
+
+** Common parameters
+
+ | Parameter Name         | Parameter ID |
+ |------------------------+--------------|
+ | Reserved               |       0x0000 |
+ | Not Used in M3UA       |       0x0001 |
+ | Not Used in M3UA       |       0x0002 |
+ | Not Used in M3UA       |       0x0003 |
+ | INFO String            |       0x0004 |
+ | Not Used in M3UA       |       0x0005 |
+ | Routing Context        |       0x0006 |
+ | Diagnostic Information |       0x0007 |
+ | Not Used in M3UA       |       0x0008 |
+ | Heartbeat Data         |       0x0009 |
+ | Not Used in M3UA       |       0x000a |
+ | Traffic Mode Type      |       0x000b |
+ | Error Code             |       0x000c |
+ | Status                 |       0x000d |
+ | Not Used in M3UA       |       0x000e |
+ | Not Used in M3UA       |       0x000f |
+ | Not Used in M3UA       |       0x0010 |
+ | ASP Identifier         |       0x0011 |
+ | Affected Point Code    |       0x0012 |
+ | Correlation ID         |       0x0013 |
+
+** M3UA specific parameters
+
+ | Parameter Name               |     Parameter ID |
+ |------------------------------+------------------|
+ | Network Appearance           |           0x0200 |
+ | Reserved                     |           0x0201 |
+ | Reserved                     |           0x0202 |
+ | Reserved                     |           0x0203 |
+ | User/Cause                   |           0x0204 |
+ | Congestion Indications       |           0x0205 |
+ | Concerned Destination        |           0x0206 |
+ | Routing Key                  |           0x0207 |
+ | Registration Result          |           0x0208 |
+ | Deregistration Result        |           0x0209 |
+ | Local Routing Key Identifier |           0x020a |
+ | Destination Point Code       |           0x020b |
+ | Service Indicators           |           0x020c |
+ | Reserved                     |           0x020d |
+ | Originating Point Code List  |           0x020e |
+ | Reserved                     |           0x020f |
+ | Protocol Data                |           0x0210 |
+ | Reserved                     |           0x0211 |
+ | Registration Status          |           0x0212 |
+ | Deregistration Status        |           0x0213 |
+ | Reserved by the IETF         | 0x0214 to 0xffff |
+
+* Messages
+
+** 3.3.  Transfer Messages
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0200 | Network Appearance  | O        |
+ | 0006 | Routing Context     | C        |
+ | 0210 | Protocol Data       | M        |
+ | 0013 | Correlation Id      | O        |
+
+** 3.4.  SS7 Signalling Network Management (SSNM) Messages
+
+*** 3.4.1 Destination Unavailable (DUNA)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0200 | Network Appearance  | O        |
+ | 0006 | Routing Context     | C        |
+ | 0012 | Affected Point Code | M        |
+ | 0004 | Info String         | O        |
+
+*** 3.4.2.  Destination Available (DAVA)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0200 | Network Appearance  | O        |
+ | 0006 | Routing Context     | C        |
+ | 0012 | Affected Point Code | M        |
+ | 0004 | Info String         | O        |
+
+*** 3.4.3.  Destination State Audit (DAUD)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0200 | Network Appearance  | O        |
+ | 0006 | Routing Context     | C        |
+ | 0012 | Affected Point Code | M        |
+ | 0004 | Info String         | O        |
+
+*** 3.4.4.  Signalling Congestion (SCON)
+
+ |  Tag | Information Element    | Presence |
+ |------+------------------------+----------+
+ | 0200 | Network Appearance     | O        |
+ | 0006 | Routing Context        | C        |
+ | 0012 | Affected Point Code    | M        |
+ | 0206 | Concerned Destination  | O        |
+ | 0205 | Congestion Indications | O        |
+ | 0004 | Info String            | O        |
+
+*** 3.4.5.  Destination User Part Unavailable (DUPU)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0200 | Network Appearance  | O        |
+ | 0006 | Routing Context     | C        |
+ | 0012 | Affected Point Code | M        |
+ | 0204 | User/Cause          | M        |
+ | 0004 | Info String         | O        |
+
+*** 3.4.6.  Destination Restricted (DRST)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0200 | Network Appearance  | O        |
+ | 0006 | Routing Context     | C        |
+ | 0012 | Affected Point Code | M        |
+ | 0004 | Info String         | O        |
+
+** 3.5.  ASP State Maintenance (ASPSM) Messages
+
+*** 3.5.1.  ASP Up
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0011 | ASP Identifier      | O        |
+ | 0004 | Info String         | O        |
+
+*** 3.5.2.  ASP Up Acknowledgement (ASP Up Ack)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0011 | ASP Identifier      | O        |
+ | 0004 | Info String         | O        |
+
+*** 3.5.3.  ASP Down
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0004 | Info String         | O        |
+
+*** 3.5.4.  ASP Down Acknowledgement (ASP Down Ack)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0004 | Info String         | O        |
+
+*** 3.5.5.  Heartbeat (BEAT)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0009 | Heartbeat Data      | O        |
+
+*** 3.5.6. Heartbeat Acknowledgement (BEAT Ack)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0009 | Heartbeat Data      | O        |
+
+** 3.6.  Routing Key Management (RKM) Messages [Optional]
+
+*** 3.6.1.  Registration Request (REG REQ)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0207 | Routing Key         | M        |
+
+*** 3.6.2.  Registration Response (REG RSP)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0208 | Registration Result | M        |
+
+*** 3.6.3.  Deregistration Request (DEREG REQ)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0006 | Routing Context     | M        |
+
+*** 3.6.4.  Deregistration Response (DEREG RSP)
+
+ |  Tag | Information Element   | Presence |
+ |------+-----------------------+----------+
+ | 0209 | Deregistration Result | M        |
+
+** 3.7.  ASP Traffic Maintenance (ASPTM) Messages
+
+*** 3.7.1.  ASP Active
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 000b | Traffic Mode Type   | O        |
+ | 0006 | Routing Context     | O        |
+ | 0004 | Info String         | O        |
+
+*** 3.7.2.  ASP Active Acknowledgement (ASP Active Ack)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 000b | Traffic Mode Type   | O        |
+ | 0006 | Routing Context     | O        |
+ | 0004 | Info String         | O        |
+
+*** 3.7.3.  ASP Inactive
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0006 | Routing Context     | O        |
+ | 0004 | Info String         | O        |
+
+*** 3.7.4.  ASP Inactive Acknowledgement (ASP Inactive Ack)
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------+
+ | 0006 | Routing Context     | O        |
+ | 0004 | Info String         | O        |
+
+** 3.8.  Management (MGMT) Messages
+
+*** 3.8.1.  Error
+
+ |  Tag | Information Element    | Presence |
+ |------+------------------------+----------|
+ | 000c | Error Code             | M        |
+ | 0006 | Routing Context        | M*       |
+ | 0200 | Network Appearance     | M*       |
+ | 0012 | Affected Point Code    | M*       |
+ | 0007 | Diagnostic Information | C        |
+
+*** 3.8.2.  Notify
+
+ |  Tag | Information Element | Presence |
+ |------+---------------------+----------|
+ | 000d | Status              | M        |
+ | 0011 | ASP Identifier      | C        |
+ | 0006 | Routing Context     | O        |
+ | 0004 | Info String         | O        |
