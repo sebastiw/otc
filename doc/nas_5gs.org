@@ -1,0 +1,751 @@
+* Overview
+
+  3GPP TS 24.501 v16.10.0
+  Non-Access-Stratum (NAS) protocol for 5G System (5GS); Stage 3
+
+* Chapter 8 Message functional definitions and contents
+
+** 8.2 5GS mobility management messages
+
+*** 8.2.1 Authentication request
+
+ | IEI | Information Element                                         | Type/Reference                          | Presence | Format | Length |
+ |-----+-------------------------------------------------------------+-----------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator                             | Extended protocol discriminator 9.2     | M        | V      | 1      |
+ |     | Security header type                                        | Security header type 9.3                | M        | V      | 1/2    |
+ |     | Spare half octet                                            | Spare half octet 9.5                    | M        | V      | 1/2    |
+ |     | Authentication request message identity                     | Message type 9.7                        | M        | V      | 1      |
+ |     | ngKSI                                                       | NAS key set identifier 9.11.3.32        | M        | V      | 1/2    |
+ |     | Spare half octet                                            | Spare half octet 9.5                    | M        | V      | 1/2    |
+ |     | ABBA                                                        | ABBA 9.11.3.10                          | M        | LV     | 3-n    |
+ |  21 | Authentication parameter RAND (5G authentication challenge) | Authentication parameter RAND 9.11.3.16 | O        | TV     | 17     |
+ |  20 | Authentication parameter AUTN (5G authentication challenge) | Authentication parameter AUTN 9.11.3.15 | O        | TLV    | 18     |
+ |  78 | EAP message                                                 | EAP message 9.11.2.2                    | O        | TLV-E  | 7-150  |
+
+*** 8.2.2 Authentication response
+
+ | IEI | Information Element                      | Type/Reference                              | Presence | Format | Length |
+ |-----+------------------------------------------+---------------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator          | Extended protocol discriminator 9.2         | M        | V      |      1 |
+ |     | Security header type                     | Security header type 9.3                    | M        | V      |    1/2 |
+ |     | Spare half octet                         | Spare half octet 9.5                        | M        | V      |    1/2 |
+ |     | Authentication response message identity | Message type 9.7                            | M        | V      |      1 |
+ |  2D | Authentication response parameter        | Authentication response parameter 9.11.3.17 | O        | TLV    |     18 |
+ |  78 | EAP message                              | EAP message 9.11.2.2                        | O        | TLV-E  | 7-1503 |
+
+*** 8.2.3 Authentication result
+
+ | IEI | Information Element                    | Type/Reference                      | Presence | Format | Length |
+ |-----+----------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator        | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                   | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                       | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | Authentication result message identity | Message type 9.7                    | M        | V      | 1      |
+ |     | ngKSI                                  | NAS key set identifier 9.11.3.32    | M        | V      | 1/2    |
+ |     | Spare half octet                       | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | EAP message                            | EAP message 9.11.2.2                | M        | LV-E   | 6-1502 |
+ |  38 | ABBA                                   | ABBA 9.11.3.10                      | O        | TLV    | 4-n    |
+
+*** 8.2.4 Authentication failure
+
+ | IEI | Information Element                     | Type/Reference                             | Presence | Format | Length |
+ |-----+-----------------------------------------+--------------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator         | Extended protocol discriminator 9.2        | M        | V      |      1 |
+ |     | Security header type                    | Security header type 9.3                   | M        | V      |    1/2 |
+ |     | Spare half octet                        | Spare half octet 9.5                       | M        | V      |    1/2 |
+ |     | Authentication failure message identity | Message type 9.7                           | M        | V      |      1 |
+ |     | 5GMM cause                              | 5GMM cause 9.11.3.2                        | M        | V      |      1 |
+ |  30 | Authentication failure parameter        | Authentication failure parameter 9.11.3.14 | O        | TLV    |     16 |
+
+*** 8.2.5 Authentication reject
+
+ | IEI | Information Element                    | Type/Reference                      | Presence | Format | Length |
+ |-----+----------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator        | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                   | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                       | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | Authentication reject message identity | Message type 9.7                    | M        | V      |      1 |
+ |  78 | EAP message                            | EAP message 9.11.2.2                | O        | TLV-E  | 7-1503 |
+
+*** 8.2.6 Registration request
+
+ | IEI | Information Element                       | Type/Reference                              | Presence | Format |  Length |
+ |-----+-------------------------------------------+---------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator           | Extended protocol discriminator 9.2         | M        | V      |       1 |
+ |     | Security header type                      | Security header type 9.3                    | M        | V      |     1/2 |
+ |     | Spare half octet                          | Spare half octet 9.5                        | M        | V      |     1/2 |
+ |     | message identity                          | Message type 9.7                            | M        | V      |       1 |
+ |     | 5GS registration type                     | 5GS registration type 9.11.3.7              | M        | V      |     1/2 |
+ |     | ngKSI                                     | NAS key set identifier 9.11.3.32            | M        | V      |     1/2 |
+ |     | 5GS mobile identity                       | 5GS mobile identity 9.11.3.4                | M        | LV-E   |     6-n |
+ |  C- | Non-current native NAS key set identifier | NAS key set identifier 9.11.3.32            | O        | TV     |       1 |
+ |  10 | 5GMM capability                           | 5GMM capability 9.11.3.1                    | O        | TLV    |    3-15 |
+ |  2E | UE security capability                    | UE security capability 9.11.3.54            | O        | TLV    |    4-10 |
+ |  2F | Requested NSSAI                           | NSSAI 9.11.3.37                             | O        | TLV    |    4-74 |
+ |  52 | Last visited registered TAI               | 5GS tracking area identity 9.11.3.8         | O        | TV     |       7 |
+ |  17 | S1 UE network capability                  | S1 UE network capability 9.11.3.48          | O        | TLV    |    4-15 |
+ |  40 | Uplink data status                        | Uplink data status 9.11.3.57                | O        | TLV    |    4-34 |
+ |  50 | PDU session status                        | PDU session status 9.11.3.44                | O        | TLV    |    4-34 |
+ |  B- | MICO indication                           | MICO indication 9.11.3.31                   | O        | TV     |       1 |
+ |  2B | UE status                                 | UE status 9.11.3.56                         | O        | TLV    |       3 |
+ |  77 | Additional GUTI                           | 5GS mobile identity 9.11.3.4                | O        | TLV-E  |      14 |
+ |  25 | Allowed PDU session status                | Allowed PDU session status 9.11.3.13        | O        | TLV    |    4-34 |
+ |  18 | UE's usage setting                        | UE's usage setting 9.11.3.55                | O        | TLV    |       3 |
+ |  51 | Requested DRX parameters                  | 5GS DRX parameters 9.11.3.2A                | O        | TLV    |       3 |
+ |  70 | EPS NAS message container                 | EPS NAS message container 9.11.3.24         | O        | TLV-E  |     4-n |
+ |  74 | LADN indication                           | LADN indication 9.11.3.29                   | O        | TLV-E  |   3-811 |
+ |  8- | Payload container type                    | Payload container type 9.11.3.40            | O        | TV     |       1 |
+ |  7B | Payload container                         | Payload container 9.11.3.39                 | O        | TLV-E  | 4-65538 |
+ |  9- | Network slicing indication                | Network slicing indication 9.11.3.36        | O        | TV     |       1 |
+ |  53 | 5GS update type                           | 5GS update type 9.11.3.9A                   | O        | TLV    |       3 |
+ |  41 | Mobile station classmark 2                | Mobile station classmark 2 9.11.3.31C       | O        | TLV    |       5 |
+ |  42 | Supported codecs                          | Supported codec list 9.11.3.51A             | O        | TLV    |     5-n |
+ |  71 | NAS message container                     | NAS message container 9.11.3.33             | O        | TLV-E  |     4-n |
+ |  60 | EPS bearer context status                 | EPS bearer context status 9.11.3.23A        | O        | TLV    |       4 |
+ |  6E | Requested extended DRX parameters         | Extended DRX parameters 9.11.3.26A          | O        | TLV    |       3 |
+ |  6A | T3324 value                               | GPRS timer 3 9.11.2.5                       | O        | TLV    |       3 |
+ |  67 | UE radio capability ID                    | UE radio capability ID 9.11.3.68            | O        | TLV    |     3-n |
+ |  35 | Requested mapped NSSAI                    | Mapped NSSAI 9.11.3.31B                     | O        | TLV    |    3-42 |
+ |  48 | Additional information requested          | Additional information requested 9.11.3.12A | O        | TLV    |       3 |
+ |  1A | Requested WUS assistance information      | WUS assistance information 9.11.3.71        | O        | TLV    |     3-n |
+ |  A- | N5GC indication                           | N5GC indication 9.11.3.72                   | O        | T      |       1 |
+ |  30 | Requested NB-N1 mode DRX parameters       | NB-N1 mode DRX parameters 9.11.3.73         | O        | TLV    |       3 |
+
+*** 8.2.7 Registration accept
+
+ | IEI | Information Element                          | Type/Reference                                         | Presence | Format |  Length |
+ |-----+----------------------------------------------+--------------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator              | Extended protocol discriminator 9.2                    | M        | V      |       1 |
+ |     | Security header type                         | Security header type 9.3                               | M        | V      |     1/2 |
+ |     | Spare half octet                             | Spare half octet 9.5                                   | M        | V      |     1/2 |
+ |     | Registration accept message identity         | Message type 9.7                                       | M        | V      |       1 |
+ |     | 5GS registration result                      | 5GS registration result 9.11.3.6                       | M        | LV     |       2 |
+ |  77 | 5G-GUTI                                      | 5GS mobile identity 9.11.3.4                           | O        | TLV-E  |      14 |
+ |  4A | Equivalent PLMNs                             | PLMN list 9.11.3.45                                    | O        | TLV    |    5-47 |
+ |  54 | TAI list                                     | 5GS tracking area identity list 9.11.3.9               | O        | TLV    |   9-114 |
+ |  15 | Allowed NSSAI                                | NSSAI 9.11.3.37                                        | O        | TLV    |    4-74 |
+ |  11 | Rejected NSSAI                               | Rejected NSSAI 9.11.3.46                               | O        | TLV    |    4-42 |
+ |  31 | Configured NSSAI                             | NSSAI 9.11.3.37                                        | O        | TLV    |   4-146 |
+ |  21 | 5GS network feature support                  | 5GS network feature support 9.11.3.5                   | O        | TLV    |     3-5 |
+ |  50 | PDU session status                           | PDU session status 9.11.3.44                           | O        | TLV    |    4-34 |
+ |  26 | PDU session reactivation result              | PDU session reactivation result 9.11.3.42              | O        | TLV    |    4-34 |
+ |  72 | PDU session reactivation result error cause  | PDU session reactivation result error cause 9.11.3.43  | O        | TLV-E  |   5-515 |
+ |  79 | LADN information                             | LADN information 9.11.3.30                             | O        | TLV-E  | 12-1715 |
+ |  B- | MICO indication                              | MICO indication 9.11.3.31                              | O        | TV     |       1 |
+ |  9- | Network slicing indication                   | Network slicing indication 9.11.3.36                   | O        | TV     |       1 |
+ |  27 | Service area list                            | Service area list 9.11.3.49                            | O        | TLV    |   6-114 |
+ |  5E | T3512 value                                  | GPRS timer 3 9.11.2.5                                  | O        | TLV    |       3 |
+ |  5D | Non-3GPP de-registration timer value         | GPRS timer 2 9.11.2.4                                  | O        | TLV    |       3 |
+ |  16 | T3502 value                                  | GPRS timer 2 9.11.2.4                                  | O        | TLV    |       3 |
+ |  34 | Emergency number list                        | Emergency number list 9.11.3.23                        | O        | TLV    |    5-50 |
+ |  7A | Extended emergency number list               | Extended emergency number list 9.11.3.26               | O        | TLV-E  | 7-65538 |
+ |  73 | SOR transparent container                    | SOR transparent container 9.11.3.51                    | O        | TLV-E  |    20-n |
+ |  78 | EAP message                                  | EAP message 9.11.2.2                                   | O        | TLV-E  |  7-1503 |
+ |  A- | NSSAI inclusion mode                         | NSSAI inclusion mode 9.11.3.37A                        | O        | TV     |       1 |
+ |  76 | Operator-defined access category definitions | Operator-defined access category definitions 9.11.3.38 | O        | TLV-E  |     3-n |
+ |  51 | Negotiated DRX parameters                    | 5GS DRX parameters 9.11.3.2A                           | O        | TLV    |       3 |
+ |  D- | Non-3GPP NW policies                         | Non-3GPP NW provided policies 9.11.3.36A               | O        | TV     |       1 |
+ |  60 | EPS bearer context status                    | EPS bearer context status 9.11.3.23A                   | O        | TLV    |       4 |
+ |  6E | Negotiated extended DRX parameters           | Extended DRX parameters 9.11.3.26A                     | O        | TLV    |       3 |
+ |  6C | T3447 value                                  | GPRS timer 3 9.11.2.5                                  | O        | TLV    |       3 |
+ |  6B | T3448 value                                  | GPRS timer 2 9.11.2.4                                  | O        | TLV    |       3 |
+ |  6A | T3324 value                                  | GPRS timer 3 9.11.2.5                                  | O        | TLV    |       3 |
+ |  67 | UE radio capability ID                       | UE radio capability ID 9.11.3.68                       | O        | TLV    |     3-n |
+ |  E- | UE radio capability ID deletion indication   | UE radio capability ID deletion indication 9.11.3.69   | O        | TV     |       1 |
+ |  39 | Pending NSSAI                                | NSSAI 9.11.3.37                                        | O        | TLV    |   4-146 |
+ |  74 | Ciphering key data                           | Ciphering key data 9.11.3.18C                          | O        | TLV-E  |    34-n |
+ |  75 | CAG information list                         | CAG information list 9.11.3.18A                        | O        | TLV-E  |     3-n |
+ |  1B | Truncated 5G-S-TMSI configuration            | Truncated 5G-S-TMSI configuration 9.11.3.70            | O        | TLV    |       3 |
+ |  1C | Negotiated WUS assistance information        | WUS assistance information 9.11.3.71                   | O        | TLV    |     3-n |
+ |  29 | Negotiated NB-N1 mode DRX parameters         | NB-N1 mode DRX parameters 9.11.3.73                    | O        | TLV    |       3 |
+
+*** 8.2.8 Registration complete
+
+ | IEI | Information Element                    | Type/Reference                      | Presence | Format | Length |
+ |-----+----------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator        | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                   | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                       | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | Registration complete message identity | Message type 9.7                    | M        | V      |      1 |
+ |  73 | SOR transparent container              | SOR transparent container 9.11.3.51 | O        | TLV-E  |     20 |
+
+*** 8.2.9 Registration reject
+
+ | IEI | Information Element                  | Type/Reference                      | Presence | Format | Length |
+ |-----+--------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator      | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                 | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                     | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | Registration reject message identity | Message type 9.7                    | M        | V      |      1 |
+ |     | 5GMM cause                           | 5GMM cause 9.11.3.2                 | M        | V      |      1 |
+ |  5F | T3346 value                          | GPRS timer 2 9.11.2.4               | O        | TLV    |      3 |
+ |  16 | T3502 value                          | GPRS timer 2 9.11.2.4               | O        | TLV    |      3 |
+ |  78 | EAP message                          | EAP message 9.11.2.2                | O        | TLV-E  | 7-1503 |
+ |  69 | Rejected NSSAI                       | Rejected NSSAI 9.11.3.46            | O        | TLV    |   4-42 |
+ |  75 | CAG information list                 | CAG information list 9.11.3.18A     | O        | TLV-E  |    3-n |
+
+*** 8.2.10 UL NAS transport
+
+ | IEI | Information Element               | Type/Reference                           | Presence | Format |  Length |
+ |-----+-----------------------------------+------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator   | Extended protocol discriminator 9.2      | M        | V      |       1 |
+ |     | Security header type              | Security header type 9.3                 | M        | V      |     1/2 |
+ |     | Spare half octet                  | Spare half octet 9.5                     | M        | V      |     1/2 |
+ |     | UL NAS TRANSPORT message identity | Message type 9.7                         | M        | V      |       1 |
+ |     | Payload container type            | Payload container type 9.11.3.40         | M        | V      |     1/2 |
+ |     | Spare half octet                  | Spare half octet 9.5                     | M        | V      |     1/2 |
+ |     | Payload container                 | Payload container 9.11.3.39              | M        | LV-E   | 3-65537 |
+ |  12 | PDU session ID                    | PDU session identity 2 9.11.3.41         | C        | TV     |       2 |
+ |  59 | Old PDU session ID                | PDU session identity 2 9.11.3.41         | O        | TV     |       2 |
+ |  8- | Request type                      | Request type 9.11.3.47                   | O        | TV     |       1 |
+ |  22 | S-NSSAI                           | S-NSSAI 9.11.2.8                         | O        | TLV    |    3-10 |
+ |  25 | DNN                               | DNN 9.11.2.1B                            | O        | TLV    |   3-102 |
+ |  24 | Additional information            | Additional information 9.11.2.1          | O        | TLV    |     3-n |
+ |  A- | MA PDU session information        | MA PDU session information 9.11.3.31A    | O        | TV     |       1 |
+ |  F- | Release assistance indication     | Release assistance indication 9.11.3.46A | O        | TV     |       1 |
+
+*** 8.2.11 DL NAS transport
+
+ | IEI | Information Element               | Type/Reference                      | Presence | Format |  Length |
+ |-----+-----------------------------------+-------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator   | Extended protocol discriminator 9.2 | M        | V      |       1 |
+ |     | Security header type              | Security header type 9.3            | M        | V      |     1/2 |
+ |     | Spare half octet                  | Spare half octet 9.5                | M        | V      |     1/2 |
+ |     | DL NAS TRANSPORT message identity | Message type 9.7                    | M        | V      |       1 |
+ |     | Payload container type            | Payload container type 9.11.3.40    | M        | V      |     1/2 |
+ |     | Spare half octet                  | Spare half octet 9.5                | M        | V      |     1/2 |
+ |     | Payload container                 | Payload container 9.11.3.39         | M        | LV-E   | 3-65537 |
+ |  12 | PDU session ID                    | PDU session identity 2 9.11.3.41    | C        | TV     |       2 |
+ |  24 | Additional information            | Additional information 9.11.2.1     | O        | TLV    |     3-n |
+ |  58 | 5GMM cause                        | 5GMM cause 9.11.3.2                 | O        | TV     |       2 |
+ |  37 | Back-off timer value              | GPRS timer 3 9.11.2.5               | O        | TLV    |       3 |
+
+*** 8.2.12 De-registration request (UE originating de-registration)
+
+ | IEI | Information Element                      | Type/Reference                      | Presence | Format | Length |
+ |-----+------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator          | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                     | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                         | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | De-registration request message identity | Message type 9.7                    | M        | V      | 1      |
+ |     | De-registration type                     | De-registration type 9.11.3.20      | M        | V      | 1/2    |
+ |     | ngKSI                                    | NAS key set identifier 9.11.3.32    | M        | V      | 1/2    |
+ |     | 5GS mobile identity                      | 5GS mobile identity 9.11.3.4        | M        | LV-E   | 6-n    |
+
+*** 8.2.13 De-registration accept (UE originating de-registration)
+
+ | IEI | Information Element                     | Type/Reference                      | Presence | Format | Length |
+ |-----+-----------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator         | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                    | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                        | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | De-registration accept message identity | Message type 9.7                    | M        | V      | 1      |
+
+*** 8.2.14 De-registration request (UE terminated de-registration)
+
+ | IEI | Information Element                      | Type/Reference                      | Presence | Format | Length |
+ |-----+------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator          | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                     | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                         | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | De-registration request message identity | Message type 9.7                    | M        | V      | 1      |
+ |     | De-registration type                     | De-registration type 9.11.3.20      | M        | V      | 1/2    |
+ |     | Spare half octet                         | Spare half octet 9.5                | M        | V      | 1/2    |
+ |  58 | 5GMM cause                               | 5GMM cause 9.11.3.2                 | O        | TV     | 2      |
+ |  5F | T3346 value                              | GPRS timer 2 9.11.2.4               | O        | TLV    | 3      |
+ |  6D | Rejected NSSAI                           | Rejected NSSAI 9.11.3.46            | O        | TLV    | 4-42   |
+ |  75 | CAG information list                     | CAG information list 9.11.3.18A     | O        | TLV-E  | 3-n    |
+
+*** 8.2.15 De-registration accept (UE terminated de-registration)
+
+ | IEI | Information Element                     | Type/Reference                      | Presence | Format | Length |
+ |-----+-----------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator         | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                    | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                        | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | De-registration accept message identity | Message type 9.7                    | M        | V      | 1      |
+
+*** 8.2.16 Service request
+
+ | IEI | Information Element                             | Type/Reference                       | Presence | Format | Length |
+ |-----+-------------------------------------------------+--------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator                 | Extended protocol discriminator 9.2  | M        | V      | 1      |
+ |     | Security header type                            | Security header type 9.3             | M        | V      | 1/2    |
+ |     | Spare half octet                                | Spare half octet 9.5                 | M        | V      | 1/2    |
+ |     | Service request message identity                | Message type 9.7                     | M        | V      | 1      |
+ |     | ngKSI                                           | NAS key set identifier 9.11.3.32     | M        | V      | 1/2    |
+ |     | Service type                                    | Service type 9.11.3.50               | M        | V      | 1/2    |
+ |     | 5G-S-TMSI                                       | 5GS mobile identity 9.11.3.4         | M        | LV-E   | 9      |
+ |  40 | Uplink data status                              | Uplink data status 9.11.3.57         | O        | TLV    | 4-34   |
+ |  50 | PDU session status PDU session status 9.11.3.44 | O                                    | TLV      | 4-34   |        |
+ |  25 | Allowed PDU session status                      | Allowed PDU session status 9.11.3.13 | O        | TLV    | 4-34   |
+ |  71 | NAS message container                           | NAS message container 9.11.3.33      | O        | TLV-E  | 4-n    |
+
+*** 8.2.17 Service accept
+
+ | IEI | Information Element                         | Type/Reference                                        | Presence | Format | Length |
+ |-----+---------------------------------------------+-------------------------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator             | Extended protocol discriminator 9.2                   | M        | V      |      1 |
+ |     | Security header type                        | Security header type 9.3                              | M        | V      |    1/2 |
+ |     | Spare half octet                            | Spare half octet 9.5                                  | M        | V      |    1/2 |
+ |     | Service accept message identity             | Message type 9.7                                      | M        | V      |      1 |
+ |  50 | PDU session status                          | PDU session status 9.11.3.44                          | O        | TLV    |   4-34 |
+ |  26 | PDU session reactivation result             | PDU session reactivation result 9.11.3.42             | O        | TLV    |   4-34 |
+ |  72 | PDU session reactivation result error cause | PDU session reactivation result error cause 9.11.3.43 | O        | TLV-E  |  5-515 |
+ |  78 | EAP message                                 | EAP message 9.11.2.2                                  | O        | TLV-E  | 7-1503 |
+ |  6B | T3448 value                                 | GPRS timer 2 9.11.2.4                                 | O        | TLV    |      3 |
+
+*** 8.2.18 Service reject
+
+ | IEI | Information Element             | Type/Reference                      | Presence | Format | Length |
+ |-----+---------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type            | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | Service reject message identity | Message type 9.7                    | M        | V      |      1 |
+ |     | 5GMM cause                      | 5GMM cause 9.11.3.2                 | M        | V      |      1 |
+ |  50 | PDU session status              | PDU session status 9.11.3.44        | O        | TLV    |   4-34 |
+ |  5F | T3346 value                     | GPRS timer 2 9.11.2.4               | O        | TLV    |      3 |
+ |  78 | EAP message                     | EAP message 9.11.2.2                | O        | TLV-E  | 7-1503 |
+ |  6B | T3448 value                     | GPRS timer 2 9.11.2.4               | O        | TLV    |      3 |
+ |  75 | CAG information list            | CAG information list 9.11.3.18A     | O        | TLV-E  |    3-n |
+
+*** 8.2.19 Configuration update command
+
+ | IEI | Information Element                           | Type/Reference                                         | Presence | Format | Length |
+ |-----+-----------------------------------------------+--------------------------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator               | Extended protocol discriminator 9.2                    | M        | V      |      1 |
+ |     | Security header type                          | Security header type 9.3                               | M        | V      |    1/2 |
+ |     | Spare half octet                              | Spare half octet 9.5                                   | M        | V      |    1/2 |
+ |     | Configuration update command message identity | Message type 9.7                                       | M        | V      |      1 |
+ |  D- | Configuration update indication               | Configuration update indication 9.11.3.18              | O        | TV     |      1 |
+ |  77 | 5G-GUTI                                       | 5GS mobile identity 9.11.3.4                           | O        | TLV-E  |     14 |
+ |  54 | TAI list                                      | 5GS tracking area identity list 9.11.3.9               | O        | TLV    |  9-114 |
+ |  15 | Allowed NSSAI                                 | NSSAI 9.11.3.37                                        | O        | TLV    |   4-74 |
+ |  27 | Service area list                             | Service area list 9.11.3.49                            | O        | TLV    |  6-114 |
+ |  43 | Full name for network                         | Network name 9.11.3.35                                 | O        | TLV    |    3-n |
+ |  45 | Short name for network                        | Network name 9.11.3.35                                 | O        | TLV    |    3-n |
+ |  46 | Local time zone                               | Time zone 9.11.3.52                                    | O        | TV     |      2 |
+ |  47 | Universal time and local time zone            | Time zone and time 9.11.3.53                           | O        | TV     |      8 |
+ |  49 | Network daylight saving time                  | Daylight saving time 9.11.3.19                         | O        | TLV    |      3 |
+ |  79 | LADN information                              | LADN information 9.11.3.30                             | O        | TLV-E  | 3-1715 |
+ |  B- | MICO indication                               | MICO indication 9.11.3.31                              | O        | TV     |      1 |
+ |  9- | Network slicing indication                    | Network slicing indication 9.11.3.36                   | O        | TV     |      1 |
+ |  31 | Configured NSSAI                              | NSSAI 9.11.3.37                                        | O        | TLV    |  4-146 |
+ |  11 | Rejected NSSAI                                | Rejected NSSAI 9.11.3.46                               | O        | TLV    |   4-42 |
+ |  76 | Operator-defined access category definitions  | Operator-defined access category definitions 9.11.3.38 | O        | TLV-E  |    3-n |
+ |  F- | SMS indication                                | SMS indication 9.11.3.50A                              | O        | TV     |      1 |
+ |  6C | T3447 value                                   | GPRS timer 3 9.11.2.5                                  | O        | TLV    |      3 |
+ |  75 | CAG information list                          | CAG information list 9.11.3.18A                        | O        | TLV-E  |    3-n |
+ |  67 | UE radio capability ID                        | UE radio capability ID 9.11.3.68                       | O        | TLV    |    3-n |
+ |  A- | UE radio capability ID deletion indication    | UE radio capability ID deletion indication 9.11.3.69   | O        | TV     |      1 |
+ |  44 | 5GS registration result                       | 5GS registration result 9.11.3.6                       | O        | TLV    |      3 |
+ |  1B | Truncated 5G-S-TMSI configuration             | Truncated 5G-S-TMSI configuration 9.11.3.70            | O        | TLV    |      3 |
+ |  C- | Additional configuration indication           | Additional configuration indication 9.11.3.74          | O        | TV     |      1 |
+
+*** 8.2.20 Configuration update complete
+
+ | IEI | Information Element                            | Type/Reference                      | Presence | Format | Length |
+ |-----+------------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator                | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                           | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                               | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | Configuration update complete message identity | Message type 9.7                    | M        | V      | 1      |
+
+*** 8.2.21 Identity request
+
+ | IEI | Information Element                       | Type/Reference                      | Presence | Format | Length |
+ |-----+-------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator           | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                      | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                          | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | Identity request message message identity | Message type 9.7                    | M        | V      | 1      |
+ |     | Identity type                             | 5GS identity type 9.11.3.3          | M        | V      | 1/2    |
+ |     | Spare half octet                          | Spare half octet  9.5               | M        | V      | 1/2    |
+
+*** 8.2.22 Identity respones
+
+ | IEI | Information Element                | Type/Reference                      | Presence | Format | Length |
+ |-----+------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator    | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type               | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                   | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | Identity response message identity | Message type 9.7                    | M        | V      | 1      |
+ |     | Mobile identity                    | 5GS mobile identity 9.11.3.4        | M        | LV-E   | 3-n    |
+
+*** 8.2.23 Notification
+
+ | IEI | Information Element             | Type/Reference                      | Presence | Format | Length |
+ |-----+---------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type            | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | Notification message identity   | Message type 9.7                    | M        | V      | 1      |
+ |     | Access type                     | Access type 9.11.2.1A               | M        | V      | 1/2    |
+ |     | Spare half octet                | Spare half octet 9.5                | M        | V      | 1/2    |
+
+*** 8.2.24 Notification response
+
+ | IEI | Information Element                    | Type/Reference                      | Presence | Format | Length |
+ |-----+----------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator        | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                   | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                       | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | Notification response message identity | Message type 9.7                    | M        | V      |      1 |
+ |  50 | PDU session status                     | PDU session status 9.11.3.44        | O        | TLV    |   4-34 |
+
+*** 8.2.25 Security mode command
+
+ | IEI | Information Element                    | Type/Reference                               | Presence | Format | Length |
+ |-----+----------------------------------------+----------------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator        | Extended protocol discriminator 9.2          | M        | V      |      1 |
+ |     | Security header type                   | Security header type 9.3                     | M        | V      |    1/2 |
+ |     | Spare half octet                       | Spare half octet 9.5                         | M        | V      |    1/2 |
+ |     | Security mode command message identity | Message type 9.7                             | M        | V      |      1 |
+ |     | Selected NAS security algorithms       | NAS security algorithms 9.11.3.34            | M        | V      |      1 |
+ |     | ngKSI                                  | NAS key set identifier 9.11.3.32             | M        | V      |    1/2 |
+ |     | Spare half octet                       | Spare half octet 9.5                         | M        | V      |    1/2 |
+ |     | Replayed UE security capabilities      | UE security capability 9.11.3.54             | M        | LV     |    3-9 |
+ |  E- | IMEISV request                         | IMEISV request 9.11.3.28                     | O        | TV     |      1 |
+ |  57 | Selected EPS NAS security algorithms   | EPS NAS security algorithms 9.11.3.25        | O        | TV     |      2 |
+ |  36 | Additional 5G security information     | Additional 5G security information 9.11.3.12 | O        | TLV    |      3 |
+ |  78 | EAP message                            | EAP message 9.11.2.2                         | O        | TLV-E  | 7-1503 |
+ |  38 | ABBA                                   | ABBA 9.11.3.10                               | O        | TLV    |    4-n |
+ |  19 | Replayed S1 UE security capabilities   | S1 UE security capability 9.11.3.48A         | O        | TLV    |    4-7 |
+
+*** 8.2.26 Security mode complete
+
+ | IEI | Information Element                     | Type/Reference                      | Presence | Format | Length |
+ |-----+-----------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator         | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type                    | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                        | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | Security mode complete message identity | Message type 9.7                    | M        | V      | 1      |
+ |  77 | IMEISV                                  | 5GS mobile identity 9.11.3.4        | O        | TLV-E  | 12     |
+ |  71 | NAS message container                   | NAS message container 9.11.3.33     | O        | TLV-E  | 4-n    |
+ |  78 | non-IMEISV PEI                          | 5GS mobile identity 9.11.3.4        | O        | TLV-E  | 7-n    |
+
+*** 8.2.27 Security mode reject
+
+ | IEI | Information Element                   | Type/Reference                      | Presence | Format | Length |
+ |-----+---------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator       | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                  | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                      | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | Security mode reject message identity | Message type 9.7                    | M        | V      |      1 |
+ |     | 5GMM cause                            | 5GMM cause 9.11.3.2                 | M        | V      |      1 |
+
+*** 8.2.28 Security protected 5GS NAS message
+
+ | IEI | Information Element             | Type/Reference                      | Presence | Format | Length |
+ |-----+---------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator | Extended protocol discriminator 9.2 | M        | V      | 1      |
+ |     | Security header type            | Security header type 9.3            | M        | V      | 1/2    |
+ |     | Spare half octet                | Spare half octet 9.5                | M        | V      | 1/2    |
+ |     | Message authentication code     | Message authentication code 9.8     | M        | V      | 4      |
+ |     | Sequence number                 | Sequence number 9.10                | M        | V      | 1      |
+ |     | Plain 5GS NAS message           | Plain 5GS NAS message 9.9           | M        | V      | 3-n    |
+
+*** 8.2.29 5GMM status
+
+ | IEI | Information Element             | Type/Reference                      | Presence | Format | Length |
+ |-----+---------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type            | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | 5GMM STATUS message identity    | Message type 9.7                    | M        | V      |      1 |
+ |     | 5GMM cause                      | 5GMM cause 9.11.3.2                 | M        | V      |      1 |
+
+*** 8.2.30 Control Plane Service request
+
+ | IEI | Information Element                            | Type/Reference                           | Presence | Format |  Length |
+ |-----+------------------------------------------------+------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                | Extended protocol discriminator 9.2      | M        | V      |       1 |
+ |     | Security header type                           | Security header type 9.3                 | M        | V      |     1/2 |
+ |     | Spare half octet                               | Spare half octet 9.5                     | M        | V      |     1/2 |
+ |     | Control plane service request message identity | Message type 9.7                         | M        | V      |       1 |
+ |     | Control plane service type                     | Control plane service type 9.11.3.18D    | M        | V      |     1/2 |
+ |     | ngKSI                                          | NAS key set identifier 9.11.3.32         | M        | V      |     1/2 |
+ |  6F | CIoT small data container                      | CIoT small data container  9.11.3.18B    | O        | TLV    |   4-257 |
+ |  8- | Payload container type                         | Payload container type 9.11.3.40         | O        | TV     |       1 |
+ |  7B | Payload container                              | Payload container 9.11.3.39              | O        | TLV-E  | 4-65538 |
+ |  12 | PDU session ID                                 | PDU session identity 2 9.11.3.41         | C        | TV     |       2 |
+ |  50 | PDU session status                             | PDU session status 9.11.3.44             | O        | TLV    |    4-34 |
+ |  F- | Release assistance indication                  | Release assistance indication 9.11.3.46A | O        | TV     |       1 |
+ |  40 | Uplink data status                             | Uplink data status 9.11.3.57             | O        | TLV    |    4-34 |
+ |  71 | NAS message container                          | NAS message container 9.11.3.33          | O        | TLV-E  |     4-n |
+ |  24 | Additional information                         | Additional information 9.11.2.1          | O        | TLV    |     3-n |
+
+*** 8.2.31 Network slice-specific authentication command
+
+ | IEI | Information Element                                            | Type/Reference                      | Presence | Format | Length |
+ |-----+----------------------------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator                                | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                                           | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                                               | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND message identity | Message type 9.7                    | M        | V      |      1 |
+ |     | S-NSSAI                                                        | S-NSSAI 9.11.2.8                    | M        | LV     |    2-5 |
+ |     | EAP message                                                    | EAP message 9.11.2.2                | M        | LV-E   | 6-1502 |
+
+*** 8.2.32 Network slice-specific authentication complete
+
+ | IEI | Information Element                                             | Type/Reference                      | Presence | Format | Length |
+ |-----+-----------------------------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator                                 | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                                            | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                                                | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE message identity | Message type 9.7                    | M        | V      |      1 |
+ |     | S-NSSAI                                                         | S-NSSAI 9.11.2.8                    | M        | LV     |    2-5 |
+ |     | EAP message                                                     | EAP message 9.11.2.2                | M        | LV-E   | 6-1502 |
+
+*** 8.2.33 Network slice-specific authentication result
+
+ | IEI | Information Element                                           | Type/Reference                      | Presence | Format | Length |
+ |-----+---------------------------------------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator                               | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | Security header type                                          | Security header type 9.3            | M        | V      |    1/2 |
+ |     | Spare half octet                                              | Spare half octet 9.5                | M        | V      |    1/2 |
+ |     | NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message identity | Message type 9.7                    | M        | V      |      1 |
+ |     | S-NSSAI                                                       | S-NSSAI 9.11.2.8                    | M        | LV     |    2-5 |
+ |     | EAP message                                                   | EAP message 9.11.2.2                | M        | LV-E   | 6-1502 |
+
+** 8.3 5GS session management messages
+
+*** 8.3.1 PDU session establishment request
+
+ | IEI | Information Element                                | Type/Reference                                      | Presence | Format |  Length |
+ |-----+----------------------------------------------------+-----------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                    | Extended protocol discriminator 9.2                 | M        | V      |       1 |
+ |     | PDU session ID                                     | PDU session identity 9.4                            | M        | V      |       1 |
+ |     | PTI                                                | Procedure transaction identity 9.6                  | M        | V      |       1 |
+ |     | PDU SESSION ESTABLISHMENT REQUEST message identity | Message type 9.7                                    | M        | V      |       1 |
+ |     | Integrity protection maximum data rate             | Integrity protection maximum data rate 9.11.4.7     | M        | V      |       2 |
+ |  9- | PDU session type                                   | PDU session type 9.11.4.11                          | O        | TV     |       1 |
+ |  A- | SSC mode                                           | SSC mode 9.11.4.16                                  | O        | TV     |       1 |
+ |  28 | 5GSM capability                                    | 5GSM capability 9.11.4.1                            | O        | TLV    |    3-15 |
+ |  55 | Maximum number of supported packet filters         | Maximum number of supported packet filters 9.11.4.9 | O        | TV     |       3 |
+ |  B- | Always-on PDU session requested                    | Always-on PDU session requested 9.11.4.4            | O        | TV     |       1 |
+ |  39 | SM PDU DN request container                        | SM PDU DN request container 9.11.4.15               | O        | TLV    |   3-255 |
+ |  7B | Extended protocol configuration options            | Extended protocol configuration options 9.11.4.6    | O        | TLV-E  | 4-65538 |
+ |  66 | IP header compression configuration                | IP header compression configuration 9.11.4.24       | O        | TLV    |   5-257 |
+ |  6E | DS-TT Ethernet port MAC address                    | DS-TT Ethernet port MAC address 9.11.4.25           | O        | TLV    |       8 |
+ |  6F | UE-DS-TT residence time                            | UE-DS-TT residence time 9.11.4.26                   | O        | TLV    |      10 |
+ |  74 | Port management information container              | Port management information container 9.11.4.27     | O        | TLV-E  | 8-65538 |
+ |  1F | Ethernet header compression configuration          | Ethernet header compression configuration 9.11.4.28 | O        | TLV    |       3 |
+ |  29 | Suggested interface identifier                     | PDU address 9.11.4.10                               | O        | TLV    |      11 |
+
+*** 8.3.2 PDU session establishment accept
+
+
+ | IEI | Information Element                               | Type/Reference                                      | Presence | Format |              Length |
+ |-----+---------------------------------------------------+-----------------------------------------------------+----------+--------+---------------------|
+ |     | Extended protocol discriminator                   | Extended protocol discriminator 9.2                 | M        | V      |                   1 |
+ |     | PDU session ID                                    | PDU session identity 9.4                            | M        | V      |                   1 |
+ |     | PTI                                               | Procedure transaction identity 9.6                  | M        | V      |                   1 |
+ |     | PDU SESSION ESTABLISHMENT ACCEPT message identity | Message type 9.7                                    | M        | V      |                   1 |
+ |     | Selected PDU session type                         | PDU session type 9.11.4.11                          | M        | V      |                 1/2 |
+ |     | Selected SSC mode                                 | SSC mode 9.11.4.16                                  | M        | V      |                 1/2 |
+ |     | Authorized QoS rules                              | QoS rules 9.11.4.13                                 | M        | LV-E   |             6-65538 |
+ |     | Session AMBR                                      | Session-AMBR 9.11.4.14                              | M        | LV     |                   7 |
+ |  59 | 5GSM cause                                        | 5GSM cause 9.11.4.2                                 | O        | TV     |                   2 |
+ |  29 | PDU address                                       | PDU address 9.11.4.10                               | O        | TLV    | 7, 11, 15, 27 or 31 |
+ |  56 | RQ timer value                                    | GPRS timer 9.11.2.3                                 | O        | TV     |                   2 |
+ |  22 | S-NSSAI                                           | S-NSSAI 9.11.2.8                                    | O        | TLV    |                3-10 |
+ |  8- | Always-on PDU session indication                  | Always-on PDU session indication 9.11.4.3           | O        | TV     |                   1 |
+ |  75 | Mapped EPS bearer contexts                        | Mapped EPS bearer contexts 9.11.4.8                 | O        | TLV-E  |             7-65538 |
+ |  78 | EAP message                                       | EAP message 9.11.2.2                                | O        | TLV-E  |              7-1503 |
+ |  79 | Authorized QoS flow descriptions                  | QoS flow descriptions 9.11.4.12                     | O        | TLV-E  |             6-65538 |
+ |  7B | Extended protocol configuration options           | Extended protocol configuration options 9.11.4.6    | O        | TLV-E  |             4-65538 |
+ |  25 | DNN                                               | DNN 9.11.2.1B                                       | O        | TLV    |               3-102 |
+ |  17 | 5GSM network feature support                      | 5GSM network feature support 9.11.4.18              | O        | TLV    |                3-15 |
+ |  18 | Serving PLMN rate control                         | Serving PLMN rate control 9.11.4.20                 | O        | TLV    |                   4 |
+ |  77 | ATSSS container                                   | ATSSS container 9.11.4.22                           | O        | TLV-E  |             3-65538 |
+ |  C- | Control plane only indication                     | Control plane only indication 9.11.4.23             | O        | TV     |                   1 |
+ |  66 | IP header compression configuration               | IP header compression configuration 9.11.4.24       | O        | TLV    |               5-257 |
+ |  1F | Ethernet header compression configuration         | Ethernet header compression configuration 9.11.4.28 | O        | TLV    |                   3 |
+
+*** 8.3.3 PDU session establishment reject
+
+ | IEI | Information Element                               | Type/Reference                                   | Presence | Format |  Length |
+ |-----+---------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                   | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                    | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                               | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION ESTABLISHMENT REJECT message identity | Message type 9.7                                 | M        | V      |       1 |
+ |     | 5GSM cause                                        | 5GSM cause 9.11.4.2                              | M        | V      |       1 |
+ |  37 | Back-off timer value                              | GPRS timer 3 9.11.2.5                            | O        | TLV    |       3 |
+ |  F- | Allowed SSC mode                                  | Allowed SSC mode 9.11.4.5                        | O        | TV     |       1 |
+ |  78 | EAP message                                       | EAP message 9.11.2.2                             | O        | TLV-E  |  7-1503 |
+ |  61 | 5GSM congestion re-attempt indicator              | 5GSM congestion re-attempt indicator 9.11.4.21   | O        | TLV    |       3 |
+ |  7B | Extended protocol configuration options           | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+ |  1D | Re-attempt indicator                              | Re-attempt indicator 9.11.4.17                   | O        | TLV    |       3 |
+
+*** 8.3.4 PDU session authentication command
+
+ | IEI | Information Element                                 | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-----------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                     | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                      | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                                 | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION AUTHENTICATION COMMAND message identity | Message type 9.7                                 | M        | V      |       1 |
+ |     | EAP message                                         | EAP message 9.11.2.2                             | M        | LV-E   |  6-1502 |
+ | 7B  | Extended protocol configuration options             | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.5 PDU session authentication complete
+
+ | IEI | Information Element                                  | Type/Reference                                   | Presence | Format |  Length |
+ |-----+------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                      | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                       | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                                  | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION AUTHENTICATION COMPLETE message identity | Message type 9.7                                 | M        | V      |       1 |
+ |     | EAP message                                          | EAP message 9.11.2.2                             | M        | LV-E   |  6-1502 |
+ | 7B  | Extended protocol configuration options              | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.6 PDU session authentication result
+
+ | IEI | Information Element                                | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                    | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                     | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                                | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION AUTHENTICATION RESULT message identity | Message type 9.7                                 | M        | V      |       1 |
+ | 78  | EAP message                                        | EAP message 9.11.2.2                             | O        | TLV-E  |  7-1503 |
+ | 7B  | Extended protocol configuration options            | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.7 PDU session modification request
+
+ | IEI | Information Element                        | Type/Reference                                      | Presence | Format |  Length |
+ |-----+--------------------------------------------+-----------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator            | Extended protocol discriminator 9.2                 | M        | V      |       1 |
+ |     | PDU session ID                             | PDU session identity 9.4                            | M        | V      |       1 |
+ |     | PTI                                        | Procedure transaction identity 9.6                  | M        | V      |       1 |
+ |     | PDU SESSION REQUEST message identity       | Message type 9.7                                    | M        | V      |       1 |
+ |  28 | 5GSM capability                            | 5GSM capability 9.11.4.1                            | O        | TLV    |    3-15 |
+ |  59 | 5GSM cause                                 | 5GSM cause 9.11.4.2                                 | O        | TV     |       2 |
+ |  55 | Maximum number of supported packet filters | Maximum number of supported packet filters 9.11.4.9 | O        | TV     |       3 |
+ |  B- | Always-on PDU session requested            | Always-on PDU session requested 9.11.4.4            | O        | TV     |       1 |
+ |  13 | Integrity protection maximum data rate     | Integrity protection maximum data rate 9.11.4.7     | O        | TV     |       3 |
+ |  7A | Requested QoS rules                        | QoS rules 9.11.4.13                                 | O        | TLV-E  | 7-65538 |
+ |  79 | Requested QoS flow descriptions            | QoS flow descriptions 9.11.4.12                     | O        | TLV-E  | 6-65538 |
+ |  75 | Mapped EPS bearer contexts                 | Mapped EPS bearer contexts 9.11.4.8                 | O        | TLV-E  | 7-65538 |
+ |  7B | Extended protocol configuration options    | Extended protocol configuration options 9.11.4.6    | O        | TLV-E  | 4-65538 |
+ |  74 | Port management information container      | Port management information container 9.11.4.27     | O        | TLV-E  | 4-65538 |
+ |  66 | IP header compression configuration        | Header compression configuration 9.11.4.24          | O        | TLV    |   5-257 |
+ |  1F | Ethernet header compression configuration  | Ethernet header compression configuration 9.11.4.28 | O        | TLV    |       3 |
+
+*** 8.3.8 PDU session modification reject
+
+ | IEI | Information Element                              | Type/Reference                                   | Presence | Format |  Length |
+ |-----+--------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                  | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                   | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                              | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION MODIFICATION REJECT message identity | Message type 9.7                                 | M        | V      |       1 |
+ |     | 5GSM cause                                       | 5GSM cause 9.11.4.2                              | M        | V      |       1 |
+ |  37 | Back-off timer value                             | GPRS timer 3 9.11.2.5                            | O        | TLV    |       3 |
+ |  61 | 5GSM congestion re-attempt indicator             | 5GSM congestion re-attempt indicator 9.11.4.21   | O        | TLV    |       3 |
+ |  7B | Extended protocol configuration options          | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+ |  1D | Re-attempt indicator                             | Re-attempt indicator 9.11.4.17                   | O        | TLV    |       3 |
+
+*** 8.3.9 PDU session modification command
+
+ | IEI | Information Element                               | Type/Reference                                     | Presence | Format |  Length |
+ |-----+---------------------------------------------------+----------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                   | Extended protocol discriminator 9.2                | M        | V      |       1 |
+ |     | PDU session ID                                    | PDU session identity 9.4                           | M        | V      |       1 |
+ |     | PTI                                               | Procedure transaction identity 9.6                 | M        | V      |       1 |
+ |     | PDU SESSION MODIFICATION COMMAND message identity | Message type 9.7                                   | M        | V      |       1 |
+ |  59 | 5GSM cause                                        | 5GSM cause 9.11.4.2                                | O        | TV     |       2 |
+ |  2A | Session AMBR                                      | Session-AMBR 9.11.4.14                             | O        | TLV    |       8 |
+ |  56 | RQ timer value                                    | GPRS timer 9.11.2.3                                | O        | TV     |       2 |
+ |  8- | Always-on PDU session indication                  | Always-on PDU session indication 9.11.4.3          | O        | TV     |       1 |
+ |  7A | Authorized QoS rules                              | QoS rules 9.11.4.13                                | O        | TLV-E  | 7-65538 |
+ |  75 | Mapped EPS bearer contexts                        | Mapped EPS bearer contexts 9.11.4.8                | O        | TLV-E  | 7-65538 |
+ |  79 | Authorized QoS flow descriptions                  | QoS flow descriptions 9.11.4.12                    | O        | TLV-E  | 6-65538 |
+ |  7B | Extended protocol configuration options           | Extended protocol configuration options 9.11.4.6   | O        | TLV-E  | 4-65538 |
+ |  77 | ATSSS container                                   | ATSSS container 9.11.4.22                          | O        | TLV-E  | 3-65538 |
+ |  66 | IP header compression configuration               | IP header compression configuration 9.11.4.24      | O        | TLV    |   5-257 |
+ |  74 | Port management information container             | Port management information container 9.11.4.27    | O        | TLV-E  | 4-65538 |
+ |  1E | Serving PLMN rate control                         | Serving PLMN rate control 9.11.4.20                | O        | TLV    |       4 |
+ |  1F | Ethernet header compression configuration         | Ethernet heaer compression configuration 9.11.4.28 | O        | TLV    |       3 |
+
+*** 8.3.10 PDU session modification complete
+
+ | IEI | Information Element                                | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                    | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                     | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                                | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION MODIFICATION COMPLETE message identity | Message type 9.7                                 | M        | V      |       1 |
+ | 7B  | Extended protocol configuration options            | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+ | 74  | Port management information container              | Port management information container 9.11.4.27  | O        | TLV-E  | 4-65538 |
+
+*** 8.3.11 PDU session modification command reject
+
+ | IEI | Information Element                                      | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator                          | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                           | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                                      | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION MODIFICATION COMMAND REJECT message identity | Message type 9.7                                 | M        | V      |       1 |
+ |     | 5GSM cause                                               | 5GSM cause 9.11.4.2                              | M        | V      |       1 |
+ | 7B  | Extended protocol configuration options                  | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.12 PDU session release request
+
+ | IEI | Information Element                          | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator              | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                               | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                          | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION RELEASE REQUEST message identity | Message type 9.7                                 | M        | V      |       1 |
+ | 59  | 5GSM cause                                   | 5GSM cause 9.11.4.2                              | O        | TV     |       2 |
+ | 7B  | Extended protocol configuration options      | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.13 PDU session release reject
+
+ | IEI | Information Element                         | Type/Reference                                   | Presence | Format |  Length |
+ |-----+---------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator             | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                              | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                         | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION RELEASE REJECT message identity | Message type 9.7                                 | M        | V      |       1 |
+ |     | 5GSM cause                                  | 5GSM cause 9.11.4.2                              | M        | V      |       1 |
+ | 7B  | Extended protocol configuration options     | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.14 PDU session release command
+
+ | IEI | Information Element                          | Type/Reference                                   | Presence | Format |  Length |
+ |-----+----------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator              | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                               | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                          | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION RELEASE COMMAND message identity | Message type 9.7                                 | M        | V      |       1 |
+ |     | 5GSM cause                                   | 5GSM cause 9.11.4.2                              | M        | V      |       1 |
+ |  37 | Back-off timer value                         | GPRS timer 3 9.11.2.5                            | O        | TLV    |       3 |
+ |  78 | EAP message                                  | EAP message 9.11.2.2                             | O        | TLV-E  |  7-1503 |
+ |  61 | 5GSM congestion re-attempt indicator         | 5GSM congestion re-attempt indicator 9.11.4.21   | O        | TLV    |       3 |
+ |  7B | Extended protocol configuration options      | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+ |  D- | Access type                                  | Access type 9.11.2.1A                            | O        | TV     |       1 |
+
+*** 8.3.15 PDU session release complete
+
+ | IEI | Information Element                           | Type/Reference                                   | Presence | Format |  Length |
+ |-----+-----------------------------------------------+--------------------------------------------------+----------+--------+---------|
+ |     | Extended protocol discriminator               | Extended protocol discriminator 9.2              | M        | V      |       1 |
+ |     | PDU session ID                                | PDU session identity 9.4                         | M        | V      |       1 |
+ |     | PTI                                           | Procedure transaction identity 9.6               | M        | V      |       1 |
+ |     | PDU SESSION RELEASE COMPLETE message identity | Message type 9.7                                 | M        | V      |       1 |
+ | 59  | 5GSM cause                                    | 5GSM cause 9.11.4.2                              | O        | TV     |       2 |
+ | 7B  | Extended protocol configuration options       | Extended protocol configuration options 9.11.4.6 | O        | TLV-E  | 4-65538 |
+
+*** 8.3.16 5GSM status
+
+ | IEI | Information Element             | Type/Reference                      | Presence | Format | Length |
+ |-----+---------------------------------+-------------------------------------+----------+--------+--------|
+ |     | Extended protocol discriminator | Extended protocol discriminator 9.2 | M        | V      |      1 |
+ |     | PDU session ID                  | PDU session identity 9.4            | M        | V      |      1 |
+ |     | PTI                             | Procedure transaction identity 9.6  | M        | V      |      1 |
+ |     | 5GSM STATUS message identity    | Message type 9.7                    | M        | V      |      1 |
+ |     | 5GSM cause                      | 5GSM cause 9.11.4.2                 | M        | V      |      1 |
