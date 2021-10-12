@@ -209,8 +209,8 @@ compose_msg_type(remote_ue_report_response) -> ?NAS_MSGT_REMOTE_UE_REPORT_RESPON
 compose_msg_type(esm_data_transport) -> ?NAS_MSGT_ESM_DATA_TRANSPORT.
 
 decode_emm_msg(attach_accept, Bin0) ->
-    {EpsAttachResult, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {EpsAttachResult, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {T3412Value, Bin3} = erlumts_l3_codec:decode_v(Bin2, 1),
     {TaiList, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
     {EsmMessageContainer, Bin5} = erlumts_l3_codec:decode_lve(Bin4),
@@ -261,8 +261,8 @@ decode_emm_msg(attach_reject, Bin0) ->
     Optionals#{emm_cause => EmmCause
               };
 decode_emm_msg(attach_request, Bin0) ->
-    {EpsAttachType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {NasKeySetIdentifier, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {NasKeySetIdentifier, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {EpsAttachType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {EpsMobileIdentity, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     {UeNetworkCapability, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
     {EsmMessageContainer, Bin5} = erlumts_l3_codec:decode_lve(Bin4),
@@ -310,8 +310,8 @@ decode_emm_msg(authentication_reject, Bin0) ->
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_emm_msg(authentication_request, Bin0) ->
-    {NasKeySetIdentifierasme, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {NasKeySetIdentifierasme, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {AuthenticationParameterRandEpsChallenge, Bin3} = erlumts_l3_codec:decode_v(Bin2, 16),
     {AuthenticationParameterAutnEpsChallenge, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
     Opts = [],
@@ -344,8 +344,8 @@ decode_emm_msg(detach_accept_ue_terminated_detach, Bin0) ->
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_emm_msg(detach_request_ue_originating_detach, Bin0) ->
-    {DetachType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {NasKeySetIdentifier, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {NasKeySetIdentifier, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {DetachType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {EpsMobileIdentity, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     Opts = [],
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
@@ -354,8 +354,8 @@ decode_emm_msg(detach_request_ue_originating_detach, Bin0) ->
                eps_mobile_identity => EpsMobileIdentity
               };
 decode_emm_msg(detach_request_ue_terminated_detach, Bin0) ->
-    {DetachType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {DetachType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [{emm_cause, 16#53, tv, 2}],
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{detach_type => DetachType
@@ -381,8 +381,8 @@ decode_emm_msg(emm_status, Bin0) ->
     Optionals#{emm_cause => EmmCause
               };
 decode_emm_msg(extended_service_request, Bin0) ->
-    {ServiceType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {NasKeySetIdentifier, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {NasKeySetIdentifier, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {ServiceType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {MTmsi, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     Opts = [{eps_bearer_context_status, 16#57, tlv, 4},
             {device_properties, 16#D, tv, 1}],
@@ -405,8 +405,8 @@ decode_emm_msg(guti_reallocation_complete, Bin0) ->
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_emm_msg(identity_request, Bin0) ->
-    {IdentityType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {IdentityType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [],
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{identity_type => IdentityType
@@ -421,8 +421,8 @@ decode_emm_msg(identity_response, Bin0) ->
               };
 decode_emm_msg(security_mode_command, Bin0) ->
     {SelectedNasSecurityAlgorithms, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
-    {NasKeySetIdentifier, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {NasKeySetIdentifier, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
     {ReplayedUeSecurityCapabilities, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
     Opts = [{imeisv_request, 16#C, tv, 1},
             {replayed_nonceue, 16#55, tv, 5},
@@ -473,8 +473,8 @@ decode_emm_msg(service_request, Bin0) ->
                message_authentication_code_short => MessageAuthenticationCodeShort
               };
 decode_emm_msg(tracking_area_update_accept, Bin0) ->
-    {EpsUpdateResult, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {EpsUpdateResult, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [{t3412_value, 16#5A, tv, 2},
             {guti, 16#50, tlv, 13},
             {tai_list, 16#54, tlv, {8, 98}},
@@ -519,8 +519,8 @@ decode_emm_msg(tracking_area_update_reject, Bin0) ->
     Optionals#{emm_cause => EmmCause
               };
 decode_emm_msg(tracking_area_update_request, Bin0) ->
-    {EpsUpdateType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {NasKeySetIdentifier, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {NasKeySetIdentifier, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {EpsUpdateType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {OldGuti, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     Opts = [{non_current_native_nas_key_set_identifier, 16#B, tv, 1},
             {gprs_ciphering_key_sequence_number, 16#8, tv, 1},
@@ -582,8 +582,8 @@ decode_emm_msg(uplink_generic_nas_transport, Bin0) ->
                generic_message_container => GenericMessageContainer
               };
 decode_emm_msg(control_plane_service_request, Bin0) ->
-    {ControlPlaneServiceType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {NasKeySetIdentifier, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {NasKeySetIdentifier, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {ControlPlaneServiceType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [{esm_message_container, 16#78, tlve, {3, n}},
             {nas_message_container, 16#67, tlv, {4, 253}},
             {eps_bearer_context_status, 16#57, tlv, 4},
@@ -615,8 +615,8 @@ decode_esm_msg(activate_dedicated_eps_bearer_context_reject, Bin0) ->
     Optionals#{esm_cause => EsmCause
               };
 decode_esm_msg(activate_dedicated_eps_bearer_context_request, Bin0) ->
-    {LinkedEpsBearerIdentity, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {LinkedEpsBearerIdentity, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {EpsQos, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     {Tft, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
     Opts = [{transaction_identifier, 16#5D, tlv, {3, 4}},
@@ -682,8 +682,8 @@ decode_esm_msg(bearer_resource_allocation_reject, Bin0) ->
     Optionals#{esm_cause => EsmCause
               };
 decode_esm_msg(bearer_resource_allocation_request, Bin0) ->
-    {LinkedEpsBearerIdentity, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {LinkedEpsBearerIdentity, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {TrafficFlowAggregate, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     {RequiredTrafficFlowQos, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
     Opts = [{protocol_configuration_options, 16#27, tlv, {3, 253}},
@@ -707,8 +707,8 @@ decode_esm_msg(bearer_resource_modification_reject, Bin0) ->
     Optionals#{esm_cause => EsmCause
               };
 decode_esm_msg(bearer_resource_modification_request, Bin0) ->
-    {EpsBearerIdentityForPacketFilter, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {EpsBearerIdentityForPacketFilter, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     {TrafficFlowAggregate, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     Opts = [{required_traffic_flow_qos, 16#5B, tlv, {3, 15}},
             {esm_cause, 16#58, tv, 2},
@@ -805,8 +805,8 @@ decode_esm_msg(pdn_connectivity_reject, Bin0) ->
     Optionals#{esm_cause => EsmCause
               };
 decode_esm_msg(pdn_connectivity_request, Bin0) ->
-    {RequestType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {PdnType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {PdnType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {RequestType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [{esm_information_transfer_flag, 16#D, tv, 1},
             {access_point_name, 16#28, tlv, {3, 102}},
             {protocol_configuration_options, 16#27, tlv, {3, 253}},
@@ -826,8 +826,8 @@ decode_esm_msg(pdn_disconnect_reject, Bin0) ->
     Optionals#{esm_cause => EsmCause
               };
 decode_esm_msg(pdn_disconnect_request, Bin0) ->
-    {LinkedEpsBearerIdentity, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
-    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {LinkedEpsBearerIdentity, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [{protocol_configuration_options, 16#27, tlv, {3, 253}},
             {extended_protocol_configuration_options, 16#7B, tlve, {4, 65538}}],
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),

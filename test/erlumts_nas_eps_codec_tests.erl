@@ -7,8 +7,8 @@ plain_attach_request_test() ->
     Expected = #{security_header_type => plain_nas_message,
                  protocol_discriminator => eps_mobility_management_messages,
                  message_type => attach_request,
-                 nas_key_set_identifier => 1,
-                 eps_attach_type => 7,
+                 nas_key_set_identifier => 7,
+                 eps_attach_type => 1,
                  eps_mobile_identity => <<9,16,16,0,0,16,0,16>>,
                  esm_message_container =>
                      #{eps_bearer_identity => 0,
@@ -29,7 +29,7 @@ integrity_attach_request_test() ->
                                 "5244f05100015c0a003103e5e03e11034f18a640080402"
                                 "600000021f005d0103e0c1">>),
     Expected = #{drx_parameter => <<10,0>>,
-                 eps_attach_type => 6,
+                 eps_attach_type => 1,
                  eps_mobile_identity =>
                      <<246,68,240,81,128,0,10,192,0,12,3>>,
                  esm_message_container =>
@@ -50,7 +50,7 @@ integrity_attach_request_test() ->
                  mobile_station_classmark_2 => <<79,24,166>>,
                  ms_network_capability => <<"åà>">>,
                  ms_network_feature_support => <<1:4>>,
-                 nas_key_set_identifier => 1,
+                 nas_key_set_identifier => 6,
                  old_guti_type => <<0:4>>,
                  protocol_discriminator => eps_mobility_management_messages,
                  security_header_type => integrity_protected,
@@ -67,7 +67,7 @@ plain_authentication_request_test() ->
     Expected = #{security_header_type => plain_nas_message,
                  protocol_discriminator => eps_mobility_management_messages,
                  message_type => authentication_request,
-                 nas_key_set_identifierasme => 0,
+                 nas_key_set_identifierasme => 6,
                  authentication_parameter_rand_eps_challenge =>
                      <<167,49,128,40,62,149,112,141,28,97,65,165,69,182,138,69>>,
                  authentication_parameter_autn_eps_challenge =>
@@ -91,7 +91,7 @@ security_mode_command_test() ->
     Bin = hexstream_to_binary(<<"37685cc2d900075d010605f070c04070">>),
     Expected = #{message_authentication_code => <<"h\\ÂÙ">>,
                  message_type => security_mode_command,
-                 nas_key_set_identifier => 0,
+                 nas_key_set_identifier => 6,
                  protocol_discriminator => eps_mobility_management_messages,
                  replayed_ue_security_capabilities => <<"ðpÀ@p">>,
                  security_header_type => integrity_protected_eps_security,
@@ -144,13 +144,14 @@ attach_accept_test() ->
                                 "f7f7272780000d0401010101000d04010000018021100"
                                 "300001081060101010183060100000100100205dc500b"
                                 "f644f05180000ac0000e0359496401015e0106">>),
-    Expected = #{eps_attach_result => 0,
+    Expected = #{eps_attach_result => 1,
                  eps_network_feature_support => <<1>>,
                  esm_message_container =>
                      #{access_point_name =>
                            <<8,105,110,116,101,114,110,101,116,6,109,110,99,
                              48,49,53,6,109,99,99,52,52,48,4,103,112,114,115>>,
-                       apn_ambr => <<"þþ÷÷">>,eps_bearer_identity => 5,
+                       apn_ambr => <<"þþ÷÷">>,
+                       eps_bearer_identity => 5,
                        eps_qos => <<"\t">>,
                        message_type =>
                            activate_default_eps_bearer_context_request,
@@ -205,13 +206,13 @@ pdn_connectivity_request_test() ->
                  eps_bearer_identity => 0,
                  message_authentication_code => <<237,23,218,204>>,
                  message_type => pdn_connectivity_request,
-                 pdn_type => 1,
+                 pdn_type => 3,
                  procedure_transaction_identity => <<"4">>,
                  protocol_configuration_options =>
                      <<128,128,33,16,1,0,0,16,129,6,0,0,0,0,131,6,0,0,0,0,0,
                        13,0,0,3,0,0,1,0,0,12,0,0,10,0,0,5,0,0,16,0>>,
                  protocol_discriminator => eps_mobility_management_messages,
-                 request_type => 3,
+                 request_type => 1,
                  security_header_type => integrity_protected_ciphered,
                  sequence_number => <<3>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
