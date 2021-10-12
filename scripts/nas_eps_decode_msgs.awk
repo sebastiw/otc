@@ -84,7 +84,11 @@ active == 0 {
     fields=substr(fields, 1, length(fields)-1)
     printf("    Opts = [%s],\n", optionals)
     printf("    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin%d, Opts),\n", bin_ctr)
-    printf("    Optionals#{%s\n              };\n", fields)
+    if(fields == "") {
+        printf("    Optionals;\n")
+    } else {
+        printf("    Optionals#{%s\n              };\n", fields)
+    }
     # Reset
     optionals=""
     parse_man_s=""
@@ -105,15 +109,22 @@ $5 ~ /O/ {
 
 # Mandatory variables
 $5 ~ /M/ {
-    bin_ctr++
-    iei_type=tag($6)
-    if(iei_type == "lv" || iei_type == "lve") {
-        maybe_len=""
+    if(field == "protocol_discriminator") {
+    } else if(field == "security_header_type") {
+    } else if(field == "eps_bearer_identity") {
+    } else if(field == "procedure_transaction_identity") {
+    } else if(field ~ /.*message_identity/) {
     } else {
-        maybe_len=", " len($7)
+        bin_ctr++
+        iei_type=tag($6)
+        if(iei_type == "lv" || iei_type == "lve") {
+            maybe_len=""
+        } else {
+            maybe_len=", " len($7)
+        }
+        parse_man=sprintf("    {%s, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
+                          atom_to_var(field), bin_ctr, iei_type, bin_ctr-1, maybe_len)
+        parse_man_s=parse_man_s parse_man
+        fields=fields sprintf("               %s => %s,\n", field, atom_to_var(field))
     }
-    parse_man=sprintf("    {%s, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
-                      atom_to_var(field), bin_ctr, iei_type, bin_ctr-1, maybe_len)
-    parse_man_s=parse_man_s parse_man
-    fields=fields sprintf("               %s => %s,\n", field, atom_to_var(field))
 }
