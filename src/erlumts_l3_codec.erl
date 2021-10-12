@@ -5,7 +5,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 -export([parse_protocol_discriminator/1]).
--export([decode_v/2, decode_lv/1, decode_lve/1]).
+-export([decode_v/2, decode_lv/1, decode_lve/1, decode_iei_list/2]).
 
 -type iei_type() :: t | v | tv | lv | tlv | lve | tlve.
 -type iei_fixed_length() :: half | pos_integer().
@@ -95,7 +95,10 @@ decode_iei_list(<<L:16, Bin/binary>>, [{Name, _IEI, lve, _L2}|Opts], Acc) when i
 decode_iei_list(<<IEI:8/big, L2:16/big, R/binary>>, [{Name, IEI, tlve, _L}|Opts], Acc) ->
     %% Type 6
     <<V:L2/binary, Rest/binary>> = R,
-    decode_iei_list(Rest, Opts, Acc#{Name => V}).
+    decode_iei_list(Rest, Opts, Acc#{Name => V});
+decode_iei_list(Bin, [T|Ts], Acc) ->
+    decode_iei_list(Bin, Ts, Acc).
+
 
 decode_iei_list_test_() ->
     [{"Shouldn't return any values",

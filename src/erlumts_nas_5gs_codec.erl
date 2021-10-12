@@ -6,7 +6,7 @@
 
 -export([decode/1, encode/1]).
 
--spec decode(binary()) -> map() | unsupported.
+-spec decode(binary()) -> map() | {unsupported, term()}.
 decode(<<EPD:8, Bin/binary>>) ->
     ProtocolDiscriminator = erlumts_l3_codec:parse_protocol_discriminator(EPD),
     case ProtocolDiscriminator of
@@ -16,7 +16,7 @@ decode(<<EPD:8, Bin/binary>>) ->
             SecurityHeaderType = parse_security_header_type(SHT),
             case decode_5gmm_content(SecurityHeaderType, Rest) of
                 unsupported ->
-                    unsupported;
+                    {unsupported, '5gmm_msg'};
                 Msg ->
                     Msg#{security_header_type => SecurityHeaderType,
                          protocol_discriminator => ProtocolDiscriminator
@@ -27,14 +27,14 @@ decode(<<EPD:8, Bin/binary>>) ->
             <<PSI:8, Rest/binary>> = Bin,
             case decode_5gsm_content(Rest) of
                 unsupported ->
-                    unsupported;
+                    {unsupported, '5gsm_msg'};
                 Msg ->
                     Msg#{pdu_session_identity => PSI,
                          protocol_discriminator => ProtocolDiscriminator
                         }
             end;
         _ ->
-            unsupported
+            {unsupported, {protocol_discriminator, ProtocolDiscriminator}}
     end.
 
 -spec encode(map()) -> binary().
@@ -173,44 +173,44 @@ compose_msg_type(pdu_session_release_complete) -> ?NAS_MSGT_PDU_SESSION_RELEASE_
 compose_msg_type('5gsm_status') -> ?NAS_MSGT_5GSM_STATUS.
 
 decode_5gmm_msg(authentication_request, Bin0) ->
-    {Ngksi, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {Abba, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
+    {Ngksi, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {Abba, Bin3} = erlumts_l3_codec:decode_lv(Bin2),
     Opts = [{authentication_parameter_rand_5g_authentication_challenge, 16#21, tv, 17},
             {authentication_parameter_autn_5g_authentication_challenge, 16#20, tlv, 18},
             {eap_message, 16#78, tlve, {7, 150}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{ngksi => Ngksi,
                abba => Abba
               };
 decode_5gmm_msg(authentication_response, Bin0) ->
     Opts = [{authentication_response_parameter, 16#2D, tlv, 18},
             {eap_message, 16#78, tlve, {7, 1503}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(authentication_result, Bin0) ->
-    {Ngksi, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {EapMessage, Bin4} = erlumts_l3_codec:decode_lve(Bin3),
+    {Ngksi, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {EapMessage, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
     Opts = [{abba, 16#38, tlv, {4, n}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{ngksi => Ngksi,
                eap_message => EapMessage
               };
 decode_5gmm_msg(authentication_failure, Bin0) ->
-    {MmCause, Bin2} = erlumts_l3_codec:decode_v(Bin1, 1),
+    {MmCause, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
     Opts = [{authentication_failure_parameter, 16#30, tlv, 16}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{'5gmm_cause' => MmCause
               };
 decode_5gmm_msg(authentication_reject, Bin0) ->
     Opts = [{eap_message, 16#78, tlve, {7, 1503}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(registration_request, Bin0) ->
-    {SRegistrationType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {Ngksi, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {SMobileIdentity, Bin4} = erlumts_l3_codec:decode_lve(Bin3),
+    {SRegistrationType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {Ngksi, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {SMobileIdentity, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
     Opts = [{non_current_native_nas_key_set_identifier, 16#C, tv, 1},
             {'5gmm_capability', 16#10, tlv, {3, 15}},
             {ue_security_capability, 16#2E, tlv, {4, 10}},
@@ -243,13 +243,13 @@ decode_5gmm_msg(registration_request, Bin0) ->
             {requested_wus_assistance_information, 16#1A, tlv, {3, n}},
             {n5gc_indication, 16#A, t, 1},
             {requested_nb_n1_mode_drx_parameters, 16#30, tlv, 3}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{'5gs_registration_type' => SRegistrationType,
                ngksi => Ngksi,
                '5gs_mobile_identity' => SMobileIdentity
               };
 decode_5gmm_msg(registration_accept, Bin0) ->
-    {SRegistrationResult, Bin2} = erlumts_l3_codec:decode_lv(Bin1),
+    {SRegistrationResult, Bin1} = erlumts_l3_codec:decode_lv(Bin0),
     Opts = [{'5g_guti', 16#77, tlve, 14},
             {equivalent_plmns, 16#4A, tlv, {5, 47}},
             {tai_list, 16#54, tlv, {9, 114}},
@@ -288,27 +288,27 @@ decode_5gmm_msg(registration_accept, Bin0) ->
             {truncated_5g_s_tmsi_configuration, 16#1B, tlv, 3},
             {negotiated_wus_assistance_information, 16#1C, tlv, {3, n}},
             {negotiated_nb_n1_mode_drx_parameters, 16#29, tlv, 3}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{'5gs_registration_result' => SRegistrationResult
               };
 decode_5gmm_msg(registration_complete, Bin0) ->
     Opts = [{sor_transparent_container, 16#73, tlve, 20}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(registration_reject, Bin0) ->
-    {MmCause, Bin2} = erlumts_l3_codec:decode_v(Bin1, 1),
+    {MmCause, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
     Opts = [{t3346_value, 16#5F, tlv, 3},
             {t3502_value, 16#16, tlv, 3},
             {eap_message, 16#78, tlve, {7, 1503}},
             {rejected_nssai, 16#69, tlv, {4, 42}},
             {cag_information_list, 16#75, tlve, {3, n}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{'5gmm_cause' => MmCause
               };
 decode_5gmm_msg(ul_nas_transport, Bin0) ->
-    {PayloadContainerType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {PayloadContainer, Bin4} = erlumts_l3_codec:decode_lve(Bin3),
+    {PayloadContainerType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {PayloadContainer, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
     Opts = [{old_pdu_session_id, 16#59, tv, 2},
             {request_type, 16#8, tv, 1},
             {s_nssai, 16#22, tlv, {3, 10}},
@@ -316,57 +316,57 @@ decode_5gmm_msg(ul_nas_transport, Bin0) ->
             {additional_information, 16#24, tlv, {3, n}},
             {ma_pdu_session_information, 16#A, tv, 1},
             {release_assistance_indication, 16#F, tv, 1}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{payload_container_type => PayloadContainerType,
                payload_container => PayloadContainer
               };
 decode_5gmm_msg(dl_nas_transport, Bin0) ->
-    {PayloadContainerType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {PayloadContainer, Bin4} = erlumts_l3_codec:decode_lve(Bin3),
+    {PayloadContainerType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {PayloadContainer, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
     Opts = [{additional_information, 16#24, tlv, {3, n}},
             {'5gmm_cause', 16#58, tv, 2},
             {back_off_timer_value, 16#37, tlv, 3}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{payload_container_type => PayloadContainerType,
                payload_container => PayloadContainer
               };
 decode_5gmm_msg(deregistration_request_ue_originating_deregistration, Bin0) ->
-    {DeRegistrationType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {Ngksi, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {SMobileIdentity, Bin4} = erlumts_l3_codec:decode_lve(Bin3),
+    {DeRegistrationType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {Ngksi, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {SMobileIdentity, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{de_registration_type => DeRegistrationType,
                ngksi => Ngksi,
                '5gs_mobile_identity' => SMobileIdentity
               };
 decode_5gmm_msg(deregistration_accept_ue_originating_deregistration, Bin0) ->
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(deregistration_request_ue_terminated_deregistration, Bin0) ->
-    {DeRegistrationType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
+    {DeRegistrationType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [{'5gmm_cause', 16#58, tv, 2},
             {t3346_value, 16#5F, tlv, 3},
             {rejected_nssai, 16#6D, tlv, {4, 42}},
             {cag_information_list, 16#75, tlve, {3, n}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{de_registration_type => DeRegistrationType
               };
 decode_5gmm_msg(deregistration_accept_ue_terminated_deregistration, Bin0) ->
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(service_request, Bin0) ->
-    {Ngksi, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {ServiceType, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {STmsi, Bin4} = erlumts_l3_codec:decode_lve(Bin3),
+    {Ngksi, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {ServiceType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {STmsi, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
     Opts = [{uplink_data_status, 16#40, tlv, {4, 34}},
             {allowed_pdu_session_status, 16#25, tlv, {4, 34}},
             {nas_message_container, 16#71, tlve, {4, n}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{ngksi => Ngksi,
                service_type => ServiceType,
                '5g_s_tmsi' => STmsi
@@ -377,16 +377,16 @@ decode_5gmm_msg(service_accept, Bin0) ->
             {pdu_session_reactivation_result_error_cause, 16#72, tlve, {5, 515}},
             {eap_message, 16#78, tlve, {7, 1503}},
             {t3448_value, 16#6B, tlv, 3}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(service_reject, Bin0) ->
-    {MmCause, Bin2} = erlumts_l3_codec:decode_v(Bin1, 1),
+    {MmCause, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
     Opts = [{pdu_session_status, 16#50, tlv, {4, 34}},
             {t3346_value, 16#5F, tlv, 3},
             {eap_message, 16#78, tlve, {7, 1503}},
             {t3448_value, 16#6B, tlv, 3},
             {cag_information_list, 16#75, tlve, {3, n}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{'5gmm_cause' => MmCause
               };
 decode_5gmm_msg(configuration_update_command, Bin0) ->
@@ -414,48 +414,48 @@ decode_5gmm_msg(configuration_update_command, Bin0) ->
             {'5gs_registration_result', 16#44, tlv, 3},
             {truncated_5g_s_tmsi_configuration, 16#1B, tlv, 3},
             {additional_configuration_indication, 16#C, tv, 1}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(configuration_update_complete, Bin0) ->
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(identity_request, Bin0) ->
-    {IdentityType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
+    {IdentityType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{identity_type => IdentityType
               };
 decode_5gmm_msg(identity_respones, Bin0) ->
-    {MobileIdentity, Bin2} = erlumts_l3_codec:decode_lve(Bin1),
+    {MobileIdentity, Bin1} = erlumts_l3_codec:decode_lve(Bin0),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{mobile_identity => MobileIdentity
               };
 decode_5gmm_msg(notification, Bin0) ->
-    {AccessType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
+    {AccessType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {_, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{access_type => AccessType
               };
 decode_5gmm_msg(notification_response, Bin0) ->
     Opts = [{pdu_session_status, 16#50, tlv, {4, 34}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(security_mode_command, Bin0) ->
-    {SelectedNasSecurityAlgorithms, Bin2} = erlumts_l3_codec:decode_v(Bin1, 1),
-    {Ngksi, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
-    {_, Bin4} = erlumts_l3_codec:decode_v(Bin3, half),
-    {ReplayedUeSecurityCapabilities, Bin5} = erlumts_l3_codec:decode_lv(Bin4),
+    {SelectedNasSecurityAlgorithms, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
+    {Ngksi, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
+    {_, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
+    {ReplayedUeSecurityCapabilities, Bin4} = erlumts_l3_codec:decode_lv(Bin3),
     Opts = [{imeisv_request, 16#E, tv, 1},
             {selected_eps_nas_security_algorithms, 16#57, tv, 2},
             {additional_5g_security_information, 16#36, tlv, 3},
             {eap_message, 16#78, tlve, {7, 1503}},
             {abba, 16#38, tlv, {4, n}},
             {replayed_s1_ue_security_capabilities, 16#19, tlv, {4, 7}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin5, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
     Optionals#{selected_nas_security_algorithms => SelectedNasSecurityAlgorithms,
                ngksi => Ngksi,
                replayed_ue_security_capabilities => ReplayedUeSecurityCapabilities
@@ -464,33 +464,33 @@ decode_5gmm_msg(security_mode_complete, Bin0) ->
     Opts = [{imeisv, 16#77, tlve, 12},
             {nas_message_container, 16#71, tlve, {4, n}},
             {non_imeisv_pei, 16#78, tlve, {7, n}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin0, Opts),
     Optionals;
 decode_5gmm_msg(security_mode_reject, Bin0) ->
-    {MmCause, Bin2} = erlumts_l3_codec:decode_v(Bin1, 1),
+    {MmCause, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{'5gmm_cause' => MmCause
               };
 decode_5gmm_msg(security_protected_5gs_nas_message, Bin0) ->
-    {MessageAuthenticationCode, Bin2} = erlumts_l3_codec:decode_v(Bin1, 4),
-    {SequenceNumber, Bin3} = erlumts_l3_codec:decode_v(Bin2, 1),
-    {Plain5gsNasMessage, Bin4} = erlumts_l3_codec:decode_v(Bin3, {3, n}),
+    {MessageAuthenticationCode, Bin1} = erlumts_l3_codec:decode_v(Bin0, 4),
+    {SequenceNumber, Bin2} = erlumts_l3_codec:decode_v(Bin1, 1),
+    {Plain5gsNasMessage, Bin3} = erlumts_l3_codec:decode_v(Bin2, {3, n}),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin4, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
     Optionals#{message_authentication_code => MessageAuthenticationCode,
                sequence_number => SequenceNumber,
                plain_5gs_nas_message => Plain5gsNasMessage
               };
 decode_5gmm_msg('5gmm_status', Bin0) ->
-    {MmCause, Bin2} = erlumts_l3_codec:decode_v(Bin1, 1),
+    {MmCause, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{'5gmm_cause' => MmCause
               };
 decode_5gmm_msg(control_plane_service_request, Bin0) ->
-    {ControlPlaneServiceType, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
-    {Ngksi, Bin3} = erlumts_l3_codec:decode_v(Bin2, half),
+    {ControlPlaneServiceType, Bin1} = erlumts_l3_codec:decode_v(Bin0, half),
+    {Ngksi, Bin2} = erlumts_l3_codec:decode_v(Bin1, half),
     Opts = [{ciot_small_data_container, 16#6F, tlv, {4, 257}},
             {payload_container_type, 16#8, tv, 1},
             {payload_container, 16#7B, tlve, {4, 65538}},
@@ -499,31 +499,31 @@ decode_5gmm_msg(control_plane_service_request, Bin0) ->
             {uplink_data_status, 16#40, tlv, {4, 34}},
             {nas_message_container, 16#71, tlve, {4, n}},
             {additional_information, 16#24, tlv, {3, n}}],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{control_plane_service_type => ControlPlaneServiceType,
                ngksi => Ngksi
               };
-decode_5gmm_msg(network_slicespecific_authentication_command, Bin0) ->
-    {SNssai, Bin2} = erlumts_l3_codec:decode_lv(Bin1),
-    {EapMessage, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
+decode_5gmm_msg(network_slice_specific_authentication_command, Bin0) ->
+    {SNssai, Bin1} = erlumts_l3_codec:decode_lv(Bin0),
+    {EapMessage, Bin2} = erlumts_l3_codec:decode_lve(Bin1),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{s_nssai => SNssai,
                eap_message => EapMessage
               };
-decode_5gmm_msg(network_slicespecific_authentication_complete, Bin0) ->
-    {SNssai, Bin2} = erlumts_l3_codec:decode_lv(Bin1),
-    {EapMessage, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
+decode_5gmm_msg(network_slice_specific_authentication_complete, Bin0) ->
+    {SNssai, Bin1} = erlumts_l3_codec:decode_lv(Bin0),
+    {EapMessage, Bin2} = erlumts_l3_codec:decode_lve(Bin1),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{s_nssai => SNssai,
                eap_message => EapMessage
               };
-decode_5gmm_msg(network_slicespecific_authentication_result, Bin0) ->
-    {SNssai, Bin2} = erlumts_l3_codec:decode_lv(Bin1),
-    {EapMessage, Bin3} = erlumts_l3_codec:decode_lve(Bin2),
+decode_5gmm_msg(network_slice_specific_authentication_result, Bin0) ->
+    {SNssai, Bin1} = erlumts_l3_codec:decode_lv(Bin0),
+    {EapMessage, Bin2} = erlumts_l3_codec:decode_lve(Bin1),
     Opts = [],
-    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin3, Opts),
+    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{s_nssai => SNssai,
                eap_message => EapMessage
               };

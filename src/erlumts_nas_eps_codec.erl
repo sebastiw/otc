@@ -14,8 +14,8 @@ decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
             %% Security Header Type
             SecurityHeaderType = parse_security_header_type(EBI_SHT),
             case decode_emm_content(SecurityHeaderType, Rest) of
-                unsupported ->
-                    unsupported;
+                {unsupported, Reason} ->
+                    {unsupported, Reason};
                 Msg ->
                     Msg#{security_header_type => SecurityHeaderType,
                          protocol_discriminator => ProtocolDiscriminator
@@ -25,44 +25,53 @@ decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
             %% EPS Bearer Identity
             case decode_esm_content(Rest) of
                 unsupported ->
-                    unsupported;
+                    {unsupported, esm_msg};
                 Msg ->
                     Msg#{eps_bearer_identity => EBI_SHT,
                          protocol_discriminator => ProtocolDiscriminator
                         }
             end;
         _ ->
-            unsupported
+            {unsupported, {protocol_discriminator, ProtocolDiscriminator}}
     end.
 
 -spec encode(map()) -> binary().
 encode(Nas) ->
     <<>>.
 
-decode_emm_content(plain_nas_message, <<MT:1/binary, OIE/binary>>) ->
+decode_emm_content(plain_nas_message, <<MT:8/big, OIE/binary>>) ->
     MsgType = parse_msg_type(MT),
     case decode_emm_msg(MsgType, OIE) of
         unsupported ->
-            unsupported;
+            {unsupported, {plain_nas_message, emm_msg, MT}};
         Msg ->
             Msg#{message_type => MsgType}
     end;
-decode_emm_content(_, <<MAC:3/binary, SN:1/binary, NMSG/binary>>) ->
-    unsupported;
+decode_emm_content(service_request, Bin) ->
+    Msg = decode_emm_msg(service_request, Bin),
+    Msg#{message_type => service_request};
+decode_emm_content(SHT, <<MAC:4/binary, SN:1/binary, NMSG/binary>>) ->
+    case decode(NMSG) of
+        {unsupported, Reason} ->
+            {unsupported, Reason};
+        Msg ->
+            Msg#{message_authentication_code => MAC,
+                 sequence_number => SN}
+    end;
 decode_emm_content(_, _) ->
-    unsupported.
+    {unsupported, binary}.
 
-decode_esm_content(<<PTI:1/binary, MT:1/binary, OIE/binary>>) ->
+decode_esm_content(<<PTI:1/binary, MT:8/big, OIE/binary>>) ->
     MsgType = parse_msg_type(MT),
     case decode_esm_msg(MsgType, OIE) of
         unsupported ->
-            unsupported;
+            {unsupported, {esm_msg, MT}};
         Msg ->
             Msg#{procedure_transaction_identity => PTI,
                  message_type => MsgType}
     end;
 decode_esm_content(_) ->
-    unsupported.
+    {unsupported, binary}.
 
 %% 9.3.1 Security header type
 parse_security_header_type(?NAS_SHT_PLAIN_NAS_MESSAGE) -> plain_nas_message;
@@ -135,7 +144,9 @@ parse_msg_type(?NAS_MSGT_ESM_DUMMY_MESSAGE) -> esm_dummy_message;
 parse_msg_type(?NAS_MSGT_ESM_STATUS) -> esm_status;
 parse_msg_type(?NAS_MSGT_REMOTE_UE_REPORT) -> remote_ue_report;
 parse_msg_type(?NAS_MSGT_REMOTE_UE_REPORT_RESPONSE) -> remote_ue_report_response;
-parse_msg_type(?NAS_MSGT_ESM_DATA_TRANSPORT) -> esm_data_transport.
+parse_msg_type(?NAS_MSGT_ESM_DATA_TRANSPORT) -> esm_data_transport;
+parse_msg_type(_) ->
+    unsupported.
 
 compose_msg_type(attach_request) -> ?NAS_MSGT_ATTACH_REQUEST;
 compose_msg_type(attach_accept) -> ?NAS_MSGT_ATTACH_ACCEPT;
@@ -232,13 +243,13 @@ decode_emm_msg(attach_accept, Bin0) ->
     Optionals#{eps_attach_result => EpsAttachResult,
                t3412_value => T3412Value,
                tai_list => TaiList,
-               esm_message_container => EsmMessageContainer
+               esm_message_container => decode(EsmMessageContainer)
               };
 decode_emm_msg(attach_complete, Bin0) ->
     {EsmMessageContainer, Bin1} = erlumts_l3_codec:decode_lve(Bin0),
     Opts = [],
     {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin1, Opts),
-    Optionals#{esm_message_container => EsmMessageContainer
+    Optionals#{esm_message_container => decode(EsmMessageContainer)
               };
 decode_emm_msg(attach_reject, Bin0) ->
     {EmmCause, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
@@ -286,7 +297,7 @@ decode_emm_msg(attach_request, Bin0) ->
                nas_key_set_identifier => NasKeySetIdentifier,
                eps_mobile_identity => EpsMobileIdentity,
                ue_network_capability => UeNetworkCapability,
-               esm_message_container => EsmMessageContainer
+               esm_message_container => decode(EsmMessageContainer)
               };
 decode_emm_msg(authentication_failure, Bin0) ->
     {EmmCause, Bin1} = erlumts_l3_codec:decode_v(Bin0, 1),
