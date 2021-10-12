@@ -128,7 +128,6 @@ $5 ~ /M/ {
     } else if(field == "procedure_transaction_identity" || field == "pti") {
     } else if(field ~ /.*message_(type|identity)/) {
     } else {
-        bin_ctr++
         iei_type=tag($6)
         if(iei_type == "lv" || iei_type == "lve") {
             maybe_len=""
@@ -136,10 +135,15 @@ $5 ~ /M/ {
             maybe_len=", " len($7)
         }
         if(field == "spare_half_octet") {
-            parse_man=sprintf("    {_, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
-                              bin_ctr, iei_type, bin_ctr-1, maybe_len)
-            parse_man_s=parse_man_s parse_man
+            # first one comes from security header type
+            if(bin_ctr > 0) {
+                bin_ctr++
+                parse_man=sprintf("    {_, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
+                                  bin_ctr, iei_type, bin_ctr-1, maybe_len)
+                parse_man_s=parse_man_s parse_man
+            }
         } else {
+            bin_ctr++
             parse_man=sprintf("    {%s, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
                               atom_to_var(field), bin_ctr, iei_type, bin_ctr-1, maybe_len)
             parse_man_s=parse_man_s parse_man
