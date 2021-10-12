@@ -9,7 +9,7 @@ function atom(s){
     s=trim(tolower(s))
     gsub("[()']", "", s)
     gsub("[ -]", "_", s)
-    if(s ~ /5.*/) {
+    if(s ~ /^5.*/) {
         s = "'" s "'"
     }
     return s

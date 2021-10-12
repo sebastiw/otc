@@ -749,3 +749,4 @@
  |     | PTI                             | Procedure transaction identity 9.6  | M        | V      |      1 |
  |     | 5GSM STATUS message identity    | Message type 9.7                    | M        | V      |      1 |
  |     | 5GSM cause                      | 5GSM cause 9.11.4.2                 | M        | V      |      1 |
+
