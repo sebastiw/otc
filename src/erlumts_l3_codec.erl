@@ -28,7 +28,13 @@ parse_protocol_discriminator(?L3_PD_GPRS_SESSION_MANAGEMENT_MESSAGES) -> gprs_se
 parse_protocol_discriminator(?L3_PD_NON_CALL_RELATED_SS_MESSAGES) -> non_call_related_ss_messages;
 parse_protocol_discriminator(?L3_PD_LOCATION_SERVICES) -> location_services; % 3GPP TS 44.071
 parse_protocol_discriminator(?L3_PD_EXTENSION_OF_PD) -> extension_of_PD;
-parse_protocol_discriminator(?L3_PD_TESTS_PROCEDURES) -> tests_procedures. % 3GPP TS 44.014
+parse_protocol_discriminator(?L3_PD_TESTS_PROCEDURES) -> tests_procedures; % 3GPP TS 44.014
+
+%% 11.2.3.1.1A Extended protocol discriminator (EPD)
+parse_protocol_discriminator(?L3_EPD_5GS_SESSION_MANAGEMENT_MESSAGES) -> '5gs_session_management_messages';
+parse_protocol_discriminator(?L3_EPD_5GS_MOBILITY_MANAGEMENT_MESSAGES) -> '5gs_mobility_management_messages'.
+
+
 
 -spec decode_v(binary(), iei_fixed_length()) -> {integer() | binary(), bitstring()}.
 decode_v(<<V:4/big, Rest/bitstring>>, half) ->

@@ -9,10 +9,16 @@ function atom(s){
     s=trim(tolower(s))
     gsub("[()']", "", s)
     gsub("[ -]", "_", s)
+    if(s ~ /5.*/) {
+        s = "'" s "'"
+    }
     return s
 }
 
 function atom_to_var(s){
+    if(substr(s, 1, 3) == "'5g") {
+        s=substr(s, 4, length(s)-4)
+    }
     split(s, arr, "_")
     s=""
     for(i = 1; i <= length(arr); i++) {
@@ -46,17 +52,24 @@ function len(s){
 ## Execution ###################
 
 # Type of messages
-/^\*\* 8.2/ {
+/^\*\* 8.2 EPS/ {
     msg_type="emm"
 }
-/^\*\* 8.3/ {
+/^\*\* 8.3 EPS/ {
     msg_type="esm"
+}
+/^\*\* 8.2 5GS/ {
+    msg_type="5gmm"
+}
+/^\*\* 8.3 5GS/ {
+    msg_type="5gsm"
 }
 
 # Every chapter (message)
 /\*\*\*/ {
     header=tolower(substr($0, length($1)+length($2)+3))
     gsub(" ", "_", header)
+    gsub("[-()]", "", header)
 }
 
 # Find the separator line in table
@@ -109,11 +122,11 @@ $5 ~ /O/ {
 
 # Mandatory variables
 $5 ~ /M/ {
-    if(field == "protocol_discriminator") {
+    if(field == "protocol_discriminator" || field == "extended_protocol_discriminator") {
     } else if(field == "security_header_type") {
-    } else if(field == "eps_bearer_identity") {
-    } else if(field == "procedure_transaction_identity") {
-    } else if(field ~ /.*message_identity/) {
+    } else if(field == "eps_bearer_identity" || field == "pdu_session_id") {
+    } else if(field == "procedure_transaction_identity" || field == "pti") {
+    } else if(field ~ /.*message_(type|identity)/) {
     } else {
         bin_ctr++
         iei_type=tag($6)
@@ -122,9 +135,15 @@ $5 ~ /M/ {
         } else {
             maybe_len=", " len($7)
         }
-        parse_man=sprintf("    {%s, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
-                          atom_to_var(field), bin_ctr, iei_type, bin_ctr-1, maybe_len)
-        parse_man_s=parse_man_s parse_man
-        fields=fields sprintf("               %s => %s,\n", field, atom_to_var(field))
+        if(field == "spare_half_octet") {
+            parse_man=sprintf("    {_, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
+                              bin_ctr, iei_type, bin_ctr-1, maybe_len)
+            parse_man_s=parse_man_s parse_man
+        } else {
+            parse_man=sprintf("    {%s, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
+                              atom_to_var(field), bin_ctr, iei_type, bin_ctr-1, maybe_len)
+            parse_man_s=parse_man_s parse_man
+            fields=fields sprintf("               %s => %s,\n", field, atom_to_var(field))
+        }
     }
 }
