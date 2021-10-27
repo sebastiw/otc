@@ -32,7 +32,9 @@ parse_protocol_discriminator(?L3_PD_TESTS_PROCEDURES) -> tests_procedures; % 3GP
 
 %% 11.2.3.1.1A Extended protocol discriminator (EPD)
 parse_protocol_discriminator(?L3_EPD_5GS_SESSION_MANAGEMENT_MESSAGES) -> '5gs_session_management_messages';
-parse_protocol_discriminator(?L3_EPD_5GS_MOBILITY_MANAGEMENT_MESSAGES) -> '5gs_mobility_management_messages'.
+parse_protocol_discriminator(?L3_EPD_5GS_MOBILITY_MANAGEMENT_MESSAGES) -> '5gs_mobility_management_messages';
+parse_protocol_discriminator(PD) ->
+    {undefined, PD}.
 
 
 

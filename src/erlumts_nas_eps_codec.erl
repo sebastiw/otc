@@ -35,9 +35,12 @@ decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
             {unsupported, {protocol_discriminator, ProtocolDiscriminator}}
     end.
 
--spec encode(map()) -> binary().
-encode(Nas) ->
-    <<>>.
+-spec encode(map()) -> binary() | {unsupported, term()}.
+encode(#{protocol_descriminator := PD}) ->
+    <<>>;
+encode(Msg) ->
+    {unsupported, Msg}.
+
 
 decode_emm_content(plain_nas_message, <<MT:8/big, OIE/binary>>) ->
     MsgType = parse_msg_type(MT),
@@ -50,7 +53,7 @@ decode_emm_content(plain_nas_message, <<MT:8/big, OIE/binary>>) ->
 decode_emm_content(service_request, Bin) ->
     Msg = decode_emm_msg(service_request, Bin),
     Msg#{message_type => service_request};
-decode_emm_content(SHT, <<MAC:4/binary, SN:1/binary, NMSG/binary>>) ->
+decode_emm_content(_SHT, <<MAC:4/binary, SN:1/binary, NMSG/binary>>) ->
     case decode(NMSG) of
         {unsupported, Reason} ->
             {unsupported, Reason};

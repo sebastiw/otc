@@ -37,7 +37,7 @@ integrity_attach_request_test() ->
                        esm_information_transfer_flag => <<1:4>>,
                        message_type => pdn_connectivity_request,
                        pdn_type => 1,
-                       procedure_transaction_identity => <<"3">>,
+                       procedure_transaction_identity => <<51>>,
                        protocol_configuration_options =>
                            <<128,128,33,16,1,0,0,16,129,6,0,0,0,0,131,6,0,0,
                              0,0,0,13,0,0,10,0,0,5,0,0,16,0>>,
@@ -45,7 +45,7 @@ integrity_attach_request_test() ->
                            eps_session_management_messages,
                        request_type => 1},
                  last_visited_registered_tai => <<68,240,81,0,1>>,
-                 message_authentication_code => <<"¾'«.">>,
+                 message_authentication_code => hexstream_to_binary(<<"be27ab2e">>),
                  message_type => attach_request,
                  mobile_station_classmark_2 => <<79,24,166>>,
                  ms_network_capability => <<"åà>">>,
@@ -54,7 +54,7 @@ integrity_attach_request_test() ->
                  old_guti_type => <<0:4>>,
                  protocol_discriminator => eps_mobility_management_messages,
                  security_header_type => integrity_protected,
-                 sequence_number => <<":">>,
+                 sequence_number => <<58>>,
                  supported_codecs => <<4,2,96,0,0,2,31,0>>,
                  ue_network_capability => <<240,112,192,64,17>>,
                  voice_domain_preference_and_ues_usage_setting => <<3>>},
@@ -69,9 +69,9 @@ plain_authentication_request_test() ->
                  message_type => authentication_request,
                  nas_key_set_identifierasme => 6,
                  authentication_parameter_rand_eps_challenge =>
-                     <<167,49,128,40,62,149,112,141,28,97,65,165,69,182,138,69>>,
+                     hexstream_to_binary(<<"a73180283e95708d1c6141a545b68a45">>),
                  authentication_parameter_autn_eps_challenge =>
-                     <<10,160,168,85,129,38,128,0,40,99,235,220,131,92,236,124>>},
+                     hexstream_to_binary(<<"0aa0a855812680002863ebdc835cec7c">>)},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
     ?assertEqual(Expected, Decoded).
 
