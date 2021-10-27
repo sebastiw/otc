@@ -6,7 +6,7 @@
 
 -export([decode/1, encode/1]).
 
--spec decode(binary()) -> map() | unsupported.
+-spec decode(binary()) -> map() | {unsupported, term()}.
 decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
     ProtocolDiscriminator = erlumts_l3_codec:parse_protocol_discriminator(PD),
     case ProtocolDiscriminator of
@@ -24,8 +24,8 @@ decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
         eps_session_management_messages ->
             %% EPS Bearer Identity
             case decode_esm_content(Rest) of
-                unsupported ->
-                    {unsupported, esm_msg};
+                {unsupported, R} ->
+                    {unsupported, R};
                 Msg ->
                     Msg#{eps_bearer_identity => EBI_SHT,
                          protocol_discriminator => ProtocolDiscriminator
@@ -36,8 +36,31 @@ decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
     end.
 
 -spec encode(map()) -> binary() | {unsupported, term()}.
-encode(#{protocol_descriminator := PD}) ->
-    <<>>;
+encode(#{protocol_descriminator := ProtocolDiscriminator} = Msg) ->
+    case ProtocolDiscriminator of
+        eps_mobility_management_messages -> %% security protected
+            SecurityHeaderType = maps:get(security_header_type, Msg, undefined),
+            case encode_emm_content(SecurityHeaderType, Msg) of
+                {unsupported, Reason} ->
+                    {unsupported, Reason};
+                Bin ->
+                    PD = erlumts_l3_codec:compose_protocol_discriminator(ProtocolDiscriminator),
+                    SHT = compose_security_header_type(SecurityHeaderType),
+                    <<SHT:4, PD:4, Bin/binary>>
+            end;
+        eps_session_management_messages ->
+            EBI = maps:get(eps_bearer_identity, Msg, undefined),
+            case encode_esm_content(Msg) of
+                {unsupported, Reason} ->
+                    {unsupported, Reason};
+                Bin ->
+                    PD = erlumts_l3_codec:compose_protocol_discriminator(ProtocolDiscriminator),
+                    <<EBI:4, PD:4, Bin/binary>>
+            end;
+        _ ->
+            {unsupported, {protocol_discriminator, ProtocolDiscriminator}}
+
+    end;
 encode(Msg) ->
     {unsupported, Msg}.
 
@@ -64,6 +87,26 @@ decode_emm_content(_SHT, <<MAC:4/binary, SN:1/binary, NMSG/binary>>) ->
 decode_emm_content(_, _) ->
     {unsupported, binary}.
 
+encode_emm_content(plain_nas_message, #{message_type := MsgType} = Msg) ->
+    case encode_emm_msg(MsgType, Msg) of
+        unsupported ->
+            {unsupported, {plain_nas_message, emm_msg, MsgType}};
+        Bin ->
+            MT = compose_msg_type(MsgType),
+            <<MT:8/big, Bin/binary>>
+    end;
+encode_emm_content(service_request, Msg) ->
+    encode_emm_msg(service_request, Msg);
+encode_emm_content(Unknown_SHT, #{message_authentication_code := MAC, sequence_number := SN} = Msg) ->
+    case encode(Msg) of
+        unsupported ->
+            {unsupported, {unknown_msg_type, Unknown_SHT}};
+        Bin ->
+            <<MAC:4/binary, SN:1/binary, Bin/binary>>
+    end;
+encode_emm_content(_, _) ->
+    {unsupported, msg}.
+
 decode_esm_content(<<PTI:1/binary, MT:8/big, OIE/binary>>) ->
     MsgType = parse_msg_type(MT),
     case decode_esm_msg(MsgType, OIE) of
@@ -76,6 +119,18 @@ decode_esm_content(<<PTI:1/binary, MT:8/big, OIE/binary>>) ->
 decode_esm_content(_) ->
     {unsupported, binary}.
 
+encode_esm_content(#{message_type := MsgType} = Msg) ->
+    case encode_esm_msg(MsgType, Msg) of
+        unsupported ->
+            {unsupported, {esm_msg, MsgType}};
+        Bin ->
+            MT = compose_msg_type(MsgType),
+            PTI = maps:get(procedure_transaction_identity, Msg),
+            <<PTI:1/binary, MT:8/big, Bin/binary>>
+    end;
+encode_esm_content(_) ->
+    {unsupported, msg}.
+
 %% 9.3.1 Security header type
 parse_security_header_type(?NAS_SHT_PLAIN_NAS_MESSAGE) -> plain_nas_message;
 parse_security_header_type(?NAS_SHT_INTEGRITY_PROTECTED) -> integrity_protected;
@@ -87,6 +142,15 @@ parse_security_header_type(?NAS_SHT_SERVICE_REQUEST) -> service_request;
 parse_security_header_type(_) ->
     %% not used and should be interpreted as 1100
     service_request.
+
+compose_security_header_type(plain_nas_message) -> ?NAS_SHT_PLAIN_NAS_MESSAGE;
+compose_security_header_type(integrity_protected) -> ?NAS_SHT_INTEGRITY_PROTECTED;
+compose_security_header_type(integrity_protected_ciphered) -> ?NAS_SHT_INTEGRITY_PROTECTED_CIPHERED;
+compose_security_header_type(integrity_protected_eps_security) -> ?NAS_SHT_INTEGRITY_PROTECTED_EPS_SECURITY;
+compose_security_header_type(integrity_protected_ciphered_eps_security) -> ?NAS_SHT_INTEGRITY_PROTECTED_CIPHERED_EPS_SECURITY;
+compose_security_header_type(integrity_protected_partially_ciphered_nas_message) -> ?NAS_SHT_INTEGRITY_PROTECTED_PARTIALLY_CIPHERED_NAS_MESSAGE;
+compose_security_header_type(service_request) -> ?NAS_SHT_SERVICE_REQUEST;
+compose_security_header_type(_) -> ?NAS_SHT_SERVICE_REQUEST.
 
 %% 9.8 Message type
 parse_msg_type(?NAS_MSGT_ATTACH_REQUEST) -> attach_request;
@@ -603,6 +667,10 @@ decode_emm_msg(service_accept, Bin0) ->
 decode_emm_msg(_, _) ->
     unsupported.
 
+encode_emm_msg(_, _) ->
+    {unsupported, not_implemented}.
+
+
 decode_esm_msg(activate_dedicated_eps_bearer_context_accept, Bin0) ->
     Opts = [{protocol_configuration_options, 16#27, tlv, {3, 253}},
             {nbifom_container, 16#33, tlv, {3, 257}},
@@ -854,3 +922,6 @@ decode_esm_msg(esm_data_transport, Bin0) ->
               };
 decode_esm_msg(_, _) ->
     unsupported.
+
+encode_esm_msg(_, _) ->
+    {unsupported, not_implemented}.

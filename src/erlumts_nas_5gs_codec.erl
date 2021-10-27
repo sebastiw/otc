@@ -38,10 +38,10 @@ decode(<<EPD:8, Bin/binary>>) ->
     end.
 
 -spec encode(map()) -> binary().
-encode(Nas) ->
+encode(_Nas) ->
     <<>>.
 
-decode_5gmm_content(plain_nas_message, <<MT:1/binary, OIE/binary>>) ->
+decode_5gmm_content(plain_5gs_nas_message, <<MT:8/big, OIE/binary>>) ->
     MsgType = parse_msg_type(MT),
     case decode_5gmm_msg(MsgType, OIE) of
         unsupported ->
@@ -49,12 +49,12 @@ decode_5gmm_content(plain_nas_message, <<MT:1/binary, OIE/binary>>) ->
         Msg ->
             Msg#{message_type => MsgType}
     end;
-decode_5gmm_content(_, <<MAC:3/binary, SN:1/binary, NMSG/binary>>) ->
+decode_5gmm_content(_, <<_MAC:3/binary, _SN:1/binary, _NMSG/binary>>) ->
     unsupported;
 decode_5gmm_content(_, _) ->
     unsupported.
 
-decode_5gsm_content(<<PTI:1/binary, MT:1/binary, OIE/binary>>) ->
+decode_5gsm_content(<<PTI:1/binary, MT:8/big, OIE/binary>>) ->
     MsgType = parse_msg_type(MT),
     case decode_5gsm_msg(MsgType, OIE) of
         unsupported ->
