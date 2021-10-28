@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-plain_attach_request_test() ->
+plain_attach_request_test_() ->
     Bin = hexstream_to_binary(<<"0741710809101000001000100620200000000000040201d011">>),
     Expected = #{security_header_type => plain_nas_message,
                  protocol_discriminator => eps_mobility_management_messages,
@@ -20,9 +20,12 @@ plain_attach_request_test() ->
                        request_type => 1},
                  ue_network_capability => <<32,32,0,0,0,0>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded),
+     ?_assertEqual(Bin, Encoded)
+    ].
 
-integrity_attach_request_test() ->
+integrity_attach_request_test_() ->
     Bin = hexstream_to_binary(<<"17be27ab2e3a0741610bf644f05180000ac0000c0305f"
                                 "070c0401100270233d011d12720808021100100001081"
                                 "0600000000830600000000000d00000a00000500001000"
@@ -59,9 +62,12 @@ integrity_attach_request_test() ->
                  ue_network_capability => <<240,112,192,64,17>>,
                  voice_domain_preference_and_ues_usage_setting => <<3>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-plain_authentication_request_test() ->
+plain_authentication_request_test_() ->
     Bin = hexstream_to_binary(<<"075206a73180283e95708d1c6141a545b68a"
                                 "45100aa0a855812680002863ebdc835cec7c">>),
     Expected = #{security_header_type => plain_nas_message,
@@ -73,9 +79,12 @@ plain_authentication_request_test() ->
                  authentication_parameter_autn_eps_challenge =>
                      hexstream_to_binary(<<"0aa0a855812680002863ebdc835cec7c">>)},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded),
+     ?_assertEqual(Bin, Encoded)
+    ].
 
-plain_authentication_response_test() ->
+plain_authentication_response_test_() ->
     Bin = hexstream_to_binary(<<"17f908e12d3c075308373f4dcdb2e7769b">>),
     Expected = #{authentication_response_parameter =>
                      <<55,63,77,205,178,231,118,155>>,
@@ -85,9 +94,12 @@ plain_authentication_response_test() ->
                  security_header_type => integrity_protected,
                  sequence_number => <<"<">>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-security_mode_command_test() ->
+security_mode_command_test_() ->
     Bin = hexstream_to_binary(<<"37685cc2d900075d010605f070c04070">>),
     Expected = #{message_authentication_code => <<"h\\ÂÙ">>,
                  message_type => security_mode_command,
@@ -98,9 +110,12 @@ security_mode_command_test() ->
                  selected_nas_security_algorithms => <<1>>,
                  sequence_number => <<0>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-security_mode_complete_test() ->
+security_mode_complete_test_() ->
     Bin = hexstream_to_binary(<<"47cd4d049b00075e">>),
     Expected = #{message_authentication_code => <<205,77,4,155>>,
                    message_type => security_mode_complete,
@@ -109,9 +124,12 @@ security_mode_complete_test() ->
                      integrity_protected_ciphered_eps_security,
                    sequence_number => <<0>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-esm_information_request_test() ->
+esm_information_request_test_() ->
     Bin = hexstream_to_binary(<<"2745d8f29b010233d9">>),
     Expected = #{eps_bearer_identity => 0,
                  message_authentication_code => <<69,216,242,155>>,
@@ -121,9 +139,12 @@ esm_information_request_test() ->
                  security_header_type => integrity_protected_ciphered,
                  sequence_number => <<1>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-esm_information_response_test() ->
+esm_information_response_test_() ->
     Bin = hexstream_to_binary(<<"270bef195a010233da280908696e7465726e6574">>),
     Expected = #{access_point_name => <<"\binternet">>,
                  eps_bearer_identity => 0,
@@ -134,9 +155,12 @@ esm_information_response_test() ->
                  security_header_type => integrity_protected_ciphered,
                  sequence_number => <<1>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-attach_accept_test() ->
+attach_accept_test_() ->
     Bin = hexstream_to_binary(<<"27118d83930207420149062044f051000100725233c10"
                                 "1091c08696e7465726e6574066d6e63303135066d6363"
                                 "343430046770727305010a0802615d0100301023911f9"
@@ -179,9 +203,12 @@ attach_accept_test() ->
                  t3412_value => <<"I">>,t3423_value => <<"I">>,
                  tai_list => <<32,68,240,81,0,1>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-activate_default_eps_bearer_context_accept_test() ->
+activate_default_eps_bearer_context_accept_test_() ->
     Bin = hexstream_to_binary(<<"2714573c4602074300035200c2">>),
     Expected = #{esm_message_container =>
                      #{eps_bearer_identity => 5,
@@ -196,9 +223,12 @@ activate_default_eps_bearer_context_accept_test() ->
                  security_header_type => integrity_protected_ciphered,
                  sequence_number => <<2>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-pdn_connectivity_request_test() ->
+pdn_connectivity_request_test_() ->
     Bin = hexstream_to_binary(<<"27ed17dacc030234d031280403696d732729808021100"
                                 "1000010810600000000830600000000000d0000030000"
                                 "0100000c00000a00000500001000">>),
@@ -216,9 +246,12 @@ pdn_connectivity_request_test() ->
                  security_header_type => integrity_protected_ciphered,
                  sequence_number => <<3>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-pdn_connectivity_reject_test() ->
+pdn_connectivity_reject_test_() ->
     Bin = hexstream_to_binary(<<"27b31470a6030234d11a3701b6">>),
     Expected = #{back_off_timer_value => <<"¶">>,
                  eps_bearer_identity => 0,
@@ -230,9 +263,12 @@ pdn_connectivity_reject_test() ->
                  security_header_type => integrity_protected_ciphered,
                  sequence_number => <<3>>},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    %% Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded)
+     %% ?_assertEqual(Bin, Encoded)
+    ].
 
-service_request_test() ->
+service_request_test_() ->
     Bin = hexstream_to_binary(<<"c7c4c952">>),
     Expected = #{ksi_and_sequence_number => <<"Ä">>,
                  message_authentication_code_short => <<"ÉR">>,
@@ -240,20 +276,15 @@ service_request_test() ->
                  protocol_discriminator => eps_mobility_management_messages,
                  security_header_type => service_request},
     Decoded = erlumts_nas_eps_codec:decode(Bin),
-    ?assertEqual(Expected, Decoded).
+    Encoded = erlumts_nas_eps_codec:encode(Expected),
+    [?_assertEqual(Expected, Decoded),
+     ?_assertEqual(Bin, Encoded)
+    ].
 
 invalid_message_test() ->
     Bin = hexstream_to_binary(<<"deadbeef">>),
     Decoded = erlumts_nas_eps_codec:decode(Bin),
     ?assertMatch({unsupported, {protocol_discriminator, _}}, Decoded).
-
-encode([]) ->
-    ok;
-encode([{Name, Expected, Parsed} | Rest]) ->
-    Encoded = erlumts_nas_eps_codec:encode(Parsed),
-    ?debugFmt("testing ~s ~s", [encode, Name]),
-    ?assertMatch(Expected, Encoded),
-    encode(Rest).
 
 hexstream_to_binary(In) ->
     list_to_binary([binary_to_integer(<<A, B>>, 16) || <<A, B>> <= In]).
