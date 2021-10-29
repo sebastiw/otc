@@ -91,7 +91,7 @@ decode_lv(<<L:8/big, Bin/bitstring>>) ->
 -spec encode_lv(binary(), binary()) -> binary().
 encode_lv(Value, Acc) ->
     L = byte_size(Value),
-    encode_lv(Value, L, Acc).
+    encode_lv(Value, L+1, Acc).
 
 -spec encode_lv(binary(), iei_length(), binary()) -> binary().
 encode_lv(Value, L0, Acc) ->
@@ -105,7 +105,8 @@ decode_lve(<<L:16/big, Bin/bitstring>>) ->
 
 -spec encode_lve(binary(), binary()) -> binary().
 encode_lve(Value, Acc) ->
-    encode_lve(Value, byte_size(Value), Acc).
+    L = byte_size(Value),
+    encode_lve(Value, L+2, Acc).
 
 -spec encode_lve(binary(), iei_length(), binary()) -> binary().
 encode_lve(Value, L0, Acc) ->

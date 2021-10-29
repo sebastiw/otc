@@ -81,8 +81,10 @@ decode_emm_content(_SHT, <<MAC:4/binary, SN:1/binary, NMSG/binary>>) ->
         {unsupported, Reason} ->
             {unsupported, Reason};
         Msg ->
-            Msg#{message_authentication_code => MAC,
-                 sequence_number => SN}
+            #{message_authentication_code => MAC,
+              sequence_number => SN,
+              nas_message => Msg
+             }
     end;
 decode_emm_content(_, _) ->
     {unsupported, binary}.
@@ -97,7 +99,7 @@ encode_emm_content(plain_nas_message, #{message_type := MsgType} = Msg) ->
     end;
 encode_emm_content(service_request, Msg) ->
     encode_emm_msg(service_request, Msg);
-encode_emm_content(Unknown_SHT, #{message_authentication_code := MAC, sequence_number := SN} = Msg) ->
+encode_emm_content(Unknown_SHT, #{message_authentication_code := MAC, sequence_number := SN, nas_message := Msg}) ->
     case encode(Msg) of
         unsupported ->
             {unsupported, {unknown_msg_type, Unknown_SHT}};
@@ -671,8 +673,8 @@ encode_emm_msg(attach_accept, #{eps_attach_result := EpsAttachResult,
                                 t3412_value := T3412Value,
                                 tai_list := TaiList,
                                 esm_message_container := EsmMessageContainer} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(EpsAttachResult, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(EpsAttachResult, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_v(T3412Value, 1, <<>>),
     Bin4 = erlumts_l3_codec:encode_lv(TaiList, <<>>),
     Bin5 = erlumts_l3_codec:encode_lve(encode(EsmMessageContainer), <<>>),
@@ -721,8 +723,8 @@ encode_emm_msg(attach_request, #{eps_attach_type := EpsAttachType,
                                  eps_mobile_identity := EpsMobileIdentity,
                                  ue_network_capability := UeNetworkCapability,
                                  esm_message_container := EsmMessageContainer} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(EpsAttachType, half, <<>>),
-    Bin2 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin1 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin2 = erlumts_l3_codec:encode_v(EpsAttachType, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_lv(EpsMobileIdentity, <<>>),
     Bin4 = erlumts_l3_codec:encode_lv(UeNetworkCapability, <<>>),
     Bin5 = erlumts_l3_codec:encode_lve(encode(EsmMessageContainer), <<>>),
@@ -766,8 +768,8 @@ encode_emm_msg(authentication_reject, #{} = Msg) ->
 encode_emm_msg(authentication_request, #{nas_key_set_identifierasme := NasKeySetIdentifierasme,
                                          authentication_parameter_rand_eps_challenge := AuthenticationParameterRandEpsChallenge,
                                          authentication_parameter_autn_eps_challenge := AuthenticationParameterAutnEpsChallenge} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(NasKeySetIdentifierasme, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(NasKeySetIdentifierasme, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_v(AuthenticationParameterRandEpsChallenge, 16, <<>>),
     Bin4 = erlumts_l3_codec:encode_lv(AuthenticationParameterAutnEpsChallenge, <<>>),
     Opts = [],
@@ -797,15 +799,15 @@ encode_emm_msg(detach_accept_ue_terminated_detach, #{} = Msg) ->
 encode_emm_msg(detach_request_ue_originating_detach, #{detach_type := DetachType,
                                                        nas_key_set_identifier := NasKeySetIdentifier,
                                                        eps_mobile_identity := EpsMobileIdentity} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(DetachType, half, <<>>),
-    Bin2 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin1 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin2 = erlumts_l3_codec:encode_v(DetachType, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_lv(EpsMobileIdentity, <<>>),
     Opts = [],
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, Bin2/bitstring, Bin3/bitstring, OptBin/binary>>;
 encode_emm_msg(detach_request_ue_terminated_detach, #{detach_type := DetachType} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(DetachType, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(DetachType, half, <<>>),
     Opts = [{emm_cause, 16#53, tv, 2}],
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, Bin2/bitstring, OptBin/binary>>;
@@ -830,8 +832,8 @@ encode_emm_msg(emm_status, #{emm_cause := EmmCause} = Msg) ->
 encode_emm_msg(extended_service_request, #{service_type := ServiceType,
                                            nas_key_set_identifier := NasKeySetIdentifier,
                                            m_tmsi := MTmsi} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(ServiceType, half, <<>>),
-    Bin2 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin1 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin2 = erlumts_l3_codec:encode_v(ServiceType, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_lv(MTmsi, <<>>),
     Opts = [{eps_bearer_context_status, 16#57, tlv, 4},
             {device_properties, 16#D, tv, 1}],
@@ -850,8 +852,8 @@ encode_emm_msg(guti_reallocation_complete, #{} = Msg) ->
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     OptBin;
 encode_emm_msg(identity_request, #{identity_type := IdentityType} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(IdentityType, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(IdentityType, half, <<>>),
     Opts = [],
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, Bin2/bitstring, OptBin/binary>>;
@@ -866,8 +868,8 @@ encode_emm_msg(security_mode_command, #{selected_nas_security_algorithms := Sele
                                         nas_key_set_identifier := NasKeySetIdentifier,
                                         replayed_ue_security_capabilities := ReplayedUeSecurityCapabilities} = Msg) ->
     Bin1 = erlumts_l3_codec:encode_v(SelectedNasSecurityAlgorithms, 1, <<>>),
-    Bin2 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
-    Bin3 = <<0:4>>,  % spare_half_octet
+    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin3 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
     Bin4 = erlumts_l3_codec:encode_lv(ReplayedUeSecurityCapabilities, <<>>),
     Opts = [{imeisv_request, 16#C, tv, 1},
             {replayed_nonceue, 16#55, tv, 5},
@@ -911,8 +913,8 @@ encode_emm_msg(service_request, #{ksi_and_sequence_number := KsiAndSequenceNumbe
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, Bin2/bitstring, OptBin/binary>>;
 encode_emm_msg(tracking_area_update_accept, #{eps_update_result := EpsUpdateResult} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(EpsUpdateResult, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(EpsUpdateResult, half, <<>>),
     Opts = [{t3412_value, 16#5A, tv, 2},
             {guti, 16#50, tlv, 13},
             {tai_list, 16#54, tlv, {8, 98}},
@@ -957,8 +959,8 @@ encode_emm_msg(tracking_area_update_reject, #{emm_cause := EmmCause} = Msg) ->
 encode_emm_msg(tracking_area_update_request, #{eps_update_type := EpsUpdateType,
                                                nas_key_set_identifier := NasKeySetIdentifier,
                                                old_guti := OldGuti} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(EpsUpdateType, half, <<>>),
-    Bin2 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin1 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin2 = erlumts_l3_codec:encode_v(EpsUpdateType, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_lv(OldGuti, <<>>),
     Opts = [{non_current_native_nas_key_set_identifier, 16#B, tv, 1},
             {gprs_ciphering_key_sequence_number, 16#8, tv, 1},
@@ -1015,8 +1017,8 @@ encode_emm_msg(uplink_generic_nas_transport, #{generic_message_container_type :=
     <<Bin1/bitstring, Bin2/bitstring, OptBin/binary>>;
 encode_emm_msg(control_plane_service_request, #{control_plane_service_type := ControlPlaneServiceType,
                                                 nas_key_set_identifier := NasKeySetIdentifier} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(ControlPlaneServiceType, half, <<>>),
-    Bin2 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin1 = erlumts_l3_codec:encode_v(NasKeySetIdentifier, half, <<>>),
+    Bin2 = erlumts_l3_codec:encode_v(ControlPlaneServiceType, half, <<>>),
     Opts = [{esm_message_container, 16#78, tlve, {3, n}},
             {nas_message_container, 16#67, tlv, {4, 253}},
             {eps_bearer_context_status, 16#57, tlv, 4},
@@ -1298,8 +1300,8 @@ encode_esm_msg(activate_dedicated_eps_bearer_context_reject, #{esm_cause := EsmC
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, OptBin/binary>>;
 encode_esm_msg(activate_dedicated_eps_bearer_context_request, #{linked_eps_bearer_identity := LinkedEpsBearerIdentity, eps_qos := EpsQos, tft := Tft} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(LinkedEpsBearerIdentity, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(LinkedEpsBearerIdentity, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_lv(EpsQos, <<>>),
     Bin4 = erlumts_l3_codec:encode_lv(Tft, <<>>),
     Opts = [{transaction_identifier, 16#5D, tlv, {3, 4}},
@@ -1357,8 +1359,8 @@ encode_esm_msg(bearer_resource_allocation_reject, #{esm_cause := EsmCause} = Msg
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, OptBin/binary>>;
 encode_esm_msg(bearer_resource_allocation_request, #{linked_eps_bearer_identity := LinkedEpsBearerIdentity, traffic_flow_aggregate := TrafficFlowAggregate, required_traffic_flow_qos := RequiredTrafficFlowQos} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(LinkedEpsBearerIdentity, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(LinkedEpsBearerIdentity, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_lv(TrafficFlowAggregate, <<>>),
     Bin4 = erlumts_l3_codec:encode_lv(RequiredTrafficFlowQos, <<>>),
     Opts = [{protocol_configuration_options, 16#27, tlv, {3, 253}},
@@ -1378,8 +1380,8 @@ encode_esm_msg(bearer_resource_modification_reject, #{esm_cause := EsmCause} = M
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, OptBin/binary>>;
 encode_esm_msg(bearer_resource_modification_request, #{eps_bearer_identity_for_packet_filter := EpsBearerIdentityForPacketFilter, traffic_flow_aggregate := TrafficFlowAggregate} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(EpsBearerIdentityForPacketFilter, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(EpsBearerIdentityForPacketFilter, half, <<>>),
     Bin3 = erlumts_l3_codec:encode_lv(TrafficFlowAggregate, <<>>),
     Opts = [{required_traffic_flow_qos, 16#5B, tlv, {3, 15}},
             {esm_cause, 16#58, tv, 2},
@@ -1469,8 +1471,8 @@ encode_esm_msg(pdn_connectivity_reject, #{esm_cause := EsmCause} = Msg) ->
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, OptBin/binary>>;
 encode_esm_msg(pdn_connectivity_request, #{request_type := RequestType, pdn_type := PdnType} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(RequestType, half, <<>>),
-    Bin2 = erlumts_l3_codec:encode_v(PdnType, half, <<>>),
+    Bin1 = erlumts_l3_codec:encode_v(PdnType, half, <<>>),
+    Bin2 = erlumts_l3_codec:encode_v(RequestType, half, <<>>),
     Opts = [{esm_information_transfer_flag, 16#D, tv, 1},
             {access_point_name, 16#28, tlv, {3, 102}},
             {protocol_configuration_options, 16#27, tlv, {3, 253}},
@@ -1487,8 +1489,8 @@ encode_esm_msg(pdn_disconnect_reject, #{esm_cause := EsmCause} = Msg) ->
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/bitstring, OptBin/binary>>;
 encode_esm_msg(pdn_disconnect_request, #{linked_eps_bearer_identity := LinkedEpsBearerIdentity} = Msg) ->
-    Bin1 = erlumts_l3_codec:encode_v(LinkedEpsBearerIdentity, half, <<>>),
-    Bin2 = <<0:4>>,  % spare_half_octet
+    Bin1 = <<0:4>>,  % spare_half_octet
+    Bin2 = erlumts_l3_codec:encode_v(LinkedEpsBearerIdentity, half, <<>>),
     Opts = [{protocol_configuration_options, 16#27, tlv, {3, 253}},
             {extended_protocol_configuration_options, 16#7B, tlve, {4, 65538}}],
     OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),
