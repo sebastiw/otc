@@ -19,7 +19,8 @@
 
 -type iei_type() :: t | v | tv | lv | tlv | lve | tlve.
 -type iei_fixed_length() :: half | pos_integer().
--type iei_length() :: iei_fixed_length() | {Min :: pos_integer(), Max :: pos_integer() | n}.
+-type iei_variable_length() :: {Min :: pos_integer(), Max :: pos_integer() | n}.
+-type iei_length() :: iei_fixed_length() | iei_variable_length().
 -type iei_tuple() :: {Name :: atom(), IEI :: integer(), Type :: iei_type(), Length :: iei_length()}.
 -type iei_list() :: list(iei_tuple()).
 
@@ -77,10 +78,13 @@ decode_v(Bin, L) when is_integer(L) ->
 decode_v(Bin, {_, n}) ->
     {Bin, <<>>}.
 
--spec encode_v(integer() | binary(), iei_fixed_length(), binary()) -> binary().
+-spec encode_v(integer() | binary(), iei_length(), binary()) -> binary().
 encode_v(V, half, Acc) ->
     <<V:4/big, Acc/bitstring>>;
 encode_v(V, L, Acc) when is_integer(L) ->
+    <<V:L/binary, Acc/binary>>;
+encode_v(V, {MinLen, n}, Acc) when is_integer(MinLen) ->
+    L = get_length(V, {MinLen, n}, 0),
     <<V:L/binary, Acc/binary>>.
 
 -spec decode_lv(binary()) -> {binary(), binary()}.

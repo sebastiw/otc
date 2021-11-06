@@ -91,7 +91,7 @@ decode_emm_content(_, _) ->
 
 encode_emm_content(plain_nas_message, #{message_type := MsgType} = Msg) ->
     case encode_emm_msg(MsgType, Msg) of
-        unsupported ->
+        {unsupported, not_implemented} ->
             {unsupported, {plain_nas_message, emm_msg, MsgType}};
         Bin ->
             MT = compose_msg_type(MsgType),
@@ -101,7 +101,7 @@ encode_emm_content(service_request, Msg) ->
     encode_emm_msg(service_request, Msg);
 encode_emm_content(Unknown_SHT, #{message_authentication_code := MAC, sequence_number := SN, nas_message := Msg}) ->
     case encode(Msg) of
-        unsupported ->
+        {unsupported, not_implemented} ->
             {unsupported, {unknown_msg_type, Unknown_SHT}};
         Bin ->
             <<MAC:4/binary, SN:1/binary, Bin/binary>>
@@ -123,7 +123,7 @@ decode_esm_content(_) ->
 
 encode_esm_content(#{message_type := MsgType} = Msg) ->
     case encode_esm_msg(MsgType, Msg) of
-        unsupported ->
+        {unsupported, not_implemented} ->
             {unsupported, {esm_msg, MsgType}};
         Bin ->
             MT = compose_msg_type(MsgType),
