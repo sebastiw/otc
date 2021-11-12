@@ -72,7 +72,7 @@ decrypt_eea3_128(_Key, _Count, _Bearer, _Direction, _Text, _Length) ->
 eea2(Key, Count, Bearer, Direction, Text, Length) ->
     %% 128-EEA2 is based on 128-bit AES in CTR mode.
     X = ((Bearer band 2#11111) bsl 3) bor ((Direction band 2#1) bsl 2),
-    IV = <<Count/binary, <<X>>/binary, 0:88>>,
+    IV = <<Count/binary, X/integer, 0:88>>,
     Out = crypto:crypto_one_time(aes_128_ctr, Key, IV, Text, true),
     Rest = bit_size(Text) - Length,
     <<O:Length, _:Rest>> = Out,
@@ -81,21 +81,21 @@ eea2(Key, Count, Bearer, Direction, Text, Length) ->
 
 %% Integrity Protection
 
-mac(Alg, Key, Count, Bearer, Direction, Text) ->
-    mac(Alg, Key, Count, Bearer, Direction, Text, bit_size(Text)).
+mac(Alg, Key, Count, Bearer, Direction, Message) ->
+    mac(Alg, Key, Count, Bearer, Direction, Message, bit_size(Message)).
 
-mac(eia1_128, Key, Count, Bearer, Direction, Text, Length) ->
-    mac_eia1_128(Key, Count, Bearer, Direction, Text, Length);
-mac(eia2_128, Key, Count, Bearer, Direction, Text, Length) ->
-    mac_eia2_128(Key, Count, Bearer, Direction, Text, Length);
-mac(eia3_128, Key, Count, Bearer, Direction, Text, Length) ->
-    mac_eia3_128(Key, Count, Bearer, Direction, Text, Length).
+mac(eia1_128, Key, Count, Bearer, Direction, Message, Length) ->
+    mac_eia1_128(Key, Count, Bearer, Direction, Message, Length);
+mac(eia2_128, Key, Count, Bearer, Direction, Message, Length) ->
+    mac_eia2_128(Key, Count, Bearer, Direction, Message, Length);
+mac(eia3_128, Key, Count, Bearer, Direction, Message, Length) ->
+    mac_eia3_128(Key, Count, Bearer, Direction, Message, Length).
 
-mac_eia1_128(_Key, _Count, _Bearer, _Direction, _Text, _Length) ->
+mac_eia1_128(_Key, _Count, _Bearer, _Direction, _Message, _Length) ->
     unimplemented.
-mac_eia2_128(Key, Count, Bearer, Direction, Text, Length) ->
-    eia2(Key, Count, Bearer, Direction, Text, Length).
-mac_eia3_128(_Key, _Count, _Bearer, _Direction, _Text, _Length) ->
+mac_eia2_128(Key, Count, Bearer, Direction, Message, Length) ->
+    eia2(Key, Count, Bearer, Direction, Message, Length).
+mac_eia3_128(_Key, _Count, _Bearer, _Direction, _Message, _Length) ->
     unimplemented.
 
 eia2(Key, Count, Bearer, Direction, Message, Length) ->
@@ -110,7 +110,7 @@ eia2(Key, Count, Bearer, Direction, Message, Length) ->
     %%  Otherwise, M_last is the exclusive-OR of padding(M_n) and K2.
     Rest = bit_size(Message) - Length,
     <<Msg:Length, _:Rest>> = Message,
-    Input = <<Count/binary, <<X>>/binary, 0:24, <<Msg:Length, 0:Rest>>/binary>>,
+    Input = <<Count/binary, X/integer, 0:24, Msg:Length, 0:Rest>>,
     crypto:macN(cmac, aes_128_cbc, Key, Input, 4).
 
 
