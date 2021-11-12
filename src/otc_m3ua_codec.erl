@@ -1,4 +1,4 @@
--module(erlumts_m3ua_codec).
+-module(otc_m3ua_codec).
 %% IETF RFC 4666 September 2006
 
 -export([decode/1,

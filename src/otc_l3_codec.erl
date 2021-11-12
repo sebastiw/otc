@@ -1,5 +1,5 @@
 %% ETSI TS 124 007 V16.5.0
--module(erlumts_l3_codec).
+-module(otc_l3_codec).
 
 -include("include/l3.hrl").
 -include_lib("eunit/include/eunit.hrl").

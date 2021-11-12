@@ -1,5 +1,5 @@
 %% 3GPP TS 33.401(EPS) & TS 33.501(5G)
--module(erlumts_nas_security_tests).
+-module(otc_nas_security_tests).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -168,7 +168,7 @@ encrypt_tests([]) ->
     ok;
 encrypt_tests([TestCase|Rest]) ->
     {Key, Count, Bearer, Direction, Length, PlainText, CipherText} = TestCase,
-    Out = erlumts_nas_security:encrypt(eea2_128, Key, Count, Bearer, Direction, PlainText, Length),
+    Out = otc_nas_security:encrypt(eea2_128, Key, Count, Bearer, Direction, PlainText, Length),
     ?assertEqual(CipherText, Out),
     encrypt_tests(Rest).
 
@@ -179,7 +179,7 @@ decrypt_tests([]) ->
     ok;
 decrypt_tests([TestCase|Rest]) ->
     {Key, Count, Bearer, Direction, Length, PlainText, CipherText} = TestCase,
-    Out = erlumts_nas_security:decrypt(eea2_128, Key, Count, Bearer, Direction, CipherText, Length),
+    Out = otc_nas_security:decrypt(eea2_128, Key, Count, Bearer, Direction, CipherText, Length),
     ?assertEqual(PlainText, Out),
     decrypt_tests(Rest).
 
@@ -215,7 +215,7 @@ mac_tests([]) ->
     ok;
 mac_tests([TestCase|Rest]) ->
     {Key, Count, Bearer, Direction, Length, Message, MAC} = TestCase,
-    Out = erlumts_nas_security:mac(eia2_128, Key, Count, Bearer, Direction, Message, Length),
+    Out = otc_nas_security:mac(eia2_128, Key, Count, Bearer, Direction, Message, Length),
     ?assertEqual(MAC, Out),
     mac_tests(Rest).
 

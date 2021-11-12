@@ -1,5 +1,5 @@
 %% 3GPP TS 33.401(EPS) & TS 33.501(5G)
--module(erlumts_nas_security).
+-module(otc_nas_security).
 
 -export([encrypt/6,
          encrypt/7,

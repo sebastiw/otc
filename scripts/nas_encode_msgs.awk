@@ -98,7 +98,7 @@ active == 0 {
     printf("encode_%s_msg(%s, #{%s} = Msg) ->\n", msg_type, header, map_fun_header)
     printf("%s", parse_man_s)
     printf("    Opts = [%s],\n", optionals)
-    printf("    OptBin = erlumts_l3_codec:encode_iei_list(Msg, Opts),\n")
+    printf("    OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),\n")
     if(fields == "") {
         printf("    OptBin;\n")
     } else {
@@ -149,7 +149,7 @@ $5 ~ /M/ {
         } else {
             bin_ctr++
             map_fun_header=map_fun_header sprintf("%s := %s, ", field, atom_to_var(field))
-            parse_man=sprintf("    Bin%s = erlumts_l3_codec:encode_%s(%s%s, <<>>),\n",
+            parse_man=sprintf("    Bin%s = otc_l3_codec:encode_%s(%s%s, <<>>),\n",
                               bin_ctr, iei_type, atom_to_var(field), maybe_len)
             parse_man_s=parse_man_s parse_man
             fields=fields sprintf("Bin%s/bitstring, ", bin_ctr)

@@ -1,4 +1,4 @@
-{application, erlumts,
+{application, otc,
  [{description, "Erlang codec for Universal Mobile Telecommunications System specifations"},
   {vsn, "1.0.0"},
   {registered, []},

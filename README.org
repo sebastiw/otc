@@ -1,7 +1,7 @@
-* ErlUMTS
+* Erlang/OTC - Open Telecom Codec
 
   This library tries to implement encoding and decoding for different
-  UMTS (Universal Mobile Telecommunications System) protocols.
+  telco protocols.
 
   It aims to support the newest release of each spec.
 

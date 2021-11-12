@@ -96,7 +96,7 @@ active == 0 {
     fields=trim(fields)
     fields=substr(fields, 1, length(fields)-1)
     printf("    Opts = [%s],\n", optionals)
-    printf("    {Optionals, _Unknown} = erlumts_l3_codec:decode_iei_list(Bin%d, Opts),\n", bin_ctr)
+    printf("    {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin%d, Opts),\n", bin_ctr)
     if(fields == "") {
         printf("    Optionals;\n")
     } else {
@@ -138,13 +138,13 @@ $5 ~ /M/ {
             # first one comes from security header type
             if(bin_ctr > 0) {
                 bin_ctr++
-                parse_man=sprintf("    {_, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
+                parse_man=sprintf("    {_, Bin%s} = otc_l3_codec:decode_%s(Bin%d%s),\n",
                                   bin_ctr, iei_type, bin_ctr-1, maybe_len)
                 parse_man_s=parse_man_s parse_man
             }
         } else {
             bin_ctr++
-            parse_man=sprintf("    {%s, Bin%s} = erlumts_l3_codec:decode_%s(Bin%d%s),\n",
+            parse_man=sprintf("    {%s, Bin%s} = otc_l3_codec:decode_%s(Bin%d%s),\n",
                               atom_to_var(field), bin_ctr, iei_type, bin_ctr-1, maybe_len)
             parse_man_s=parse_man_s parse_man
             fields=fields sprintf("               %s => %s,\n", field, atom_to_var(field))
