@@ -217,7 +217,7 @@ mac_tests([TestCase|Rest]) ->
     {Key, Count, Bearer, Direction, Length, Message, MAC} = TestCase,
     Out = erlumts_nas_security:mac(eia2_128, Key, Count, Bearer, Direction, Message, Length),
     ?assertEqual(MAC, Out),
-    encrypt_tests(Rest).
+    mac_tests(Rest).
 
 %% Utilities
 
