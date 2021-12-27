@@ -12,7 +12,7 @@
 -type ansi_point_code() :: {ansi, integer(), integer(), integer()}.
 
 -spec decode(binary()) -> unsupported | {unsupported, term(), term()} | map().
-decode(<<1:8, 0:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) ->
+decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) ->
     %% 0                   1                   2                   3
     %% 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     %% +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
