@@ -11,7 +11,7 @@
 -type itu_point_code() :: {itu, integer(), integer(), integer()}.
 -type ansi_point_code() :: {ansi, integer(), integer(), integer()}.
 
--spec decode(binary()) -> unsupported | map().
+-spec decode(binary()) -> unsupported | {unsupported, term(), term()} | map().
 decode(<<1:8, 0:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) ->
     %% 0                   1                   2                   3
     %% 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -29,6 +29,8 @@ decode(<<1:8, 0:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) -
     case decode_msg(MC, MT, Bin) of
         unsupported ->
             unsupported;
+        {unsupported, _, _} = Unsup ->
+            Unsup;
         Msg ->
             Msg#{message_type => MT,
                  message_class => MC}
@@ -829,10 +831,11 @@ decode_point_code({<<Mask:8/big>>, <<PCbin:24/big>>}) ->
     MaskBits = trunc(math:pow(2, Mask) - 1),
     LowPC = PCbin band (trunc(math:pow(2, 24) - 1) bxor MaskBits),
     HighPC = PCbin bor MaskBits,
-    [decode_point_code(<<PC:24/big>>) || PC <- lists:seq(LowPC, HighPC)];
-decode_point_code(<<0:10, Zone:3, Region:8, SP:3>>) ->         % ITU 14-bits
+    [decode_pc(<<PC:24/big>>) || PC <- lists:seq(LowPC, HighPC)].
+
+decode_pc(<<0:10, Zone:3, Region:8, SP:3>>) ->         % ITU 14-bits
     {itu, Zone, Region, SP};
-decode_point_code(<<Network:8, Cluster:8, Member:8>>) ->       % ANSI 24-bits
+decode_pc(<<Network:8, Cluster:8, Member:8>>) ->       % ANSI 24-bits
     {ansi, Network, Cluster, Member}.
 
 -spec encode_point_code(itu_point_code() | ansi_point_code()) -> binary().
