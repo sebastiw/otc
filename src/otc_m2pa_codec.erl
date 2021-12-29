@@ -60,13 +60,15 @@ compose_message_type(link_status) -> ?M2PA_MSG_TYPE_LINK_STATUS.
 
 
 decode_msg(user_data, Data) ->
+    %% 2.3.1 User data
     case Data of
         <<>> ->
             #{};
-        <<PRI:2, _:6, SIO:1/binary, SIF/binary>> ->
+        <<PRI:2, _:6, Payload/binary>> ->
+            %% PRI - Priority used only in national MTP defined in [JT-Q703] and
+            %% [JT-Q704].  These bits are spare for other MTP versions.
             #{priority => PRI,
-              service_information_octet => SIO,
-              payload => SIF}
+              payload => Payload}
     end;
 decode_msg(link_status, <<State:32/big>>) ->
     #{link_status => parse_link_status(State)};
@@ -82,9 +84,8 @@ decode_msg(link_status, <<State:32/big, Filler/binary>>) ->
 encode_msg(user_data, Msg) ->
     case Msg of
         #{payload := Payload} ->
-            Pri = maps:get(priority, Msg, 0),
-            SIO = maps:get(service_information_octet, Msg, <<0>>),
-            <<Pri:2, 0:6, SIO:1/binary, Payload/binary>>;
+            PRI = maps:get(priority, Msg, 0),
+            <<PRI:2, 0:6, Payload/binary>>;
         _ ->
             <<>>
     end;

@@ -1,0 +1,275 @@
+* Overview
+
+  ITU-T Q.704 (07/96)
+
+  SERIES Q: SWITCHING AND SIGNALLING
+  Specifications of Signalling System No. 7 – Message transfer part
+  SIGNALLING NETWORK FUNCTIONS AND MESSAGES
+
+  ITU-T Q.707 (10/89)
+  Specifications of Signalling System No. 7
+  TESTING AND MAINTENANCE
+
+* 15 Formats and codes of signalling network management messages
+** 15.4 Changeover message
+
+*** Changeover order signal
+
+| Field  | Bits | Value |
+|--------+------+-------|
+| H0     |    4 |  0001 |
+| H1     |    4 |  0001 |
+| FSN    |    7 |       |
+| Filler |    1 |     0 |
+
+*** Changeover acknowledgment signal
+
+| Field  | Bits | Value |
+|--------+------+-------|
+| H0     |    4 |  0001 |
+| H1     |    4 |  0010 |
+| FSN    |    7 |       |
+| Filler |    1 |     0 |
+
+** 15.5 Changeback message
+
+*** Changeback declaration signal
+
+| Field           | Bits | Value |
+|-----------------+------+-------|
+| H0              |    4 |  0010 |
+| H1              |    4 |  0101 |
+| Changeback code |    8 |       |
+
+*** Changeback acknowledgement signal
+
+| Field           | Bits | Value |
+|-----------------+------+-------|
+| H0              |    4 |  0010 |
+| H1              |    4 |  0110 |
+| Changeback code |    8 |       |
+
+** 15.6 Emergency changeover message
+
+*** Emergency changeover order signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0010 |
+| H1    |    4 |  0001 |
+
+*** Emergency changeover acknowledgement signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0010 |
+| H1    |    4 |  0010 |
+
+** 15.7 Transfer-prohibited message
+
+*** Transfer-prohibited signal
+
+| Field       | Bits | Value |
+|-------------+------+-------|
+| H0          |    4 |  0100 |
+| H1          |    4 |  0001 |
+| Destination |   14 |       |
+| Spare       |    2 |    00 |
+
+** 15.8 Transfer-allowed message
+
+*** Transfer-allowed signal
+
+| Field       | Bits | Value |
+|-------------+------+-------|
+| H0          |    4 |  0100 |
+| H1          |    4 |  0101 |
+| Destination |   14 |       |
+| Spare       |    2 |    00 |
+
+** 15.9 Transfer-restricted message (national option)
+
+*** Transfer-restricted
+
+| Field       | Bits | Value |
+|-------------+------+-------|
+| H0          |    4 |  0100 |
+| H1          |    4 |  0011 |
+| Destination |   14 |       |
+| Spare       |    2 |    00 |
+
+** 15.10 Signalling-route-set-test message
+
+*** Signalling-route-set-test signal for prohibited destination
+
+| Field       | Bits | Value |
+|-------------+------+-------|
+| H0          |    4 |  0101 |
+| H1          |    4 |  0001 |
+| Destination |   14 |       |
+| Spare       |    2 |    00 |
+
+*** Signalling-route-set-test signal for restricted destination (national option)
+
+| Field       | Bits | Value |
+|-------------+------+-------|
+| H0          |    4 |  0101 |
+| H1          |    4 |  0010 |
+| Destination |   14 |       |
+| Spare       |    2 |    00 |
+
+** 15.11 Management inhibit message
+
+*** Link inhibit signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  0001 |
+
+*** Link uninhibit signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  0010 |
+
+*** Link inhibited acknowledgement signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  0011 |
+
+*** Link uninhibited acknowledgement signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  0100 |
+
+*** Link inhibit denied signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  0101 |
+
+*** Link force uninhibit signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  0110 |
+
+*** Link local inhibit test signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  0111 |
+
+*** Link remote inhibit test signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0110 |
+| H1    |    4 |  1000 |
+
+** 15.12 Traffic restart allowed message
+
+*** Traffic restart allowed signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0111 |
+| H1    |    4 |  0001 |
+
+** 15.13 Signalling-data-link-connection-order message
+
+*** Signalling-data-link-connection-order signal
+
+| Field                   | Bits | Value |
+|-------------------------+------+-------|
+| H0                      |    4 |  1000 |
+| H1                      |    4 |  0001 |
+| Signalling data link id |   12 |       |
+| Spare                   |    4 | 0000  |
+
+** 15.14 Signalling-data-link-connection-acknowledgement message
+
+*** Connection-successful signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  1000 |
+| H1    |    4 |  0010 |
+
+*** Connection-not-successful signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  1000 |
+| H1    |    4 |  0011 |
+
+*** Connection-not-possible signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  1000 |
+| H1    |    4 |  0100 |
+
+** 15.15 Transfer-controlled message
+
+*** Transfer-controlled signal
+
+| Field       | Bits | Value |
+|-------------+------+-------|
+| H0          |    4 |  0011 |
+| H1          |    4 |  0010 |
+| Destination |   14 |       |
+| Spare       |    2 |    00 |
+
+** 15.16 Signalling-route-set-congestion-test message (national option)
+
+*** Signalling-route-set-congestion-test signal
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0011 |
+| H1    |    4 |  0001 |
+
+** 15.17 User Part unavailable message
+
+*** User part unavailable
+
+| Field                | Bits | Value |
+|----------------------+------+-------|
+| H0                   |    4 |  1010 |
+| H1                   |    4 |  0001 |
+| Destination          |   14 |       |
+| Spare                |    2 |    00 |
+| User Part ID         |    4 |       |
+| Unavailability Cause |    4 |       |
+
+* Q.707 Testing and Maintenance messages
+
+** signalling link test signal
+
+| Field        | Bits | Value |
+|--------------+------+-------|
+| H0           |    4 |  0001 |
+| H1           |    4 |  0001 |
+| Spare        |    4 |  0000 |
+| Length       |    4 |       |
+| Test Pattern |  n*8 |       |
+
+** signalling link test acknowledgement signal
+
+| Field        | Bits | Value |
+|--------------+------+-------|
+| H0           |    4 |  0001 |
+| H1           |    4 |  0010 |
+| Spare        |    4 |  0000 |
+| Length       |    4 |       |
+| Test Pattern |  n*8 |       |
