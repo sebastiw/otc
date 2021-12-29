@@ -26,9 +26,9 @@ decode(_) ->
     unsupported.
 
 encode(#{network_indicator := NetworkInd, service_indicator := ServiceInd} = Msg) ->
-    #{signalling_link_selection => SLS,
-      origin_point_code => OPC,
-      destination_point_code => DPC
+    #{signalling_link_selection := SLS,
+      origin_point_code := OPC,
+      destination_point_code := DPC
      } = Msg,
     NI = compose_network_indicator(NetworkInd),
     SI = compose_service_indicator(ServiceInd),
@@ -89,7 +89,7 @@ encode_msg(mgmt, Msg) -> %% Q.704
     encode_mgmt(Msg);
 encode_msg(maint, Msg) -> %% Q.707
     encode_maint(Msg);
-encode_msg(_, #{payload => Bin}) ->
+encode_msg(_, #{payload := Bin}) ->
     Bin.
 
 decode_mgmt(<<?MTP3_MGMT_H0_CHM, ?MTP3_MGMT_H1_CHM_COO, Bin/binary>>) ->
@@ -134,10 +134,12 @@ decode_mgmt(<<?MTP3_MGMT_H0_TFM, ?MTP3_MGMT_H1_TFM_TFA, Bin/binary>>) ->
       destination_point_code => DPC};
 decode_mgmt(<<?MTP3_MGMT_H0_RSM, ?MTP3_MGMT_H1_RSM_RST, Bin/binary>>) ->
     <<DPC:14, _:2>> = Bin,
-    #{message_type => route_set_test_prohibited};
+    #{message_type => route_set_test_prohibited,
+      destination_point_code => DPC};
 decode_mgmt(<<?MTP3_MGMT_H0_RSM, ?MTP3_MGMT_H1_RSM_RSR, Bin/binary>>) ->
     <<DPC:14, _:2>> = Bin,
-    #{message_type => route_set_test_restricted};
+    #{message_type => route_set_test_restricted,
+      destination_point_code => DPC};
 decode_mgmt(<<?MTP3_MGMT_H0_MIM, ?MTP3_MGMT_H1_MIM_LIN, Bin/binary>>) ->
     <<>> = Bin,
     #{message_type => link_inhibit};
@@ -229,10 +231,12 @@ encode_mgmt(#{message_type := transfer_allowed,
               destination_point_code := DPC}) ->
     Bin = <<DPC:14, 0:2>>,
     <<?MTP3_MGMT_H0_TFM, ?MTP3_MGMT_H1_TFM_TFA, Bin/binary>>;
-encode_mgmt(#{message_type := route_set_test_prohibited}) ->
+encode_mgmt(#{message_type := route_set_test_prohibited,
+              destination_point_code := DPC}) ->
     Bin = <<DPC:14, 0:2>>,
     <<?MTP3_MGMT_H0_RSM, ?MTP3_MGMT_H1_RSM_RST, Bin/binary>>;
-encode_mgmt(#{message_type := route_set_test_restricted}) ->
+encode_mgmt(#{message_type := route_set_test_restricted,
+              destination_point_code := DPC}) ->
     Bin = <<DPC:14, 0:2>>,
     <<?MTP3_MGMT_H0_RSM, ?MTP3_MGMT_H1_RSM_RSR, Bin/binary>>;
 encode_mgmt(#{message_type := link_inhibit}) ->
@@ -309,13 +313,13 @@ decode_maint(<<?MTP3_MAINT_H0_TEST, ?MTP3_MAINT_H1_TEST_SLTA, Bin/binary>>) ->
 decode_maint(_) ->
     unsupported.
 
-encode_maint(#{message_type => signalling_link_test,
-               test_pattern => TP}) ->
+encode_maint(#{message_type := signalling_link_test,
+               test_pattern := TP}) ->
     L = byte_size(TP),
     Bin = <<0:4, L:4, TP/binary>>,
     <<?MTP3_MAINT_H0_TEST, ?MTP3_MAINT_H1_TEST_SLTM, Bin/binary>>;
-encode_maint(#{message_type => signalling_link_test_ack,
-               test_pattern => TP}) ->
+encode_maint(#{message_type := signalling_link_test_ack,
+               test_pattern := TP}) ->
     L = byte_size(TP),
     Bin = <<0:4, L:4, TP/binary>>,
     <<?MTP3_MAINT_H0_TEST, ?MTP3_MAINT_H1_TEST_SLTA, Bin/binary>>;
