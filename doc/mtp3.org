@@ -1,10 +1,12 @@
 * Overview
 
   ITU-T Q.704 (07/96)
-
-  SERIES Q: SWITCHING AND SIGNALLING
   Specifications of Signalling System No. 7 – Message transfer part
   SIGNALLING NETWORK FUNCTIONS AND MESSAGES
+
+  ITU-T Q.2210 (07/96)
+  Broadband ISDN – Signalling network protocols
+  Message transfer part level 3 functions and messages using the services of ITU-T Recommendation Q.2140
 
   ITU-T Q.707 (10/89)
   Specifications of Signalling System No. 7
@@ -251,6 +253,24 @@
 | Spare                |    2 |    00 |
 | User Part ID         |    4 |       |
 | Unavailability Cause |    4 |       |
+
+* Q.2210 - Extendsion of Q.704
+** 9.8.1 Changeover message
+*** Extended Changeover Order Signal (XCO)
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0001 |
+| H1    |    4 |  0011 |
+| FSN   |   24 |       |
+
+*** Extended Changeover Acknowledgement Signal (XCA)
+
+| Field | Bits | Value |
+|-------+------+-------|
+| H0    |    4 |  0001 |
+| H1    |    4 |  0100 |
+| FSN   |   24 |       |
 
 * Q.707 Testing and Maintenance messages
 
