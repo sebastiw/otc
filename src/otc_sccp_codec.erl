@@ -835,8 +835,8 @@ decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                  end,
     {SSN, Bin2} = case SSNI of
                       0 -> {undefined, Bin1};
-                      1 -> <<SSN0:1/binary, Rest1/binary>> = Bin1,
-                           {SSN0, Rest1}
+                      1 -> <<SSN0:8/big, Rest1/binary>> = Bin1,
+                           {parse_ssn(SSN0), Rest1}
                   end,
     GT = case GTI of
              0 ->
@@ -903,7 +903,7 @@ encode_gt(#{national_use_indicator := NR,
                    end,
     {SSNI, SSNBin} = case SSN of
                          undefined -> {0, <<>>};
-                         _ -> {1, SSN}
+                         _ -> {1, <<(compose_ssn(SSN)):8/big>>}
                      end,
     RI = case RoutingInd of
              ssn -> 1;
@@ -939,6 +939,43 @@ encode_gt(#{national_use_indicator := NR,
                       <<OE:1, NI:7, GT1/binary>>
               end,
     <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, SSNBin/binary, PCBin/binary, Address/binary>>.
+
+parse_ssn(?SCCP_SSN_UNKNOWN) -> unknown;
+parse_ssn(?SCCP_SSN_MGMT) -> management;
+parse_ssn(?SCCP_SSN_ITU_RESERVED) -> itu_reserved;
+parse_ssn(?SCCP_SSN_ISUP) -> isdn_user_part;
+parse_ssn(?SCCP_SSN_OMAP) -> operation_maintenance_administration_part;
+parse_ssn(?SCCP_SSN_MAP) -> mobile_application_part;
+parse_ssn(?SCCP_SSN_HLR) -> home_location_register;
+parse_ssn(?SCCP_SSN_VLR) -> visitor_location_register;
+parse_ssn(?SCCP_SSN_MSC) -> mobile_switching_centre;
+parse_ssn(?SCCP_SSN_EIC) -> equipment_identifier_centre;
+parse_ssn(?SCCP_SSN_AUC) -> authentication_centre;
+parse_ssn(?SCCP_SSN_ISSS) -> isdn_supplementary_services;
+parse_ssn(?SCCP_SSN_BROADBAND) -> broadband_isdn_edge_to_edge_applications;
+parse_ssn(?SCCP_SSN_TC_TEST_RESPONDER) -> tc_test_responder;
+parse_ssn(SSN) when SSN == 2#00001100 -> {international, SSN};
+parse_ssn(SSN) when SSN >= 2#00001111, SSN =< 2#00011111 -> {international, SSN};
+parse_ssn(SSN) when SSN >= 2#00100000, SSN =< 2#11111110 -> {national, SSN};
+parse_ssn(SSN) when SSN == 2#11111111 -> expansion.
+
+compose_ssn(unknown) -> ?SCCP_SSN_UNKNOWN;
+compose_ssn(management) -> ?SCCP_SSN_MGMT;
+compose_ssn(itu_reserved) -> ?SCCP_SSN_ITU_RESERVED;
+compose_ssn(isdn_user_part) -> ?SCCP_SSN_ISUP;
+compose_ssn(operation_maintenance_administration_part) -> ?SCCP_SSN_OMAP;
+compose_ssn(mobile_application_part) -> ?SCCP_SSN_MAP;
+compose_ssn(home_location_register) -> ?SCCP_SSN_HLR;
+compose_ssn(visitor_location_register) -> ?SCCP_SSN_VLR;
+compose_ssn(mobile_switching_centre) -> ?SCCP_SSN_MSC;
+compose_ssn(equipment_identifier_centre) -> ?SCCP_SSN_EIC;
+compose_ssn(authentication_centre) -> ?SCCP_SSN_AUC;
+compose_ssn(isdn_supplementary_services) -> ?SCCP_SSN_ISSS;
+compose_ssn(broadband_isdn_edge_to_edge_applications) -> ?SCCP_SSN_BROADBAND;
+compose_ssn(tc_test_responder) -> ?SCCP_SSN_TC_TEST_RESPONDER;
+compose_ssn({international, SSN}) -> SSN;
+compose_ssn({national, SSN}) -> SSN;
+compose_ssn(expansion) -> 2#11111111.
 
 decode_bcd(<<>>) ->
     [];
