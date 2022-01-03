@@ -238,8 +238,15 @@ decode_msg(xudts, Bin) ->
                data => decode_parameter(data, D)};
 decode_msg(ludt, Bin) ->
     NumPointers = 4,
-    <<PC:1/binary, HC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, LD, OptBin] = separate_fields(Pointers, Bin1),
+    <<PC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
+    <<CdPAP:16/big, CgPAP:16/big, LDP:16/big, OptBinP:16/big>> = Pointers,
+    <<CdPAL:8/big>> = binary:at(Bin1, CdPAP),
+    CdPA = binary:part(Bin1, CdPAP+1, CdPAL-1),
+    <<CgPAL:8/big>> = binary:at(Bin1, CgPAP),
+    CgPA = binary:part(Bin1, CgPAP+1, CgPAL-1),
+    <<LDL:16/big>> = binary:part(Bin1, LDP, 2),
+    LD = binary:part(Bin1, LDP+1, LDL-1),
+    OptBin = binary:part(Bin1, byte_size(Bin1), -OptBinP),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -251,8 +258,15 @@ decode_msg(ludt, Bin) ->
                long_data => decode_parameter(long_data, LD)};
 decode_msg(ludts, Bin) ->
     NumPointers = 4,
-    <<RC:1/binary, HC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, LD, OptBin] = separate_fields(Pointers, Bin1),
+    <<RC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
+    <<CdPAP:16/big, CgPAP:16/big, LDP:16/big, OptBinP:16/big>> = Pointers,
+    <<CdPAL:8/big>> = binary:at(Bin1, CdPAP),
+    CdPA = binary:part(Bin1, CdPAP+1, CdPAL-1),
+    <<CgPAL:8/big>> = binary:at(Bin1, CgPAP),
+    CgPA = binary:part(Bin1, CgPAP+1, CgPAL-1),
+    <<LDL:16/big>> = binary:part(Bin1, LDP, 2),
+    LD = binary:part(Bin1, LDP+1, LDL-1),
+    OptBin = binary:part(Bin1, byte_size(Bin1), -OptBinP),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -272,10 +286,10 @@ separate_fields_test() ->
     %% Bin: <<CgPABin1, LDBin2, CdPABin3, OptBin4>>
     CdPA = <<4, "CdPA">>,
     CgPA = <<4, "CgPA">>,
-    LD = <<2, "LD">>,
-    Bin = <<CgPA/binary, LD/binary, CdPA/binary>>,
+    D = <<1, "D">>,
+    Bin = <<CgPA/binary, D/binary, CdPA/binary>>,
     Vs = separate_fields(<<94, 3, 14, 0>>, Bin),
-    ?assertEqual([<<"CdPA">>, <<"CgPA">>, <<"LD">>, <<>>], Vs).
+    ?assertEqual([<<"CdPA">>, <<"CgPA">>, <<"D">>, <<>>], Vs).
 
 separate_fields(PointerBin, Bin) ->
     %% Split and add appearance counter
@@ -623,9 +637,9 @@ encode_msg(ludt,
                      false ->
                          0
                  end,
-    Pointers = <<(4):8/big, (CdPALen+4):8/big, (CgPALen+CdPALen+4):8/big, OptPointer:8/big>>,
+    Pointers = <<(4):16/big, (CdPALen+4):16/big, (CgPALen+CdPALen+4):16/big, OptPointer:16/big>>,
     <<PC/binary, HC/binary, Pointers/binary,
-      CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, LDLen:8/big, LD/binary,
+      CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, LDLen:16/big, LD/binary,
       OptBin/binary>>;
 encode_msg(ludts,
            #{return_cause := ReturnCause,
@@ -651,9 +665,9 @@ encode_msg(ludts,
                      false ->
                          0
                  end,
-    Pointers = <<(4):8/big, (CdPALen+4):8/big, (CgPALen+CdPALen+4):8/big, OptPointer:8/big>>,
+    Pointers = <<(4):16/big, (CdPALen+4):16/big, (CgPALen+CdPALen+4):16/big, OptPointer:16/big>>,
     <<RC/binary, HC/binary, Pointers/binary,
-      CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, LDLen:8/big, LD/binary,
+      CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, LDLen:16/big, LD/binary,
       OptBin/binary>>.
 
 decode_parameters(Bin, Parameters) ->
