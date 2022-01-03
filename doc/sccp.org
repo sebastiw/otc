@@ -86,7 +86,7 @@
 | Called party address        |    3.4 | O            |             4-n |
 | Data                        |   3.16 | O            |           3-130 |
 | Importance                  |   3.19 | O            |               3 |
-| End of optional parameter   |    3.1 | O            |               1 |
+| End of optional parameters  |    3.1 | O            |               1 |
 
 ** 4.4 Connection refused (CREF)
 
@@ -98,7 +98,7 @@
 | Called party address        |    3.4 | O            |             4-n |
 | Data                        |   3.16 | O            |           3-130 |
 | Importance                  |   3.19 | O            |               3 |
-| End of optional parameter   |    3.1 | O            |               1 |
+| End of optional parameters  |    3.1 | O            |               1 |
 
 ** 4.5 Released (RLSD)
 
@@ -110,7 +110,7 @@
 | Release cause               |   3.11 | F            |               1 |
 | Data                        |   3.16 | O            |           3-130 |
 | Importance                  |   3.19 | O            |               3 |
-| End of optional parameter   |    3.1 | O            |               1 |
+| End of optional parameters  |    3.1 | O            |               1 |
 
 ** 4.6 Release complete (RLC)
 
