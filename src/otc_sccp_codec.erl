@@ -1,4 +1,5 @@
 -module(otc_sccp_codec).
+%% ITU-T Q.713 (03/2001)
 
 -export([decode/1,
          encode/1
@@ -240,9 +241,9 @@ decode_msg(ludt, Bin) ->
     NumPointers = 4,
     <<PC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
     <<CdPAP:16/big, CgPAP:16/big, LDP:16/big, OptBinP:16/big>> = Pointers,
-    <<CdPAL:8/big>> = binary:at(Bin1, CdPAP),
+    CdPAL = binary:at(Bin1, CdPAP),
     CdPA = binary:part(Bin1, CdPAP+1, CdPAL-1),
-    <<CgPAL:8/big>> = binary:at(Bin1, CgPAP),
+    CgPAL = binary:at(Bin1, CgPAP),
     CgPA = binary:part(Bin1, CgPAP+1, CgPAL-1),
     <<LDL:16/big>> = binary:part(Bin1, LDP, 2),
     LD = binary:part(Bin1, LDP+1, LDL-1),
@@ -260,9 +261,9 @@ decode_msg(ludts, Bin) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
     <<CdPAP:16/big, CgPAP:16/big, LDP:16/big, OptBinP:16/big>> = Pointers,
-    <<CdPAL:8/big>> = binary:at(Bin1, CdPAP),
+    CdPAL = binary:at(Bin1, CdPAP),
     CdPA = binary:part(Bin1, CdPAP+1, CdPAL-1),
-    <<CgPAL:8/big>> = binary:at(Bin1, CgPAP),
+    CgPAL = binary:at(Bin1, CgPAP),
     CgPA = binary:part(Bin1, CgPAP+1, CgPAL-1),
     <<LDL:16/big>> = binary:part(Bin1, LDP, 2),
     LD = binary:part(Bin1, LDP+1, LDL-1),
@@ -756,25 +757,50 @@ decode_parameter(called_party_address, Bin) ->
 decode_parameter(calling_party_address, Bin) ->
     decode_gt(Bin);
 decode_parameter(protocol_class, Bin) ->
-    Bin;
+    case Bin of
+        <<2#0000:4, O:4>> ->
+            Opts = parse_protocol_class_options(O),
+            Opts#{class => 0};          % Connection-less
+        <<2#0001:4, O:4>> ->
+            Opts = parse_protocol_class_options(O),
+            Opts#{class => 1};          % Connection-less
+        <<2#0010:4, S:4>> ->
+            #{class => 2, spare => S};  % Connection-oriented
+        <<2#0011:4, S:4>> ->
+            #{class => 3, spare => S}   % Connection-oriented
+    end;
 decode_parameter(segmenting_reassembling, Bin) ->
-    Bin;
+    <<_Spare:7, M:1>> = Bin,
+    case M of
+        0 -> no_more_data;
+        1 -> more_data
+    end;
 decode_parameter(receive_sequence_number, Bin) ->
-    Bin;
+    <<PR:7, _Spare:1>> = Bin,
+    PR;
 decode_parameter(sequencing_segmenting, Bin) ->
-    Bin;
+    <<PS:7, _Spare:1, PR:7, M:1>> = Bin,
+    #{send_sequence_number => PS,
+      receive_sequence_number => PR,
+      more_data => 1 =:= M
+     };
 decode_parameter(credit, Bin) ->
     Bin;
 decode_parameter(release_cause, Bin) ->
-    Bin;
+    <<RC:8>> = Bin,
+    parse_release_cause(RC);
 decode_parameter(return_cause, Bin) ->
-    Bin;
+    <<RC:8>> = Bin,
+    parse_return_cause(RC);
 decode_parameter(reset_cause, Bin) ->
-    Bin;
+    <<RC:8>> = Bin,
+    parse_reset_cause(RC);
 decode_parameter(error_cause, Bin) ->
-    Bin;
+    <<EC:8>> = Bin,
+    parse_error_cause(EC);
 decode_parameter(refusal_cause, Bin) ->
-    Bin;
+    <<RC:8>> = Bin,
+    parse_refusal_cause(RC);
 decode_parameter(data, Bin) ->
     Bin;
 decode_parameter(segmentation, Bin) ->
@@ -788,6 +814,200 @@ decode_parameter(long_data, Bin) ->
 decode_parameter(_, _) ->
     undefined.
 
+parse_protocol_class_options(2#0000) ->
+    #{options => no_options};
+parse_protocol_class_options(2#1000) ->
+    #{options => return_on_error};
+parse_protocol_class_options(_O) ->
+    #{}.
+
+compose_protocol_class_options(#{options := no_options}) ->
+    2#0000;
+compose_protocol_class_options(#{options := return_on_error}) ->
+    2#1000;
+compose_protocol_class_options(_) ->
+    0.
+
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_END_USER_ORIGINATED) -> end_user_originated;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_END_USER_CONGESTION) -> end_user_congestion;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_END_USER_FAILURE) -> end_user_failure;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_SCCP_USER_ORIGINATED) -> sccp_user_originated;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_REMOTE_PROCEDURE_ERROR) -> remote_procedure_error;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_INCONSISTENT_CONNECTION_DATA) -> inconsistent_connection_data;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_ACCESS_FAILURE) -> access_failure;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_ACCESS_CONGESTION) -> access_congestion;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_SUBSYSTEM_FAILURE) -> subsystem_failure;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_SUBSYSTEM_CONGESTION) -> subsystem_congestion;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_MTP_FAILURE) -> mtp_failure;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_NETWORK_CONGESTION) -> network_congestion;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_EXPIRATION_OF_RESET_TIMER) -> expiration_of_reset_timer;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_EXPIRATION_OF_RECEIVE_INACTIVITY_TIMER) -> expiration_of_receive_inactivity_timer;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_RESERVED) -> reserved;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_UNQUALIFIED) -> unqualified;
+parse_release_cause(?SCCP_IEI_RELEASE_CAUSE_SCCP_FAILURE) -> sccp_failure;
+parse_release_cause(V) when V >= 2#0001_0001; V =< 2#1111_0011 -> {reserved_international, V};
+parse_release_cause(V) when V >= 2#1111_0100; V =< 2#1111_1110 -> {reserved_national, V};
+parse_release_cause(V) -> {reserved, V}.
+
+compose_release_cause(end_user_originated) -> ?SCCP_IEI_RELEASE_CAUSE_END_USER_ORIGINATED;
+compose_release_cause(end_user_congestion) -> ?SCCP_IEI_RELEASE_CAUSE_END_USER_CONGESTION;
+compose_release_cause(end_user_failure) -> ?SCCP_IEI_RELEASE_CAUSE_END_USER_FAILURE;
+compose_release_cause(sccp_user_originated) -> ?SCCP_IEI_RELEASE_CAUSE_SCCP_USER_ORIGINATED;
+compose_release_cause(remote_procedure_error) -> ?SCCP_IEI_RELEASE_CAUSE_REMOTE_PROCEDURE_ERROR;
+compose_release_cause(inconsistent_connection_data) -> ?SCCP_IEI_RELEASE_CAUSE_INCONSISTENT_CONNECTION_DATA;
+compose_release_cause(access_failure) -> ?SCCP_IEI_RELEASE_CAUSE_ACCESS_FAILURE;
+compose_release_cause(access_congestion) -> ?SCCP_IEI_RELEASE_CAUSE_ACCESS_CONGESTION;
+compose_release_cause(subsystem_failure) -> ?SCCP_IEI_RELEASE_CAUSE_SUBSYSTEM_FAILURE;
+compose_release_cause(subsystem_congestion) -> ?SCCP_IEI_RELEASE_CAUSE_SUBSYSTEM_CONGESTION;
+compose_release_cause(mtp_failure) -> ?SCCP_IEI_RELEASE_CAUSE_MTP_FAILURE;
+compose_release_cause(network_congestion) -> ?SCCP_IEI_RELEASE_CAUSE_NETWORK_CONGESTION;
+compose_release_cause(expiration_of_reset_timer) -> ?SCCP_IEI_RELEASE_CAUSE_EXPIRATION_OF_RESET_TIMER;
+compose_release_cause(expiration_of_receive_inactivity_timer) -> ?SCCP_IEI_RELEASE_CAUSE_EXPIRATION_OF_RECEIVE_INACTIVITY_TIMER;
+compose_release_cause(reserved) -> ?SCCP_IEI_RELEASE_CAUSE_RESERVED;
+compose_release_cause(unqualified) -> ?SCCP_IEI_RELEASE_CAUSE_UNQUALIFIED;
+compose_release_cause(sccp_failure) -> ?SCCP_IEI_RELEASE_CAUSE_SCCP_FAILURE;
+compose_release_cause({reserved_international, V}) -> V;
+compose_release_cause({reserved_national, V}) -> V;
+compose_release_cause({reserved, V}) -> V.
+
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_NO_TRANSLATION_FOR_AN_ADDRESS_OF_SUCH_NATURE) -> no_translation_for_an_address_of_such_nature;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_NO_TRANSLATION_FOR_THIS_SPECIFIC_ADDRESS) -> no_translation_for_this_specific_address;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SUBSYSTEM_CONGESTION) -> subsystem_congestion;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SUBSYSTEM_FAILURE) -> subsystem_failure;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_UNEQUIPPED_USER) -> unequipped_user;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_MTP_FAILURE) -> mtp_failure;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_NETWORK_CONGESTION) -> network_congestion;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_UNQUALIFIED) -> unqualified;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_ERROR_IN_MESSAGE_TRANSPORT) -> error_in_message_transport;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_ERROR_IN_LOCAL_PROCESSING) -> error_in_local_processing;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_DESTINATION_CANNOT_PERFORM_REASSEMBLY) -> destination_cannot_perform_reassembly;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SCCP_FAILURE) -> sccp_failure;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_HOP_COUNTER_VIOLATION) -> hop_counter_violation;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_NOT_SUPPORTED) -> segmentation_not_supported;
+parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_FAILURE) -> segmentation_failure;
+parse_return_cause(V) when V >= 2#0000_1111; V =< 2#1110_0100 -> {reserved_international, V};
+parse_return_cause(V) when V >= 2#1110_0101; V =< 2#1111_1110 -> {reserved_national, V};
+parse_return_cause(V) -> {reserved, V}.
+
+compose_return_cause(no_translation_for_an_address_of_such_nature) -> ?SCCP_IEI_RETURN_CAUSE_NO_TRANSLATION_FOR_AN_ADDRESS_OF_SUCH_NATURE;
+compose_return_cause(no_translation_for_this_specific_address) -> ?SCCP_IEI_RETURN_CAUSE_NO_TRANSLATION_FOR_THIS_SPECIFIC_ADDRESS;
+compose_return_cause(subsystem_congestion) -> ?SCCP_IEI_RETURN_CAUSE_SUBSYSTEM_CONGESTION;
+compose_return_cause(subsystem_failure) -> ?SCCP_IEI_RETURN_CAUSE_SUBSYSTEM_FAILURE;
+compose_return_cause(unequipped_user) -> ?SCCP_IEI_RETURN_CAUSE_UNEQUIPPED_USER;
+compose_return_cause(mtp_failure) -> ?SCCP_IEI_RETURN_CAUSE_MTP_FAILURE;
+compose_return_cause(network_congestion) -> ?SCCP_IEI_RETURN_CAUSE_NETWORK_CONGESTION;
+compose_return_cause(unqualified) -> ?SCCP_IEI_RETURN_CAUSE_UNQUALIFIED;
+compose_return_cause(error_in_message_transport) -> ?SCCP_IEI_RETURN_CAUSE_ERROR_IN_MESSAGE_TRANSPORT;
+compose_return_cause(error_in_local_processing) -> ?SCCP_IEI_RETURN_CAUSE_ERROR_IN_LOCAL_PROCESSING;
+compose_return_cause(destination_cannot_perform_reassembly) -> ?SCCP_IEI_RETURN_CAUSE_DESTINATION_CANNOT_PERFORM_REASSEMBLY;
+compose_return_cause(sccp_failure) -> ?SCCP_IEI_RETURN_CAUSE_SCCP_FAILURE;
+compose_return_cause(hop_counter_violation) -> ?SCCP_IEI_RETURN_CAUSE_HOP_COUNTER_VIOLATION;
+compose_return_cause(segmentation_not_supported) -> ?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_NOT_SUPPORTED;
+compose_return_cause(segmentation_failure) -> ?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_FAILURE;
+compose_return_cause({reserved_international, V}) -> V;
+compose_return_cause({reserved_national, V}) -> V;
+compose_return_cause({reserved, V}) -> V.
+
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_END_USER_ORIGINATED) -> end_user_originated;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_SCCP_USER_ORIGINATED) -> sccp_user_originated;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_MESSAGE_OUT_OF_ORDER_INCORRECT_PS) -> message_out_of_order_incorrect_ps;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_MESSAGE_OUT_OF_ORDER_INCORRECT_PR) -> message_out_of_order_incorrect_pr;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_REMOTE_PROCEDURE_ERROR_MESSAGE_OUT_OF_WINDOW) -> remote_procedure_error_message_out_of_window;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_REMOTE_PROCEDURE_ERROR_INCORRECT_PS_AFTER_REINITIALIZATION) -> remote_procedure_error_incorrect_ps_after_reinitialization;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_REMOTE_PROCEDURE_ERROR_GENERAL) -> remote_procedure_error_general;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_REMOTE_END_USER_OPERATIONAL) -> remote_end_user_operational;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_NETWORK_OPERATIONAL) -> network_operational;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_ACCESS_OPERATIONAL) -> access_operational;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_NETWORK_CONGESTION) -> network_congestion;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_RESERVED) -> reserved;
+parse_reset_cause(?SCCP_IEI_RESET_CAUSE_UNQUALIFIED) -> unqualified;
+parse_reset_cause(V) when V >= 2#0000_1101; V =< 2#1111_0011 -> {reserved_international, V};
+parse_reset_cause(V) when V >= 2#1111_0100; V =< 2#1111_1110 -> {reserved_national, V};
+parse_reset_cause(V) -> {reserved, V}.
+
+compose_reset_cause(end_user_originated) -> ?SCCP_IEI_RESET_CAUSE_END_USER_ORIGINATED;
+compose_reset_cause(sccp_user_originated) -> ?SCCP_IEI_RESET_CAUSE_SCCP_USER_ORIGINATED;
+compose_reset_cause(message_out_of_order_incorrect_ps) -> ?SCCP_IEI_RESET_CAUSE_MESSAGE_OUT_OF_ORDER_INCORRECT_PS;
+compose_reset_cause(message_out_of_order_incorrect_pr) -> ?SCCP_IEI_RESET_CAUSE_MESSAGE_OUT_OF_ORDER_INCORRECT_PR;
+compose_reset_cause(remote_procedure_error_message_out_of_window) -> ?SCCP_IEI_RESET_CAUSE_REMOTE_PROCEDURE_ERROR_MESSAGE_OUT_OF_WINDOW;
+compose_reset_cause(remote_procedure_error_incorrect_ps_after_reinitialization) -> ?SCCP_IEI_RESET_CAUSE_REMOTE_PROCEDURE_ERROR_INCORRECT_PS_AFTER_REINITIALIZATION;
+compose_reset_cause(remote_procedure_error_general) -> ?SCCP_IEI_RESET_CAUSE_REMOTE_PROCEDURE_ERROR_GENERAL;
+compose_reset_cause(remote_end_user_operational) -> ?SCCP_IEI_RESET_CAUSE_REMOTE_END_USER_OPERATIONAL;
+compose_reset_cause(network_operational) -> ?SCCP_IEI_RESET_CAUSE_NETWORK_OPERATIONAL;
+compose_reset_cause(access_operational) -> ?SCCP_IEI_RESET_CAUSE_ACCESS_OPERATIONAL;
+compose_reset_cause(network_congestion) -> ?SCCP_IEI_RESET_CAUSE_NETWORK_CONGESTION;
+compose_reset_cause(reserved) -> ?SCCP_IEI_RESET_CAUSE_RESERVED;
+compose_reset_cause(unqualified) -> ?SCCP_IEI_RESET_CAUSE_UNQUALIFIED;
+compose_reset_cause({reserved_international, V}) -> V;
+compose_reset_cause({reserved_national, V}) -> V;
+compose_reset_cause({reserved, V}) -> V.
+
+parse_error_cause(?SCCP_IEI_ERROR_CAUSE_LOCAL_REFERENCE_NUMBER_MISMATCH_UNASSIGNED_DESTINATION) -> local_reference_number_mismatch_unassigned_destination;
+parse_error_cause(?SCCP_IEI_ERROR_CAUSE_LOCAL_REFERENCE_NUMBER_MISMATCH_INCONSISTENT_SOURCE) -> local_reference_number_mismatch_inconsistent_source;
+parse_error_cause(?SCCP_IEI_ERROR_CAUSE_POINT_CODE_MISMATCH) -> point_code_mismatch;
+parse_error_cause(?SCCP_IEI_ERROR_CAUSE_SERVICE_CLASS_MISMATCH) -> service_class_mismatch;
+parse_error_cause(?SCCP_IEI_ERROR_CAUSE_UNQUALIFIED) -> unqualified;
+parse_error_cause(V) when V >= 2#0000_0101; V =< 2#1111_0011 -> {reserved_international, V};
+parse_error_cause(V) when V >= 2#1111_0100; V =< 2#1111_1110 -> {reserved_national, V};
+parse_error_cause(V) -> {reserved, V}.
+
+compose_error_cause(local_reference_number_mismatch_unassigned_destination) -> ?SCCP_IEI_ERROR_CAUSE_LOCAL_REFERENCE_NUMBER_MISMATCH_UNASSIGNED_DESTINATION;
+compose_error_cause(local_reference_number_mismatch_inconsistent_source) -> ?SCCP_IEI_ERROR_CAUSE_LOCAL_REFERENCE_NUMBER_MISMATCH_INCONSISTENT_SOURCE;
+compose_error_cause(point_code_mismatch) -> ?SCCP_IEI_ERROR_CAUSE_POINT_CODE_MISMATCH;
+compose_error_cause(service_class_mismatch) -> ?SCCP_IEI_ERROR_CAUSE_SERVICE_CLASS_MISMATCH;
+compose_error_cause(unqualified) -> ?SCCP_IEI_ERROR_CAUSE_UNQUALIFIED;
+compose_error_cause({reserved_international, V}) -> V;
+compose_error_cause({reserved_national, V}) -> V;
+compose_error_cause({reserved, V}) -> V.
+
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_END_USER_ORIGINATED) -> end_user_originated;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_END_USER_CONGESTION) -> end_user_congestion;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_END_USER_FAILURE) -> end_user_failure;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_SCCP_USER_ORIGINATED) -> sccp_user_originated;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_DESTINATION_ADDRESS_UNKNOWN) -> destination_address_unknown;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_DESTINATION_INACCESSIBLE) -> destination_inaccessible;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_NETWORK_RESOURCE_QOS_NOT_AVAILABLE_NON_TRANSIENT) -> network_resource_qos_not_available_non_transient;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_NETWORK_RESOURCE_QOS_NOT_AVAILABLE_TRANSIENT) -> network_resource_qos_not_available_transient;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_ACCESS_FAILURE) -> access_failure;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_ACCESS_CONGESTION) -> access_congestion;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_SUBSYSTEM_FAILURE) -> subsystem_failure;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_SUBSYSTEM_CONGESTION) -> subsystem_congestion;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_EXPIRATION_OF_THE_CONNECTION_ESTABLISHMENT_TIMER) -> expiration_of_the_connection_establishment_timer;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_INCOMPATIBLE_USER_DATA) -> incompatible_user_data;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_RESERVED) -> reserved;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_UNQUALIFIED) -> unqualified;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_HOP_COUNTER_VIOLATION) -> hop_counter_violation;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_SCCP_FAILURE) -> sccp_failure;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_NO_TRANSLATION_FOR_AN_ADDRESS_OF_SUCH_NATURE) -> no_translation_for_an_address_of_such_nature;
+parse_refusal_cause(?SCCP_IEI_REFUSAL_CAUSE_UNEQUIPPED_USER) -> unequipped_user;
+parse_refusal_cause(V) when V >= 2#0001_0100; V =< 2#1111_0011 -> {reserved_international, V};
+parse_refusal_cause(V) when V >= 2#1111_0100; V =< 2#1111_1110 -> {reserved_national, V};
+parse_refusal_cause(V) -> {reserved, V}.
+
+compose_refusal_cause(end_user_originated) -> ?SCCP_IEI_REFUSAL_CAUSE_END_USER_ORIGINATED;
+compose_refusal_cause(end_user_congestion) -> ?SCCP_IEI_REFUSAL_CAUSE_END_USER_CONGESTION;
+compose_refusal_cause(end_user_failure) -> ?SCCP_IEI_REFUSAL_CAUSE_END_USER_FAILURE;
+compose_refusal_cause(sccp_user_originated) -> ?SCCP_IEI_REFUSAL_CAUSE_SCCP_USER_ORIGINATED;
+compose_refusal_cause(destination_address_unknown) -> ?SCCP_IEI_REFUSAL_CAUSE_DESTINATION_ADDRESS_UNKNOWN;
+compose_refusal_cause(destination_inaccessible) -> ?SCCP_IEI_REFUSAL_CAUSE_DESTINATION_INACCESSIBLE;
+compose_refusal_cause(network_resource_qos_not_available_non_transient) -> ?SCCP_IEI_REFUSAL_CAUSE_NETWORK_RESOURCE_QOS_NOT_AVAILABLE_NON_TRANSIENT;
+compose_refusal_cause(network_resource_qos_not_available_transient) -> ?SCCP_IEI_REFUSAL_CAUSE_NETWORK_RESOURCE_QOS_NOT_AVAILABLE_TRANSIENT;
+compose_refusal_cause(access_failure) -> ?SCCP_IEI_REFUSAL_CAUSE_ACCESS_FAILURE;
+compose_refusal_cause(access_congestion) -> ?SCCP_IEI_REFUSAL_CAUSE_ACCESS_CONGESTION;
+compose_refusal_cause(subsystem_failure) -> ?SCCP_IEI_REFUSAL_CAUSE_SUBSYSTEM_FAILURE;
+compose_refusal_cause(subsystem_congestion) -> ?SCCP_IEI_REFUSAL_CAUSE_SUBSYSTEM_CONGESTION;
+compose_refusal_cause(expiration_of_the_connection_establishment_timer) -> ?SCCP_IEI_REFUSAL_CAUSE_EXPIRATION_OF_THE_CONNECTION_ESTABLISHMENT_TIMER;
+compose_refusal_cause(incompatible_user_data) -> ?SCCP_IEI_REFUSAL_CAUSE_INCOMPATIBLE_USER_DATA;
+compose_refusal_cause(reserved) -> ?SCCP_IEI_REFUSAL_CAUSE_RESERVED;
+compose_refusal_cause(unqualified) -> ?SCCP_IEI_REFUSAL_CAUSE_UNQUALIFIED;
+compose_refusal_cause(hop_counter_violation) -> ?SCCP_IEI_REFUSAL_CAUSE_HOP_COUNTER_VIOLATION;
+compose_refusal_cause(sccp_failure) -> ?SCCP_IEI_REFUSAL_CAUSE_SCCP_FAILURE;
+compose_refusal_cause(no_translation_for_an_address_of_such_nature) -> ?SCCP_IEI_REFUSAL_CAUSE_NO_TRANSLATION_FOR_AN_ADDRESS_OF_SUCH_NATURE;
+compose_refusal_cause(unequipped_user) -> ?SCCP_IEI_REFUSAL_CAUSE_UNEQUIPPED_USER;
+compose_refusal_cause({reserved_international, V}) -> V;
+compose_refusal_cause({reserved_national, V}) -> V;
+compose_refusal_cause({reserved, V}) -> V.
+
 encode_parameter(destination_local_reference, Bin) ->
     Bin;
 encode_parameter(source_local_reference, Bin) ->
@@ -796,8 +1016,19 @@ encode_parameter(called_party_address, Bin) ->
     encode_gt(Bin);
 encode_parameter(calling_party_address, Bin) ->
     encode_gt(Bin);
-encode_parameter(protocol_class, Bin) ->
-    Bin;
+encode_parameter(protocol_class, Val) ->
+    case Val of
+        #{class := 0} ->
+            O = compose_protocol_class_options(Val),
+            <<2#0000:4, O:4>>;
+        #{class := 1} ->
+            O = compose_protocol_class_options(Val),
+            <<2#0001:4, O:4>>;
+        #{class := 2} ->
+            <<2#0010:4, 0:4>>;
+        #{class := 3} ->
+            <<2#0011:4, 0:4>>
+    end;
 encode_parameter(segmenting_reassembling, Bin) ->
     Bin;
 encode_parameter(receive_sequence_number, Bin) ->
@@ -806,16 +1037,21 @@ encode_parameter(sequencing_segmenting, Bin) ->
     Bin;
 encode_parameter(credit, Bin) ->
     Bin;
-encode_parameter(release_cause, Bin) ->
-    Bin;
-encode_parameter(return_cause, Bin) ->
-    Bin;
-encode_parameter(reset_cause, Bin) ->
-    Bin;
-encode_parameter(error_cause, Bin) ->
-    Bin;
-encode_parameter(refusal_cause, Bin) ->
-    Bin;
+encode_parameter(release_cause, RC) ->
+    V = compose_release_cause(RC),
+    <<V:8>>;
+encode_parameter(return_cause, RC) ->
+    V = compose_return_cause(RC),
+    <<V:8>>;
+encode_parameter(reset_cause, RC) ->
+    V = compose_reset_cause(RC),
+    <<V:8>>;
+encode_parameter(error_cause, EC) ->
+    V = compose_error_cause(EC),
+    <<V:8>>;
+encode_parameter(refusal_cause, RC) ->
+    V = compose_refusal_cause(RC),
+    <<V:8>>;
 encode_parameter(data, Bin) ->
     Bin;
 encode_parameter(segmentation, Bin) ->
