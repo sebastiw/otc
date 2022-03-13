@@ -83,9 +83,15 @@ compose_network_indicator(national) -> ?MTP3_NETIND_NATIONAL;
 compose_network_indicator(national_spare) -> ?MTP3_NETIND_NATIONAL_SPARE.
 
 decode_msg(mgmt, Bin) -> %% Q.704
-    #{payload => decode_mgmt(Bin)};
+    case decode_mgmt(Bin) of
+        unsupported -> unsupported;
+        Payload -> #{payload => Payload}
+    end;
 decode_msg(maint, Bin) -> %% Q.707
-    #{payload => decode_maint(Bin)};
+    case decode_maint(Bin) of
+        unsupported -> unsupported;
+        Payload -> #{payload => Payload}
+    end;
 decode_msg(_, Bin) ->
     #{payload => Bin}.
 
