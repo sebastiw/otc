@@ -804,11 +804,17 @@ decode_parameter(refusal_cause, Bin) ->
 decode_parameter(data, Bin) ->
     Bin;
 decode_parameter(segmentation, Bin) ->
-    Bin;
+    <<F:1, C:1, _Spare:2, Rem:4, LocalRef:3/binary>> = Bin,
+    #{first_segment_indication => 0 == F,
+      class => C,
+      remaining_segments => Rem,
+      local_reference => LocalRef};
 decode_parameter(hop_counter, Bin) ->
-    Bin;
+    <<HC:8>> = Bin,
+    HC;
 decode_parameter(importance, Bin) ->
-    Bin;
+    <<_Spare:5, Importance:3>> = Bin,
+    Importance;
 decode_parameter(long_data, Bin) ->
     Bin;
 decode_parameter(_, _) ->
@@ -1054,12 +1060,17 @@ encode_parameter(refusal_cause, RC) ->
     <<V:8>>;
 encode_parameter(data, Bin) ->
     Bin;
-encode_parameter(segmentation, Bin) ->
-    Bin;
-encode_parameter(hop_counter, Bin) ->
-    Bin;
-encode_parameter(importance, Bin) ->
-    Bin;
+encode_parameter(segmentation, V) ->
+    F = maps:get(first_segment_indication, V, true),
+    C = maps:get(class, V, 0),
+    Rem = maps:get(remaining_segments, V, 0),
+    LR = rand:uniform(2#1111)-1,
+    LocalRef = maps:get(local_reference, V, LR),
+    <<F:1, C:1, 0:2, Rem:4, LocalRef:3/binary>>;
+encode_parameter(hop_counter, HC) ->
+    <<HC:8>>;
+encode_parameter(importance, Importance) ->
+    <<0:5, Importance:3>>;
 encode_parameter(long_data, Bin) ->
     Bin.
 

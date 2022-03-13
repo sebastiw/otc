@@ -21,12 +21,12 @@
 
 * Codecs
 
-| Name    | Spec                          | Encode | Decode | Production Tested | Notes                            |
-|---------+-------------------------------+--------+--------+-------------------+----------------------------------|
-| M3UA    | IETF RFC 4666 September 2006  | X      | X      |                   |                                  |
-| M2PA    | IETF RFC 4165 September 2005  | X      | X      |                   |                                  |
-| MTP3    | ITU-T Q.704 (07/96) July 1996 | X      | X      |                   |                                  |
-| SCCP    | ITU-T Q.713 (03/2001)         | X*     | X*     |                   | *not complete for all parameters |
-| L3      |                               |        |        |                   |                                  |
-| NAS EPS |                               |        |        |                   |                                  |
-| NAS 5GS |                               |        |        |                   |                                  |
+| Name    | Spec                          | Encode | Decode | Production Tested | Notes |
+|---------+-------------------------------+--------+--------+-------------------+-------|
+| M3UA    | IETF RFC 4666 September 2006  | X      | X      |                   |       |
+| M2PA    | IETF RFC 4165 September 2005  | X      | X      |                   |       |
+| MTP3    | ITU-T Q.704 (07/96) July 1996 | X      | X      |                   |       |
+| SCCP    | ITU-T Q.713 (03/2001)         | X      | X      |                   |       |
+| L3      |                               |        |        |                   |       |
+| NAS EPS |                               |        |        |                   |       |
+| NAS 5GS |                               |        |        |                   |       |
