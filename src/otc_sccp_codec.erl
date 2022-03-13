@@ -708,45 +708,47 @@ encode_parameters(Msg, [{Name, _}|Os], Acc) when is_map_key(Name, Msg) ->
 encode_parameters(Msg, [_|Os], Acc) ->
     encode_parameters(Msg, Os, Acc).
 
-parse_iei(?SCCP_IEI_DESTINATION_LOCAL_REFERENCE) -> destination_local_reference;
-parse_iei(?SCCP_IEI_SOURCE_LOCAL_REFERENCE) -> source_local_reference;
+%% Mandatory, taken care of elsewhere:
+%% parse_iei(?SCCP_IEI_DESTINATION_LOCAL_REFERENCE) -> destination_local_reference;
+%% parse_iei(?SCCP_IEI_SOURCE_LOCAL_REFERENCE) -> source_local_reference;
+%% parse_iei(?SCCP_IEI_PROTOCOL_CLASS) -> protocol_class;
+%% parse_iei(?SCCP_IEI_SEGMENTING_REASSEMBLING) -> segmenting_reassembling;
+%% parse_iei(?SCCP_IEI_RECEIVE_SEQUENCE_NUMBER) -> receive_sequence_number;
+%% parse_iei(?SCCP_IEI_SEQUENCING_SEGMENTING) -> sequencing_segmenting;
+%% parse_iei(?SCCP_IEI_RELEASE_CAUSE) -> release_cause;
+%% parse_iei(?SCCP_IEI_RETURN_CAUSE) -> return_cause;
+%% parse_iei(?SCCP_IEI_RESET_CAUSE) -> reset_cause;
+%% parse_iei(?SCCP_IEI_ERROR_CAUSE) -> error_cause;
+%% parse_iei(?SCCP_IEI_REFUSAL_CAUSE) -> refusal_cause;
+%% parse_iei(?SCCP_IEI_LONG_DATA) -> long_data;
+%% Optional:
 parse_iei(?SCCP_IEI_CALLED_PARTY_ADDRESS) -> called_party_address;
 parse_iei(?SCCP_IEI_CALLING_PARTY_ADDRESS) -> calling_party_address;
-parse_iei(?SCCP_IEI_PROTOCOL_CLASS) -> protocol_class;
-parse_iei(?SCCP_IEI_SEGMENTING_REASSEMBLING) -> segmenting_reassembling;
-parse_iei(?SCCP_IEI_RECEIVE_SEQUENCE_NUMBER) -> receive_sequence_number;
-parse_iei(?SCCP_IEI_SEQUENCING_SEGMENTING) -> sequencing_segmenting;
 parse_iei(?SCCP_IEI_CREDIT) -> credit;
-parse_iei(?SCCP_IEI_RELEASE_CAUSE) -> release_cause;
-parse_iei(?SCCP_IEI_RETURN_CAUSE) -> return_cause;
-parse_iei(?SCCP_IEI_RESET_CAUSE) -> reset_cause;
-parse_iei(?SCCP_IEI_ERROR_CAUSE) -> error_cause;
-parse_iei(?SCCP_IEI_REFUSAL_CAUSE) -> refusal_cause;
 parse_iei(?SCCP_IEI_DATA) -> data;
 parse_iei(?SCCP_IEI_SEGMENTATION) -> segmentation;
 parse_iei(?SCCP_IEI_HOP_COUNTER) -> hop_counter;
-parse_iei(?SCCP_IEI_IMPORTANCE) -> importance;
-parse_iei(?SCCP_IEI_LONG_DATA) -> long_data.
+parse_iei(?SCCP_IEI_IMPORTANCE) -> importance.
 
-compose_iei(destination_local_reference) -> ?SCCP_IEI_DESTINATION_LOCAL_REFERENCE;
-compose_iei(source_local_reference) -> ?SCCP_IEI_SOURCE_LOCAL_REFERENCE;
+%% compose_iei(destination_local_reference) -> ?SCCP_IEI_DESTINATION_LOCAL_REFERENCE;
+%% compose_iei(source_local_reference) -> ?SCCP_IEI_SOURCE_LOCAL_REFERENCE;
+%% compose_iei(protocol_class) -> ?SCCP_IEI_PROTOCOL_CLASS;
+%% compose_iei(segmenting_reassembling) -> ?SCCP_IEI_SEGMENTING_REASSEMBLING;
+%% compose_iei(receive_sequence_number) -> ?SCCP_IEI_RECEIVE_SEQUENCE_NUMBER;
+%% compose_iei(sequencing_segmenting) -> ?SCCP_IEI_SEQUENCING_SEGMENTING;
+%% compose_iei(release_cause) -> ?SCCP_IEI_RELEASE_CAUSE;
+%% compose_iei(return_cause) -> ?SCCP_IEI_RETURN_CAUSE;
+%% compose_iei(reset_cause) -> ?SCCP_IEI_RESET_CAUSE;
+%% compose_iei(error_cause) -> ?SCCP_IEI_ERROR_CAUSE;
+%% compose_iei(refusal_cause) -> ?SCCP_IEI_REFUSAL_CAUSE;
+%% compose_iei(long_data) -> ?SCCP_IEI_LONG_DATA;
 compose_iei(called_party_address) -> ?SCCP_IEI_CALLED_PARTY_ADDRESS;
 compose_iei(calling_party_address) -> ?SCCP_IEI_CALLING_PARTY_ADDRESS;
-compose_iei(protocol_class) -> ?SCCP_IEI_PROTOCOL_CLASS;
-compose_iei(segmenting_reassembling) -> ?SCCP_IEI_SEGMENTING_REASSEMBLING;
-compose_iei(receive_sequence_number) -> ?SCCP_IEI_RECEIVE_SEQUENCE_NUMBER;
-compose_iei(sequencing_segmenting) -> ?SCCP_IEI_SEQUENCING_SEGMENTING;
 compose_iei(credit) -> ?SCCP_IEI_CREDIT;
-compose_iei(release_cause) -> ?SCCP_IEI_RELEASE_CAUSE;
-compose_iei(return_cause) -> ?SCCP_IEI_RETURN_CAUSE;
-compose_iei(reset_cause) -> ?SCCP_IEI_RESET_CAUSE;
-compose_iei(error_cause) -> ?SCCP_IEI_ERROR_CAUSE;
-compose_iei(refusal_cause) -> ?SCCP_IEI_REFUSAL_CAUSE;
 compose_iei(data) -> ?SCCP_IEI_DATA;
 compose_iei(segmentation) -> ?SCCP_IEI_SEGMENTATION;
 compose_iei(hop_counter) -> ?SCCP_IEI_HOP_COUNTER;
-compose_iei(importance) -> ?SCCP_IEI_IMPORTANCE;
-compose_iei(long_data) -> ?SCCP_IEI_LONG_DATA.
+compose_iei(importance) -> ?SCCP_IEI_IMPORTANCE.
 
 decode_parameter(destination_local_reference, Bin) ->
     Bin;
