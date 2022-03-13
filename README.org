@@ -9,6 +9,11 @@
   If a field or message is not supported, the library should not crash
   but instead return some error-tuple or atom.
 
+  Decoding should preferably be strict, and follow the rules from the
+  specification.  Encoding on the other hand, should be lenient, but
+  if format is incorrect, then log a warning. The idea behind this is
+  that the user knows best what to send, but might need guidance.
+
 * Linguistics
 
   decode - function that converts from binary format to an Erlang map
