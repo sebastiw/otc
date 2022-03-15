@@ -27,11 +27,50 @@
 * Codecs
 
 | Name    | Spec                          | Encode | Decode | Production Tested | Notes                                            |
-|---------+-------------------------------+--------+--------+-------------------+--------------------------------------------------+
+|---------+-------------------------------+--------+--------+-------------------+--------------------------------------------------|
 | M3UA    | IETF RFC 4666 September 2006  | X      | X      |                   |                                                  |
 | M2PA    | IETF RFC 4165 September 2005  | X      | X      |                   |                                                  |
 | MTP3    | ITU-T Q.704 (07/96) July 1996 | X      | X      |                   |                                                  |
 | SCCP    | ITU-T Q.713 (03/2001)         | X      | X      |                   |                                                  |
-| L3      | 3GPP TS 24.007 V16.5.0        | X      | X      |                   |                                                  |
-| NAS EPS | 3GPP TS 24.301 V16.8.0        | /      | /      |                   | Messages are de-/encoded, but missing parameters |
-| NAS 5GS | 3GPP TS 24.501 V16.10.0       | /      | /      |                   | Messages are de-/encoded, but missing parameters |
+| L3      | 3GPP TS 24.007 v16.5.0        | X      | X      |                   |                                                  |
+| NAS EPS | 3GPP TS 24.301 v16.8.0        | /      | /      |                   | Messages are de-/encoded, but missing parameters |
+| NAS 5GS | 3GPP TS 24.501 v16.10.0       | /      | /      |                   | Messages are de-/encoded, but missing parameters |
+| SGSAP   | 3GPP TS 29.118 v16.0.0        |        |        |                   |                                                  |
+
+
+* Diameter dictionaries
+
+| Name     | Spec                   | Interfaces | Done |
+|----------+------------------------+------------+------|
+| Base     | IETF RFC 6733          |            |      |
+| S6       | 3GPP TS 29.272 v16.4.0 | S6a, S6d   |      |
+| S7       | 3GPP TS 29.272 v16.4.0 | S7a, S7d   |      |
+| S13      | 3GPP TS 29.272 v16.4.0 | S13, S13'  |      |
+| SLh      | 3GPP TS 29.173 v16.0.0 | SLh        |      |
+| Ro       | 3GPP TS 32.299 v16.2.0 |            |      |
+| Rf       | 3GPP TS 32.299 v16.2.0 |            |      |
+| Gxx      | 3GPP TS 29.212 v16.4.0 | Gx         |      |
+| Sd       | 3GPP TS 29.212 v16.4.0 | Gx         |      |
+| St       | 3GPP TS 29.212 v16.4.0 | Gx         |      |
+| Rx       | 3GPP TS 29.214 v16.6.0 |            |      |
+| Sy       | 3GPP TS 29.219 v16.0.0 | Sy         |      |
+| PLMN-PDN | 3GPP TS 29.061 v16.4.0 |            |      |
+| S6mn     | 3GPP TS 29.336 v16.3.0 | S6m, S6n   |      |
+| S6t      | 3GPP TS 29.336 v16.3.0 | S6t        |      |
+| Cx       | 3GPP TS 29.229 v16.2.0 | Cx         |      |
+| Dx       | 3GPP TS 29.229 v16.2.0 | Dx         |      |
+
+* ASN.1
+
+| Name   | Spec                                | Note          |
+|--------+-------------------------------------+---------------|
+| MAP v1 | GSM 09.02 v4.9.1/ETS 300.599 01-60  | correct spec? |
+| MAP v2 | GSM 09.02 v4.19.1/ETS 300.599 09-60 | correct spec? |
+| MAP v3 |                                     |               |
+| MAP v4 | 3GPP TS 29.002 v16.3.0              |               |
+|        |                                     |               |
+| CAP v1 | GSM Phase 2+ R96                    |               |
+| CAP v2 | GSM 03.78/3GPP TS 01.441 v7.8.1     |               |
+| CAP v3 | 3GPP TS 23.078 v4.11.1              |               |
+| CAP v4 | 3GPP TS 23.078 v16.0.0              |               |
+|        |                                     |               |
