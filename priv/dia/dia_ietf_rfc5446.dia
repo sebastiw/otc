@@ -1,0 +1,23 @@
+@name     dia_ietf_rfc5446
+
+@inherits dia_ietf_rfc6733
+
+@avp_types
+MIP6-Feature-Vector                          124 Unsigned64  M
+MIP6-Home-Link-Prefix                        125 OctetString M
+MIP-Home-Agent-Address                       334 Address     M
+MIP-Home-Agent-Host                          348 Grouped     M
+MIP6-Agent-Info                              486 Grouped     M
+
+
+@grouped
+MIP-Home-Agent-Host ::= <AVP Header: 348>
+              { Destination-Realm }
+              { Destination-Host }
+          *   [ AVP ]
+
+MIP6-Agent-Info ::= <AVP Header: 486>
+          *2  [ MIP-Home-Agent-Address ]
+              [ MIP-Home-Agent-Host ]
+              [ MIP6-Home-Link-Prefix ]
+          *   [ AVP ]

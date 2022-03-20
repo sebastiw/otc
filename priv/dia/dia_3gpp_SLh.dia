@@ -1,0 +1,43 @@
+@id       16777291
+@name     dia_3gpp_SLh
+
+@inherits dia_3gpp_ietf
+@inherits dia_3gpp
+
+@messages
+LCS-Routing-Info-Request ::= <Diameter Header: 8388622, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+              [ User-Name ]
+              [ MSISDN ]
+              [ GMLC-Number ]
+          *   [ Supported-Features ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+LCS-Routing-Info-Answer ::= <Diameter Header: 8388622, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ User-Name ]
+              [ MSISDN ]
+              [ LMSI ]
+              [ Serving-Node ]
+          *   [ Additional-Serving-Node ]
+              [ GMLC-Address ]
+              [ PPR-Address ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]

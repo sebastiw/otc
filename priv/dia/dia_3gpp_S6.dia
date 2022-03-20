@@ -1,0 +1,326 @@
+;; S6 (MME/SGSN-HSS)
+
+@id       16777251
+@name     dia_3gpp_S6
+@vendor   10415 3gpp
+
+@inherits dia_3gpp_ietf
+@inherits dia_3gpp_ts_29272
+
+@messages
+Update-Location-Request ::= <Diameter Header: 316, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Name }
+              { RAT-Type }
+              { ULR-Flags }
+              { Visited-PLMN-Id }
+              [ UE-SRVCC-Capability ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ Terminal-Information ]
+              [ Destination-Host ]
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ SGSN-Number ]
+              [ Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions ]
+              [ GMLC-Address ]
+          *   [ Active-APN ]
+              [ Equivalent-PLMN-List ]
+              [ MME-Number-for-MT-SMS ]
+              [ SMS-Register-Request ]
+              [ SGs-MME-Identity ]
+              [ Coupled-Node-Diameter-ID ]
+              [ Adjacent-PLMNs ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Update-Location-Answer ::= <Diameter Header: 316, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Diagnostic ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+              [ ULA-Flags ]
+              [ Subscription-Data ]
+          *   [ Reset-ID ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Authentication-Information-Request ::= <Diameter Header: 318, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Name }
+              { Visited-PLMN-Id }
+              [ Destination-Host ]
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ Requested-EUTRAN-Authentication-Info ]
+              [ Requested-UTRAN-GERAN-Authentication-Info ]
+              [ AIR-Flags ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Authentication-Information-Answer ::= <Diameter Header: 318, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Diagnostic ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+              [ Authentication-Info ]
+              [ UE-Usage-Type ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Cancel-Location-Request ::= <Diameter Header: 317, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { User-Name }
+              { Cancellation-Type }
+          *   [ Supported-Features ]
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ CLR-Flags ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Cancel-Location-Answer ::= <Diameter Header: 317, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Insert-Subscriber-Data-Request ::= <Diameter Header: 319, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { User-Name }
+              { Subscription-Data }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ IDR-Flags ]
+          *   [ Reset-ID ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Insert-Subscriber-Data-Answer ::= <Diameter Header: 319, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ IMS-Voice-Over-PS-Sessions-Supported ]
+              [ Last-UE-Activity-Time ]
+              [ RAT-Type ]
+              [ IDA-Flags ]
+              [ EPS-User-State ]
+              [ EPS-Location-Information ]
+              [ Local-Time-Zone ]
+          *   [ Monitoring-Event-Report ]
+          *   [ Monitoring-Event-Config-Status ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Delete-Subscriber-Data-Request ::= <Diameter Header: 320, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { User-Name }
+              { DSR-Flags }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ SCEF-ID ]
+          *   [ Context-Identifier ]
+              [ Trace-Reference ]
+          *   [ TS-Code ]
+          *   [ SS-Code ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Delete-Subscriber-Data-Answer ::= <Diameter Header: 320, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ DSA-Flags ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Purge-UE-Request ::= <Diameter Header: 321, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Name }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+              [ PUR-Flags ]
+          *   [ Supported-Features ]
+              [ EPS-Location-Information ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Purge-UE-Answer ::= <Diameter Header: 321, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ PUA-Flags ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Reset-Request ::= <Diameter Header: 322, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+          *   [ User-Id ]
+          *   [ Reset-ID ]
+              [ Subscription-Data ]
+              [ Subscription-Data-Deletion ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Reset-Answer ::= <Diameter Header: 322, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Notify-Request ::= <Diameter Header: 323, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Name }
+              [ Vendor-Specific-Application-Id ]
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ Terminal-Information ]
+              [ MIP6-Agent-Info ]
+              [ Visited-Network-Identifier ]
+              [ Context-Identifier ]
+              [ Service-Selection ]
+              [ Alert-Reason ]
+              [ UE-SRVCC-Capability ]
+              [ NOR-Flags ]
+              [ Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions ]
+              [ Maximum-UE-Availability-Time ]
+          *   [ Monitoring-Event-Config-Status ]
+              [ Emergency-Services ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Notify-Answer ::= <Diameter Header: 323, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]

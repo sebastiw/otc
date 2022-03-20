@@ -1,0 +1,7 @@
+;; 3GPP TS 29.061
+
+@name     dia_3gpp_ts_29061
+@vendor   10415 3gpp
+
+@avp_types
+3GPP-Charging-Characteristics                13 UTF8String  MV

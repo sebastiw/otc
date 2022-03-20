@@ -1,0 +1,7 @@
+;; 3GPP TS 29.229
+
+@name     dia_3gpp_ts_29229
+@vendor   10415 3gpp
+
+@avp_types
+Confidentiality-Key               625 OctetString   MV

@@ -1,0 +1,11 @@
+;; 3GPP TS 29.214
+
+@name     dia_3gpp_ts_29214
+@vendor   10415 3gpp
+
+@avp_types
+Max-Requested-Bandwidth-DL                   515 Unsigned32   MV
+Max-Requested-Bandwidth-UL                   516 Unsigned32   MV
+Extended-Max-Requested-BW-DL                 554 Unsigned32   V
+Extended-Max-Requested-BW-UL                 555 Unsigned32   V
+

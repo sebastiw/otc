@@ -1,0 +1,374 @@
+;; 3GPP TS 29.336 v16.3.0
+
+@name     dia_3gpp_ts_29336
+@vendor   10415 3gpp
+
+@inherits dia_3gpp_ts_29299
+Charged-Party
+
+@avp_types
+AESE-Communication-Pattern                        3113 Grouped          MV
+Communication-Pattern-Set                         3114 Grouped          MV
+Periodic-Communication-Indicator                  3115 Unsigned32       MV
+Communication-Duration-Time                       3116 Unsigned32       MV
+Periodic-Time                                     3117 Unsigned32       MV
+Scheduled-Communication-Time                      3118 Grouped          MV
+Stationary-Indication                             3119 Unsigned32       MV
+AESE-Communication-Pattern-Config-Status          3120 Grouped          MV
+AESE-Error-Report                                 3121 Grouped          MV
+Monitoring-Event-Configuration                    3122 Grouped          MV
+Monitoring-Event-Report                           3123 Grouped          MV
+SCEF-Reference-ID                                 3124 Unsigned32       MV
+SCEF-ID                                           3125 DiameterIdentity MV
+SCEF-Reference-ID-for-Deletion                    3126 Unsigned32       MV
+Monitoring-Type                                   3127 Unsigned32       MV
+Maximum-Number-of-Reports                         3128 Unsigned32       MV
+UE-Reachability-Configuration                     3129 Grouped          MV
+Monitoring-Duration                               3130 Time             MV
+Maximum-Detection-Time                            3131 Unsigned32       MV
+Reachability-Type                                 3132 Unsigned32       MV
+Maximum-Latency                                   3133 Unsigned32       MV
+Maximum-Response-Time                             3134 Unsigned32       MV
+Location-Information-Configuration                3135 Grouped          MV
+MONTE-Location-Type                               3136 Unsigned32       MV
+Accuracy                                          3137 Unsigned32       MV
+Association-Type                                  3138 Unsigned32       MV
+Roaming-Information                               3139 Unsigned32       MV
+Reachability-Information                          3140 Unsigned32       MV
+IMEI-Change                                       3141 Unsigned32       MV
+Monitoring-Event-Config-Status                    3142 Grouped          MV
+Supported-Services                                3143 Grouped          MV
+Supported-Monitoring-Events                       3144 Unsigned64       MV
+CIR-Flags                                         3145 Unsigned32       MV
+Service-Result                                    3146 Grouped          MV
+Service-Result-Code                               3147 Unsigned32       MV
+Reference-ID-Validity-Time                        3148 Time             MV
+Event-Handling                                    3149 Unsigned32       MV
+NIDD-Authorization-Request                        3150 Grouped          MV
+NIDD-Authorization-Response                       3151 Grouped          MV
+Service-Report                                    3152 Grouped          MV
+Node-Type                                         3153 Unsigned32       MV
+S6t-HSS-Cause                                     3154 Unsigned32       MV
+Enhanced-Coverage-Restriction                     3155 Grouped          V
+Enhanced-Coverage-Restriction-Data                3156 Grouped          V
+Restricted-PLMN-List                              3157 Grouped          V
+Allowed-PLMN-List                                 3158 Grouped          V
+Requested-Validity-Time                           3159 Time             V
+Granted-Validity-Time                             3160 Time             V
+NIDD-Authorization-Update                         3161 Grouped          V
+Loss-Of-Connectivity-Reason                       3162 Unsigned32       V
+Group-Reporting-Guard-Timer                       3163 Unsigned32       V
+CIA-Flags                                         3164 Unsigned32       V
+Group-Report                                      3165 Grouped          V
+Group-Report-Item                                 3166 Grouped          V
+RIR-Flags                                         3167 Unsigned32       V
+Type-Of-External-Identifier                       3168 Unsigned32       V
+APN-Validity-Time                                 3169 Grouped          V
+Suggested-Network-Configuration                   3170 Grouped          V
+Monitoring-Event-Report-Status                    3171 Grouped          V
+PLMN-ID-Requested                                 3172 Enumerated       V
+AdditionalIdentifiers                             3173 Grouped          V
+NIR-Flags                                         3174 Unsigned32       V
+Reporting-Time-Stamp                              3175 Time             V
+NIA-Flags                                         3176 Unsigned32       V
+Group-User-Identifier                             3177 Grouped          V
+MTC-Provider-Info                                 3178 Grouped          V
+MTC-Provider-ID                                   3179 UTF8String       V
+PDN-Connectivity-Status-Configuration             3180 Grouped          V
+PDN-Connectivity-Status-Report                    3181 Grouped          V
+PDN-Connectivity-Status-Type                      3182 Unsigned32       V
+Traffic-Profile                                   3183 Unsigned32       V
+Updated-Network-Configuration                     3184 Grouped          V
+Battery-Indicator                                 3185 Unsigned32       V
+SCEF-Reference-ID-Ext                             3186 Unsigned64       V
+SCEF-Reference-ID-for-Deletion-Ext                3187 Unsigned64       V
+
+@grouped
+AESE-Communication-Pattern ::= <AVP Header: 3113>
+              { SCEF-ID }
+              [ SCEF-Reference-ID ]
+              [ SCEF-Reference-ID-Ext ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+          *   [ Communication-Pattern-Set ]
+              [ MTC-Provider-Info ]
+          *   [ AVP ]
+
+Communication-Pattern-Set ::= <AVP Header: 3114>
+              [ Periodic-Communication-Indicator ]
+              [ Communication-Duration-Time ]
+              [ Periodic-Time ]
+          *   [ Scheduled-Communication-Time ]
+              [ Stationary-Indication ]
+              [ Reference-ID-Validity-Time ]
+              [ Traffic-Profile ]
+              [ Battery-Indicator ]
+          *   [ AVP ]
+
+Scheduled-Communication-Time ::= <AVP Header: 3118>
+              [ Day-Of-Week-Mask ]
+              [ Time-Of-Day-Start ]
+              [ Time-Of-Day-End ]
+          *   [ AVP ]
+
+AESE-Communication-Pattern-Config-Status ::= <AVP Header: 3120>
+              { SCEF-Reference-ID }
+              [ SCEF-Reference-ID-Ext ]
+              [ SCEF-ID ]
+              [ AESE-Error-Report ]
+          *   [ AVP ]
+
+AESE-Error-Report ::= <AVP Header: 3121>
+              [ Service-Result ]
+          *   [ AVP ]
+
+Monitoring-Event-Configuration ::= <AVP Header: 3122>
+              { SCEF-ID }
+              { Monitoring-Type }
+              [ SCEF-Reference-ID ]
+              [ SCEF-Reference-ID-Ext ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+              [ Maximum-Number-of-Reports ]
+              [ Monitoring-Duration ]
+              [ Charged-Party ]
+              [ Maximum-Detection-Time ]
+              [ UE-Reachability-Configuration ]
+              [ Location-Information-Configuration ]
+              [ Association-Type ]
+              [ DL-Buffering-Suggested-Packet-Count ]
+              [ PLMN-ID-Requested ]
+              [ MTC-Provider-Info ]
+              [ PDN-Connectivity-Status-Configuration ]
+          *   [ AVP ]
+
+Monitoring-Event-Report ::= <AVP Header: 3123>
+
+UE-Reachability-Configuration ::= <AVP Header: 3129>
+Location-Information-Configuration ::= <AVP Header: 3135>
+              [ MONTE-Location-Type ]
+              [ Accuracy ]
+              [ Periodic-Time ]
+          *   [ AVP ]
+
+Monitoring-Event-Config-Status ::= <AVP Header: 3142>
+              { SCEF-Reference-ID }
+          *   [ Service-Report ]
+              [ SCEF-Reference-ID-Ext ]
+              [ SCEF-ID ]
+          *   [ AVP ]
+
+Supported-Services ::= <AVP Header: 3143>
+              [ Supported-Monitoring-Events ]
+              [ Node-Type ]
+          *   [ AVP ]
+
+Service-Result ::= <AVP Header: 3146>
+              [ Vendor-Id ]
+              [ Service-Result-Code ]
+          *   [ AVP ]
+
+NIDD-Authorization-Request ::= <AVP Header: 3150>
+              [ Service-Selection ]
+              [ Requested-Validity-Time ]
+          *   [ AVP ]
+
+NIDD-Authorization-Response ::= <AVP Header: 3151>
+              [ MSISDN ]
+              [ User-Name ]
+              [ External-Identifier ]
+              [ Granted-Validity-Time ]
+          *   [ AVP ]
+
+Service-Report ::= <AVP Header: 3152>
+              [ Service-Result ]
+              [ Node-Type ]
+          *   [ AVP ]
+
+Enhanced-Coverage-Restriction ::= <AVP Header: 3155>
+              [ Restricted-PLMN-List ]
+              [ Allowed-PLMN-List ]
+          *   [ AVP ]
+
+Enhanced-Coverage-Restriction-Data ::= <AVP Header: 3156>
+              { Enhanced-Coverage-Restriction }
+              [ Visited-PLMN-Id ]
+          *   [ AVP ]
+
+Restricted-PLMN-List ::= <AVP Header: 3157>
+          *   [ Visited-PLMN-Id ]
+          *   [ AVP ]
+
+Allowed-PLMN-List ::= <AVP Header: 3158>
+          *   [ Visited-PLMN-Id ]
+          *   [ AVP ]
+
+NIDD-Authorization-Update ::= <AVP Header: 3161>
+          *   [ APN-Validity-Time ]
+          *   [ AVP ]
+
+Group-Report ::= <AVP Header: 3165>
+              { SCEF-Reference-ID }
+              [ SCEF-Reference-ID-Ext ]
+              [ SCEF-ID ]
+          *   [ Group-Report-Item ]
+          *   [ AVP ]
+
+Group-Report-Item ::= <AVP Header: 3166>
+              { User-Identifier }
+              [ Visited-PLMN-Id ]
+              [ Roaming-Information ]
+              [ IMEI-Change ]
+              [ Reachability-Information ]
+              [ Maximum-UE-Availability-Time ]
+              [ EPS-Location-Information ]
+              [ Monitoring-Type ]
+          *   [ Service-Report ]
+              [ S6t-HSS-Cause ]
+              [ Idle-Status-Indication ]
+              [ Reporting-Time-Stamp ]
+              [ Updated-Network-Configuration ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+              [ Event-Handling ]
+          *   [ AVP ]
+
+APN-Validity-Time ::= <AVP Header: 3169>
+              { Granted-Validity-Time }
+              [ Service-Selection ]
+          *   [ AVP ]
+
+Suggested-Network-Configuration ::= <AVP Header: 3170>
+              { SCEF-Reference-ID }
+              { SCEF-ID }
+              [ SCEF-Reference-ID-Ext ]
+              [ Subscribed-Periodic-RAU-TAU-Timer ]
+              [ Active-Time ]
+              [ DL-Buffering-Suggested-Packet-Count ]
+              [ MTC-Provider-Info ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+          *   [ AVP ]
+
+Monitoring-Event-Report-Status ::= <AVP Header: 3171>
+              { SCEF-Reference-ID }
+              { SCEF-ID }
+              [ SCEF-Reference-ID-Ext ]
+              [ Result-Code ]
+              [ Experimental-Result-Code ]
+          *   [ AVP ]
+
+AdditionalIdentifiers ::= <AVP Header: 3173>
+          *   [ External-Identifier ]
+          *   [ AVP ]
+
+Group-User-Identifier ::= <AVP Header: 3177>
+              [ User-Name ]
+              [ MSISDN ]
+              [ External-Identifier ]
+          *   [ AVP ]
+
+MTC-Provider-Info ::= <AVP Header: 3178>
+              [ MTC-Provider-ID ]
+          *   [ AVP ]
+
+PDN-Connectivity-Status-Configuration ::= <AVP Header: 3180>
+              [ Service-Selection ]
+          *   [ AVP ]
+
+PDN-Connectivity-Status-Report ::= <AVP Header: 3181>
+              { Service-Selection }
+              { PDN-Connectivity-Status-Type }
+              [ PDN-Type ]
+              [ Non-IP-PDN-Type-Indicator ]
+              [ Non-IP-Data-Delivery-Mechanism ]
+          *2  [ Served-Party-IP-Address ]
+          *   [ AVP ]
+
+Updated-Network-Configuration ::= <AVP Header: 3184>
+              { SCEF-ID }
+              [ SCEF-Reference-ID ]
+              [ SCEF-Reference-ID-Ext ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+              [ Subscribed-Periodic-RAU-TAU-Timer ]
+              [ Active-Time ]
+              [ DL-Buffering-Suggested-Packet-Count ]
+          *   [ AVP ]
+
+
+@enum PLMN-ID-Requested
+TRUE                                                         0
+FALSE                                                        1
+@define Periodic-Communication-Indicator
+PERIODICALLY 0
+ON_DEMAND 1
+
+@define Monitoring-Type
+LOSS_OF_CONNECTIVITY 0
+UE_REACHABILITY 1
+LOCATION_REPORTING 2
+CHANGE_OF_IMSI_IMEI_SV_ASSOCIATION 3
+ROAMING_STATUS 4
+COMMUNICATION_FAILURE 5
+AVAILABILITY_AFTER_DDN_FAILURE 6
+NUMBER_OF_UES_PRESENT_IN_A_GEOGRAPHICAL_AREA 7
+UE_REACHABILITY_AND_IDLE_STATUS_INDICATION 8
+AVAILABILITY_AFTER_DDN_FAILURE_AND_IDLE_STATUS_INDICATION 9
+PDN_CONNECTIVITY_STATUS 10
+
+@define MONTE-Location-Type
+CURRENT_LOCATION 0
+LAST_KNOWN_LOCATION 1
+
+@define Accuracy
+CGI-ECGI 0
+eNB 1
+LA-TA-RA 2
+PRA 3
+PLMN-ID 4
+
+@define Association-Type
+IMEI-CHANGE 0
+IMEISV-CHANGE 1
+
+@define Roaming-Information
+SUBSCRIBER_ROAMING 0
+SUBSCRIBER_NOT_ROAMING 1
+
+@define Reachability-Information
+REACHABLE_FOR_SMS 0
+REACHABLE_FOR_DATA 1
+
+@define Event-Handling
+SUSPEND 0
+RESUME 1
+CANCEL 2
+
+@define Node-Type
+HSS 0
+MME 1
+SGSN 2
+
+@define Loss-Of-Connectivity-Reason
+UE_DETACHED_MME 0
+UE_DETACHED_SGSN 1
+MAX_DETECTION_TIME_EXPIRED_MME 2
+MAX_DETECTION_TIME_EXPIRED_SGSN 3
+UE_PURGED_MME 4
+UE_PURGED_SGSN 5
+
+@define Type-Of-External-Identifier
+EXTERNAL-UE-IDENTIFIER-TYPE 0
+EXTERNAL-GROUP-IDENTIFIER-TYPE 1
+
+@define PDN-Connectivity-Status-Type
+CREATED 0
+DELETED 1
+
+@define Traffic-Profile
+SINGLE_TRANSMISSION_UL 0
+SINGLE_TRANSMISSION_DL 1
+DUAL_TRANSMISSION_UL_WITH_SUBSEQUENT_DL 2
+DUAL_TRANSMISSION_DL_WITH_SUBSEQUENT_UL 3
+MULTI_TRANSMISSION 4
