@@ -11,7 +11,36 @@ udt_test() ->
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
+    Exp = #{called_party_address =>
+                #{address =>
+                      #{encoding_scheme => 1,
+                        global_title => "467211221122",
+                        nature_of_address_indicator => 4,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => mobile_switching_centre},
+            calling_party_address =>
+                #{address =>
+                      #{encoding_scheme => 2,
+                        global_title => "846729887766",
+                        nature_of_address_indicator => 8,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => home_location_register},
+            data => D,
+            message_type => udt,
+            protocol_class => #{class => 0, options => return_on_error}},
+
     Val = otc_sccp_codec:decode(Bin),
+    ?assertEqual(Exp, Val),
     NewBin = otc_sccp_codec:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -20,11 +49,41 @@ xudt_test() ->
     CgPA = calling_party_address(),
     D = data(),
 
-    Bin = <<16#11, 16#80, 16#0f, 16#04, 16#0f, 16#1a, 16#00,
+    Bin = <<16#11, 16#81, 16#0f, 16#04, 16#0f, 16#1a, 16#00,
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
+    Exp = #{called_party_address =>
+                #{address =>
+                      #{encoding_scheme => 1,
+                        global_title => "467211221122",
+                        nature_of_address_indicator => 4,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => mobile_switching_centre},
+            calling_party_address =>
+                #{address =>
+                      #{encoding_scheme => 2,
+                        global_title => "846729887766",
+                        nature_of_address_indicator => 8,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => home_location_register},
+            data => D,
+            hop_counter => 15,
+            message_type => xudt,
+            protocol_class => #{class => 1, options => return_on_error}},
+
     Val = otc_sccp_codec:decode(Bin),
+    ?assertEqual(Exp, Val),
     NewBin = otc_sccp_codec:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -37,7 +96,38 @@ xudts_test() ->
             16#0b, CgPA/binary,
             16#0b, CdPA/binary,
             16#18, D/binary>>,
+
+    Exp = #{called_party_address =>
+                #{address =>
+                      #{encoding_scheme => 2,
+                        global_title => "846729887766",
+                        nature_of_address_indicator => 8,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => home_location_register},
+            calling_party_address =>
+                #{address =>
+                      #{encoding_scheme => 1,
+                        global_title => "467211221122",
+                        nature_of_address_indicator => 4,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => mobile_switching_centre},
+            data => D,
+            hop_counter => 15,
+            message_type => xudts,
+            return_cause => no_translation_for_this_specific_address},
+
     Val = otc_sccp_codec:decode(Bin),
+    ?assertEqual(Exp, Val),
     NewBin = otc_sccp_codec:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -55,7 +145,37 @@ xudts_arbitrary_pointers_test() ->
                  16#0b, CdPA/binary,
                  16#0b, CgPA/binary,
                  16#18, D/binary>>,
+    Exp = #{called_party_address =>
+                #{address =>
+                      #{encoding_scheme => 1,
+                        global_title => "467211221122",
+                        nature_of_address_indicator => 4,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => mobile_switching_centre},
+            calling_party_address =>
+                #{address =>
+                      #{encoding_scheme => 2,
+                        global_title => "846729887766",
+                        nature_of_address_indicator => 8,
+                        numbering_plan => 1,
+                        odd_even_indicator => 0,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,routing_indicator => gt,
+                  subsystem_number => home_location_register},
+            data => D,
+            hop_counter => 15,
+            message_type => xudts,
+            return_cause => unqualified},
+
     Val = otc_sccp_codec:decode(Bin),
+    ?assertEqual(Exp, Val),
     NewBin = otc_sccp_codec:encode(Val),
     ?assertEqual(Expected, NewBin).
 

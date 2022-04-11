@@ -760,15 +760,15 @@ decode_parameter(calling_party_address, Bin) ->
     decode_gt(Bin);
 decode_parameter(protocol_class, Bin) ->
     case Bin of
-        <<2#0000:4, O:4>> ->
+        <<O:4, 2#0000:4>> ->
             Opts = parse_protocol_class_options(O),
             Opts#{class => 0};          % Connection-less
-        <<2#0001:4, O:4>> ->
+        <<O:4, 2#0001:4>> ->
             Opts = parse_protocol_class_options(O),
             Opts#{class => 1};          % Connection-less
-        <<2#0010:4, S:4>> ->
+        <<S:4, 2#0010:4>> ->
             #{class => 2, spare => S};  % Connection-oriented
-        <<2#0011:4, S:4>> ->
+        <<S:4, 2#0011:4>> ->
             #{class => 3, spare => S}   % Connection-oriented
     end;
 decode_parameter(segmenting_reassembling, Bin) ->
@@ -1028,14 +1028,14 @@ encode_parameter(protocol_class, Val) ->
     case Val of
         #{class := 0} ->
             O = compose_protocol_class_options(Val),
-            <<2#0000:4, O:4>>;
+            <<O:4, 2#0000:4>>;
         #{class := 1} ->
             O = compose_protocol_class_options(Val),
-            <<2#0001:4, O:4>>;
+            <<O:4, 2#0001:4>>;
         #{class := 2} ->
-            <<2#0010:4, 0:4>>;
+            <<0:4, 2#0010:4>>;
         #{class := 3} ->
-            <<2#0011:4, 0:4>>
+            <<0:4, 2#0011:4>>
     end;
 encode_parameter(segmenting_reassembling, Bin) ->
     Bin;
