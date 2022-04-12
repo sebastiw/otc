@@ -1101,13 +1101,13 @@ decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                  GT1 = decode_bcd(OEI, GT0),
                  #{odd_even_indicator => OEI,
                    nature_of_address_indicator => NI,
-                   global_title => GT1};
+                   address => GT1};
              2#0010 ->
                  %% global title includes translation type
                  %% only
                  <<TT:8/big, GT0/binary>> = Bin2,
                  #{translation_type => TT,
-                   global_title => GT0};
+                   address => GT0};
              2#0011 ->
                  %% global title includes translation type,
                  %% numbering plan and encoding scheme
@@ -1115,7 +1115,7 @@ decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                  GT1 = decode_gt_part(ES, GT0),
                  #{translation_type => TT,
                    numbering_plan => NP,
-                   global_title => GT1};
+                   address => GT1};
              2#0100 ->
                  %% global title includes translation type,
                  %% numbering plan, encoding scheme and nature
@@ -1127,36 +1127,36 @@ decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                       nature_of_address_indicator => NI}
          end,
     RoutingInd = case RI of
-                     1 -> ssn;
-                     0 -> gt
+                     1 -> subsystem_number;
+                     0 -> global_title
                  end,
     #{national_use_indicator => NR,
       routing_indicator => RoutingInd,
       global_title_indicator => GTI,
-      address => GT,
+      global_title => GT,
       subsystem_number => SSN,
       point_code => PC
      }.
 
 decode_gt_part(2#0000, GT) ->
     #{encoding_scheme => unknown,
-      global_title => GT};
+      address => GT};
 decode_gt_part(2#0001, GT) ->
     #{encoding_scheme => bcd,
       odd_even_indicator => odd,
-      global_title => decode_bcd(odd, GT)};
+      address => decode_bcd(odd, GT)};
 decode_gt_part(2#0010, GT) ->
     #{encoding_scheme => bcd,
       odd_even_indicator => even,
-      global_title => decode_bcd(even, GT)};
+      address => decode_bcd(even, GT)};
 decode_gt_part(2#0100, GT) ->
     #{encoding_scheme => national,
-      global_title => GT}.
+      address => GT}.
 
 encode_gt(#{national_use_indicator := NR,
             routing_indicator := RoutingInd,
             global_title_indicator := GTI,
-            address := GT,
+            global_title := GT,
             subsystem_number := SSN,
             point_code := PC
            }) ->
@@ -1169,8 +1169,8 @@ encode_gt(#{national_use_indicator := NR,
                          _ -> {1, <<(compose_ssn(SSN)):8/big>>}
                      end,
     RI = case RoutingInd of
-             ssn -> 1;
-             gt -> 0
+             subsystem_number -> 1;
+             global_title -> 0
          end,
     Address = case GTI of
                   2#0100 ->
@@ -1178,7 +1178,7 @@ encode_gt(#{national_use_indicator := NR,
                         numbering_plan := NP,
                         encoding_scheme := EncodingScheme,
                         nature_of_address_indicator := NI,
-                        global_title := GT0} = GT,
+                        address := GT0} = GT,
                       GT1 = encode_bcd(GT0),
                       ES = compose_encoding_scheme(EncodingScheme, GT),
                       <<TT:8/big, NP:4, ES:4, 0:1, NI:7, GT1/binary>>;
@@ -1186,19 +1186,19 @@ encode_gt(#{national_use_indicator := NR,
                       #{translation_type := TT,
                         numbering_plan := NP,
                         encoding_scheme := ES,
-                        global_title := GT0} = GT,
+                        address := GT0} = GT,
                       GT1 = encode_bcd(GT0),
                       ES = compose_encoding_scheme(ES, GT),
                       <<TT:8/big, NP:4, ES:4, GT1/binary>>;
                   2#0010 ->
                       #{translation_type := TT,
-                        global_title := GT0} = GT,
+                        address := GT0} = GT,
                       GT1 = encode_bcd(GT0),
                       <<TT:8/big, GT1/binary>>;
                   2#0001 ->
                       #{odd_even_indicator := OE,
                         nature_of_address_indicator := NI,
-                        global_title := GT0} = GT,
+                        address := GT0} = GT,
                       GT1 = encode_bcd(GT0),
                       <<OE:1, NI:7, GT1/binary>>
               end,

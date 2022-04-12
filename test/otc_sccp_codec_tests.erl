@@ -14,9 +14,9 @@ udt_test() ->
             16#0b, CgPA/binary,
             16#18, D/binary>>,
     Exp = #{called_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "467211221122",
+                        address => "467211221122",
                         nature_of_address_indicator => 4,
                         numbering_plan => 1,
                         odd_even_indicator => even,
@@ -24,12 +24,12 @@ udt_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => mobile_switching_centre},
             calling_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "46729887766",
+                        address => "46729887766",
                         nature_of_address_indicator => 8,
                         numbering_plan => 1,
                         odd_even_indicator => odd,
@@ -37,7 +37,7 @@ udt_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => home_location_register},
             data => D,
             message_type => udt,
@@ -58,9 +58,9 @@ xudt_test() ->
             16#0b, CgPA/binary,
             16#18, D/binary>>,
     Exp = #{called_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "467211221122",
+                        address => "467211221122",
                         nature_of_address_indicator => 4,
                         numbering_plan => 1,
                         odd_even_indicator => even,
@@ -68,12 +68,12 @@ xudt_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => mobile_switching_centre},
             calling_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "46729887766",
+                        address => "46729887766",
                         nature_of_address_indicator => 8,
                         numbering_plan => 1,
                         odd_even_indicator => odd,
@@ -81,7 +81,7 @@ xudt_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => home_location_register},
             data => D,
             hop_counter => 15,
@@ -104,9 +104,9 @@ xudts_test() ->
             16#18, D/binary>>,
 
     Exp = #{called_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "46729887766",
+                        address => "46729887766",
                         nature_of_address_indicator => 8,
                         numbering_plan => 1,
                         odd_even_indicator => odd,
@@ -114,12 +114,12 @@ xudts_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => home_location_register},
             calling_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "467211221122",
+                        address => "467211221122",
                         nature_of_address_indicator => 4,
                         numbering_plan => 1,
                         odd_even_indicator => even,
@@ -127,7 +127,7 @@ xudts_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => mobile_switching_centre},
             data => D,
             hop_counter => 15,
@@ -154,9 +154,9 @@ xudts_arbitrary_pointers_test() ->
                  16#0b, CgPA/binary,
                  16#18, D/binary>>,
     Exp = #{called_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "467211221122",
+                        address => "467211221122",
                         nature_of_address_indicator => 4,
                         numbering_plan => 1,
                         odd_even_indicator => even,
@@ -164,12 +164,12 @@ xudts_arbitrary_pointers_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => mobile_switching_centre},
             calling_party_address =>
-                #{address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
-                        global_title => "46729887766",
+                        address => "46729887766",
                         nature_of_address_indicator => 8,
                         numbering_plan => 1,
                         odd_even_indicator => odd,
@@ -177,7 +177,7 @@ xudts_arbitrary_pointers_test() ->
                   global_title_indicator => 4,
                   national_use_indicator => 0,
                   point_code => undefined,
-                  routing_indicator => gt,
+                  routing_indicator => global_title,
                   subsystem_number => home_location_register},
             data => D,
             hop_counter => 15,
