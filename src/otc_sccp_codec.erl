@@ -1079,8 +1079,8 @@ encode_parameter(long_data, Bin) ->
 decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
     {PC, Bin1} = case PCI of
                      0 -> {undefined, Bin0};
-                     1 -> <<PC0:1/binary, Rest0/binary>> = Bin0,
-                          {PC0, Rest0}
+                     1 -> <<LSB:8, 0:2, MSB:6, Rest0/binary>> = Bin0,
+                          {<<MSB:6, LSB:8>>, Rest0}
                  end,
     {SSN, Bin2} = case SSNI of
                       0 -> {undefined, Bin1};
@@ -1094,38 +1094,37 @@ decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                  %% global title includes nature of address
                  %% indicator only
                  <<OE:1, NI:7, GT0/binary>> = Bin2,
-                 GT1 = decode_bcd(GT0),
-                 #{odd_even_indicator => OE,
+                 OEI = case OE of
+                           0 -> even;
+                           1 -> odd
+                       end,
+                 GT1 = decode_bcd(OEI, GT0),
+                 #{odd_even_indicator => OEI,
                    nature_of_address_indicator => NI,
                    global_title => GT1};
              2#0010 ->
                  %% global title includes translation type
                  %% only
                  <<TT:8/big, GT0/binary>> = Bin2,
-                 GT1 = decode_bcd(GT0),
                  #{translation_type => TT,
-                   global_title => GT1};
+                   global_title => GT0};
              2#0011 ->
                  %% global title includes translation type,
                  %% numbering plan and encoding scheme
                  <<TT:8/big, NP:4, ES:4, GT0/binary>> = Bin2,
-                 GT1 = decode_bcd(GT0),
+                 GT1 = decode_gt_part(ES, GT0),
                  #{translation_type => TT,
                    numbering_plan => NP,
-                   encoding_scheme => ES,
                    global_title => GT1};
              2#0100 ->
                  %% global title includes translation type,
                  %% numbering plan, encoding scheme and nature
                  %% of address indicator
-                 <<TT:8/big, NP:4, ES:4, OE:1, NI:7, GT0/binary>> = Bin2,
-                 GT1 = decode_bcd(GT0),
-                 #{translation_type => TT,
-                   numbering_plan => NP,
-                   encoding_scheme => ES,
-                   odd_even_indicator => OE,
-                   nature_of_address_indicator => NI,
-                   global_title => GT1}
+                 <<TT:8/big, NP:4, ES:4, 0:1, NI:7, GT0/binary>> = Bin2,
+                 GT1 = decode_gt_part(ES, GT0),
+                 GT1#{translation_type => TT,
+                      numbering_plan => NP,
+                      nature_of_address_indicator => NI}
          end,
     RoutingInd = case RI of
                      1 -> ssn;
@@ -1138,6 +1137,21 @@ decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
       subsystem_number => SSN,
       point_code => PC
      }.
+
+decode_gt_part(2#0000, GT) ->
+    #{encoding_scheme => unknown,
+      global_title => GT};
+decode_gt_part(2#0001, GT) ->
+    #{encoding_scheme => bcd,
+      odd_even_indicator => odd,
+      global_title => decode_bcd(odd, GT)};
+decode_gt_part(2#0010, GT) ->
+    #{encoding_scheme => bcd,
+      odd_even_indicator => even,
+      global_title => decode_bcd(even, GT)};
+decode_gt_part(2#0100, GT) ->
+    #{encoding_scheme => national,
+      global_title => GT}.
 
 encode_gt(#{national_use_indicator := NR,
             routing_indicator := RoutingInd,
@@ -1162,18 +1176,19 @@ encode_gt(#{national_use_indicator := NR,
                   2#0100 ->
                       #{translation_type := TT,
                         numbering_plan := NP,
-                        encoding_scheme := ES,
-                        odd_even_indicator := OE,
+                        encoding_scheme := EncodingScheme,
                         nature_of_address_indicator := NI,
                         global_title := GT0} = GT,
                       GT1 = encode_bcd(GT0),
-                      <<TT:8/big, NP:4, ES:4, OE:1, NI:7, GT1/binary>>;
+                      ES = compose_encoding_scheme(EncodingScheme, GT),
+                      <<TT:8/big, NP:4, ES:4, 0:1, NI:7, GT1/binary>>;
                   2#0011 ->
                       #{translation_type := TT,
                         numbering_plan := NP,
                         encoding_scheme := ES,
                         global_title := GT0} = GT,
                       GT1 = encode_bcd(GT0),
+                      ES = compose_encoding_scheme(ES, GT),
                       <<TT:8/big, NP:4, ES:4, GT1/binary>>;
                   2#0010 ->
                       #{translation_type := TT,
@@ -1188,6 +1203,15 @@ encode_gt(#{national_use_indicator := NR,
                       <<OE:1, NI:7, GT1/binary>>
               end,
     <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, SSNBin/binary, PCBin/binary, Address/binary>>.
+
+compose_encoding_scheme(unknown, _) ->
+    2#0000;
+compose_encoding_scheme(bcd, #{odd_even_indicator := odd}) ->
+    2#0001;
+compose_encoding_scheme(bcd, #{odd_even_indicator := even}) ->
+    2#0010;
+compose_encoding_scheme(national, _) ->
+    2#0100.
 
 parse_ssn(?SCCP_SSN_UNKNOWN) -> unknown;
 parse_ssn(?SCCP_SSN_MGMT) -> management;
@@ -1226,17 +1250,17 @@ compose_ssn({international, SSN}) -> SSN;
 compose_ssn({national, SSN}) -> SSN;
 compose_ssn(expansion) -> 2#11111111.
 
-decode_bcd(<<>>) ->
+decode_bcd(even, <<>>) ->
     [];
-decode_bcd(<<2#1111:4, A:4>>) ->
+decode_bcd(odd, <<2#0000:4, A:4>>) ->
     [decode_bcd_digit(A)];
-decode_bcd(<<B:4, A:4, Rest/binary>>) ->
-    [decode_bcd_digit(A), decode_bcd_digit(B)|decode_bcd(Rest)].
+decode_bcd(OE, <<B:4, A:4, Rest/binary>>) ->
+    [decode_bcd_digit(A), decode_bcd_digit(B)|decode_bcd(OE, Rest)].
 
 encode_bcd([]) ->
     <<>>;
 encode_bcd([A]) ->
-    <<2#1111:4, (encode_bcd_digit(A)):4>>;
+    <<2#0000:4, (encode_bcd_digit(A)):4>>;
 encode_bcd([A, B|Rest]) ->
     <<(encode_bcd_digit(B)):4, (encode_bcd_digit(A)):4, (encode_bcd(Rest))/binary>>.
 
