@@ -32,7 +32,8 @@ decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) -
         {unsupported, _, _} = Unsup ->
             Unsup;
         Msg ->
-            Msg#{message_type => MT,
+            Msg#{protocol => m3ua,
+                 message_type => MT,
                  message_class => MC}
     end;
 decode(_) ->

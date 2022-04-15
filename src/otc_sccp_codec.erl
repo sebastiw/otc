@@ -14,7 +14,8 @@ decode(<<MT:8/big, Rest/binary>>) ->
         unsupported ->
             unsupported;
         Msg ->
-            Msg#{message_type => MessageType}
+            Msg#{protocol => sccp,
+                 message_type => MessageType}
     end.
 
 encode(#{message_type := MessageType} = Msg) ->
@@ -152,20 +153,24 @@ decode_msg(udt, Bin) ->
     NumPointers = 3,
     <<PC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D] = separate_fields(Pointers, Bin1),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = #{},
     Optionals#{protocol_class => decode_parameter(protocol_class, PC),
-               called_party_address => decode_parameter(called_party_address, CdPA),
-               calling_party_address => decode_parameter(calling_party_address, CgPA),
-               data => decode_parameter(data, D)};
+               called_party_address => CalledPartyAddress,
+               calling_party_address => CallingPartyAddress,
+               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(udts, Bin) ->
     NumPointers = 3,
     <<RC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D] = separate_fields(Pointers, Bin1),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = #{},
     Optionals#{return_cause => decode_parameter(return_cause, RC),
-               called_party_address => decode_parameter(called_party_address, CdPA),
-               calling_party_address => decode_parameter(calling_party_address, CgPA),
-               data => decode_parameter(data, D)};
+               called_party_address => CalledPartyAddress,
+               calling_party_address => CallingPartyAddress,
+               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(ed, Bin) ->
     NumPointers = 1,
     <<DLR:3/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
@@ -218,12 +223,14 @@ decode_msg(xudt, Bin) ->
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = decode_parameters(OptBin, AllowedParameters),
     Optionals#{protocol_class => decode_parameter(protocol_class, PC),
                hop_counter => decode_parameter(hop_counter, HC),
-               called_party_address => decode_parameter(called_party_address, CdPA),
-               calling_party_address => decode_parameter(calling_party_address, CgPA),
-               data => decode_parameter(data, D)};
+               called_party_address => CalledPartyAddress,
+               calling_party_address => CallingPartyAddress,
+               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(xudts, Bin) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
@@ -231,12 +238,14 @@ decode_msg(xudts, Bin) ->
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = decode_parameters(OptBin, AllowedParameters),
     Optionals#{return_cause => decode_parameter(return_cause, RC),
                hop_counter => decode_parameter(hop_counter, HC),
-               called_party_address => decode_parameter(called_party_address, CdPA),
-               calling_party_address => decode_parameter(calling_party_address, CgPA),
-               data => decode_parameter(data, D)};
+               called_party_address => CalledPartyAddress,
+               calling_party_address => CallingPartyAddress,
+               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(ludt, Bin) ->
     NumPointers = 4,
     <<PC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
@@ -251,12 +260,14 @@ decode_msg(ludt, Bin) ->
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = decode_parameters(OptBin, AllowedParameters),
     Optionals#{protocol_class => decode_parameter(protocol_class, PC),
                hop_counter => decode_parameter(hop_counter, HC),
-               called_party_address => decode_parameter(called_party_address, CdPA),
-               calling_party_address => decode_parameter(calling_party_address, CgPA),
-               long_data => decode_parameter(long_data, LD)};
+               called_party_address => CalledPartyAddress,
+               calling_party_address => CallingPartyAddress,
+               long_data => decode_data(long_data, LD, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(ludts, Bin) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
@@ -271,12 +282,14 @@ decode_msg(ludts, Bin) ->
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = decode_parameters(OptBin, AllowedParameters),
     Optionals#{return_cause => decode_parameter(return_cause, RC),
                hop_counter => decode_parameter(hop_counter, HC),
-               called_party_address => decode_parameter(called_party_address, CdPA),
-               calling_party_address => decode_parameter(calling_party_address, CgPA),
-               long_data => decode_parameter(long_data, LD)};
+               called_party_address => CalledPartyAddress,
+               calling_party_address => CallingPartyAddress,
+               long_data => decode_data(long_data, LD, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(_, _) ->
     unsupported.
 
@@ -316,7 +329,82 @@ separate_fields(<<P:8/big, R/binary>>, <<L:8/big, Bin/binary>>, {N, PAcc, BAcc})
     <<Val:L/binary, Rest/binary>> = Bin,
     separate_fields(R, Rest, {N+1, [{P, N}|PAcc], [Val|BAcc]}).
 
+-define(IS_SCCP_MGMT,
+        #{routing_indicator := subsystem_number, subsystem_number := management}).
 
+decode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
+    decode_mgmt_data(D);
+decode_data(Type, D, _, _) ->
+    decode_parameter(Type, D).
+
+encode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
+    encode_mgmt_data(D);
+encode_data(Type, D, _, _) ->
+    encode_parameter(Type, D).
+
+decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_ALLOWED:8, ASSN:8, APC:2/binary, SMI:8>>) ->
+    #{format_identifier => allowed,
+      affected_ssn => ASSN,
+      affected_pc => APC,
+      subsystem_multiplicity_indicator => SMI};
+decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_PROHIBITED:8, ASSN:8, APC:2/binary, SMI:8>>) ->
+    #{format_identifier => prohibited,
+      affected_ssn => ASSN,
+      affected_pc => APC,
+      subsystem_multiplicity_indicator => SMI};
+decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_STATUS_TEST:8, ASSN:8, APC:2/binary, SMI:8>>) ->
+    #{format_identifier => status_test,
+      affected_ssn => ASSN,
+      affected_pc => APC,
+      subsystem_multiplicity_indicator => SMI};
+decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_REQUEST:8, ASSN:8, APC:2/binary, SMI:8>>) ->
+    #{format_identifier => out_of_service_request,
+      affected_ssn => ASSN,
+      affected_pc => APC,
+      subsystem_multiplicity_indicator => SMI};
+decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_GRANT:8, ASSN:8, APC:2/binary, SMI:8>>) ->
+    #{format_identifier => out_of_service_grant,
+      affected_ssn => ASSN,
+      affected_pc => APC,
+      subsystem_multiplicity_indicator => SMI};
+decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_CONGESTED:8, ASSN:8, APC:2/binary, SMI:8, CL:8>>) ->
+    #{format_identifier => congested,
+      affected_ssn => ASSN,
+      affected_pc => APC,
+      subsystem_multiplicity_indicator => SMI,
+      congestion_level => CL}.
+
+encode_mgmt_data(#{format_identifier := allowed,
+                   affected_ssn := ASSN,
+                   affected_pc := APC,
+                   subsystem_multiplicity_indicator := SMI}) ->
+    <<?SCCP_SCMG_SUBSYSTEM_ALLOWED:8, ASSN:8, APC:2/binary, SMI:8>>;
+encode_mgmt_data(#{format_identifier := prohibited,
+                   affected_ssn := ASSN,
+                   affected_pc := APC,
+                   subsystem_multiplicity_indicator := SMI}) ->
+    <<?SCCP_SCMG_SUBSYSTEM_PROHIBITED:8, ASSN:8, APC:2/binary, SMI:8>>;
+encode_mgmt_data(#{format_identifier := status_test,
+                   affected_ssn := ASSN,
+                   affected_pc := APC,
+                   subsystem_multiplicity_indicator := SMI}) ->
+    <<?SCCP_SCMG_SUBSYSTEM_STATUS_TEST:8, ASSN:8, APC:2/binary, SMI:8>>;
+encode_mgmt_data(#{format_identifier := out_of_service_request,
+                   affected_ssn := ASSN,
+                   affected_pc := APC,
+                   subsystem_multiplicity_indicator := SMI}) ->
+    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_REQUEST:8, ASSN:8, APC:2/binary, SMI:8>>;
+encode_mgmt_data(#{format_identifier := out_of_service_grant,
+                   affected_ssn := ASSN,
+                   affected_pc := APC,
+                   subsystem_multiplicity_indicator := SMI}) ->
+    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_GRANT:8, ASSN:8, APC:2/binary, SMI:8>>;
+encode_mgmt_data(#{format_identifier := congested,
+                   affected_ssn := ASSN,
+                   affected_pc := APC,
+                   subsystem_multiplicity_indicator := SMI,
+                   congestion_level := CL}) ->
+    <<?SCCP_SCMG_SUBSYSTEM_CONGESTED:8, ASSN:8, APC:2/binary, SMI:8, CL:8>>.
 
 encode_msg(cr,
            #{source_local_reference := SourceLocalReference,
@@ -464,7 +552,7 @@ encode_msg(udt,
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_parameter(data, Data),
+    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [],
     OptBin = encode_parameters(Msg, AllowedParameters),
@@ -482,7 +570,7 @@ encode_msg(udts,
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_parameter(data, Data),
+    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [],
     OptBin = encode_parameters(Msg, AllowedParameters),
@@ -570,7 +658,7 @@ encode_msg(xudt,
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_parameter(data, Data),
+    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
@@ -598,7 +686,7 @@ encode_msg(xudts,
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_parameter(data, Data),
+    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
@@ -626,7 +714,7 @@ encode_msg(ludt,
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    LD = encode_parameter(long_data, LongData),
+    LD = encode_data(long_data, LongData, CalledPartyAddress, CallingPartyAddress),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
@@ -654,7 +742,7 @@ encode_msg(ludts,
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    LD = encode_parameter(long_data, LongData),
+    LD = encode_data(long_data, LongData, CalledPartyAddress, CallingPartyAddress),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
@@ -755,9 +843,9 @@ decode_parameter(destination_local_reference, Bin) ->
 decode_parameter(source_local_reference, Bin) ->
     Bin;
 decode_parameter(called_party_address, Bin) ->
-    decode_gt(Bin);
+    decode_address(Bin);
 decode_parameter(calling_party_address, Bin) ->
-    decode_gt(Bin);
+    decode_address(Bin);
 decode_parameter(protocol_class, Bin) ->
     case Bin of
         <<O:4, 2#0000:4>> ->
@@ -1021,9 +1109,9 @@ encode_parameter(destination_local_reference, Bin) ->
 encode_parameter(source_local_reference, Bin) ->
     Bin;
 encode_parameter(called_party_address, Bin) ->
-    encode_gt(Bin);
+    encode_address(Bin);
 encode_parameter(calling_party_address, Bin) ->
-    encode_gt(Bin);
+    encode_address(Bin);
 encode_parameter(protocol_class, Val) ->
     case Val of
         #{class := 0} ->
@@ -1076,7 +1164,7 @@ encode_parameter(importance, Importance) ->
 encode_parameter(long_data, Bin) ->
     Bin.
 
-decode_gt(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
+decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
     {PC, Bin1} = case PCI of
                      0 -> {undefined, Bin0};
                      1 -> <<LSB:8, 0:2, MSB:6, Rest0/binary>> = Bin0,
@@ -1153,56 +1241,66 @@ decode_gt_part(2#0100, GT) ->
     #{encoding_scheme => national,
       address => GT}.
 
-encode_gt(#{national_use_indicator := NR,
-            routing_indicator := RoutingInd,
-            global_title_indicator := GTI,
-            global_title := GT,
-            subsystem_number := SSN,
-            point_code := PC
-           }) ->
-    {PCI, PCBin} = case PC of
+encode_gt_part(#{encoding_scheme := unknown,
+                 address := GT}) ->
+    GT;
+encode_gt_part(#{encoding_scheme := bcd,
+                 address := GT}) ->
+    encode_bcd(GT);
+encode_gt_part(#{encoding_scheme := national,
+                 address := GT}) ->
+    GT.
+
+encode_address(#{national_use_indicator := NR,
+                 routing_indicator := RoutingInd,
+                 global_title_indicator := GTI
+                } = Address) ->
+    {PCI, PCBin} = case maps:get(point_code, Address, undefined) of
                        undefined -> {0, <<>>};
-                       _ -> {1, PC}
+                       PC -> {1, PC}
                    end,
-    {SSNI, SSNBin} = case SSN of
+    {SSNI, SSNBin} = case maps:get(subsystem_number, Address, undefined) of
                          undefined -> {0, <<>>};
-                         _ -> {1, <<(compose_ssn(SSN)):8/big>>}
+                         SSN -> {1, <<(compose_ssn(SSN)):8/big>>}
                      end,
     RI = case RoutingInd of
              subsystem_number -> 1;
              global_title -> 0
          end,
-    Address = case GTI of
-                  2#0100 ->
-                      #{translation_type := TT,
-                        numbering_plan := NP,
-                        encoding_scheme := EncodingScheme,
-                        nature_of_address_indicator := NI,
-                        address := GT0} = GT,
-                      GT1 = encode_bcd(GT0),
-                      ES = compose_encoding_scheme(EncodingScheme, GT),
-                      <<TT:8/big, NP:4, ES:4, 0:1, NI:7, GT1/binary>>;
-                  2#0011 ->
-                      #{translation_type := TT,
-                        numbering_plan := NP,
-                        encoding_scheme := ES,
-                        address := GT0} = GT,
-                      GT1 = encode_bcd(GT0),
-                      ES = compose_encoding_scheme(ES, GT),
-                      <<TT:8/big, NP:4, ES:4, GT1/binary>>;
-                  2#0010 ->
-                      #{translation_type := TT,
-                        address := GT0} = GT,
-                      GT1 = encode_bcd(GT0),
-                      <<TT:8/big, GT1/binary>>;
-                  2#0001 ->
-                      #{odd_even_indicator := OE,
-                        nature_of_address_indicator := NI,
-                        address := GT0} = GT,
-                      GT1 = encode_bcd(GT0),
-                      <<OE:1, NI:7, GT1/binary>>
-              end,
-    <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, SSNBin/binary, PCBin/binary, Address/binary>>.
+    GlobalTitle = maps:get(global_title, Address, #{}),
+    GT = case GTI of
+             2#0100 ->
+                 #{translation_type := TT,
+                   numbering_plan := NP,
+                   encoding_scheme := EncodingScheme,
+                   nature_of_address_indicator := NI
+                  } = GlobalTitle,
+                 GT1 = encode_gt_part(GlobalTitle),
+                 ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
+                 <<TT:8/big, NP:4, ES:4, 0:1, NI:7, GT1/binary>>;
+             2#0011 ->
+                 #{translation_type := TT,
+                   numbering_plan := NP,
+                   encoding_scheme := ES
+                  } = GlobalTitle,
+                 GT1 = encode_gt_part(GlobalTitle),
+                 ES = compose_encoding_scheme(ES, GlobalTitle),
+                 <<TT:8/big, NP:4, ES:4, GT1/binary>>;
+             2#0010 ->
+                 #{translation_type := TT
+                  } = GlobalTitle,
+                 GT1 = encode_gt_part(GlobalTitle),
+                 <<TT:8/big, GT1/binary>>;
+             2#0001 ->
+                 #{odd_even_indicator := OE,
+                   nature_of_address_indicator := NI
+                  } = GlobalTitle,
+                 GT1 = encode_gt_part(GlobalTitle),
+                 <<OE:1, NI:7, GT1/binary>>;
+             2#0000 ->
+                 <<>>
+         end,
+    <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, SSNBin/binary, PCBin/binary, GT/binary>>.
 
 compose_encoding_scheme(unknown, _) ->
     2#0000;

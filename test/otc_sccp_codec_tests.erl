@@ -13,7 +13,8 @@ udt_test() ->
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
-    Exp = #{called_party_address =>
+    Exp = #{protocol => sccp,
+            called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "467211221122",
@@ -57,7 +58,8 @@ xudt_test() ->
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
-    Exp = #{called_party_address =>
+    Exp = #{protocol => sccp,
+            called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "467211221122",
@@ -103,7 +105,8 @@ xudts_test() ->
             16#0b, CdPA/binary,
             16#18, D/binary>>,
 
-    Exp = #{called_party_address =>
+    Exp = #{protocol => sccp,
+            called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "46729887766",
@@ -153,7 +156,8 @@ xudts_arbitrary_pointers_test() ->
                  16#0b, CdPA/binary,
                  16#0b, CgPA/binary,
                  16#18, D/binary>>,
-    Exp = #{called_party_address =>
+    Exp = #{protocol => sccp,
+            called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "467211221122",
@@ -188,6 +192,51 @@ xudts_arbitrary_pointers_test() ->
     ?assertEqual(Exp, Val),
     NewBin = otc_sccp_codec:encode(Val),
     ?assertEqual(Expected, NewBin).
+
+udt_scmg_test() ->                              % sccp mgmt sst
+    CdPA = <<16#42, %% AddressIndicator
+             16#01>>, %% SSN
+    CgPA = <<16#42, %% AddressIndicator
+             16#01>>, %% SSN
+    D = <<16#03, %% SCMG MsgType
+          16#06, %% Affected SSN
+          16#12, 16#34, %% Affected PC
+          16#00>>, %% Subsystem multiplicity indicator
+
+    Bin = <<16#09, %% SCCP MsgType,
+            16#80, %% ProtocolClass
+            16#03, 16#05, 16#07, %% Pointers
+            16#02, CdPA/binary,
+            16#02, CgPA/binary,
+            16#05, D/binary>>,
+    Exp = #{protocol => sccp,
+            called_party_address =>
+                #{global_title => undefined,
+                  global_title_indicator => 0,
+                  national_use_indicator => 0,
+                  point_code => undefined,
+                  routing_indicator => subsystem_number,
+                  subsystem_number => management},
+            calling_party_address =>
+                #{global_title => undefined,
+                  global_title_indicator => 0,
+                  national_use_indicator => 0,
+                  point_code => undefined,
+                  routing_indicator => subsystem_number,
+                  subsystem_number => management},
+            data => #{format_identifier => status_test,
+                      affected_pc => <<18,52>>,
+                      affected_ssn => 6,
+                      subsystem_multiplicity_indicator => 0
+                     },
+            message_type => udt,
+            protocol_class => #{class => 0, options => return_on_error}},
+
+    Val = otc_sccp_codec:decode(Bin),
+    ?assertEqual(Exp, Val),
+    NewBin = otc_sccp_codec:encode(Val),
+    ?assertEqual(Bin, NewBin).
+
 
 called_party_address() ->
     <<16#12, %% AddressIndicator
