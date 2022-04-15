@@ -225,8 +225,8 @@ udt_scmg_test() ->                              % sccp mgmt sst
                   routing_indicator => subsystem_number,
                   subsystem_number => management},
             data => #{format_identifier => status_test,
-                      affected_pc => <<18,52>>,
-                      affected_ssn => 6,
+                      affected_point_code => <<18,52>>,
+                      affected_subsystem_number => home_location_register,
                       subsystem_multiplicity_indicator => 0
                      },
             message_type => udt,

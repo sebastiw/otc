@@ -344,67 +344,67 @@ encode_data(Type, D, _, _) ->
 
 decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_ALLOWED:8, ASSN:8, APC:2/binary, SMI:8>>) ->
     #{format_identifier => allowed,
-      affected_ssn => ASSN,
-      affected_pc => APC,
+      affected_subsystem_number => parse_ssn(ASSN),
+      affected_point_code => APC,
       subsystem_multiplicity_indicator => SMI};
 decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_PROHIBITED:8, ASSN:8, APC:2/binary, SMI:8>>) ->
     #{format_identifier => prohibited,
-      affected_ssn => ASSN,
-      affected_pc => APC,
+      affected_subsystem_number => parse_ssn(ASSN),
+      affected_point_code => APC,
       subsystem_multiplicity_indicator => SMI};
 decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_STATUS_TEST:8, ASSN:8, APC:2/binary, SMI:8>>) ->
     #{format_identifier => status_test,
-      affected_ssn => ASSN,
-      affected_pc => APC,
+      affected_subsystem_number => parse_ssn(ASSN),
+      affected_point_code => APC,
       subsystem_multiplicity_indicator => SMI};
 decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_REQUEST:8, ASSN:8, APC:2/binary, SMI:8>>) ->
     #{format_identifier => out_of_service_request,
-      affected_ssn => ASSN,
-      affected_pc => APC,
+      affected_subsystem_number => parse_ssn(ASSN),
+      affected_point_code => APC,
       subsystem_multiplicity_indicator => SMI};
 decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_GRANT:8, ASSN:8, APC:2/binary, SMI:8>>) ->
     #{format_identifier => out_of_service_grant,
-      affected_ssn => ASSN,
-      affected_pc => APC,
+      affected_subsystem_number => parse_ssn(ASSN),
+      affected_point_code => APC,
       subsystem_multiplicity_indicator => SMI};
 decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_CONGESTED:8, ASSN:8, APC:2/binary, SMI:8, CL:8>>) ->
     #{format_identifier => congested,
-      affected_ssn => ASSN,
-      affected_pc => APC,
+      affected_subsystem_number => parse_ssn(ASSN),
+      affected_point_code => APC,
       subsystem_multiplicity_indicator => SMI,
       congestion_level => CL}.
 
 encode_mgmt_data(#{format_identifier := allowed,
-                   affected_ssn := ASSN,
-                   affected_pc := APC,
+                   affected_subsystem_number := ASSN,
+                   affected_point_code := APC,
                    subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_ALLOWED:8, ASSN:8, APC:2/binary, SMI:8>>;
+    <<?SCCP_SCMG_SUBSYSTEM_ALLOWED:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
 encode_mgmt_data(#{format_identifier := prohibited,
-                   affected_ssn := ASSN,
-                   affected_pc := APC,
+                   affected_subsystem_number := ASSN,
+                   affected_point_code := APC,
                    subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_PROHIBITED:8, ASSN:8, APC:2/binary, SMI:8>>;
+    <<?SCCP_SCMG_SUBSYSTEM_PROHIBITED:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
 encode_mgmt_data(#{format_identifier := status_test,
-                   affected_ssn := ASSN,
-                   affected_pc := APC,
+                   affected_subsystem_number := ASSN,
+                   affected_point_code := APC,
                    subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_STATUS_TEST:8, ASSN:8, APC:2/binary, SMI:8>>;
+    <<?SCCP_SCMG_SUBSYSTEM_STATUS_TEST:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
 encode_mgmt_data(#{format_identifier := out_of_service_request,
-                   affected_ssn := ASSN,
-                   affected_pc := APC,
+                   affected_subsystem_number := ASSN,
+                   affected_point_code := APC,
                    subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_REQUEST:8, ASSN:8, APC:2/binary, SMI:8>>;
+    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_REQUEST:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
 encode_mgmt_data(#{format_identifier := out_of_service_grant,
-                   affected_ssn := ASSN,
-                   affected_pc := APC,
+                   affected_subsystem_number := ASSN,
+                   affected_point_code := APC,
                    subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_GRANT:8, ASSN:8, APC:2/binary, SMI:8>>;
+    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_GRANT:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
 encode_mgmt_data(#{format_identifier := congested,
-                   affected_ssn := ASSN,
-                   affected_pc := APC,
+                   affected_subsystem_number := ASSN,
+                   affected_point_code := APC,
                    subsystem_multiplicity_indicator := SMI,
                    congestion_level := CL}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_CONGESTED:8, ASSN:8, APC:2/binary, SMI:8, CL:8>>.
+    <<?SCCP_SCMG_SUBSYSTEM_CONGESTED:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8, CL:8>>.
 
 encode_msg(cr,
            #{source_local_reference := SourceLocalReference,
