@@ -483,7 +483,7 @@ decode_parameter({protocol_data = Name, _, _, SM}, <<PDH:12/binary, UPD/binary>>
     <<OPC:4/binary, DPC:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>> = PDH,
     PD = #{originating_point_code => OPC,
            destination_point_code => DPC,
-           service_indicator => SI,
+           service_indicator => parse_user_identity(SI),
            network_indicator => NI,
            message_priority => MP,
            signalling_link_selection => SLS,
@@ -659,7 +659,7 @@ encode_parameter(protocol_data, V) ->
      signalling_link_selection := SLS,
      user_protocol_data := UPD
     } = V,
-    PDH = <<OPC:4/binary, DPC:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>>,
+    PDH = <<OPC:4/binary, DPC:4/binary, (compose_user_identity(SI)):8/big, NI:8/big, MP:8/big, SLS:8/big>>,
     <<PDH:12/binary, UPD/binary>>;
 encode_parameter(correlation_id, CI) ->
     <<CI:32/big>>;
