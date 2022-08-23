@@ -1,17 +1,45 @@
--module(otc_m3ua_codec).
-%% IETF RFC 4666 September 2006
+-module(otc_m3ua).
+-behaviour(otc_codec).
 
--export([decode/1,
+-export([spec/0,
+         codec/1,
+         next/1,
+         decode/1,
          encode/1,
          decode_point_code/1,
          encode_point_code/1]).
 
 -include("include/m3ua.hrl").
 
+spec() ->
+    "IETF RFC 4666 September 2006".
+
+codec(Bin) when is_binary(Bin) ->
+    case decode(Bin) of
+        #{protocol_data := #{user_protocol_data := UPD} = PD} = Msg ->
+            PD2 = maps:without([user_protocol_data], PD),
+            {ok, {Msg#{protocol_data => PD2}, UPD}};
+        Msg ->
+            {ok, Msg}
+    end;
+codec(Map) when is_map(Map) ->
+    encode(Map).
+
+
+-type subproto() :: sccp | tup | isup | broadband_isup |
+                    satellite_isup |
+                    aal_type_2_signalling |
+                    bearer_independent_call_control |
+                    gateway_control_protocol.
+
+-spec next(map()) -> '$stop' | {ok, subproto()}.
+next(#{protocol_data := #{service_indicator := SI}}) -> {ok, SI};
+next(_) -> '$stop'.
+
 -type itu_point_code() :: {itu, integer(), integer(), integer()}.
 -type ansi_point_code() :: {ansi, integer(), integer(), integer()}.
 
--spec decode(binary()) -> unsupported | {unsupported, term(), term()} | map().
+-spec decode(binary()) -> map().
 decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) ->
     %% 0                   1                   2                   3
     %% 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -26,49 +54,30 @@ decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) -
     MT = parse_message_type(MC, MessageType),
     ValLen = Len - 8,                 % Remove version, reserved, mc, mt, length
     <<Bin:ValLen/binary>> = Remain,
-    case decode_msg(MC, MT, Bin) of
-        unsupported ->
-            unsupported;
-        {unsupported, _, _} = Unsup ->
-            Unsup;
-        Msg ->
-            Msg#{protocol => m3ua,
-                 message_type => MT,
-                 message_class => MC}
-    end;
-decode(_) ->
-    unsupported.
+    {ok, Msg} = decode_msg(MC, MT, Bin),
+    Msg#{message_type => MT,
+         message_class => MC}.
 
 encode(#{message_type := MessageType, message_class := MessageClass} = Msg) ->
     MC = compose_message_class(MessageClass),
     MT = compose_message_type(MessageClass, MessageType),
-    case encode_msg(MessageClass, MessageType, Msg) of
-        unsupported ->
-            unsupported;
-        Bin ->
-            Len = byte_size(Bin) + 8,
-            <<1:8, 0:8, MC:8, MT:8, Len:32/big, Bin/binary>>
-    end;
-encode(_) ->
-    unsupported.
+    Bin = encode_msg(MessageClass, MessageType, Msg),
+    Len = byte_size(Bin) + 8,
+    <<1:8, 0:8, MC:8, MT:8, Len:32/big, Bin/binary>>.
 
 parse_message_class(?M3UA_MSG_CLASS_MGMT) -> mgmt;
 parse_message_class(?M3UA_MSG_CLASS_TM) -> tm;
 parse_message_class(?M3UA_MSG_CLASS_SSNM) -> ssnm;
 parse_message_class(?M3UA_MSG_CLASS_ASPSM) -> aspsm;
 parse_message_class(?M3UA_MSG_CLASS_ASPTM) -> asptm;
-parse_message_class(?M3UA_MSG_CLASS_RKM) -> rkm;
-parse_message_class(_) ->
-    unsupported.
+parse_message_class(?M3UA_MSG_CLASS_RKM) -> rkm.
 
 compose_message_class(mgmt) -> ?M3UA_MSG_CLASS_MGMT;
 compose_message_class(tm) -> ?M3UA_MSG_CLASS_TM;
 compose_message_class(ssnm) -> ?M3UA_MSG_CLASS_SSNM;
 compose_message_class(aspsm) -> ?M3UA_MSG_CLASS_ASPSM;
 compose_message_class(asptm) -> ?M3UA_MSG_CLASS_ASPTM;
-compose_message_class(rkm) -> ?M3UA_MSG_CLASS_RKM;
-compose_message_class(_) ->
-    unsupported.
+compose_message_class(rkm) -> ?M3UA_MSG_CLASS_RKM.
 
 parse_message_type(mgmt, ?M3UA_MGMT_TYPE_ERR) -> err;
 parse_message_type(mgmt, ?M3UA_MGMT_TYPE_NTFY) -> ntfy;
@@ -92,9 +101,7 @@ parse_message_type(asptm, ?M3UA_ASPTM_TYPE_ASPIA_ACK) -> aspia_ack;
 parse_message_type(rkm, ?M3UA_RKM_TYPE_REG_REQ) -> reg_req;
 parse_message_type(rkm, ?M3UA_RKM_TYPE_REG_RSP) -> reg_rsp;
 parse_message_type(rkm, ?M3UA_RKM_TYPE_DEREG_REQ) -> dereg_req;
-parse_message_type(rkm, ?M3UA_RKM_TYPE_DEREG_RSP) -> dereg_rsp;
-parse_message_type(_, _) ->
-    unsupported.
+parse_message_type(rkm, ?M3UA_RKM_TYPE_DEREG_RSP) -> dereg_rsp.
 
 compose_message_type(mgmt, err) -> ?M3UA_MGMT_TYPE_ERR;
 compose_message_type(mgmt, ntfy) -> ?M3UA_MGMT_TYPE_NTFY;
@@ -118,9 +125,7 @@ compose_message_type(asptm, aspia_ack) -> ?M3UA_ASPTM_TYPE_ASPIA_ACK;
 compose_message_type(rkm, reg_req) -> ?M3UA_RKM_TYPE_REG_REQ;
 compose_message_type(rkm, reg_rsp) -> ?M3UA_RKM_TYPE_REG_RSP;
 compose_message_type(rkm, dereg_req) -> ?M3UA_RKM_TYPE_DEREG_REQ;
-compose_message_type(rkm, dereg_rsp) -> ?M3UA_RKM_TYPE_DEREG_RSP;
-compose_message_type(_, _) ->
-    unsupported.
+compose_message_type(rkm, dereg_rsp) -> ?M3UA_RKM_TYPE_DEREG_RSP.
 
 decode_msg(tm, data, Bin) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
@@ -252,9 +257,7 @@ decode_msg(mgmt, ntfy, Bin) ->
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(_, _, _) ->
-    unsupported.
+    decode_parameters(Bin, AllowedParameters).
 
 encode_msg(tm, data, Msg) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
@@ -386,9 +389,7 @@ encode_msg(mgmt, ntfy, Msg) ->
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(_, _, _) ->
-    unsupported.
+    encode_parameters(Msg, AllowedParameters).
 
 decode_parameters(Bin, AllowedParameters) ->
     Ps = decode_parameters(Bin, AllowedParameters, #{}),
@@ -397,26 +398,21 @@ decode_parameters(Bin, AllowedParameters) ->
 decode_parameters(<<>>, _, Acc) ->
     Acc;
 decode_parameters(Bin, AllowedParameters, Acc) ->
-    case take_parameter(Bin) of
-        {Tag, BinValue, Rest} ->
-            case lists:keytake(Tag, 2, AllowedParameters) of
-                false ->
-                    {unsupported, tag_not_found, Tag};
-                {value, {_, _, _, single} = T, APs} ->
-                    NAcc = decode_parameter(T, BinValue, Acc),
-                    decode_parameters(Rest, APs, NAcc);
-                {value, {_, _, _, multiple} = T, APs} ->
-                    NAcc = decode_parameter(T, BinValue, Acc),
-                    decode_parameters(Rest, [T|APs], NAcc)
-            end;
-        unsupported ->
-            {unsupported, parameter_not_found, Bin}
+    {Tag, BinValue, Rest} = take_parameter(Bin),
+
+    case lists:keytake(Tag, 2, AllowedParameters) of
+        {value, {_, _, _, single} = T, APs} ->
+            NAcc = decode_parameter(T, BinValue, Acc),
+            decode_parameters(Rest, APs, NAcc);
+        {value, {_, _, _, multiple} = T, APs} ->
+            NAcc = decode_parameter(T, BinValue, Acc),
+            decode_parameters(Rest, [T|APs], NAcc)
     end.
 
 verify_mandatory_exist(Ps, []) ->
-    Ps;
+    {ok, Ps};
 verify_mandatory_exist(Ps, [{N, _, mandatory, _}|_]) when not is_map_key(N, Ps) ->
-    {unsupported, mandatory_missing, N};
+    throw({mandatory_missing, N});
 verify_mandatory_exist(Ps, [_|Rest]) ->
     verify_mandatory_exist(Ps, Rest).
 
@@ -440,7 +436,7 @@ encode_parameters(Msg, [Param|AllowedParameters], Acc) ->
                               end, <<>>, Vs),
             encode_parameters(Msg, AllowedParameters, Bin);
         {Name, _, mandatory, _} when not is_map_key(Name, Msg) ->
-            {unsupported, mandatory_missing, Name};
+            throw({mandatory_missing, Name});
          _ ->
             encode_parameters(Msg, AllowedParameters, Acc)
     end.
@@ -468,9 +464,7 @@ take_parameter(<<Tag:16/big, Len:16/big, Bin1/binary>>) ->
     %% +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     ValLen = Len - 4,         % Remove parameter tag + length
     <<Value:ValLen/binary, 0:PadLen/integer-unit:8, Rest/binary>> = Bin1,
-    {Tag, Value, Rest};
-take_parameter(_) ->
-    unsupported.
+    {Tag, Value, Rest}.
 
 decode_parameter({network_appearance = Name, _, _, SM}, <<NA:32/big>>, Acc) ->
     update_params(Name, SM, NA, Acc);

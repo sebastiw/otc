@@ -1,11 +1,37 @@
--module(otc_mtp3_codec).
-%% ITU-T Q.704 (07/96) July 1996
+-module(otc_mtp3).
+-behaviour(otc_codec).
 
--export([decode/1,
+-export([spec/0,
+         codec/1,
+         next/1,
+         decode/1,
          encode/1
         ]).
 
 -include("include/mtp3.hrl").
+
+spec() ->
+    "ITU-T Q.704 (07/96) July 1996".
+
+codec(Bin) when is_binary(Bin) ->
+    case decode(Bin) of
+        #{payload := D} = Msg
+          when is_binary(D) ->
+            {ok, {maps:without([payload], Msg), D}};
+        Msg ->
+            {ok, Msg}
+    end;
+codec(Map) when is_map(Map) ->
+    encode(Map).
+
+-type subproto() :: sccp | tup | isup |
+                    dup_call | dup_reg | mtp_test |
+                    broadband_isup | satellite_isup.
+
+-spec next(map()) -> '$stop' | {ok, subproto()}.
+next(#{service_indicator := SI} = V)
+  when not is_map_key(payload, V) -> {ok, SI};
+next(_) -> '$stop'.
 
 decode(<<NI:2/big, _:2, SI:4/big, RL0:32/little, Rest/binary>>) ->
     NetworkInd = parse_network_indicator(NI),
@@ -13,19 +39,13 @@ decode(<<NI:2/big, _:2, SI:4/big, RL0:32/little, Rest/binary>>) ->
     %% Routing Label is in reverse byte order
     RL = <<RL0:32/big>>,
     <<SLS:4/big, OPC:14/big, DPC:14/big>> = RL,
-    case decode_msg(ServiceInd, Rest) of
-        unsupported ->
-            unsupported;
-        Msg ->
-            Msg#{network_indicator => NetworkInd,
-                 service_indicator => ServiceInd,
-                 signalling_link_selection => SLS,
-                 origin_point_code => OPC,
-                 destination_point_code => DPC
-                }
-    end;
-decode(_) ->
-    unsupported.
+    Msg = decode_msg(ServiceInd, Rest),
+    Msg#{network_indicator => NetworkInd,
+         service_indicator => ServiceInd,
+         signalling_link_selection => SLS,
+         origin_point_code => OPC,
+         destination_point_code => DPC
+        }.
 
 encode(#{network_indicator := NetworkInd, service_indicator := ServiceInd} = Msg) ->
     #{signalling_link_selection := SLS,
@@ -37,14 +57,8 @@ encode(#{network_indicator := NetworkInd, service_indicator := ServiceInd} = Msg
     RL0 = <<SLS:4/big, OPC:14/big, DPC:14/big>>,
     %% Routing Label is in reverse byte order
     <<RL:32/little>> = RL0,
-    case encode_msg(ServiceInd, Msg) of
-        unsupported ->
-            unsupported;
-        Bin ->
-            <<NI:2/big, 0:2, SI:4/big, RL:32/big, Bin/binary>>
-    end;
-encode(_) ->
-    unsupported.
+    Bin = encode_msg(ServiceInd, Msg),
+    <<NI:2/big, 0:2, SI:4/big, RL:32/big, Bin/binary>>.
 
 parse_service_indicator(?MTP3_SERVIND_MGMT) -> mgmt;
 parse_service_indicator(?MTP3_SERVIND_MAINT) -> maint;
@@ -55,9 +69,7 @@ parse_service_indicator(?MTP3_SERVIND_DUP_CALL) -> dup_call;
 parse_service_indicator(?MTP3_SERVIND_DUP_REG) -> dup_reg;
 parse_service_indicator(?MTP3_SERVIND_MTP_TEST) -> mtp_test;
 parse_service_indicator(?MTP3_SERVIND_BROADBAND_ISUP) -> broadband_isup;
-parse_service_indicator(?MTP3_SERVIND_SATELLITE_ISUP) -> satellite_isup;
-parse_service_indicator(_) ->
-    unsupported.
+parse_service_indicator(?MTP3_SERVIND_SATELLITE_ISUP) -> satellite_isup.
 
 compose_service_indicator(mgmt) -> ?MTP3_SERVIND_MGMT;
 compose_service_indicator(maint) -> ?MTP3_SERVIND_MAINT;
@@ -68,9 +80,7 @@ compose_service_indicator(dup_call) -> ?MTP3_SERVIND_DUP_CALL;
 compose_service_indicator(dup_reg) -> ?MTP3_SERVIND_DUP_REG;
 compose_service_indicator(mtp_test) -> ?MTP3_SERVIND_MTP_TEST;
 compose_service_indicator(broadband_isup) -> ?MTP3_SERVIND_BROADBAND_ISUP;
-compose_service_indicator(satellite_isup) -> ?MTP3_SERVIND_SATELLITE_ISUP;
-compose_service_indicator(_) ->
-    unsupported.
+compose_service_indicator(satellite_isup) -> ?MTP3_SERVIND_SATELLITE_ISUP.
 
 parse_network_indicator(?MTP3_NETIND_INTERNATIONAL) -> international;
 parse_network_indicator(?MTP3_NETIND_INTERNATIONAL_SPARE) -> international_spare;
@@ -83,15 +93,9 @@ compose_network_indicator(national) -> ?MTP3_NETIND_NATIONAL;
 compose_network_indicator(national_spare) -> ?MTP3_NETIND_NATIONAL_SPARE.
 
 decode_msg(mgmt, Bin) -> %% Q.704
-    case decode_mgmt(Bin) of
-        unsupported -> unsupported;
-        Payload -> #{payload => Payload}
-    end;
+    #{payload => decode_mgmt(Bin)};
 decode_msg(maint, Bin) -> %% Q.707
-    case decode_maint(Bin) of
-        unsupported -> unsupported;
-        Payload -> #{payload => Payload}
-    end;
+    #{payload => decode_maint(Bin)};
 decode_msg(_, Bin) ->
     #{payload => Bin}.
 
@@ -205,9 +209,7 @@ decode_mgmt(<<?MTP3_MGMT_H1_UFC_UPU:4, ?MTP3_MGMT_H0_UFC:4, Bin/binary>>) ->
       destination_point_code => DPC,
       user_part_id => UPID,
       unavailability_cause => UnavailabilityCause
-     };
-decode_mgmt(_) ->
-    unsupported.
+     }.
 
 encode_mgmt(#{message_type := changeover_order,
               forward_sequence_number := FSN}) ->
@@ -312,15 +314,11 @@ encode_mgmt(#{message_type := user_part_unavailable,
              }) ->
     UC = compose_unavailability_cause(UnavailabilityCause),
     Bin = <<DPC:14, 0:2, UPID:4, UC:4>>,
-    <<?MTP3_MGMT_H1_UFC_UPU:4, ?MTP3_MGMT_H0_UFC:4, Bin/binary>>;
-encode_mgmt(_) ->
-    unsupported.
+    <<?MTP3_MGMT_H1_UFC_UPU:4, ?MTP3_MGMT_H0_UFC:4, Bin/binary>>.
 
 parse_unavailability_cause(?MTP3_UPU_CAUSE_UNKNOWN) -> unknown;
 parse_unavailability_cause(?MTP3_UPU_CAUSE_UNEQUIPPED) -> unequipped;
-parse_unavailability_cause(?MTP3_UPU_CAUSE_INACCESSIBLE) -> inaccessible;
-parse_unavailability_cause(_) ->
-    unsupported.
+parse_unavailability_cause(?MTP3_UPU_CAUSE_INACCESSIBLE) -> inaccessible.
 
 compose_unavailability_cause(unknown) -> ?MTP3_UPU_CAUSE_UNKNOWN;
 compose_unavailability_cause(unequipped) -> ?MTP3_UPU_CAUSE_UNEQUIPPED;
@@ -335,9 +333,7 @@ decode_maint(<<?MTP3_MAINT_H1_TEST_SLTA:4, ?MTP3_MAINT_H0_TEST:4, Bin/binary>>) 
     <<L:4, _:4, Rest/binary>> = Bin,
     <<TP:L/binary>> = Rest,
     #{message_type => signalling_link_test_ack,
-      test_pattern => TP};
-decode_maint(_) ->
-    unsupported.
+      test_pattern => TP}.
 
 encode_maint(#{message_type := signalling_link_test,
                test_pattern := TP}) ->
@@ -348,7 +344,5 @@ encode_maint(#{message_type := signalling_link_test_ack,
                test_pattern := TP}) ->
     L = byte_size(TP),
     Bin = <<L:4, 0:4, TP/binary>>,
-    <<?MTP3_MAINT_H1_TEST_SLTA:4, ?MTP3_MAINT_H0_TEST:4, Bin/binary>>;
-encode_maint(_) ->
-    unsupported.
+    <<?MTP3_MAINT_H1_TEST_SLTA:4, ?MTP3_MAINT_H0_TEST:4, Bin/binary>>.
 
