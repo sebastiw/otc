@@ -75,7 +75,7 @@ decode_next({Proto, Data}, Headers) ->
 
 next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
 %% next({sctp, V}) -> otc_sctp:next(V);
-next({m2pa, V}) -> otc_m3ua:next(V);
+next({m2pa, V}) -> otc_m2pa:next(V);
 next({m3ua, V}) -> otc_m3ua:next(V);
 next({mtp3, V}) -> otc_mtp3:next(V);
 next({sccp, V}) -> otc_sccp:next(V);
