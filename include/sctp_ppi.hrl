@@ -1,0 +1,12 @@
+
+-define(PPI_M2UA, 2).
+-define(PPI_M3UA, 3).
+-define(PPI_M2PA, 5).
+-define(PPI_S1AP, 18).
+-define(PPI_M2AP, 43).
+-define(PPI_M3AP, 44).
+-define(PPI_SSH, 45).
+-define(PPI_Diameter, 46).
+-define(PPI_Diameter_DTLS, 47).
+-define(PPI_NGAP, 60).
+-define(PPI_NGAP_DTLS, 66).

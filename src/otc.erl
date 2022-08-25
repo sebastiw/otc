@@ -6,6 +6,7 @@
          decode/1,
          decode/2,
          encode/1,
+         sctp_ppi/1,
          sctp/1,
          m2pa/1,
          mtp3/1,
@@ -26,7 +27,7 @@ decapsulate(Proto, Data) ->
     decapsulate({Proto, Data}).
 
 decapsulate({PPI, Data}) when is_integer(PPI) ->
-    decapsulate_next({ppi(PPI), Data}, []);
+    decapsulate_next({sctp_ppi(PPI), Data}, []);
 decapsulate({Proto, Data}) when is_atom(Proto) ->
     decapsulate_next({Proto, Data}, []);
 decapsulate(Data) when is_binary(Data) ->
@@ -72,6 +73,7 @@ decode_next({Proto, Data}, Headers) ->
     end.
 
 
+next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
 %% next({sctp, V}) -> otc_sctp:next(V);
 next({m2pa, V}) -> otc_m3ua:next(V);
 next({m3ua, V}) -> otc_m3ua:next(V);
@@ -81,6 +83,7 @@ next({nas_eps, V}) -> otc_nas_eps:next(V);
 next({nas_eps_emm, V}) -> otc_nas_eps_emm:next(V);
 next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V).
 
+sctp_ppi(PPI) -> otc_sctp_ppi:codec(PPI).
 sctp(D) -> otc_sctp:codec(D).
 m2pa(D) -> otc_m2pa:codec(D).
 mtp3(D) -> otc_mtp3:codec(D).
@@ -90,8 +93,6 @@ nas_eps(D) -> otc_nas_eps:codec(D).
 nas_eps_emm(D) -> otc_nas_eps_emm:codec(D).
 nas_eps_esm(D) -> otc_nas_eps_esm:codec(D).
 
-ppi(PPI) ->
-    otc_sctp_ppi:codec(PPI).
 
 encode(#{protocol := Proto} = Pdu) ->
     ?MODULE:Proto(Pdu);
