@@ -18,8 +18,8 @@ codec(Bin) when is_binary(Bin) ->
 codec(Map) when is_map(Map) ->
     encode(Map).
 
-next(_) ->
-    '$stop'.
+next(#{message_type := user_data}) -> {ok, mtp3};
+next(_) -> '$stop'.
 
 decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/binary>>) ->
     %%  0                   1                   2                   3
