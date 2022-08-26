@@ -17,9 +17,9 @@ codec(Bin) when is_binary(Bin) ->
     case decode(Bin) of
         #{payload := D} = Msg
           when is_binary(D) ->
-            {ok, {maps:without([payload], Msg), D}};
+            {maps:without([payload], Msg), D};
         Msg ->
-            {ok, Msg}
+            Msg
     end;
 codec(Map) when is_map(Map) ->
     encode(Map).

@@ -18,9 +18,9 @@ codec(Bin) when is_binary(Bin) ->
     case decode(Bin) of
         #{protocol_data := #{user_protocol_data := UPD} = PD} = Msg ->
             PD2 = maps:without([user_protocol_data], PD),
-            {ok, {Msg#{protocol_data => PD2}, UPD}};
+            {Msg#{protocol_data => PD2}, UPD};
         Msg ->
-            {ok, Msg}
+            Msg
     end;
 codec(Map) when is_map(Map) ->
     encode(Map).
@@ -627,9 +627,7 @@ decode_parameter({status = Name, _, _, SM}, <<ST:16/big, SI:16/big>>, Acc) ->
                 #{status_type => other,
                   status_information => I}
         end,
-    update_params(Name, SM, V, Acc);
-decode_parameter(P, B, _) ->
-    {unsupported, parameter, {P, B}}.
+    update_params(Name, SM, V, Acc).
 
 update_params(Name, single, V, Acc) ->
     Acc#{Name => V};

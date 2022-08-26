@@ -1,9 +1,9 @@
 -module(otc).
 %% Inspired by [pkt](https://github.com/msantos/pkt) and [ossie](https://github.com/massemanet/ossie)
 
--export([decapsulate/1,
+-export([%% decapsulate/1,
          decapsulate/2,
-         decode/1,
+         %% decode/1,
          decode/2,
          encode/1,
          sctp_ppi/1,
@@ -19,8 +19,11 @@
 
 -include_lib("kernel/include/logger.hrl").
 
--spec otc:decapsulate(_Data) -> _Packet.
--spec otc:decapsulate(_Proto, _Data) -> _Packet.
+-type data() :: binary() | non_neg_integer().
+-type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | nas_eps | nas_eps_emm | nas_eps_esm.
+
+-spec otc:decapsulate(protocol(), data()) -> _Packet.
+-spec otc:decapsulate({protocol(), data()}) -> _Packet.
 %% decapsulate/1,2 works on valid packets. If the packet is malformed
 %% or unsupported, decapsulate/1 will crash.
 decapsulate(Proto, Data) ->
@@ -29,9 +32,9 @@ decapsulate(Proto, Data) ->
 decapsulate({PPI, Data}) when is_integer(PPI) ->
     decapsulate_next({sctp_ppi(PPI), Data}, []);
 decapsulate({Proto, Data}) when is_atom(Proto) ->
-    decapsulate_next({Proto, Data}, []);
-decapsulate(Data) when is_binary(Data) ->
-    decapsulate_next({sctp, Data}, []).
+    decapsulate_next({Proto, Data}, []).
+%% decapsulate(Data) when is_binary(Data) ->
+%%     decapsulate_next({sctp, Data}, []).
 
 decapsulate_next({'$stop', Data}, Headers) ->
     lists:reverse([Data|Headers]);
@@ -39,34 +42,32 @@ decapsulate_next({Proto, Data}, Headers) ->
     {Header, Payload} = ?MODULE:Proto(Data),
     decapsulate_next({next({Proto, Header}), Payload}, [Header|Headers]).
 
--type data() :: binary().
--type protocol() :: m3ua | sccp.
--spec otc:decode(data()) ->
-          {ok, _Packet} |
-          {error, _SoFar, {_FailedProto, binary()}}.
+%% -spec otc:decode(data()) ->
+%%           {ok, _Packet} |
+%%           {error, _SoFar, {_FailedProto, binary()}}.
 -spec otc:decode(protocol(), data()) ->
           {ok, _Packet} |
           {error, _SoFar, {_FailedProto, binary()}}.
 %% Similar to decapsulate/1 but, on error, returns any part of the
 %% packet that has been successfully converted to Erlang term format.
-decode(Data) when is_binary(Data) ->
-    decode(sctp, Data).
-decode(Proto, Data) ->
+%% decode(Data) when is_binary(Data) ->
+%%     decode(sctp, Data).
+decode(PPI, Data) when is_integer(PPI) ->
+    decode(sctp_ppi(PPI), Data);
+decode(Proto, Data) when is_atom(Proto) ->
     decode_next({Proto, Data}, []).
 
 decode_next({Proto, Data}, Headers) ->
     try ?MODULE:Proto(Data) of
-        {ok, {Header, Payload}} ->
+        {Header, Payload} ->
             case next({Proto, Header}) of
                 '$stop' ->
                     {ok, {lists:reverse([Header#{protocol => Proto}|Headers]), Payload}};
                 {ok, Next} ->
                     decode_next({Next, Payload}, [Header#{protocol => Proto}|Headers])
             end;
-        {ok, Header} ->
-            {ok, lists:reverse([Header#{protocol => Proto}|Headers])};
-        {error, _, _} = Error ->
-            Error
+        Header ->
+            {ok, lists:reverse([Header#{protocol => Proto}|Headers])}
     catch E:R:S ->
             ?LOG_ERROR({E, R, S}),
             {error, lists:reverse(Headers), {unsupported, Data}}

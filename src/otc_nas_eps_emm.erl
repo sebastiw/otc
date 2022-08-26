@@ -11,12 +11,7 @@ spec() ->
     "3GPP TS 24.301 version 16.8.0".
 
 codec({SecurityHeaderType, Bin}) when is_binary(Bin) ->
-    case decode({SecurityHeaderType, Bin}) of
-        {Msg, D} ->
-            {ok, {Msg, D}};
-        Msg ->
-            {ok, Msg}
-    end;
+    decode({SecurityHeaderType, Bin});
 codec(Map) when is_map(Map) ->
     encode(Map).
 

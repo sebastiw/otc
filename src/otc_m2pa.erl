@@ -14,7 +14,7 @@ spec() ->
     "IETF RFC 4165 September 2005".
 
 codec(Bin) when is_binary(Bin) ->
-    {ok, decode(Bin)};
+    decode(Bin);
 codec(Map) when is_map(Map) ->
     encode(Map).
 
@@ -40,12 +40,17 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
     %% |     unused    |                      FSN                      |
     %% +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     <<_:8, BSN:24/big, _:8, FSN:24/big, Rest/binary>> = Bin,
-    Msg = decode_msg(MT, Rest),
-    Msg#{message_class => m2pa,
-         message_type => MT,
-         backward_sequence_number => BSN,
-         forward_sequence_number => FSN
-        }.
+    Base = #{message_class => m2pa,
+             message_type => MT,
+             backward_sequence_number => BSN,
+             forward_sequence_number => FSN
+            },
+    case decode_msg(MT, Rest) of
+        {Msg, Data} ->
+            {maps:merge(Msg, Base), Data};
+        Msg ->
+            maps:merge(Msg, Base)
+    end.
 
 encode(#{message_class := m2pa, message_type := MessageType} = Msg) ->
     MT = compose_message_type(MessageType),
@@ -70,8 +75,7 @@ decode_msg(user_data, Data) ->
         <<PRI:2, _:6, Payload/binary>> ->
             %% PRI - Priority used only in national MTP defined in [JT-Q703] and
             %% [JT-Q704].  These bits are spare for other MTP versions.
-            #{priority => PRI,
-              payload => Payload}
+            {#{priority => PRI}, Payload}
     end;
 decode_msg(link_status, <<State:32/big>>) ->
     #{link_status => parse_link_status(State)};
@@ -86,9 +90,8 @@ decode_msg(link_status, <<State:32/big, Filler/binary>>) ->
 
 encode_msg(user_data, Msg) ->
     case Msg of
-        #{payload := Payload} ->
-            PRI = maps:get(priority, Msg, 0),
-            <<PRI:2, 0:6, Payload/binary>>;
+        #{priority := PRI} ->
+            <<PRI:2, 0:6>>;
         _ ->
             <<>>
     end;

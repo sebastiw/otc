@@ -18,14 +18,14 @@ codec(Bin) when is_binary(Bin) ->
     case decode(Bin) of
         #{long_data := LD} = Msg2
           when is_map(LD) ->
-            {ok, Msg2};
+            Msg2;
         #{long_data := LD, message_type := MessageType} = Msg2
           when ludt =:= MessageType;
                ludts =:= MessageType ->
-            {ok, {maps:without([long_data], Msg2), LD}};
+            {maps:without([long_data], Msg2), LD};
         #{data := D} = Msg2
           when is_map(D) ->
-            {ok, Msg2};
+            Msg2;
         #{data := D, message_type := MessageType} = Msg2
           when cr =:= MessageType;
                cc =:= MessageType;
@@ -38,9 +38,9 @@ codec(Bin) when is_binary(Bin) ->
                ed =:= MessageType;
                xudt =:= MessageType;
                xudts =:= MessageType ->
-            {ok, {maps:without([data], Msg2), D}};
+            {maps:without([data], Msg2), D};
         Msg2 ->
-            {ok, Msg2}
+            Msg2
     end;
 codec(Map) when is_map(Map) ->
     encode(Map).

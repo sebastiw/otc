@@ -1,5 +1,4 @@
 -module(otc_sctp_ppi).
--behaviour(otc_codec).
 
 -export([spec/0,
          codec/1,
@@ -12,7 +11,6 @@
 spec() ->
     "https://www.iana.org/assignments/sctp-parameters/sctp-parameters.xhtml#sctp-parameters-25".
 
--spec next(map()) -> '$stop' | {ok, atom()}.
 next(m3ua) -> {ok, m3ua};
 next(m2pa) -> {ok, m2pa};
 next(_) -> '$stop'.

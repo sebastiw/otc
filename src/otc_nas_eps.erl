@@ -18,22 +18,14 @@ spec() ->
     "3GPP TS 24.301 version 16.8.0".
 
 codec(Bin) when is_binary(Bin) ->
-    case decode(Bin) of
-        %% #{message_type := esm_data_transport,
-        %%   user_data_container := D} = Msg
-        %%   when is_binary(D) ->
-        %%     {ok, {maps:without([user_data_container], Msg), D}};
-        %% {Msg, D} ->
-        %%     {ok, {Msg, D}};
-        Msg ->
-            {ok, Msg}
-    end;
+    decode(Bin);
 codec(Map) when is_map(Map) ->
     encode(Map).
 
 -spec next(map()) -> '$stop' | {ok, nas_eps | nas_eps_emm | nas_eps_esm}.
-next(#{security_header_type := _}) -> {ok, nas_eps_emm};
-next(#{eps_bearer_identity := _}) -> {ok, nas_eps_esm}.
+next(#{protocol_discriminator := eps_mobility_management_messages}) -> {ok, nas_eps_emm};
+next(#{protocol_discriminator := eps_session_management_messages}) -> {ok, nas_eps_esm};
+next(_) -> '$stop'.
 
 -spec decode(binary()) -> map() | {map(), binary()}.
 decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
