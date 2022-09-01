@@ -21,7 +21,6 @@
   |           | - TCAPMessages.asn1                                                  |
   |           | - UnidialoguePDUs.asn1                                               |
   |-----------+----------------------------------------------------------------------|
-  | Reference | https://www.itu.int/ITU-T/recommendations/rec.aspx?rec=4079&showfl=1 |
 
 * ETSI ETR 091 ed.1
 
