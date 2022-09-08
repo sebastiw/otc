@@ -3,11 +3,13 @@
 
 -export([%% decapsulate/1,
          decapsulate/2,
+         decapsulate/3,
          %% decode/1,
          decode/2,
+         decode/3,
          encode/1,
          sctp_ppi/1,
-         sctp/1,
+         %% sctp/1,
          m2pa/1,
          mtp3/1,
          m3ua/1,
@@ -19,52 +21,65 @@
 
 -include_lib("kernel/include/logger.hrl").
 
--type data() :: binary() | non_neg_integer().
 -type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | nas_eps | nas_eps_emm | nas_eps_esm.
+-type options() :: #{stop_after := protocol()}.
 
--spec otc:decapsulate(protocol(), data()) -> _Packet.
--spec otc:decapsulate({protocol(), data()}) -> _Packet.
+-type data() :: binary() | non_neg_integer().
+-type header() :: map().
+-type headers() :: [header()].
+-type packet() :: headers() | Decoded :: {headers(), data()} | Decapsulated :: [header() | binary()].
+
+-spec otc:decapsulate(protocol(), data()) -> packet().
+-spec otc:decapsulate(protocol(), data(), options()) -> packet().
 %% decapsulate/1,2 works on valid packets. If the packet is malformed
 %% or unsupported, decapsulate/1 will crash.
 decapsulate(Proto, Data) ->
-    decapsulate({Proto, Data}).
+    decapsulate(Proto, Data, #{}).
 
-decapsulate({PPI, Data}) when is_integer(PPI) ->
-    decapsulate_next({sctp_ppi(PPI), Data}, []);
-decapsulate({Proto, Data}) when is_atom(Proto) ->
-    decapsulate_next({Proto, Data}, []).
+decapsulate(PPI, Data, Opts) when is_integer(PPI) ->
+    decapsulate_next(sctp_ppi(PPI), Data, [], Opts);
+decapsulate(Proto, Data, Opts) when is_atom(Proto) ->
+    decapsulate_next(Proto, Data, [], Opts).
 %% decapsulate(Data) when is_binary(Data) ->
 %%     decapsulate_next({sctp, Data}, []).
 
-decapsulate_next({'$stop', Data}, Headers) ->
+decapsulate_next('$stop', Data, Headers, _Opts) ->
     lists:reverse([Data|Headers]);
-decapsulate_next({Proto, Data}, Headers) ->
+decapsulate_next(Proto, Data, Headers, #{stop_after := Proto}) ->
+    lists:reverse([Data|Headers]);
+decapsulate_next(Proto, Data, Headers, Opts) ->
     {Header, Payload} = ?MODULE:Proto(Data),
-    decapsulate_next({next({Proto, Header}), Payload}, [Header|Headers]).
+    decapsulate_next(next({Proto, Header}, Opts), Payload, [Header|Headers], Opts).
 
 %% -spec otc:decode(data()) ->
-%%           {ok, _Packet} |
-%%           {error, _SoFar, {_FailedProto, binary()}}.
+%%           {ok, packet()} |
+%%           {error, SoFar :: headers(), {FailedProto :: protocol(), data()}}.
 -spec otc:decode(protocol(), data()) ->
-          {ok, _Packet} |
-          {error, _SoFar, {_FailedProto, binary()}}.
+          {ok, packet()} |
+          {error, SoFar :: headers(), {FailedProto :: protocol(), data()}}.
+-spec otc:decode(protocol(), data(), options()) ->
+          {ok, packet()} |
+          {error, SoFar :: headers(), {FailedProto :: protocol(), data()}}.
 %% Similar to decapsulate/1 but, on error, returns any part of the
 %% packet that has been successfully converted to Erlang term format.
 %% decode(Data) when is_binary(Data) ->
 %%     decode(sctp, Data).
-decode(PPI, Data) when is_integer(PPI) ->
-    decode(sctp_ppi(PPI), Data);
-decode(Proto, Data) when is_atom(Proto) ->
-    decode_next({Proto, Data}, []).
+decode(P, Data) ->
+    decode(P, Data, #{}).
 
-decode_next({Proto, Data}, Headers) ->
+decode(PPI, Data, Opts) when is_integer(PPI) ->
+    decode(sctp_ppi(PPI), Data, Opts);
+decode(Proto, Data, Opts) when is_atom(Proto) ->
+    decode_next({Proto, Data}, [], Opts).
+
+decode_next({Proto, Data}, Headers, Opts) ->
     try ?MODULE:Proto(Data) of
         {Header, Payload} ->
-            case next({Proto, Header}) of
+            case next({Proto, Header}, Opts) of
                 '$stop' ->
                     {ok, {lists:reverse([Header#{protocol => Proto}|Headers]), Payload}};
                 {ok, Next} ->
-                    decode_next({Next, Payload}, [Header#{protocol => Proto}|Headers])
+                    decode_next({Next, Payload}, [Header#{protocol => Proto}|Headers], Opts)
             end;
         Header ->
             {ok, lists:reverse([Header#{protocol => Proto}|Headers])}
@@ -73,6 +88,10 @@ decode_next({Proto, Data}, Headers) ->
             {error, lists:reverse(Headers), {unsupported, Data}}
     end.
 
+next({Proto, _Header}, #{stop_after := Proto}) ->
+    '$stop';
+next({Proto, Header}, _) ->
+    next({Proto, Header}).
 
 next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
 %% next({sctp, V}) -> otc_sctp:next(V);
@@ -85,7 +104,7 @@ next({nas_eps_emm, V}) -> otc_nas_eps_emm:next(V);
 next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V).
 
 sctp_ppi(PPI) -> otc_sctp_ppi:codec(PPI).
-sctp(D) -> otc_sctp:codec(D).
+%% sctp(D) -> otc_sctp:codec(D).
 m2pa(D) -> otc_m2pa:codec(D).
 mtp3(D) -> otc_mtp3:codec(D).
 m3ua(D) -> otc_m3ua:codec(D).
