@@ -33,7 +33,7 @@ next(#{service_indicator := SI} = V)
   when not is_map_key(payload, V) -> {ok, SI};
 next(_) -> '$stop'.
 
-decode(<<NI:2/big, _:2, SI:4/big, RL0:32/little, Rest/binary>>) ->
+decode(<<NI:2/big, NU:2/big, SI:4/big, RL0:32/little, Rest/binary>>) ->
     NetworkInd = parse_network_indicator(NI),
     ServiceInd = parse_service_indicator(SI),
     %% Routing Label is in reverse byte order
@@ -41,6 +41,7 @@ decode(<<NI:2/big, _:2, SI:4/big, RL0:32/little, Rest/binary>>) ->
     <<SLS:4/big, OPC:14/big, DPC:14/big>> = RL,
     Msg = decode_msg(ServiceInd, Rest),
     Msg#{network_indicator => NetworkInd,
+         national_use_spare => NU,
          service_indicator => ServiceInd,
          signalling_link_selection => SLS,
          origin_point_code => OPC,
@@ -53,12 +54,13 @@ encode(#{network_indicator := NetworkInd, service_indicator := ServiceInd} = Msg
       destination_point_code := DPC
      } = Msg,
     NI = compose_network_indicator(NetworkInd),
+    NU = maps:get(national_use_spare, Msg, 2#00),
     SI = compose_service_indicator(ServiceInd),
     RL0 = <<SLS:4/big, OPC:14/big, DPC:14/big>>,
     %% Routing Label is in reverse byte order
     <<RL:32/little>> = RL0,
     Bin = encode_msg(ServiceInd, Msg),
-    <<NI:2/big, 0:2, SI:4/big, RL:32/big, Bin/binary>>.
+    <<NI:2/big, NU:2/big, SI:4/big, RL:32/big, Bin/binary>>.
 
 parse_service_indicator(?MTP3_SERVIND_MGMT) -> mgmt;
 parse_service_indicator(?MTP3_SERVIND_MAINT) -> maint;
