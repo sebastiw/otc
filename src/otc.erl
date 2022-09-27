@@ -74,17 +74,17 @@ decode(Proto, Data, Opts) when is_atom(Proto) ->
 
 decode_next({Proto, Data}, Headers, Opts) ->
     try ?MODULE:Proto(Data) of
-        {Header, Payload} ->
+        {Header, Payload} when is_map(Header) ->
             case next({Proto, Header}, Opts) of
                 '$stop' ->
                     {ok, {lists:reverse([Header#{protocol => Proto}|Headers]), Payload}};
                 {ok, Next} ->
                     decode_next({Next, Payload}, [Header#{protocol => Proto}|Headers], Opts)
             end;
-        Header ->
+        Header when is_map(Header) ->
             {ok, lists:reverse([Header#{protocol => Proto}|Headers])}
     catch E:R:S ->
-            ?LOG_ERROR({E, R, S}),
+            ?LOG_ERROR(#{E => R, stack => S}),
             {error, lists:reverse(Headers), {unsupported, Data}}
     end.
 
