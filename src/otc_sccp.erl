@@ -22,7 +22,7 @@ codec(Bin) when is_binary(Bin) ->
         #{long_data := LD, message_type := MessageType} = Msg2
           when ludt =:= MessageType;
                ludts =:= MessageType ->
-            {maps:without([long_data], Msg2), LD};
+            {Msg2, LD};
         #{data := D} = Msg2
           when is_map(D) ->
             Msg2;
@@ -38,7 +38,7 @@ codec(Bin) when is_binary(Bin) ->
                ed =:= MessageType;
                xudt =:= MessageType;
                xudts =:= MessageType ->
-            {maps:without([data], Msg2), D};
+            {Msg2, D};
         Msg2 ->
             Msg2
     end;

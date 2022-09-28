@@ -16,9 +16,8 @@ spec() ->
 
 codec(Bin) when is_binary(Bin) ->
     case decode(Bin) of
-        #{protocol_data := #{user_protocol_data := UPD} = PD} = Msg ->
-            PD2 = maps:without([user_protocol_data], PD),
-            {Msg#{protocol_data => PD2}, UPD};
+        #{protocol_data := #{user_protocol_data := UPD} = _PD} = Msg ->
+            {Msg, UPD};
         Msg ->
             Msg
     end;

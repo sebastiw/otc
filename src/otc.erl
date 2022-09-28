@@ -1,14 +1,8 @@
 -module(otc).
 %% Inspired by [pkt](https://github.com/msantos/pkt) and [ossie](https://github.com/massemanet/ossie)
 
--export([%% decapsulate/1,
-         decapsulate/2,
-         decapsulate/3,
-         %% decode/1,
-         decode/2,
-         decode/3,
-         encode/1,
-         sctp_ppi/1,
+%% Supported protocol
+-export([sctp_ppi/1,
          %% sctp/1,
          m2pa/1,
          mtp3/1,
@@ -22,11 +16,50 @@
          nas_5gs_5gsm/1
         ]).
 
+%% General functions
+-export([%% decapsulate/1,
+         decapsulate/2,
+         decapsulate/3,
+         %% decode/1,
+         decode/2,
+         decode/3,
+         encode/1]).
+
 -include_lib("kernel/include/logger.hrl").
 
--type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | nas_eps | nas_eps_emm | nas_eps_esm.
--type options() :: #{stop_after => protocol()}.
+%% Supported protocols ---------------------------------------------------------
 
+-type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | nas_eps | nas_eps_emm | nas_eps_esm.
+
+next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
+%% next({sctp, V}) -> otc_sctp:next(V);
+next({m2pa, V}) -> otc_m2pa:next(V);
+next({m3ua, V}) -> otc_m3ua:next(V);
+next({mtp3, V}) -> otc_mtp3:next(V);
+next({sccp, V}) -> otc_sccp:next(V);
+next({nas_eps, V}) -> otc_nas_eps:next(V);
+next({nas_eps_emm, V}) -> otc_nas_eps_emm:next(V);
+next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V);
+next({nas_5gs, V}) -> otc_nas_5gs:next(V);
+next({nas_5gs_5gmm, V}) -> otc_nas_5gs_5gmm:next(V);
+next({nas_5gs_5gsm, V}) -> otc_nas_5gs_5gsm:next(V).
+
+sctp_ppi(PPI) -> otc_sctp_ppi:codec(PPI).
+%% sctp(D) -> otc_sctp:codec(D).
+m2pa(D) -> otc_m2pa:codec(D).
+mtp3(D) -> otc_mtp3:codec(D).
+m3ua(D) -> otc_m3ua:codec(D).
+sccp(D) -> otc_sccp:codec(D).
+nas_eps(D) -> otc_nas_eps:codec(D).
+nas_eps_emm(D) -> otc_nas_eps_emm:codec(D).
+nas_eps_esm(D) -> otc_nas_eps_esm:codec(D).
+nas_5gs(D) -> otc_nas_5gs:codec(D).
+nas_5gs_5gmm(D) -> otc_nas_5gs_5gmm:codec(D).
+nas_5gs_5gsm(D) -> otc_nas_5gs_5gsm:codec(D).
+
+%% General functions -----------------------------------------------------------
+
+-type options() :: #{stop_after => protocol()}.
 -type data() :: binary() | non_neg_integer().
 -type header() :: map().
 -type headers() :: [header()].
@@ -95,33 +128,6 @@ next({Proto, _Header}, #{stop_after := Proto}) ->
     '$stop';
 next({Proto, Header}, _) ->
     next({Proto, Header}).
-
-next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
-%% next({sctp, V}) -> otc_sctp:next(V);
-next({m2pa, V}) -> otc_m2pa:next(V);
-next({m3ua, V}) -> otc_m3ua:next(V);
-next({mtp3, V}) -> otc_mtp3:next(V);
-next({sccp, V}) -> otc_sccp:next(V);
-next({nas_eps, V}) -> otc_nas_eps:next(V);
-next({nas_eps_emm, V}) -> otc_nas_eps_emm:next(V);
-next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V);
-next({nas_5gs, V}) -> otc_nas_5gs:next(V);
-next({nas_5gs_5gmm, V}) -> otc_nas_5gs_5gmm:next(V);
-next({nas_5gs_5gsm, V}) -> otc_nas_5gs_5gsm:next(V).
-
-sctp_ppi(PPI) -> otc_sctp_ppi:codec(PPI).
-%% sctp(D) -> otc_sctp:codec(D).
-m2pa(D) -> otc_m2pa:codec(D).
-mtp3(D) -> otc_mtp3:codec(D).
-m3ua(D) -> otc_m3ua:codec(D).
-sccp(D) -> otc_sccp:codec(D).
-nas_eps(D) -> otc_nas_eps:codec(D).
-nas_eps_emm(D) -> otc_nas_eps_emm:codec(D).
-nas_eps_esm(D) -> otc_nas_eps_esm:codec(D).
-nas_5gs(D) -> otc_nas_5gs:codec(D).
-nas_5gs_5gmm(D) -> otc_nas_5gs_5gmm:codec(D).
-nas_5gs_5gsm(D) -> otc_nas_5gs_5gsm:codec(D).
-
 
 encode(#{protocol := Proto} = Pdu) ->
     ?MODULE:Proto(Pdu);

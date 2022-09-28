@@ -14,15 +14,66 @@
   if format is incorrect, then log a warning. The idea behind this is
   that the user knows best what to send, but might need guidance.
 
+* Usage
+
+  otc can be called with both decode/2, decode/3, as well as decapsulate/2, decapsulate/3 functions.
+  The differens is that decapsulate will crash on errors while decode returns an error-tuple.
+
+  In successful cases `decode` will return an ok-tuple containing
+  either (only) a list of headers if the binary was fully decoded, or
+  both a list of decoded headers, and a binary containing the parts it
+  was not able to decode.
+
+```
+  1> otc:decode(m2pa, UserBinary).
+  {ok, {[#{protocol := m2pa, ..}, #{protocol := mtp3, ..}, #{protocol := sccp, ..}], <<SCCPPayload>>}}
+
+  2> otc:decode(m2pa, UserBinary, #{stop_after => mtp3}).
+  {ok, {[#{protocol := m2pa, ..}, #{protocol := mtp3, ..}], <<MTP3Payload>>}}
+
+  3> otc:decode(m2pa, LinkBinary).
+  {ok, [#{protocol := m2pa, ..}]}
+
+  4> otc:decapsulate(m2pa, UserBinary).
+  {[#{protocol := m2pa, ..}, #{protocol := mtp3, ..}, #{protocol := sccp, ..}], <<SCCPPayload>>}
+
+  5> otc:decapsulate(m2pa, UserBinary, #{stop_after => mtp3}).
+  {[#{protocol := m2pa, ..}, #{protocol := mtp3, ..}], <<MTP3Payload>>}
+
+  6> otc:decapsulate(m2pa, LinkBinary).
+  [#{protocol := m2pa, ..}]
+```
+
+  For encoding there is only one function encode/1, but it can take
+  multiple different types of inputs.
+
+```
+  11> otc:encode(#{protocol => m2pa, ..}).
+  <<M2PABinary>>
+
+  12> otc:encode([#{protocol => m2pa, ..}, #{protocol => mtp3, ..}]).
+  <<M2PABinary>>
+
+  13> otc:encode({[#{protocol => m2pa, ..}], <<M2PAPayload>>}).
+  <<M2PABinary>>
+```
+
+  Examples are given with m2pa codec, but could be used with any of
+  the supported protocols. See [tests](test/otc_tests.erl)
+
 * Linguistics
 
   decode - function that converts from binary format to an Erlang map
+
+  decapsulate - as decode, but crashes on errors.
 
   parse - function that converts from UMTS magic number to Erlang atom
 
   encode - function that converts from Erlang map to binary format
 
   compose - function that converts from Erlang atom to UMTS magic number
+
+  *_codec - modules used as helpers, does not comply with the pkt-style codecs.
 
 * Codecs
 
@@ -36,7 +87,6 @@
 | NAS EPS | 3GPP TS 24.301 v16.8.0        | /      | /      |                   | Messages are de-/encoded, but missing parameters |
 | NAS 5GS | 3GPP TS 24.501 v16.10.0       | /      | /      |                   | Messages are de-/encoded, but missing parameters |
 | SGSAP   | 3GPP TS 29.118 v16.0.0        |        |        |                   |                                                  |
-
 
 * Diameter dictionaries
 

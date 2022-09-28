@@ -6,7 +6,9 @@ decode_m3ua_no_payload_test() ->
     Bin = <<16#01,16#00,16#02,16#01,16#00,16#00,16#00,16#10,
             16#00,16#12,16#00,16#08,16#00,16#00,16#05,16#04>>,
     Msg = otc:decode(m3ua, Bin),
-    ?assertMatch({ok, [#{protocol := m3ua}]}, Msg).
+    ?assertMatch({ok, [#{protocol := m3ua}]}, Msg),
+    NewBin = otc:encode(element(2, Msg)),
+    ?assertEqual(Bin, NewBin).
 
 decode_m3ua_sccp_payload_test() ->
     UserData = <<16#62,16#26,16#48,16#04,
@@ -34,7 +36,11 @@ decode_m3ua_sccp_payload_test() ->
                 16#00,16#00,16#35,16#a7,16#03,16#03,16#00,16#08,
                 SccpBin/binary>>,
     Msg = otc:decode(m3ua, M3uaBin),
-    ?assertMatch({ok, {[#{protocol := m3ua}, #{protocol := sccp}], UserData}}, Msg).
+    ?assertMatch({ok, {[#{protocol := m3ua}, #{protocol := sccp}], UserData}}, Msg),
+    %% Both M3UA and SCCP has the payload backed in the packet.
+    {ok, {[#{protocol_data := _PD} = M3UA, _SCCP], _Payload}} = Msg,
+    NewBin = otc:encode(M3UA),
+    ?assertEqual(M3uaBin, NewBin).
 
 decode_nas_eps_pdn_connectivity_reject_test() ->
     Bin = <<16#27,16#b3,16#14,16#70,
@@ -55,4 +61,6 @@ decode_nas_eps_pdn_connectivity_reject_test() ->
              message_type => pdn_connectivity_reject,
              procedure_transaction_identity => <<"4">>},
     Msg = otc:decode(nas_eps, Bin),
-    ?assertMatch({ok, [Map1, Map2, Map3, Map4]}, Msg).
+    ?assertMatch({ok, [Map1, Map2, Map3, Map4]}, Msg),
+    NewBin = otc:encode(element(2, Msg)),
+    ?assertEqual(Bin, NewBin).
