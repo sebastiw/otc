@@ -13,8 +13,7 @@ udt_test() ->
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
-    Exp = #{protocol => sccp,
-            called_party_address =>
+    Exp = #{called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "467211221122",
@@ -26,7 +25,7 @@ udt_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => mobile_switching_centre},
+                  subsystem_number => msc},
             calling_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
@@ -39,14 +38,14 @@ udt_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => home_location_register},
+                  subsystem_number => hlr},
             data => D,
             message_type => udt,
             protocol_class => #{class => 0, options => return_on_error}},
 
-    Val = otc_sccp_codec:decode(Bin),
+    Val = otc_sccp:decode(Bin),
     ?assertEqual(Exp, Val),
-    NewBin = otc_sccp_codec:encode(Val),
+    NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
 
 xudt_test() ->
@@ -58,8 +57,7 @@ xudt_test() ->
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
-    Exp = #{protocol => sccp,
-            called_party_address =>
+    Exp = #{called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "467211221122",
@@ -71,7 +69,7 @@ xudt_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => mobile_switching_centre},
+                  subsystem_number => msc},
             calling_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
@@ -84,15 +82,15 @@ xudt_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => home_location_register},
+                  subsystem_number => hlr},
             data => D,
             hop_counter => 15,
             message_type => xudt,
             protocol_class => #{class => 1, options => return_on_error}},
 
-    Val = otc_sccp_codec:decode(Bin),
+    Val = otc_sccp:decode(Bin),
     ?assertEqual(Exp, Val),
-    NewBin = otc_sccp_codec:encode(Val),
+    NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
 
 xudts_test() ->
@@ -105,8 +103,7 @@ xudts_test() ->
             16#0b, CdPA/binary,
             16#18, D/binary>>,
 
-    Exp = #{protocol => sccp,
-            called_party_address =>
+    Exp = #{called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "46729887766",
@@ -118,7 +115,7 @@ xudts_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => home_location_register},
+                  subsystem_number => hlr},
             calling_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
@@ -131,15 +128,15 @@ xudts_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => mobile_switching_centre},
+                  subsystem_number => msc},
             data => D,
             hop_counter => 15,
             message_type => xudts,
             return_cause => no_translation_for_this_specific_address},
 
-    Val = otc_sccp_codec:decode(Bin),
+    Val = otc_sccp:decode(Bin),
     ?assertEqual(Exp, Val),
-    NewBin = otc_sccp_codec:encode(Val),
+    NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
 
 xudts_arbitrary_pointers_test() ->
@@ -156,8 +153,7 @@ xudts_arbitrary_pointers_test() ->
                  16#0b, CdPA/binary,
                  16#0b, CgPA/binary,
                  16#18, D/binary>>,
-    Exp = #{protocol => sccp,
-            called_party_address =>
+    Exp = #{called_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "467211221122",
@@ -169,7 +165,7 @@ xudts_arbitrary_pointers_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => mobile_switching_centre},
+                  subsystem_number => msc},
             calling_party_address =>
                 #{global_title =>
                       #{encoding_scheme => bcd,
@@ -182,15 +178,15 @@ xudts_arbitrary_pointers_test() ->
                   national_use_indicator => 0,
                   point_code => undefined,
                   routing_indicator => global_title,
-                  subsystem_number => home_location_register},
+                  subsystem_number => hlr},
             data => D,
             hop_counter => 15,
             message_type => xudts,
             return_cause => unqualified},
 
-    Val = otc_sccp_codec:decode(Bin),
+    Val = otc_sccp:decode(Bin),
     ?assertEqual(Exp, Val),
-    NewBin = otc_sccp_codec:encode(Val),
+    NewBin = otc_sccp:encode(Val),
     ?assertEqual(Expected, NewBin).
 
 udt_scmg_test() ->                              % sccp mgmt sst
@@ -209,8 +205,7 @@ udt_scmg_test() ->                              % sccp mgmt sst
             16#02, CdPA/binary,
             16#02, CgPA/binary,
             16#05, D/binary>>,
-    Exp = #{protocol => sccp,
-            called_party_address =>
+    Exp = #{called_party_address =>
                 #{global_title => undefined,
                   global_title_indicator => 0,
                   national_use_indicator => 0,
@@ -226,15 +221,15 @@ udt_scmg_test() ->                              % sccp mgmt sst
                   subsystem_number => management},
             data => #{format_identifier => status_test,
                       affected_point_code => <<18,52>>,
-                      affected_subsystem_number => home_location_register,
+                      affected_subsystem_number => hlr,
                       subsystem_multiplicity_indicator => 0
                      },
             message_type => udt,
             protocol_class => #{class => 0, options => return_on_error}},
 
-    Val = otc_sccp_codec:decode(Bin),
+    Val = otc_sccp:decode(Bin),
     ?assertEqual(Exp, Val),
-    NewBin = otc_sccp_codec:encode(Val),
+    NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
 
 

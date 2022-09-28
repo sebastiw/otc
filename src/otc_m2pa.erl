@@ -1,12 +1,25 @@
--module(otc_m2pa_codec).
-%% IETF RFC 4165 September 2005
+-module(otc_m2pa).
+-behaviour(otc_codec).
 
-
--export([decode/1,
+-export([spec/0,
+         codec/1,
+         next/1,
+         decode/1,
          encode/1
         ]).
 
 -include("include/m2pa.hrl").
+
+spec() ->
+    "IETF RFC 4165 September 2005".
+
+codec(Bin) when is_binary(Bin) ->
+    decode(Bin);
+codec(Map) when is_map(Map) ->
+    encode(Map).
+
+next(#{message_type := user_data}) -> {ok, mtp3};
+next(_) -> '$stop'.
 
 decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/binary>>) ->
     %%  0                   1                   2                   3
@@ -27,18 +40,17 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
     %% |     unused    |                      FSN                      |
     %% +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     <<_:8, BSN:24/big, _:8, FSN:24/big, Rest/binary>> = Bin,
+    Base = #{message_class => m2pa,
+             message_type => MT,
+             backward_sequence_number => BSN,
+             forward_sequence_number => FSN
+            },
     case decode_msg(MT, Rest) of
-        unsupported ->
-            unsupported;
+        {Msg, Data} ->
+            {maps:merge(Msg, Base), Data};
         Msg ->
-            Msg#{message_class => m2pa,
-                 message_type => MT,
-                 backward_sequence_number => BSN,
-                 forward_sequence_number => FSN
-                }
-    end;
-decode(_) ->
-    unsupported.
+            maps:merge(Msg, Base)
+    end.
 
 encode(#{message_class := m2pa, message_type := MessageType} = Msg) ->
     MT = compose_message_type(MessageType),
@@ -46,14 +58,10 @@ encode(#{message_class := m2pa, message_type := MessageType} = Msg) ->
     BSN = maps:get(backward_sequence_number, Msg, 0),
     FSN = maps:get(forward_sequence_number, Msg, 0),
     Len = byte_size(Bin) + 8 + 8,
-    <<1:8, 0:8, ?M2PA_MSG_CLASS_MSGS:8, MT:8, Len:32/big, 0:8, BSN:24/big, 0:8, FSN:24/big, Bin/binary>>;
-encode(_) ->
-    unsupported.
+    <<1:8, 0:8, ?M2PA_MSG_CLASS_MSGS:8, MT:8, Len:32/big, 0:8, BSN:24/big, 0:8, FSN:24/big, Bin/binary>>.
 
 parse_message_type(?M2PA_MSG_TYPE_USER_DATA) -> user_data;
-parse_message_type(?M2PA_MSG_TYPE_LINK_STATUS) -> link_status;
-parse_message_type(_) ->
-    unsupported.
+parse_message_type(?M2PA_MSG_TYPE_LINK_STATUS) -> link_status.
 
 compose_message_type(user_data) -> ?M2PA_MSG_TYPE_USER_DATA;
 compose_message_type(link_status) -> ?M2PA_MSG_TYPE_LINK_STATUS.
@@ -67,8 +75,7 @@ decode_msg(user_data, Data) ->
         <<PRI:2, _:6, Payload/binary>> ->
             %% PRI - Priority used only in national MTP defined in [JT-Q703] and
             %% [JT-Q704].  These bits are spare for other MTP versions.
-            #{priority => PRI,
-              payload => Payload}
+            {#{priority => PRI}, Payload}
     end;
 decode_msg(link_status, <<State:32/big>>) ->
     #{link_status => parse_link_status(State)};
@@ -83,9 +90,8 @@ decode_msg(link_status, <<State:32/big, Filler/binary>>) ->
 
 encode_msg(user_data, Msg) ->
     case Msg of
-        #{payload := Payload} ->
-            PRI = maps:get(priority, Msg, 0),
-            <<PRI:2, 0:6, Payload/binary>>;
+        #{priority := PRI} ->
+            <<PRI:2, 0:6>>;
         _ ->
             <<>>
     end;
@@ -100,7 +106,6 @@ encode_msg(link_status, Msg) ->
             <<LS:32/big>>
     end.
 
-
 parse_link_status(?LINK_STATUS_STATE_ALIGNMENT) -> alignment;
 parse_link_status(?LINK_STATUS_STATE_PROVING_NORMAL) -> proving_normal;
 parse_link_status(?LINK_STATUS_STATE_PROVING_EMERGENCY) -> proving_emergency;
@@ -109,9 +114,7 @@ parse_link_status(?LINK_STATUS_STATE_PROCESSOR_OUTAGE) -> processor_outage;
 parse_link_status(?LINK_STATUS_STATE_PROCESSOR_RECOVERED) -> processor_recovered;
 parse_link_status(?LINK_STATUS_STATE_BUSY) -> busy;
 parse_link_status(?LINK_STATUS_STATE_BUSY_ENDED) -> busy_ended;
-parse_link_status(?LINK_STATUS_STATE_OUT_OF_SERVICE) -> out_of_service;
-parse_link_status(_) ->
-    unsupported.
+parse_link_status(?LINK_STATUS_STATE_OUT_OF_SERVICE) -> out_of_service.
 
 compose_link_status(alignment) -> ?LINK_STATUS_STATE_ALIGNMENT;
 compose_link_status(proving_normal) -> ?LINK_STATUS_STATE_PROVING_NORMAL;

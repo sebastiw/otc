@@ -1,29 +1,61 @@
--module(otc_sccp_codec).
-%% ITU-T Q.713 (03/2001)
+-module(otc_sccp).
+-behaviour(otc_codec).
 
--export([decode/1,
+-export([spec/0,
+         codec/1,
+         next/1,
+         decode/1,
          encode/1
         ]).
 
 -include("include/sccp.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
+spec() ->
+    "ITU-T Q.713 (03/2001)".
+
+codec(Bin) when is_binary(Bin) ->
+    case decode(Bin) of
+        #{long_data := LD} = Msg2
+          when is_map(LD) ->
+            Msg2;
+        #{long_data := LD, message_type := MessageType} = Msg2
+          when ludt =:= MessageType;
+               ludts =:= MessageType ->
+            {Msg2, LD};
+        #{data := D} = Msg2
+          when is_map(D) ->
+            Msg2;
+        #{data := D, message_type := MessageType} = Msg2
+          when cr =:= MessageType;
+               cc =:= MessageType;
+               cref =:= MessageType;
+               rlsd =:= MessageType;
+               dt1 =:= MessageType;
+               dt2 =:= MessageType;
+               udt =:= MessageType;
+               udts =:= MessageType;
+               ed =:= MessageType;
+               xudt =:= MessageType;
+               xudts =:= MessageType ->
+            {Msg2, D};
+        Msg2 ->
+            Msg2
+    end;
+codec(Map) when is_map(Map) ->
+    encode(Map).
+
+next(_) -> '$stop'.
+
 decode(<<MT:8/big, Rest/binary>>) ->
     MessageType = parse_message_type(MT),
-    case decode_msg(MessageType, Rest) of
-        unsupported ->
-            unsupported;
-        Msg ->
-            Msg#{protocol => sccp,
-                 message_type => MessageType}
-    end.
+    Msg = decode_msg(MessageType, Rest),
+    Msg#{message_type => MessageType}.
 
 encode(#{message_type := MessageType} = Msg) ->
     MT = compose_message_type(MessageType),
     Bin = encode_msg(MessageType, Msg),
-    <<MT:8/big, Bin/binary>>;
-encode(_) ->
-    unsupported.
+    <<MT:8/big, Bin/binary>>.
 
 parse_message_type(?SCCP_MSG_TYPE_CR) -> cr;
 parse_message_type(?SCCP_MSG_TYPE_CC) -> cc;
@@ -44,9 +76,7 @@ parse_message_type(?SCCP_MSG_TYPE_IT) -> it;
 parse_message_type(?SCCP_MSG_TYPE_XUDT) -> xudt;
 parse_message_type(?SCCP_MSG_TYPE_XUDTS) -> xudts;
 parse_message_type(?SCCP_MSG_TYPE_LUDT) -> ludt;
-parse_message_type(?SCCP_MSG_TYPE_LUDTS) -> ludts;
-parse_message_type(_) ->
-    unsupported.
+parse_message_type(?SCCP_MSG_TYPE_LUDTS) -> ludts.
 
 compose_message_type(cr) -> ?SCCP_MSG_TYPE_CR;
 compose_message_type(cc) -> ?SCCP_MSG_TYPE_CC;
@@ -289,9 +319,7 @@ decode_msg(ludts, Bin) ->
                hop_counter => decode_parameter(hop_counter, HC),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
-               long_data => decode_data(long_data, LD, CalledPartyAddress, CallingPartyAddress)};
-decode_msg(_, _) ->
-    unsupported.
+               long_data => decode_data(long_data, LD, CalledPartyAddress, CallingPartyAddress)}.
 
 separate_fields_test() ->
     %% Example:
@@ -1281,10 +1309,10 @@ encode_address(#{national_use_indicator := NR,
              2#0011 ->
                  #{translation_type := TT,
                    numbering_plan := NP,
-                   encoding_scheme := ES
+                   encoding_scheme := EncodingScheme
                   } = GlobalTitle,
                  GT1 = encode_gt_part(GlobalTitle),
-                 ES = compose_encoding_scheme(ES, GlobalTitle),
+                 ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
                  <<TT:8/big, NP:4, ES:4, GT1/binary>>;
              2#0010 ->
                  #{translation_type := TT
@@ -1314,17 +1342,34 @@ compose_encoding_scheme(national, _) ->
 parse_ssn(?SCCP_SSN_UNKNOWN) -> unknown;
 parse_ssn(?SCCP_SSN_MGMT) -> management;
 parse_ssn(?SCCP_SSN_ITU_RESERVED) -> itu_reserved;
-parse_ssn(?SCCP_SSN_ISUP) -> isdn_user_part;
-parse_ssn(?SCCP_SSN_OMAP) -> operation_maintenance_administration_part;
-parse_ssn(?SCCP_SSN_MAP) -> mobile_application_part;
-parse_ssn(?SCCP_SSN_HLR) -> home_location_register;
-parse_ssn(?SCCP_SSN_VLR) -> visitor_location_register;
-parse_ssn(?SCCP_SSN_MSC) -> mobile_switching_centre;
-parse_ssn(?SCCP_SSN_EIC) -> equipment_identifier_centre;
-parse_ssn(?SCCP_SSN_AUC) -> authentication_centre;
-parse_ssn(?SCCP_SSN_ISSS) -> isdn_supplementary_services;
+parse_ssn(?SCCP_SSN_ISUP) -> isup;
+parse_ssn(?SCCP_SSN_OMAP) -> omap;
+parse_ssn(?SCCP_SSN_MAP) -> map;
+parse_ssn(?SCCP_SSN_HLR) -> hlr;
+parse_ssn(?SCCP_SSN_VLR) -> vlr;
+parse_ssn(?SCCP_SSN_MSC) -> msc;
+parse_ssn(?SCCP_SSN_EIC) -> eic;
+parse_ssn(?SCCP_SSN_AUC) -> auc;
+parse_ssn(?SCCP_SSN_ISSS) -> isss;
 parse_ssn(?SCCP_SSN_BROADBAND) -> broadband_isdn_edge_to_edge_applications;
 parse_ssn(?SCCP_SSN_TC_TEST_RESPONDER) -> tc_test_responder;
+
+parse_ssn(?SCCP_SSN_NAT_CSS) -> css;
+parse_ssn(?SCCP_SSN_NAT_PCAP) -> pcap;
+parse_ssn(?SCCP_SSN_NAT_BSS) -> bss;
+parse_ssn(?SCCP_SSN_NAT_MSC) -> msc;
+parse_ssn(?SCCP_SSN_NAT_SMLC) -> smlc;
+parse_ssn(?SCCP_SSN_NAT_BSS_OM) -> bss_om;
+parse_ssn(?SCCP_SSN_NAT_BSSAP) -> bssap;
+parse_ssn(?SCCP_SSN_NAT_RANAP) -> ranap;
+parse_ssn(?SCCP_SSN_NAT_RNSAP) -> rnsap;
+parse_ssn(?SCCP_SSN_NAT_GMLC) -> gmlc;
+parse_ssn(?SCCP_SSN_NAT_CAP) -> cap;
+parse_ssn(?SCCP_SSN_NAT_SCF) -> scf;
+parse_ssn(?SCCP_SSN_NAT_SIWF) -> siwf;
+parse_ssn(?SCCP_SSN_NAT_SGSN) -> sgsn;
+parse_ssn(?SCCP_SSN_NAT_GGSN) -> ggsn;
+
 parse_ssn(SSN) when SSN == 2#00001100 -> {international, SSN};
 parse_ssn(SSN) when SSN >= 2#00001111, SSN =< 2#00011111 -> {international, SSN};
 parse_ssn(SSN) when SSN >= 2#00100000, SSN =< 2#11111110 -> {national, SSN};
@@ -1333,15 +1378,15 @@ parse_ssn(SSN) when SSN == 2#11111111 -> expansion.
 compose_ssn(unknown) -> ?SCCP_SSN_UNKNOWN;
 compose_ssn(management) -> ?SCCP_SSN_MGMT;
 compose_ssn(itu_reserved) -> ?SCCP_SSN_ITU_RESERVED;
-compose_ssn(isdn_user_part) -> ?SCCP_SSN_ISUP;
-compose_ssn(operation_maintenance_administration_part) -> ?SCCP_SSN_OMAP;
-compose_ssn(mobile_application_part) -> ?SCCP_SSN_MAP;
-compose_ssn(home_location_register) -> ?SCCP_SSN_HLR;
-compose_ssn(visitor_location_register) -> ?SCCP_SSN_VLR;
-compose_ssn(mobile_switching_centre) -> ?SCCP_SSN_MSC;
-compose_ssn(equipment_identifier_centre) -> ?SCCP_SSN_EIC;
-compose_ssn(authentication_centre) -> ?SCCP_SSN_AUC;
-compose_ssn(isdn_supplementary_services) -> ?SCCP_SSN_ISSS;
+compose_ssn(isup) -> ?SCCP_SSN_ISUP;
+compose_ssn(omap) -> ?SCCP_SSN_OMAP;
+compose_ssn(map) -> ?SCCP_SSN_MAP;
+compose_ssn(hlr) -> ?SCCP_SSN_HLR;
+compose_ssn(vlr) -> ?SCCP_SSN_VLR;
+compose_ssn(msc) -> ?SCCP_SSN_MSC;
+compose_ssn(eic) -> ?SCCP_SSN_EIC;
+compose_ssn(auc) -> ?SCCP_SSN_AUC;
+compose_ssn(isss) -> ?SCCP_SSN_ISSS;
 compose_ssn(broadband_isdn_edge_to_edge_applications) -> ?SCCP_SSN_BROADBAND;
 compose_ssn(tc_test_responder) -> ?SCCP_SSN_TC_TEST_RESPONDER;
 compose_ssn({international, SSN}) -> SSN;
