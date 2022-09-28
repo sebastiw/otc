@@ -29,7 +29,6 @@ decode({_SHT, <<MAC:4/binary, SN:1/binary, NMSG/binary>>}) ->
        sequence_number => SN
       }, NMSG}.
 
-
 encode(#{message_authentication_code := MAC, sequence_number := SN}) ->
     <<MAC:4/binary, SN:1/binary>>;
 encode(#{message_type := service_request} = Msg) ->

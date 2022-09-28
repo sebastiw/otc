@@ -16,13 +16,16 @@
          sccp/1,
          nas_eps/1,
          nas_eps_emm/1,
-         nas_eps_esm/1
+         nas_eps_esm/1,
+         nas_5gs/1,
+         nas_5gs_5gmm/1,
+         nas_5gs_5gsm/1
         ]).
 
 -include_lib("kernel/include/logger.hrl").
 
 -type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | nas_eps | nas_eps_emm | nas_eps_esm.
--type options() :: #{stop_after := protocol()}.
+-type options() :: #{stop_after => protocol()}.
 
 -type data() :: binary() | non_neg_integer().
 -type header() :: map().
@@ -85,7 +88,7 @@ decode_next({Proto, Data}, Headers, Opts) ->
             {ok, lists:reverse([Header#{protocol => Proto}|Headers])}
     catch E:R:S ->
             ?LOG_ERROR(#{E => R, stack => S}),
-            {error, lists:reverse(Headers), {unsupported, Data}}
+            {error, lists:reverse(Headers), Data}
     end.
 
 next({Proto, _Header}, #{stop_after := Proto}) ->
@@ -101,7 +104,10 @@ next({mtp3, V}) -> otc_mtp3:next(V);
 next({sccp, V}) -> otc_sccp:next(V);
 next({nas_eps, V}) -> otc_nas_eps:next(V);
 next({nas_eps_emm, V}) -> otc_nas_eps_emm:next(V);
-next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V).
+next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V);
+next({nas_5gs, V}) -> otc_nas_5gs:next(V);
+next({nas_5gs_5gmm, V}) -> otc_nas_5gs_5gmm:next(V);
+next({nas_5gs_5gsm, V}) -> otc_nas_5gs_5gsm:next(V).
 
 sctp_ppi(PPI) -> otc_sctp_ppi:codec(PPI).
 %% sctp(D) -> otc_sctp:codec(D).
@@ -112,6 +118,9 @@ sccp(D) -> otc_sccp:codec(D).
 nas_eps(D) -> otc_nas_eps:codec(D).
 nas_eps_emm(D) -> otc_nas_eps_emm:codec(D).
 nas_eps_esm(D) -> otc_nas_eps_esm:codec(D).
+nas_5gs(D) -> otc_nas_5gs:codec(D).
+nas_5gs_5gmm(D) -> otc_nas_5gs_5gmm:codec(D).
+nas_5gs_5gsm(D) -> otc_nas_5gs_5gsm:codec(D).
 
 
 encode(#{protocol := Proto} = Pdu) ->

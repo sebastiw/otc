@@ -27,7 +27,6 @@ next(#{protocol_discriminator := eps_mobility_management_messages}) -> {ok, nas_
 next(#{protocol_discriminator := eps_session_management_messages}) -> {ok, nas_eps_esm};
 next(_) -> '$stop'.
 
--spec decode(binary()) -> map() | {map(), binary()}.
 decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
     ProtocolDiscriminator = otc_l3_codec:parse_protocol_discriminator(PD),
     case ProtocolDiscriminator of
@@ -45,7 +44,6 @@ decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
             {Msg, Rest}
     end.
 
--spec encode(map()) -> binary() | {unsupported, term()}.
 encode(#{protocol_discriminator := ProtocolDiscriminator} = Msg) ->
     PD = otc_l3_codec:compose_protocol_discriminator(ProtocolDiscriminator),
     case ProtocolDiscriminator of
