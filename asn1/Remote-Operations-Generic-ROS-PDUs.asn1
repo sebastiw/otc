@@ -64,7 +64,7 @@ Invoke {InvokeId:InvokeIdSet, OPERATION:Operations} ::= SEQUENCE
    }
 )
 
-ReturnResult {OPERATION:Operations}::= SEQUENCE
+ReturnResult {OPERATION:Operations} ::= SEQUENCE
 {
    invokeId InvokeId
             (CONSTRAINED BY {-- must be that for an outstanding operation --}

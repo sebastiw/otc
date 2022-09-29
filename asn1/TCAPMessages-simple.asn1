@@ -1,0 +1,134 @@
+TCAPMessages-simple {
+   ccitt recommendation q 773 modules(2) messages(1) version3(3)}
+
+-- This module is a simplification of the TCAPMessages module, with
+-- parameters removed.
+
+DEFINITIONS
+::=
+BEGIN
+
+-- EXPORTS everything
+
+IMPORTS
+   InvokeId,
+   GeneralProblem,
+   InvokeProblem,
+   ReturnResultProblem,
+   ReturnErrorProblem
+FROM Remote-Operations-Generic-ROS-PDUs {
+   joint-iso-itu-t remote-operations(4) generic-ROS-PDUs(6) version1(0)}
+;
+
+-- Transaction Portion fields.
+
+OPERATION ::= INTEGER ( 0..65535 )
+ERROR ::= INTEGER ( 0..65535 )
+
+TCMessage ::= CHOICE {
+   unidirectional [APPLICATION 1] IMPLICIT Unidirectional,
+   begin          [APPLICATION 2] IMPLICIT Begin,
+   end            [APPLICATION 4] IMPLICIT End,
+   continue       [APPLICATION 5] IMPLICIT Continue,
+   abort          [APPLICATION 7] IMPLICIT Abort
+   }
+
+Unidirectional ::= SEQUENCE {
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion
+   }
+
+Begin ::= SEQUENCE {
+   otid OrigTransactionID,
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion OPTIONAL
+   }
+
+End ::= SEQUENCE {
+   dtid DestTransactionID,
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion OPTIONAL
+   }
+
+Continue ::= SEQUENCE {
+   otid OrigTransactionID,
+   dtid DestTransactionID,
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion OPTIONAL
+   }
+
+Abort ::= SEQUENCE {
+   dtid DestTransactionID,
+   reason CHOICE {
+      p-abortCause P-AbortCause,
+      u-abortCause DialoguePortion } OPTIONAL
+   }
+
+DialoguePortion ::= [APPLICATION 11] EXTERNAL
+
+OrigTransactionID ::= [APPLICATION 8] IMPLICIT OCTET STRING(SIZE(1..4))
+
+DestTransactionID ::= [APPLICATION 9] IMPLICIT OCTET STRING(SIZE(1..4))
+
+P-AbortCause ::= [APPLICATION 10] INTEGER {
+   unrecognizedMessageType (0),
+   unrecognizedTransactionID (1),
+   badlyFormattedTransactionPortion (2),
+   incorrectTransactionPortion (3),
+   resourceLimitation (4) } (0..127)
+
+ComponentPortion ::=
+   [APPLICATION 12] SEQUENCE SIZE (1..MAX) OF
+   Component
+
+Component ::= CHOICE {
+   invoke [1] IMPLICIT Invoke,
+   returnResultLast [2] IMPLICIT ReturnResult,
+   returnError [3] IMPLICIT ReturnError,
+   reject [4] IMPLICIT Reject,
+   returnResultNotLast [7] IMPLICIT ReturnResult
+   }
+
+TCInvokeldSet INTEGER ::= {-128..127}
+
+Invoke ::= SEQUENCE
+{
+   invokeId InvokeId,
+   linkedId CHOICE {
+                     present [0] IMPLICIT present < InvokeId,
+                     absent  [1] IMPLICIT NULL
+                   } OPTIONAL,
+   opcode OPERATION,
+   argument ANY DEFINED BY opcode OPTIONAL
+}
+
+ReturnResult ::= SEQUENCE
+{
+   invokeId InvokeId,
+   result SEQUENCE
+   {
+      opcode OPERATION,
+      result ANY DEFINED BY opcode
+   } OPTIONAL
+}
+
+ReturnError ::= SEQUENCE
+{
+   invokeId InvokeId,
+   errcode ERROR,
+   parameter ANY DEFINED BY errcode OPTIONAL
+}
+
+Reject ::= SEQUENCE
+{
+   invokeId InvokeId,
+   problem CHOICE
+   {
+      general      [0] GeneralProblem,
+      invoke       [1] InvokeProblem,
+      returnResult [2] ReturnResultProblem,
+      returnError  [3] ReturnErrorProblem
+   }
+}
+
+END

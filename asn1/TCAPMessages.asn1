@@ -40,7 +40,7 @@ Begin {OPERATION : Invokable, OPERATION: Returnable} ::= SEQUENCE {
    }
 
 End {OPERATION : Invokable, OPERATION: Returnable} ::= SEQUENCE {
-   dtid DestTrasactionID,
+   dtid DestTransactionID,
    dialoguePortion DialoguePortion OPTIONAL,
    components ComponentPortion {{Invokable}, {Returnable}} OPTIONAL
    }

@@ -6,6 +6,7 @@ src/Remote-Operations-Information-Objects.erl
 src/Remote-Operations-Useful-Definitions.erl
 src/DialoguePDUs.erl
 src/TCAPMessages.erl
+src/TCAPMessages-simple.erl
 src/UnidialoguePDUs.erl
 src/MobileDomainDefinitions.erl
 src/MAP-ApplicationContexts.erl

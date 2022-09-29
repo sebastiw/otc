@@ -63,3 +63,50 @@
   |           | - MAP-SupplementaryServiceOperations.asn1    |
   |           | - MAP-TS-Code.asn1                           |
   |-----------+----------------------------------------------|
+
+* 3GPP TS 29.078
+
+  |-----------+--------------------------------------------|
+  | Name      | CAMEL Application Part (CAP) specification |
+  | Version   | 17.0.0                                     |
+  |-----------+--------------------------------------------|
+  | File list | -                                          |
+  |-----------+--------------------------------------------|
+
+* ITU-T H.248.1
+
+  |-----------+-------------------------------------|
+  | Name      | Gateway control protocol: Version 1 |
+  | Version   | (03/02) March 2002                  |
+  |-----------+-------------------------------------|
+  | File list | - MEDIA-GATEWAY-CONTROL.asn1        |
+  |-----------+-------------------------------------|
+
+* ETS 300 374-1
+
+  |-----------+---------------------------------------------------------------------------------------------------------------|
+  | Name      | Intelligent Network (IN); Capability Set 1 (CS1); Application Protocol (INAP); Part 1: Protocol specification |
+  | Version   | (09/94) September 1994                                                                                        |
+  |-----------+---------------------------------------------------------------------------------------------------------------|
+  | File list | - Core-INAP-CS1-DataTypes.asn1                                                                                |
+  |           | - Core-INAP-CS1-Codes.asn1                                                                                    |
+  |           | - Core-INAP-CS1-Errors.asn1                                                                                   |
+  |           | - Core-INAP-CS1-Operations.asn1                                                                               |
+  |-----------+---------------------------------------------------------------------------------------------------------------|
+
+* ITU-T Q.1218 (10/1995)
+
+  |-----------+-------------------------------------------------------|
+  | Name      | Interface Recommendation for intelligent network CS-1 |
+  | Version   | (10/95) October 1995                                  |
+  |-----------+-------------------------------------------------------|
+  | File list | - IN-CS-1-Operations                                  |
+  |           | - IN-CS-1-Errors                                      |
+  |           | - IN-CS-1-datatypes                                   |
+  |           | - IN-CS-1-Codes                                       |
+  |           | - IN-DirectoryAbstractService                         |
+  |           | - INDirectoryAccessProtocol                           |
+  |           | - SDFProtocolObjectIdentifiers                        |
+  |           | -                                                     |
+  |-----------+-------------------------------------------------------|
+  | Applied   | Amendment 1                                           |
