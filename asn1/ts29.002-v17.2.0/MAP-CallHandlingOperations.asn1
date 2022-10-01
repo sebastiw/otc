@@ -181,7 +181,7 @@ ist-Alert OPERATION ::= { --Timer m
    facilityNotSupported}
    CODE local:87 }
 
-ist-Command OPERATION::= { --Timer m
+ist-Command OPERATION ::= { --Timer m
    ARGUMENT
    IST-CommandArg
    RESULT
@@ -195,7 +195,7 @@ ist-Command OPERATION::= { --Timer m
    facilityNotSupported}
    CODE local:88 }
 
-releaseResources OPERATION::= { --Timer m
+releaseResources OPERATION ::= { --Timer m
    ARGUMENT
    ReleaseResourcesArg
    RESULT

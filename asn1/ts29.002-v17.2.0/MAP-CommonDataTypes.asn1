@@ -538,7 +538,7 @@ RAIdentity ::= OCTET STRING (SIZE (6))
    -- It shall contain the value part defined in 3GPP TS 29.060 only. I.e. the 3GPP TS 29.060
    -- type identifier octet shall not be included.
 
-NetworkNodeDiameterAddress::= SEQUENCE {
+NetworkNodeDiameterAddress ::= SEQUENCE {
    diameter-Name [0] DiameterIdentity,
    diameter-Realm [1] DiameterIdentity }
 

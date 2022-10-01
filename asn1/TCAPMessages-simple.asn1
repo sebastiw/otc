@@ -11,6 +11,13 @@ BEGIN
 -- EXPORTS everything
 
 IMPORTS
+   DialoguePortion,
+   OrigTransactionID,
+   DestTransactionID,
+   Abort
+FROM TCAPMessages {
+   ccitt recommendation q 773 modules(2) messages(1) version3(3)}
+
    InvokeId,
    GeneralProblem,
    InvokeProblem,
@@ -57,26 +64,6 @@ Continue ::= SEQUENCE {
    components ComponentPortion OPTIONAL
    }
 
-Abort ::= SEQUENCE {
-   dtid DestTransactionID,
-   reason CHOICE {
-      p-abortCause P-AbortCause,
-      u-abortCause DialoguePortion } OPTIONAL
-   }
-
-DialoguePortion ::= [APPLICATION 11] EXTERNAL
-
-OrigTransactionID ::= [APPLICATION 8] IMPLICIT OCTET STRING(SIZE(1..4))
-
-DestTransactionID ::= [APPLICATION 9] IMPLICIT OCTET STRING(SIZE(1..4))
-
-P-AbortCause ::= [APPLICATION 10] INTEGER {
-   unrecognizedMessageType (0),
-   unrecognizedTransactionID (1),
-   badlyFormattedTransactionPortion (2),
-   incorrectTransactionPortion (3),
-   resourceLimitation (4) } (0..127)
-
 ComponentPortion ::=
    [APPLICATION 12] SEQUENCE SIZE (1..MAX) OF
    Component
@@ -88,8 +75,6 @@ Component ::= CHOICE {
    reject [4] IMPLICIT Reject,
    returnResultNotLast [7] IMPLICIT ReturnResult
    }
-
-TCInvokeldSet INTEGER ::= {-128..127}
 
 Invoke ::= SEQUENCE
 {

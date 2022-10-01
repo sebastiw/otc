@@ -274,7 +274,7 @@ VLR-Capability ::= SEQUENCE{
    msisdn-lessOperation-Supported [10] NULL OPTIONAL,
    reset-ids-Supported [11] NULL OPTIONAL }
 
-SupportedRAT-Types::= BIT STRING {
+SupportedRAT-Types ::= BIT STRING {
    utran (0),
    geran (1),
    gan (2),
@@ -550,13 +550,13 @@ UpdateGprsLocationArg ::= SEQUENCE {
    lgd-supportIndicator [21] NULL OPTIONAL,
    adjacentPLMN-List [23] AdjacentPLMN-List OPTIONAL }
 
-SMSRegisterRequest::= ENUMERATED {
+SMSRegisterRequest ::= ENUMERATED {
    sms-registration-required (0),
    sms-registration-not-preferred (1),
    no-preference (2),
    ...}
 
-Used-RAT-Type::= ENUMERATED {
+Used-RAT-Type ::= ENUMERATED {
    utran (0),
    geran (1),
    gan (2),
@@ -616,7 +616,7 @@ SGSN-Capability ::= SEQUENCE{
    -- /updateofHomogeneousSupportOfIMSVoiceOverPSSessions and
    -- ext-SupportedFeatures are also applied to the MME/IWF
 
-SupportedFeatures::= BIT STRING {
+SupportedFeatures ::= BIT STRING {
    odb-all-apn (0),
    odb-HPLMN-APN (1),
    odb-VPLMN-APN (2),
@@ -663,7 +663,7 @@ SupportedFeatures::= BIT STRING {
 Ext-SupportedFeatures ::= BIT STRING {
    unlicensedSpectrumAsSecondaryRAT (0) } (SIZE (1..40))
 
-UE-SRVCC-Capability::= ENUMERATED {
+UE-SRVCC-Capability ::= ENUMERATED {
    ue-srvcc-not-supported (0),
    ue-srvcc-supported (1),
    ...}
@@ -787,13 +787,13 @@ PrepareHO-Arg ::= [3] SEQUENCE {
 LCLS-GlobalCallReference ::= OCTET STRING (SIZE (13..15))
    -- Octets are coded as specified in 3GPP TS 29.205 [146]
 
-LCLS-Negotiation::= BIT STRING {
+LCLS-Negotiation ::= BIT STRING {
    permission-indicator-not-allowed-bit (0),
    permission-indicator-spare-bit (1)} (SIZE (2..8))
    --for definition and allowed combination of bits 0 and 1 see 3GPP TS 29.205
    -- exception handling: bits 2 to 7 shall be ignored if received and not understood
 
-LCLS-ConfigurationPreference::= BIT STRING {
+LCLS-ConfigurationPreference ::= BIT STRING {
    forward-data-sending-indicator (0),
    backward-data-sending-indicator (1),
    forward-data-reception-indicator (2),
@@ -1095,7 +1095,7 @@ CheckIMEI-Res ::= SEQUENCE {
    extensionContainer [0] ExtensionContainer OPTIONAL,
    ...}
 
-RequestedEquipmentInfo::= BIT STRING {
+RequestedEquipmentInfo ::= BIT STRING {
    equipmentStatus (0),
    bmuef (1)} (SIZE (2..8))
    -- exception handling: reception of unknown bit assignments in the

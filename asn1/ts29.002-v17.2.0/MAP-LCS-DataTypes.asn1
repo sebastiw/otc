@@ -273,7 +273,7 @@ SupportedGADShapes ::= BIT STRING {
    -- A node shall mark in the BIT STRING all Shapes defined in 3GPP TS 23.032 it supports.
    -- exception handling: bits 7 to 15 shall be ignored if received.
 
-LCS-ReferenceNumber::= OCTET STRING (SIZE(1))
+LCS-ReferenceNumber ::= OCTET STRING (SIZE(1))
 
 LCSCodeword ::= SEQUENCE {
    dataCodingScheme [0] USSD-DataCodingScheme,
@@ -372,12 +372,12 @@ ReportingPLMNList ::= SEQUENCE {
    plmn-List [1] PLMNList,
    ...}
 
-PLMNList::= SEQUENCE SIZE (1..maxNumOfReportingPLMN) OF
+PLMNList ::= SEQUENCE SIZE (1..maxNumOfReportingPLMN) OF
    ReportingPLMN
 
 maxNumOfReportingPLMN INTEGER ::= 20
 
-ReportingPLMN::= SEQUENCE {
+ReportingPLMN ::= SEQUENCE {
    plmn-Id [0] PLMN-Id,
    ran-Technology [1] RAN-Technology OPTIONAL,
    ran-PeriodicLocationSupport [2] NULL OPTIONAL,

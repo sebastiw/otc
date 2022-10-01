@@ -1,6 +1,7 @@
 *.md
 _build
 *.beam
+rebar3.crashdump
 src/Remote-Operations-Generic-ROS-PDUs.erl
 src/Remote-Operations-Information-Objects.erl
 src/Remote-Operations-Useful-Definitions.erl
