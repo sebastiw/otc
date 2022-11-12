@@ -79,8 +79,11 @@ ReturnResult {OPERATION:Operations} ::= SEQUENCE
              ({Operations})(CONSTRAINED BY {-- identified by invokeId --}
              ! RejectProblem : returnResult-unrecognizedInvocation),
       result OPERATION.&ResultType
-             ({Operations} {@opcode}
+             ({Operations} {@.opcode}
              ! RejectProblem : returnResult-mistypedResult)
+             -- XXX_SWO (2022-11-12): result parameter is in spec
+             -- called with @opcode, and not from the sub-object for
+             -- result (@.opcode).
    }
    OPTIONAL
 }

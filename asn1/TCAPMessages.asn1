@@ -94,7 +94,9 @@ ComponentPortion {OPERATION: Invokable, OPERATION: Returnable} ::=
 
 Component {OPERATION: Invokable, OPERATION: Returnable} ::= CHOICE {
    basicROS ROS {TCInvokeldSet, {Invokable}, {Returnable}},
-   returnResultNotLast [7] returnResult < ROS {{Returnable}}
+   returnResultNotLast [7] returnResult < ROS {TCInvokeldSet, {Invokable}, {Returnable}}
+   -- XXX_SWO (2022-11-12): the ROS object for returnResultNotLast is
+   -- called with ROS {{Returnable}} in spec, which doesn't seem ok.
    }
 
 TCInvokeldSet INTEGER ::= {-128..127}
