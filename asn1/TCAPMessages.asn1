@@ -28,24 +28,24 @@ TCMessage {OPERATION: Invokable, OPERATION: Returnable} ::= CHOICE {
    abort          [APPLICATION 7] Abort
    }
 
-Unidirectional {OPERATION : Invokable, OPERATION: Returnable} ::= SEQUENCE {
+Unidirectional {OPERATION: Invokable, OPERATION: Returnable} ::= SEQUENCE {
    dialoguePortion DialoguePortion OPTIONAL,
-   components ComponentPortion {{Invokable},{Returnable}}
+   components ComponentPortion {{Invokable}, {Returnable}}
    }
 
-Begin {OPERATION : Invokable, OPERATION: Returnable} ::= SEQUENCE {
+Begin {OPERATION: Invokable, OPERATION: Returnable} ::= SEQUENCE {
    otid OrigTransactionID,
    dialoguePortion DialoguePortion OPTIONAL,
    components ComponentPortion {{Invokable}, {Returnable}} OPTIONAL
    }
 
-End {OPERATION : Invokable, OPERATION: Returnable} ::= SEQUENCE {
+End {OPERATION: Invokable, OPERATION: Returnable} ::= SEQUENCE {
    dtid DestTransactionID,
    dialoguePortion DialoguePortion OPTIONAL,
    components ComponentPortion {{Invokable}, {Returnable}} OPTIONAL
    }
 
-Continue {OPERATION : Invokable, OPERATION: Returnable} ::= SEQUENCE {
+Continue {OPERATION: Invokable, OPERATION: Returnable} ::= SEQUENCE {
    otid OrigTransactionID,
    dtid DestTransactionID,
    dialoguePortion DialoguePortion OPTIONAL,
@@ -83,7 +83,7 @@ P-AbortCause ::= [APPLICATION 10] INTEGER {
 -- COMPONENT PORTION. The last field in the transaction portion of the TCAP message is the
 -- component portion. The component portion may be absent.
 
-ComponentPortion {OPERATION : Invokable, OPERATION: Returnable} ::=
+ComponentPortion {OPERATION: Invokable, OPERATION: Returnable} ::=
    [APPLICATION 12] SEQUENCE SIZE (1..MAX) OF
    Component {{Invokable}, {Returnable}}
 
@@ -92,7 +92,7 @@ ComponentPortion {OPERATION : Invokable, OPERATION: Returnable} ::=
 -- operations, returning results or error, and for the rejection of invalid PDUs.
 -- TCAP adds returnResultNotLast to allow for the segmentation of a result.
 
-Component {OPERATION : Invokable, OPERATION: Returnable} ::= CHOICE {
+Component {OPERATION: Invokable, OPERATION: Returnable} ::= CHOICE {
    basicROS ROS {TCInvokeldSet, {Invokable}, {Returnable}},
    returnResultNotLast [7] returnResult < ROS {{Returnable}}
    }

@@ -52,11 +52,13 @@ Invoke {InvokeId:InvokeIdSet, OPERATION:Operations} ::= SEQUENCE
 ! RejectProblem : general-mistypedPDU)
 (
    WITH COMPONENTS
-   {...,
+   {
+      ...,
       linkedId ABSENT
    }
    | WITH COMPONENTS
-   {...,
+   {
+      ...,
       linkedId PRESENT,
       opcode
       (CONSTRAINED BY {-- must be in the &Linked field of the associated operation --}
