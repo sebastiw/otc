@@ -5,6 +5,7 @@ TCAPMessages-simple {
 -- parameters removed.
 
 DEFINITIONS
+IMPLICIT TAGS
 ::=
 BEGIN
 
@@ -29,15 +30,15 @@ FROM Remote-Operations-Generic-ROS-PDUs {
 
 -- Transaction Portion fields.
 
-OPERATION ::= INTEGER ( 0..65535 )
-ERROR ::= INTEGER ( 0..65535 )
+OPCODE ::= INTEGER ( 0..65535 )
+ERRCODE ::= INTEGER ( 0..65535 )
 
 TCMessage ::= CHOICE {
-   unidirectional [APPLICATION 1] IMPLICIT Unidirectional,
-   begin          [APPLICATION 2] IMPLICIT Begin,
-   end            [APPLICATION 4] IMPLICIT End,
-   continue       [APPLICATION 5] IMPLICIT Continue,
-   abort          [APPLICATION 7] IMPLICIT Abort
+   unidirectional [APPLICATION 1] Unidirectional,
+   begin          [APPLICATION 2] Begin,
+   end            [APPLICATION 4] End,
+   continue       [APPLICATION 5] Continue,
+   abort          [APPLICATION 7] Abort
    }
 
 Unidirectional ::= SEQUENCE {
@@ -69,11 +70,11 @@ ComponentPortion ::=
    Component
 
 Component ::= CHOICE {
-   invoke [1] IMPLICIT Invoke,
-   returnResultLast [2] IMPLICIT ReturnResult,
-   returnError [3] IMPLICIT ReturnError,
-   reject [4] IMPLICIT Reject,
-   returnResultNotLast [7] IMPLICIT ReturnResult
+   invoke [1] Invoke,
+   returnResultLast [2] ReturnResult,
+   returnError [3] ReturnError,
+   reject [4] Reject,
+   returnResultNotLast [7] ReturnResult
    }
 
 Invoke ::= SEQUENCE
@@ -83,7 +84,7 @@ Invoke ::= SEQUENCE
                      present [0] IMPLICIT present < InvokeId,
                      absent  [1] IMPLICIT NULL
                    } OPTIONAL,
-   opcode OPERATION,
+   opcode OPCODE,
    argument ANY DEFINED BY opcode OPTIONAL
 }
 
@@ -92,7 +93,7 @@ ReturnResult ::= SEQUENCE
    invokeId InvokeId,
    result SEQUENCE
    {
-      opcode OPERATION,
+      opcode OPCODE,
       result ANY DEFINED BY opcode
    } OPTIONAL
 }
@@ -100,7 +101,7 @@ ReturnResult ::= SEQUENCE
 ReturnError ::= SEQUENCE
 {
    invokeId InvokeId,
-   errcode ERROR,
+   errcode ERRCODE,
    parameter ANY DEFINED BY errcode OPTIONAL
 }
 
