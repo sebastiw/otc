@@ -19,6 +19,10 @@ IMPORTS
 FROM TCAPMessages {
    ccitt recommendation q 773 modules(2) messages(1) version3(3)}
 
+   Code
+FROM Remote-Operations-Information-Objects {
+   joint-iso-itu-t remote-operations(4) informationObjects(5) version2(1)}
+
    InvokeId,
    GeneralProblem,
    InvokeProblem,
@@ -29,9 +33,6 @@ FROM Remote-Operations-Generic-ROS-PDUs {
 ;
 
 -- Transaction Portion fields.
-
-OPCODE ::= INTEGER ( 0..65535 )
-ERRCODE ::= INTEGER ( 0..65535 )
 
 TCMessage ::= CHOICE {
    unidirectional [APPLICATION 1] Unidirectional,
@@ -84,7 +85,7 @@ Invoke ::= SEQUENCE
                      present [0] IMPLICIT present < InvokeId,
                      absent  [1] IMPLICIT NULL
                    } OPTIONAL,
-   opcode OPCODE,
+   opcode Code,
    argument ANY DEFINED BY opcode OPTIONAL
 }
 
@@ -93,7 +94,7 @@ ReturnResult ::= SEQUENCE
    invokeId InvokeId,
    result SEQUENCE
    {
-      opcode OPCODE,
+      opcode Code,
       result ANY DEFINED BY opcode
    } OPTIONAL
 }
@@ -101,7 +102,7 @@ ReturnResult ::= SEQUENCE
 ReturnError ::= SEQUENCE
 {
    invokeId InvokeId,
-   errcode ERRCODE,
+   errcode Code,
    parameter ANY DEFINED BY errcode OPTIONAL
 }
 
