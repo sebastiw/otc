@@ -24,7 +24,7 @@
   both a list of decoded headers, and a binary containing the parts it
   was not able to decode.
 
-```
+#+BEGIN_SRC erlang
   1> otc:decode(m2pa, UserBinary).
   {ok, {[#{protocol := m2pa, ..}, #{protocol := mtp3, ..}, #{protocol := sccp, ..}], <<SCCPPayload>>}}
 
@@ -42,12 +42,12 @@
 
   6> otc:decapsulate(m2pa, LinkBinary).
   [#{protocol := m2pa, ..}]
-```
+#+END_SRC
 
   For encoding there is only one function encode/1, but it can take
   multiple different types of inputs.
 
-```
+#+BEGIN_SRC erlang
   11> otc:encode(#{protocol => m2pa, ..}).
   <<M2PABinary>>
 
@@ -56,7 +56,7 @@
 
   13> otc:encode({[#{protocol => m2pa, ..}], <<M2PAPayload>>}).
   <<M2PABinary>>
-```
+#+END_SRC
 
   Examples are given with m2pa codec, but could be used with any of
   the supported protocols. See [tests](test/otc_tests.erl)

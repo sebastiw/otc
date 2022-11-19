@@ -1,0 +1,21 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Erlang/OTP 25.1 / rebar3 3.20.0
+    steps:
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '25.1'
+          rebar3-version: '3.20.0'
+      - run: rebar3 eunit
