@@ -1,5 +1,5 @@
-TCAPMessages-simple {
-   ccitt recommendation q 773 modules(2) messages(1) version3(3)}
+TCAP-OTC {
+   otc(68) recommendation q 773 modules(2) messages(1) version3(3)}
 
 -- This module is a simplification of the TCAPMessages module, with
 -- parameters removed.

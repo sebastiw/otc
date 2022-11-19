@@ -23,12 +23,12 @@ codec(Map) when is_map(Map) ->
     encode(Map).
 
 decode(Bin) ->
-    {ok, D} = 'TCAPMessages-simple':decode('TCMessage', Bin),
+    {ok, D} = 'TCAP-OTC':decode('TCMessage', Bin),
     decode_message(D).
 
 encode(Map) ->
     TC = encode_message(Map),
-    {ok, Bin} = 'TCAPMessages-simple':encode('TCMessage', TC),
+    {ok, Bin} = 'TCAP-OTC':encode('TCMessage', TC),
     Bin.
 
 decode_message({'unidirectional', TC}) ->
