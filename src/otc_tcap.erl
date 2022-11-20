@@ -12,12 +12,16 @@
 spec() ->
     "ITU-T Q.773 (06/97)".
 
-next(#{dialoguePortion :=
-           #{'application-context-name' := {0,4,0,0,1,0,_,_}}}) -> {ok, map};
+next(#{dialogue :=
+           #{application_context_family := M}}) -> {ok, M};
 next(_) -> '$stop'.
 
 codec(Bin) when is_binary(Bin) ->
-    decode(Bin);
+    case decode(Bin) of
+        #{dialogue := #{application_context_family := map} = Dialogue,
+          components := [_|_] = Cs} = TC -> {TC, {Dialogue, Cs}};
+        TC -> TC
+    end;
 
 codec(Map) when is_map(Map) ->
     encode(Map).
