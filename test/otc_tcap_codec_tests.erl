@@ -46,7 +46,7 @@ empty_begin_no_user_info_test() ->
     NewBin = otc_tcap:encode(Val),
     ?assertEqual(Bin, NewBin).
 
-end_result_map_sm_v2_test() ->
+end_returnResultLast_with_component_test() ->
     Dialogue = <<16#61,16#17,
                  16#a1,16#09,16#06,16#07,16#04,16#00,16#00,16#01,
                  16#00,16#14,16#02,16#a2,16#03,16#02,16#01,16#00,

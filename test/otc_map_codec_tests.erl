@@ -21,4 +21,5 @@ sendRoutingInfoForSM_returnResultLast_test() ->
                             #{'networkNode-Number' => NetworkNodeNumber}}},
     Val = otc_map:decode(Component),
     ?assertEqual(Exp, Val),
-    ?assertEqual(Component, otc_map:encode(Val)).
+    NewComp = otc_map:encode(Val),
+    ?assertEqual(Component, NewComp).
