@@ -195,24 +195,14 @@ parse_application_context_name(#{'application-context-name' := ACN}) when is_tup
     MAPAC = tuple_to_list('MAP-ApplicationContexts':'map-ac'()),
     IsMAP = lists:prefix(MAPAC, tuple_to_list(ACN)),
     if IsMAP ->
-            ACNs = [{'MAP-ApplicationContexts':F(), F}
-                    || {F, 0} <- 'MAP-ApplicationContexts':module_info(exports)],
-            case lists:keyfind(ACN, 1, ACNs) of
-                false -> {map, ACN};
-                {_, F} -> {map, F}
-            end;
+            {map, otc_map:parse_application_context(ACN)};
        true ->
             {unknown, ACN}
     end.
 
 compose_application_context_name(#{application_context_family := map} = D) ->
     ACN = maps:get(application_context_name, D),
-    ACNs = [{'MAP-ApplicationContexts':F(), F}
-            || {F, 0} <- 'MAP-ApplicationContexts':module_info(exports)],
-    case lists:keyfind(ACN, 2, ACNs) of
-        false -> ACN;
-        {F, _} -> F
-    end;
+    otc_map:compose_application_context(ACN);
 compose_application_context_name(#{application_context_family := unknown} = D) ->
     maps:get(application_context_name, D).
 
