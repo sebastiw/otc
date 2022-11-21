@@ -18,4 +18,4 @@ jobs:
         with:
           otp-version: '25.1'
           rebar3-version: '3.20.0'
-      - run: DIAGNOSTICS=1 rebar3 eunit
+      - run: DEBUG=1 rebar3 eunit
