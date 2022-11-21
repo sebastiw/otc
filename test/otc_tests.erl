@@ -36,9 +36,9 @@ decode_m3ua_sccp_payload_test() ->
                 16#00,16#00,16#35,16#a7,16#03,16#03,16#00,16#08,
                 SccpBin/binary>>,
     Msg = otc:decode(m3ua, M3uaBin),
-    ?assertMatch({ok, {[#{protocol := m3ua}, #{protocol := sccp}], UserData}}, Msg),
+    ?assertMatch({ok, [#{protocol := m3ua}, #{protocol := sccp}, #{protocol := tcap}]}, Msg),
     %% Both M3UA and SCCP has the payload backed in the packet.
-    {ok, {[#{protocol_data := _PD} = M3UA, _SCCP], _Payload}} = Msg,
+    {ok, [#{protocol_data := _PD} = M3UA, _SCCP, _TCAP]} = Msg,
     NewBin = otc:encode(M3UA),
     ?assertEqual(M3uaBin, NewBin).
 

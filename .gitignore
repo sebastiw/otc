@@ -1,3 +1,5 @@
 *.md
 _build
 *.beam
+rebar3.crashdump
+src/[A-Z]*

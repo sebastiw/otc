@@ -8,6 +8,8 @@
          mtp3/1,
          m3ua/1,
          sccp/1,
+         tcap/1,
+         map/1,
          nas_eps/1,
          nas_eps_emm/1,
          nas_eps_esm/1,
@@ -29,7 +31,7 @@
 
 %% Supported protocols ---------------------------------------------------------
 
--type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | nas_eps | nas_eps_emm | nas_eps_esm.
+-type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | tcap | map | nas_eps | nas_eps_emm | nas_eps_esm.
 
 next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
 %% next({sctp, V}) -> otc_sctp:next(V);
@@ -37,6 +39,8 @@ next({m2pa, V}) -> otc_m2pa:next(V);
 next({m3ua, V}) -> otc_m3ua:next(V);
 next({mtp3, V}) -> otc_mtp3:next(V);
 next({sccp, V}) -> otc_sccp:next(V);
+next({tcap, V}) -> otc_tcap:next(V);
+next({map, V}) -> otc_map:next(V);
 next({nas_eps, V}) -> otc_nas_eps:next(V);
 next({nas_eps_emm, V}) -> otc_nas_eps_emm:next(V);
 next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V);
@@ -50,6 +54,8 @@ m2pa(D) -> otc_m2pa:codec(D).
 mtp3(D) -> otc_mtp3:codec(D).
 m3ua(D) -> otc_m3ua:codec(D).
 sccp(D) -> otc_sccp:codec(D).
+tcap(D) -> otc_tcap:codec(D).
+map(D) -> otc_map:codec(D).
 nas_eps(D) -> otc_nas_eps:codec(D).
 nas_eps_emm(D) -> otc_nas_eps_emm:codec(D).
 nas_eps_esm(D) -> otc_nas_eps_esm:codec(D).

@@ -1,0 +1,112 @@
+
+* ITU-T X.880
+
+  |-----------+-------------------------------------------------|
+  | Name      | Remote Operations: Concepts, Model and Notation |
+  | Version   | (07/94) July 1994                               |
+  |-----------+-------------------------------------------------|
+  | File list | - Remote-Operations-Generic-ROS-PDUs.asn1       |
+  |           | - Remote-Operations-Information-Objects.asn1    |
+  |           | - Remote-Operations-Useful-Definitions.asn1     |
+  |-----------+-------------------------------------------------|
+  | Applied   | Amendment 1                                     |
+
+* ITU-T Q.773
+
+  |-----------+----------------------------------------------------------------------|
+  | Name      | Transaction capabilities formats and encoding                        |
+  | Version   | (06/97) June 1997                                                    |
+  |-----------+----------------------------------------------------------------------|
+  | File list | - DialoguePDUs.asn1                                                  |
+  |           | - TCAPMessages.asn1                                                  |
+  |           | - UnidialoguePDUs.asn1                                               |
+  |-----------+----------------------------------------------------------------------|
+
+* ETSI ETR 091 ed.1
+
+  |-----------+----------------------------------------------------------|
+  | Name      | ETSI object identifier tree; Common domain Mobile domain |
+  | Version   | (07/93) July 1993                                        |
+  |-----------+----------------------------------------------------------|
+  | File list | - MobileDomainDefinitions.asn1                           |
+  |-----------+----------------------------------------------------------|
+
+* 3GPP TS 29.002
+
+  |-----------+----------------------------------------------|
+  | Name      | Mobile Application Part (MAP) specification  |
+  | Version   | 17.2.0                                       |
+  |-----------+----------------------------------------------|
+  | File list | - MAP-ApplicationContexts.asn1               |
+  |           | - MAP-BS-Code.asn1                           |
+  |           | - MAP-CallHandlingOperations.asn1            |
+  |           | - MAP-CH-DataTypes.asn1                      |
+  |           | - MAP-CommonDataTypes.asn1                   |
+  |           | - MAP-DialogueInformation.asn1               |
+  |           | - MAP-ER-DataTypes.asn1                      |
+  |           | - MAP-Errors.asn1                            |
+  |           | - MAP-ExtensionDataTypes.asn1                |
+  |           | - MAP-GR-DataTypes.asn1                      |
+  |           | - MAP-Group-Call-Operations.asn1             |
+  |           | - MAP-LCS-DataTypes.asn1                     |
+  |           | - MAP-LCS-DataTypes.asn.raw                  |
+  |           | - MAP-LocationServiceOperations.asn1         |
+  |           | - MAP-MobileServiceOperations.asn1           |
+  |           | - MAP-MS-DataTypes.asn1                      |
+  |           | - MAP-OM-DataTypes.asn1                      |
+  |           | - MAP-OperationAndMaintenanceOperations.asn1 |
+  |           | - MAP-Protocol.asn1                          |
+  |           | - MAP-ShortMessageServiceOperations.asn1     |
+  |           | - MAP-SM-DataTypes.asn1                      |
+  |           | - MAP-SS-Code.asn1                           |
+  |           | - MAP-SS-DataTypes.asn1                      |
+  |           | - MAP-SupplementaryServiceOperations.asn1    |
+  |           | - MAP-TS-Code.asn1                           |
+  |-----------+----------------------------------------------|
+
+* 3GPP TS 29.078
+
+  |-----------+--------------------------------------------|
+  | Name      | CAMEL Application Part (CAP) specification |
+  | Version   | 17.0.0                                     |
+  |-----------+--------------------------------------------|
+  | File list | -                                          |
+  |-----------+--------------------------------------------|
+
+* ITU-T H.248.1
+
+  |-----------+-------------------------------------|
+  | Name      | Gateway control protocol: Version 1 |
+  | Version   | (03/02) March 2002                  |
+  |-----------+-------------------------------------|
+  | File list | - MEDIA-GATEWAY-CONTROL.asn1        |
+  |-----------+-------------------------------------|
+
+* ETS 300 374-1
+
+  |-----------+---------------------------------------------------------------------------------------------------------------|
+  | Name      | Intelligent Network (IN); Capability Set 1 (CS1); Application Protocol (INAP); Part 1: Protocol specification |
+  | Version   | (09/94) September 1994                                                                                        |
+  |-----------+---------------------------------------------------------------------------------------------------------------|
+  | File list | - Core-INAP-CS1-DataTypes.asn1                                                                                |
+  |           | - Core-INAP-CS1-Codes.asn1                                                                                    |
+  |           | - Core-INAP-CS1-Errors.asn1                                                                                   |
+  |           | - Core-INAP-CS1-Operations.asn1                                                                               |
+  |-----------+---------------------------------------------------------------------------------------------------------------|
+
+* ITU-T Q.1218 (10/1995)
+
+  |-----------+-------------------------------------------------------|
+  | Name      | Interface Recommendation for intelligent network CS-1 |
+  | Version   | (10/95) October 1995                                  |
+  |-----------+-------------------------------------------------------|
+  | File list | - IN-CS-1-Operations                                  |
+  |           | - IN-CS-1-Errors                                      |
+  |           | - IN-CS-1-datatypes                                   |
+  |           | - IN-CS-1-Codes                                       |
+  |           | - IN-DirectoryAbstractService                         |
+  |           | - INDirectoryAccessProtocol                           |
+  |           | - SDFProtocolObjectIdentifiers                        |
+  |           | -                                                     |
+  |-----------+-------------------------------------------------------|
+  | Applied   | Amendment 1                                           |

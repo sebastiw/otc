@@ -1,0 +1,121 @@
+TCAP-OTC {
+   otc(68) recommendation q 773 modules(2) messages(1) version3(3)}
+
+-- This module is a simplification of the TCAPMessages module, with
+-- parameters removed.
+
+DEFINITIONS
+IMPLICIT TAGS
+::=
+BEGIN
+
+-- EXPORTS everything
+
+IMPORTS
+   DialoguePortion,
+   OrigTransactionID,
+   DestTransactionID,
+   Abort
+FROM TCAPMessages {
+   ccitt recommendation q 773 modules(2) messages(1) version3(3)}
+
+   Code
+FROM Remote-Operations-Information-Objects {
+   joint-iso-itu-t remote-operations(4) informationObjects(5) version2(1)}
+
+   InvokeId,
+   GeneralProblem,
+   InvokeProblem,
+   ReturnResultProblem,
+   ReturnErrorProblem
+FROM Remote-Operations-Generic-ROS-PDUs {
+   joint-iso-itu-t remote-operations(4) generic-ROS-PDUs(6) version1(0)}
+;
+
+-- Transaction Portion fields.
+
+TCMessage ::= CHOICE {
+   unidirectional [APPLICATION 1] Unidirectional,
+   begin          [APPLICATION 2] Begin,
+   end            [APPLICATION 4] End,
+   continue       [APPLICATION 5] Continue,
+   abort          [APPLICATION 7] Abort
+   }
+
+Unidirectional ::= SEQUENCE {
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion
+   }
+
+Begin ::= SEQUENCE {
+   otid OrigTransactionID,
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion OPTIONAL
+   }
+
+End ::= SEQUENCE {
+   dtid DestTransactionID,
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion OPTIONAL
+   }
+
+Continue ::= SEQUENCE {
+   otid OrigTransactionID,
+   dtid DestTransactionID,
+   dialoguePortion DialoguePortion OPTIONAL,
+   components ComponentPortion OPTIONAL
+   }
+
+ComponentPortion ::=
+   [APPLICATION 12] SEQUENCE SIZE (1..MAX) OF
+   Component
+
+Component ::= CHOICE {
+   invoke [1] Invoke,
+   returnResultLast [2] ReturnResult,
+   returnError [3] ReturnError,
+   reject [4] Reject,
+   returnResultNotLast [7] ReturnResult
+   }
+
+Invoke ::= SEQUENCE
+{
+   invokeId InvokeId,
+   linkedId CHOICE {
+                     present [0] IMPLICIT present < InvokeId,
+                     absent  [1] IMPLICIT NULL
+                   } OPTIONAL,
+   opcode Code,
+   argument ANY DEFINED BY opcode OPTIONAL
+}
+
+ReturnResult ::= SEQUENCE
+{
+   invokeId InvokeId,
+   result SEQUENCE
+   {
+      opcode Code,
+      result ANY DEFINED BY opcode
+   } OPTIONAL
+}
+
+ReturnError ::= SEQUENCE
+{
+   invokeId InvokeId,
+   errcode Code,
+   parameter ANY DEFINED BY errcode OPTIONAL
+}
+
+Reject ::= SEQUENCE
+{
+   invokeId InvokeId,
+   problem CHOICE
+   {
+      general      [0] GeneralProblem,
+      invoke       [1] InvokeProblem,
+      returnResult [2] ReturnResultProblem,
+      returnError  [3] ReturnErrorProblem
+   }
+}
+
+END

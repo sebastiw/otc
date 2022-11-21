@@ -18,14 +18,14 @@ codec(Bin) when is_binary(Bin) ->
     case decode(Bin) of
         #{long_data := LD} = Msg2
           when is_map(LD) ->
-            Msg2;
+            Msg2; %% MGMT message
         #{long_data := LD, message_type := MessageType} = Msg2
           when ludt =:= MessageType;
                ludts =:= MessageType ->
             {Msg2, LD};
         #{data := D} = Msg2
           when is_map(D) ->
-            Msg2;
+            Msg2; %% MGMT message
         #{data := D, message_type := MessageType} = Msg2
           when cr =:= MessageType;
                cc =:= MessageType;
@@ -45,6 +45,60 @@ codec(Bin) when is_binary(Bin) ->
 codec(Map) when is_map(Map) ->
     encode(Map).
 
+
+-define(IS_CONNECTIONLESS(M),
+        0 =:= map_get(class, map_get(protocol_class, M));
+        1 =:= map_get(class, map_get(protocol_class, M))).
+
+%% TS 29.002 v17.2.0 Chapter 6
+next(#{called_party_address := #{subsystem_number := hlr}} = M)
+  when ?IS_CONNECTIONLESS(M) ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := vlr}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       hlr =:= CgSSN; vlr =:= CgSSN; msc =:= CgSSN; css =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := msc}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       msc =:= CgSSN; sgsn =:= CgSSN; gmlc =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := eir}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       msc =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := gsmSCF}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       hlr =:= CgSSN; vlr =:= CgSSN; msc =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := sgsn}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       hlr =:= CgSSN; msc =:= CgSSN; gmlc =:= CgSSN; css =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := hlr},
+       called_party_address := #{subsystem_number := ggsn}} = M)
+  when ?IS_CONNECTIONLESS(M) ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := css}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       vlr =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := glmc}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       msc =:= CgSSN; gsmSCF =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+%% TS 29.078 v17.0.0 Chapter 14.2.2
+next(#{calling_party_address := #{subsystem_number := cap},
+       called_party_address := #{subsystem_number := cap}} = M)
+  when ?IS_CONNECTIONLESS(M) ->
+    {ok, tcap};
+%% TODO: ITU-T Q.1400 (03/93)
 next(_) -> '$stop'.
 
 decode(<<MT:8/big, Rest/binary>>) ->
