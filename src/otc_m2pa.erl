@@ -80,13 +80,9 @@ decode_msg(user_data, Data) ->
 decode_msg(link_status, <<State:32/big>>) ->
     #{link_status => parse_link_status(State)};
 decode_msg(link_status, <<State:32/big, Filler/binary>>) ->
-    case parse_link_status(State) of
-        proving_normal ->
-            #{link_status => proving_normal,
-              link_status_filler => Filler};
-        _ ->
-            unsupported
-    end.
+    proving_normal = parse_link_status(State),
+    #{link_status => proving_normal,
+      link_status_filler => Filler}.
 
 encode_msg(user_data, Msg) ->
     case Msg of
