@@ -1389,6 +1389,23 @@ compose_ssn(auc) -> ?SCCP_SSN_AUC;
 compose_ssn(isss) -> ?SCCP_SSN_ISSS;
 compose_ssn(broadband_isdn_edge_to_edge_applications) -> ?SCCP_SSN_BROADBAND;
 compose_ssn(tc_test_responder) -> ?SCCP_SSN_TC_TEST_RESPONDER;
+
+compose_ssn(css) -> ?SCCP_SSN_NAT_CSS;
+compose_ssn(pcap) -> ?SCCP_SSN_NAT_PCAP;
+compose_ssn(bss) -> ?SCCP_SSN_NAT_BSS;
+compose_ssn(msc) -> ?SCCP_SSN_NAT_MSC;
+compose_ssn(smlc) -> ?SCCP_SSN_NAT_SMLC;
+compose_ssn(bss_om) -> ?SCCP_SSN_NAT_BSS_OM;
+compose_ssn(bssap) -> ?SCCP_SSN_NAT_BSSAP;
+compose_ssn(ranap) -> ?SCCP_SSN_NAT_RANAP;
+compose_ssn(rnsap) -> ?SCCP_SSN_NAT_RNSAP;
+compose_ssn(gmlc) -> ?SCCP_SSN_NAT_GMLC;
+compose_ssn(cap) -> ?SCCP_SSN_NAT_CAP;
+compose_ssn(scf) -> ?SCCP_SSN_NAT_SCF;
+compose_ssn(siwf) -> ?SCCP_SSN_NAT_SIWF;
+compose_ssn(sgsn) -> ?SCCP_SSN_NAT_SGSN;
+compose_ssn(ggsn) -> ?SCCP_SSN_NAT_GGSN;
+
 compose_ssn({international, SSN}) -> SSN;
 compose_ssn({national, SSN}) -> SSN;
 compose_ssn(expansion) -> 2#11111111.
