@@ -1,0 +1,101 @@
+;; 3GPP TS 29.234 v11.2.0 Pr
+
+@id       16777230
+@name     dia_3gpp_ts_29234_Pr
+@vendor   10415 3GPP
+
+@messages
+
+Server-Assignment-Request ::= <Diameter Header: 301, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Server-Assignment-Type }
+              [ Destination-Host ]
+              [ User-Name ]
+              [ Visited-Network-Identifier ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Server-Assignment-Answer ::= <Diameter Header: 301, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ User-Name ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+AA-Request ::= <Diameter Header: 265, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Request-Type }
+              { 3GPP-WLAN-APN- Id }
+              [ Destination-Host ]
+              [ Visited-Network-Identifier ]
+              [ User-Name ]
+              [ Authorization-Lifetime ]
+              [ Auth-Grace-Period ]
+              [ Auth-Session-State ]
+              [ Framed-IP-Address ]
+              [ Framed-IP-Netmask ]
+          *   [ Tunneling ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+AA-Answer ::= <Diameter Header: 265, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Request-Type }
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Subscription-ID-AVP ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+ASR ::= <Diameter Header: 274, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              { 3GPP-WLAN-APN-Id }
+              [ User-Name ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ASA ::= <Diameter Header: 274, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ User-Name ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Redirected-Host ]
+              [ Redirected-Host-Usage ]
+              [ Redirected-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+

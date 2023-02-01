@@ -1,0 +1,25 @@
+;; IETF RFC 7944 August 2016
+
+@name dia_ietf_rfc7944
+
+@avp_types
+DRMP                                               301 Enumerated       -
+
+@enum DRMP
+PRIORITY_15                  15  ; Lowest
+PRIORITY_14                  14
+PRIORITY_13                  13
+PRIORITY_12                  12
+PRIORITY_11                  11
+PRIORITY_10                  10
+PRIORITY_9                    9
+PRIORITY_8                    8
+PRIORITY_7                    7
+PRIORITY_6                    6
+PRIORITY_5                    5
+PRIORITY_4                    4
+PRIORITY_3                    3
+PRIORITY_2                    2
+PRIORITY_1                    1
+PRIORITY_0                    0  ; Highest
+

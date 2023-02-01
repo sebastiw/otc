@@ -1,0 +1,93 @@
+;; 3GPP TS 29.153 v17.0.0 Ns
+
+@id       16777347
+@name     dia_3gpp_ts_29153_Ns
+@vendor   10415 3gpp
+
+@messages
+NS-Request ::= <Diameter Header: 8388724, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Ns-Request-Type }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ SCEF-ID ]
+              [ SCEF-Reference-ID ]
+              [ Network-Area-Info-List ]
+              [ Congestion-Level-Range ]
+              [ Monitoring-Duration ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+NS-Answer ::= <Diameter Header: 8388724, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ SCEF-Reference-ID ]
+              [ Origin-State-Id ]
+          *   [ Network-Congestion-Area-Report ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Supported-Features ]
+          *   [ Load ]
+          *   [ AVP ]
+
+NC-Request ::= <Diameter Header: 8388725, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ SCEF-Reference-ID ]
+          *   [ Network-Congestion-Area-Report ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+NC-Answer ::= <Diameter Header: 8388725, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+

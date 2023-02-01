@@ -1,0 +1,48 @@
+;; 3GPP TS 29.061 v17.6.0
+
+@name     dia_3gpp_ts_29061
+@vendor   10415 3gpp
+
+@avp_types
+3GPP-Charging-Characteristics                               13   UTF8String        MV
+
+@enum MBMS-StartStop-Indication
+START                                                        0
+STOP                                                         1
+UPDATE                                                       2
+HEARTBEAT                                                    3
+
+@enum MBMS-Service-Type
+MULTICAST                                                    0
+BROADCAST                                                    1
+
+@enum MBMS-2G-3G-Indicator
+2G                                                           0
+3G                                                           1
+2G_AND_3G                                                    2
+
+@enum MBMS-Counting-Information
+COUNTING_NOT_APPLICABLE                                      0
+COUNTING_APPLICABLE                                          1
+
+@enum MBMS-User-Data-Mode-Indication
+UNICAST                                                      0
+MULTICAST_AND_UNICAST                                        1
+
+@enum CN-IP-Multicast-Distribution
+NO_IP_MULTICAST                                              0
+IP_MULTICAST                                                 1
+
+@enum MBMS-HC-Indicator
+;; defined in TS 25.413
+UNCOMPRESSED_HEADER                                          0
+COMPRESSED_HEADER                                            1
+
+
+@enum MBMS-Access-Indicator
+UTRAN                                                        0
+EUTRAN                                                       1
+UTRAN_AND_EUTRAN                                             2
+
+@enum MBMS-GW-UDP-Port-Indicator
+UDP_PORT_REQUIRED                                            1

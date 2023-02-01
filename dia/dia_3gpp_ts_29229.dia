@@ -1,0 +1,304 @@
+;; 3GPP TS 29.229 v17.2.0
+
+@name     dia_3gpp_ts_29229
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi_es_283035
+Line-Identifier
+
+@avp_vendor_id 13019
+Line-Identifier
+
+@avp_types
+Visited-Network-Identifier                                  600  OctetString       MV
+Public-Identity                                             601  UTF8String        MV
+Server-Name                                                 602  UTF8String        MV
+Server-Capabilities                                         603  Grouped           MV
+Mandatory-Capability                                        604  Unsigned32        MV
+Optional-Capability                                         605  Unsigned32        MV
+User-Data                                                   606  OctetString       MV
+SIP-Number-Auth-Items                                       607  Unsigned32        MV
+SIP-Authentication-Scheme                                   608  UTF8String        MV
+SIP-Authenticate                                            609  OctetString       MV
+SIP-Authorization                                           610  OctetString       MV
+SIP-Authentication-Context                                  611  OctetString       MV
+SIP-Auth-Data-Item                                          612  Grouped           MV
+SIP-Item-Number                                             613  Unsigned32        MV
+Server-Assignment-Type                                      614  Enumerated        MV
+Deregistration-Reason                                       615  Grouped           MV
+Reason-Code                                                 616  Enumerated        MV
+Reason-Info                                                 617  UTF8String        MV
+Charging-Information                                        618  Grouped           MV
+Primary-Event-Charging-Function-Name                        619  DiameterURI       MV
+Secondary-Event-Charging-Function-Name                      620  DiameterURI       MV
+Primary-Charging-Collection-Function-Name                   621  DiameterURI       MV
+Secondary-Charging-Collection-Function-Name                 622  DiameterURI       MV
+User-Authorization-Type                                     623  Enumerated        MV
+User-Data-Already-Available                                 624  Enumerated        MV
+Confidentiality-Key                                         625  OctetString       MV
+Integrity-Key                                               626  OctetString       MV
+Supported-Features                                          628  Grouped           V 
+Feature-List-ID                                             629  Unsigned32        V 
+Feature-List                                                630  Unsigned32        V 
+Supported-Applications                                      631  Grouped           V 
+Associated-Identities                                       632  Grouped           V 
+Originating-Request                                         633  Enumerated        MV
+Wildcarded-Public-Identity                                  634  UTF8String        V 
+SIP-Digest-Authenticate                                     635  Grouped           V 
+UAR-Flags                                                   637  Unsigned32        V 
+Loose-Route-Indication                                      638  Enumerated        V 
+SCSCF-Restoration-Info                                      639  Grouped           V 
+Path                                                        640  OctetString       V 
+Contact                                                     641  OctetString       V 
+Subscription-Info                                           642  Grouped           V 
+Call-ID-SIP-Header                                          643  OctetString       V 
+From-SIP-Header                                             644  OctetString       V 
+To-SIP-Header                                               645  OctetString       V 
+Record-Route                                                646  OctetString       V 
+Associated-Registered-Identities                            647  Grouped           V 
+Multiple-Registration-Indication                            648  Enumerated        V 
+Restoration-Info                                            649  Grouped           V 
+Session-Priority                                            650  Enumerated        V 
+Identity-with-Emergency-Registration                        651  Grouped           V 
+Priviledged-Sender-Indication                               652  Enumerated        V 
+LIA-Flags                                                   653  Unsigned32        V 
+Initial-CSeq-Sequence-Number                                654  Unsigned32        V 
+SAR-Flags                                                   655  Unsigned32        V 
+Allowed-WAF-WWSF-Identities                                 656  Grouped           V 
+WebRTC-Authentication-Function-Name                         657  UTF8String        V 
+WebRTC-Web-Server-Function-Name                             658  UTF8String        V 
+RTR-Flags                                                   659  Unsigned32        V 
+P-CSCF-Subscription-Info                                    660  Grouped           V 
+Registration-Time-Out                                       661  Time              V 
+Alternate-Digest-Algorithm                                  662  UTF8String        V 
+Alternate-Digest-HA1                                        663  UTF8String        V 
+Failed-PCSCF                                                664  Grouped           V 
+PCSCF-FQDN                                                  665  DiameterIdentity  V 
+PCSCF-IP-Address                                            666  Address           V 
+
+;; Reused AVPs
+@avp_types
+Framed-IP-Address                                           8    OctetString       M  ; IETF RFC4005
+Framed-Interface-Id                                         96   Unsigned64        M  ; IETF RFC4005
+Framed-IPv6-Prefix                                          97   OctetString       M  ; IETF RFC4005
+Digest-Realm                                                104  UTF8String        M  ; IETF RFC4590
+Digest-QoP                                                  110  UTF8String        M  ; IETF RFC4590
+Digest-Algorithm                                            111  UTF8String        M  ; IETF RFC4590
+Digest-HA1                                                  121  UTF8String        M  ; IETF RFC4590
+OC-Supported-Features                                       621  Grouped           -  ; IETF RFC7683
+OC-Feature-Vector                                           622  Unsigned64        -  ; IETF RFC7683
+OC-OLR                                                      623  Grouped           -  ; IETF RFC7683
+OC-Sequence-Number                                          624  Unsigned64        -  ; IETF RFC7683
+OC-Validity-Duration                                        625  Unsigned32        -  ; IETF RFC7683
+OC-Report-Type                                              626  Enumerated        -  ; IETF RFC7683
+OC-Reduction-Percentage                                     627  Unsigned32        -  ; IETF RFC7683
+SourceID                                                    649  DiameterIdentity  -  ; IETF RFC8583
+Load                                                        650  Grouped           -  ; IETF RFC8583
+Load-Type                                                   651  Enumerated        -  ; IETF RFC8583
+Load-Value                                                  652  Unsigned64        -  ; IETF RFC8583
+
+@grouped
+
+Server-Capabilities ::= <AVP Header: 603>
+          *   [ Mandatory-Capability ]
+          *   [ Optional-Capability ]
+          *   [ Server-Name ]
+          *   [ AVP ]
+
+SIP-Auth-Data-Item ::= <AVP Header: 612>
+              [ SIP-Item-Number ]
+              [ SIP-Authentication-Scheme ]
+              [ SIP-Authenticate ]
+              [ SIP-Authorization ]
+              [ SIP-Authentication-Context ]
+              [ Confidentiality-Key ]
+              [ Integrity-Key ]
+              [ SIP-Digest-Authenticate ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Framed-Interface-Id ]
+          *   [ Line-Identifier ]
+          *   [ AVP ]
+
+Deregistration-Reason ::= <AVP Header: 615>
+              { Reason-Code }
+              [ Reason-Info ]
+          *   [ AVP ]
+
+Charging-Information ::= <AVP Header: 618>
+              [ Primary-Event-Charging-Function-Name ]
+              [ Secondary-Event-Charging-Function-Name ]
+              [ Primary-Charging-Collection-Function-Name ]
+              [ Secondary-Charging-Collection-Function-Name ]
+          *   [ AVP ]
+
+OC-Supported-Features ::= <AVP Header: 621>
+              [ OC-Feature-Vector ]
+          *   [ AVP ]
+
+OC-OLR ::= <AVP Header: 623>
+              < OC-Sequence-Number >
+              < OC-Report-Type >
+              [ OC-Reduction-Percentage ]
+              [ OC-Validity-Duration ]
+          *   [ AVP ]
+
+Supported-Features ::= <AVP Header: 628>
+              { Vendor-Id }
+              { Feature-List-ID }
+              { Feature-List }
+          *   [ AVP ]
+
+Supported-Applications ::= <AVP Header: 631>
+          *   [ Auth-Application-Id ]
+          *   [ Acct-Application-Id ]
+          *   [ Vendor-Specific-Application-Id ]
+          *   [ AVP ]
+
+Associated-Identities ::= <AVP Header: 632>
+          *   [ User-Name ]
+          *   [ AVP ]
+
+SIP-Digest-Authenticate ::= <AVP Header: 635>
+              { Digest-Realm }
+              { Digest-QoP }
+              { Digest-HA1 }
+              [ Digest-Algorithm ]
+              [ Alternate-Digest-Algorithm ]
+              [ Alternate-Digest-HA1 ]
+          *   [ AVP ]
+
+SCSCF-Restoration-Info ::= <AVP Header: 639>
+              { User-Name }
+         1*   { Restoration-Info }
+              [ Registration-Time-Out ]
+              [ SIP-Authentication-Scheme ]
+          *   [ AVP ]
+
+Subscription-Info ::= <AVP Header: 642>
+              { Call-ID-SIP-Header }
+              { From-SIP-Header }
+              { To-SIP-Header }
+              { Record-Route }
+              { Contact }
+          *   [ AVP ]
+
+Associated-Registered-Identities ::= <AVP Header: 647>
+          *   [ User-Name ]
+          *   [ AVP ]
+
+Restoration-Info ::= <AVP Header: 649>
+              { Path }
+              { Contact }
+              [ Initial-CSeq-Sequence-Number ]
+              [ Call-ID-SIP-Header ]
+              [ Subscription-Info ]
+              [ P-CSCF-Subscription-Info ]
+          *   [ AVP ]
+
+Load ::= <AVP Header: 650>
+              [ Load-Type ]
+              [ Load-Value ]
+              [ SourceID ]
+          *   [ AVP ]
+
+Identity-with-Emergency-Registration ::= <AVP Header: 651>
+              { User-Name }
+              { Public-Identity }
+          *   [ AVP ]
+
+Allowed-WAF-WWSF-Identities ::= <AVP Header: 656>
+          *   [ WebRTC-Authentication-Function-Name ]
+          *   [ WebRTC-Web-Server-Function-Name ]
+          *   [ AVP ]
+
+P-CSCF-Subscription-Info ::= <AVP Header: 660>
+              { Call-ID-SIP-Header }
+              { From-SIP-Header }
+              { To-SIP-Header }
+              { Contact }
+          *   [ AVP ]
+
+Failed-PCSCF ::= <AVP Header: 664>
+              [ PCSCF-FQDN ]
+          *   [ PCSCF-IP-Address ]
+          *   [ AVP ]
+
+@enum Server-Assignment-Type
+NO_ASSIGNMENT                                                0
+REGISTRATION                                                 1
+RE_REGISTRATION                                              2
+UNREGISTERED_USER                                            3
+TIMEOUT_DEREGISTRATION                                       4
+USER_DEREGISTRATION                                          5
+TIMEOUT_DEREGISTRATION_STORE_SERVER_NAME                     6
+USER_DEREGISTRATION_STORE_SERVER_NAME                        7
+ADMINISTRATIVE_DEREGISTRATION                                8
+AUTHENTICATION_FAILURE                                       9
+AUTHENTICATION_TIMEOUT                                      10
+DEREGISTRATION_TOO_MUCH_DATA                                11
+AAA_USER_DATA_REQUEST                                       12
+PGW_UPDATE                                                  13
+RESTORATION                                                 14
+
+@enum Reason-Code
+PERMANENT_TERMINATION                                        0
+NEW_SERVER_ASSIGNED                                          1
+SERVER_CHANGE                                                2
+REMOVE_S_CSCF                                                3
+
+@enum User-Authorization-Type
+REGISTRATION                                                 0
+DE_REGISTRATION                                              1
+REGISTRATION_AND_CAPABILITIES                                2
+
+@enum User-Data-Already-Available
+USER_DATA_NOT_AVAILABLE                                      0
+USER_DATA_ALREADY_AVAILABLE                                  1
+
+@enum Originating-Request
+ORIGINATING                                                  0
+
+@enum Loose-Route-Indication
+LOOSE_ROUTE_NOT_REQUIRED                                     0
+LOOSE_ROUTE_REQUIRED                                         1
+
+@enum Multiple-Registration-Indication
+NOT_MULTIPLE_REGISTRATION                                    0
+MULTIPLE_REGISTRATION                                        1
+
+@enum Session-Priority
+PRIORITY_0                                                   0 ; Highest
+PRIORITY_1                                                   1
+PRIORITY_2                                                   2
+PRIORITY_3                                                   3
+PRIORITY_4                                                   4
+
+@enum Load-Type
+HOST                                                         0
+PEER                                                         1
+
+@enum Priviledged-Sender-Indication
+NOT_PRIVILEDGED_SENDER                                       0
+PRIVILEDGED_SENDER                                           1
+
+@define Experimental-Result
+;; 6.2.1 Success
+DIAMETER_FIRST_REGISTRATION                                 2001
+DIAMETER_SUBSEQUENT_REGISTRATION                            2002
+DIAMETER_UNREGISTERED_SERVICE                               2003
+DIAMETER_SUCCESS_SERVER_NAME_NOT_STORED                     2004
+;; 6.2.2 Permanent Failures
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_IDENTITIES_DONT_MATCH                        5002
+DIAMETER_ERROR_IDENTITY_NOT_REGISTERED                      5003
+DIAMETER_ERROR_ROAMING_NOT_ALLOWED                          5004
+DIAMETER_ERROR_IDENTITY_ALREADY_REGISTERED                  5005
+DIAMETER_ERROR_AUTH_SCHEME_NOT_SUPPORTED                    5006
+DIAMETER_ERROR_IN_ASSIGNMENT_TYPE                           5007
+DIAMETER_ERROR_TOO_MUCH_DATA                                5008
+DIAMETER_ERROR_NOT_SUPPORTED_USER_DATA                      5009
+DIAMETER_ERROR_FEATURE_UNSUPPORTED                          5011
+DIAMETER_ERROR_SERVING_NODE_FEATURE_UNSUPPORTED             5012

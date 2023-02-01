@@ -1,8 +1,0 @@
-;; 3GPP TS 29.299
-
-@name     dia_3gpp_ts_29299
-@vendor   10415 3gpp
-
-@avp_types
-Served-Party-IP-Address                 848  Address     MV
-Charged-Party                           857  UTF8String  MV

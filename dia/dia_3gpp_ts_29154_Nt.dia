@@ -1,0 +1,58 @@
+;; 3GPP TS 29.154 v17.0.0 Nt
+
+@id       16777348
+@name     dia_3gpp_ts_29154_Nt
+@vendor   10415 3gpp
+
+@messages
+BT-Request ::= <Diameter Header: 8388723, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Transfer-Request-Type }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+              [ Application-Service-Provider-Identity ]
+              [ CC-Output-Octets ]
+              [ CC-Input-Octets ]
+              [ CC-Total-Octets ]
+              [ Number-Of-UEs ]
+              [ Time-Window ]
+              [ Network-Area-Info-List ]
+              [ Reference-Id ]
+              [ Transfer-Policy-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+BT-Answer ::= <Diameter Header: 8388723, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+              [ Reference-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Transfer-Policy ]
+              [ PCRF-Address ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ Load ]
+          *   [ AVP ]
+

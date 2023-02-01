@@ -1,0 +1,202 @@
+;; 3GPP TS 29.336 S6t
+
+@id       16777345
+@name     dia_3gpp_ts_29336_S6t
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf_rfc7944
+DRMP
+
+@inherits dia_3gpp_ts_29336
+
+@messages
+Configuration-Information-Request ::= <Diameter Header: 8388718, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identifier }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+          *   [ Monitoring-Event-Configuration ]
+              [ CIR-Flags ]
+          *   [ AESE-Communication-Pattern ]
+              [ Enhanced-Coverage-Restriction ]
+              [ Group-Reporting-Guard-Timer ]
+              [ AdditionalIdentifiers ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ Suggested-Network-Configuration ]
+          *   [ AVP ]
+
+Configuration-Information-Answer ::= <Diameter Header: 8388718, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Supported-Features ]
+              [ User-Identifier ]
+              [ Number-Of-UEs ]
+          *   [ Monitoring-Event-Report ]
+          *   [ Monitoring-Event-Config-Status ]
+          *   [ AESE-Communication-Pattern-Config-Status ]
+          *   [ Supported-Services ]
+              [ S6t-HSS-Cause ]
+              [ Enhanced-Coverage-Restriction-Data ]
+              [ CIA-Flags ]
+          *   [ IMSI-Group-Id ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ Suggested-Network-Configuration ]
+          *   [ AVP ]
+
+Reporting-Information-Request ::= <Diameter Header: 8388719, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              [ DRMP ]
+          *   [ Supported-Features ]
+              [ User-Identifier ]
+          *   [ Monitoring-Event-Report ]
+          *   [ Group-Report ]
+              [ Updated-Network-Configuration ]
+              [ RIR-Flags ]
+          *   [ Supported-Services ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Reporting-Information-Answer ::= <Diameter Header: 8388719, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+          *   [ Monitoring-Event-Report-Status ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+NIDD-Information-Request ::= <Diameter Header: 8388726, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identifier }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ NIDD-Authorization-Request ]
+              [ NIDD-Authorization-Update ]
+              [ NIR-Flags ]
+          *   [ Group-User-Identifier ]
+              [ MTC-Provider-Info ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+NIDD-Information-Answer ::= <Diameter Header: 8388726, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Supported-Features ]
+              [ NIDD-Authorization-Response ]
+          *   [ Group-User-Identifier ]
+              [ NIA-Flags ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+@avp_types
+User-Identifier                                             3102 Grouped           MV
+Group-Report                                                3165 Grouped           V 
+Group-Report-Item                                           3166 Grouped           V 
+
+;; Reused AVPs
+@avp_types
+IMSI-Group-Id                                               1675 Grouped           V  ; 3GPP TS 29.272
+Group-Service-Id                                            1676 Unsigned32        V  ; 3GPP TS 29.272
+Group-PLMN-Id                                               1677 OctetString       V  ; 3GPP TS 29.272
+Local-Group-Id                                              1678 OctetString       V  ; 3GPP TS 29.272
+Number-Of-UEs                                               4209 Unsigned32        MV ; 3GPP TS 29.154
+
+@grouped
+IMSI-Group-Id ::= <AVP Header: 1675>
+              { Group-Service-Id }
+              { Group-PLMN-Id }
+              { Local-Group-Id }
+          *   [ AVP ]
+
+User-Identifier ::= <AVP Header: 3102>
+              [ User-Name ]
+              [ MSISDN ]
+              [ External-Identifier ]
+              [ Type-Of-External-Identifier ]
+          *   [ AVP ]
+
+Group-Report ::= <AVP Header: 3165>
+              { SCEF-Reference-ID }
+              [ SCEF-Reference-ID-Ext ]
+              [ SCEF-ID ]
+          *   [ Group-Report-Item ]
+          *   [ AVP ]
+
+Group-Report-Item ::= <AVP Header: 3166>
+              { User-Identifier }
+              [ Visited-PLMN-Id ]
+              [ Roaming-Information ]
+              [ IMEI-Change ]
+              [ Reachability-Information ]
+              [ Maximum-UE-Availability-Time ]
+              [ EPS-Location-Information ]
+              [ Monitoring-Type ]
+          *   [ Service-Report ]
+              [ S6t-HSS-Cause ]
+              [ Idle-Status-Indication ]
+              [ Reporting-Time-Stamp ]
+              [ Updated-Network-Configuration ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+              [ Event-Handling ]
+          *   [ AVP ]
+
+@define Experimental-Result
+;; 8.3.3 Permanent Failures
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_ENTITY               5510
+DIAMETER_ERROR_UNAUTHORIZED_SERVICE                         5511
+DIAMETER_ERROR_REQUESTED_RANGE_IS_NOT_ALLOWED               5512
+DIAMETER_ERROR_CONFIGURATION_EVENT_STORAGE_NOT_SUCCESSFUL   5513
+DIAMETER_ERROR_CONFIGURATION_EVENT_NON_EXISTANT             5514
+DIAMETER_ERROR_USER_NO_APN_SUBSCRIPTION                     5451
+DIAMETER_ERROR_UNAUTHORIZED_MTC_PROVIDER                    5516
+

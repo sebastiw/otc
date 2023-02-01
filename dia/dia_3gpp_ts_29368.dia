@@ -1,0 +1,83 @@
+;; 3GPP TS 29.368 v17.0.0
+
+@name     dia_3gpp_ts_29368
+@vendor   10415 3gpp
+
+@avp_types
+Device-Action                                               3001 Grouped           MV
+Device-Notification                                         3002 Grouped           MV
+Trigger-Data                                                3003 Grouped           MV
+Payload                                                     3004 OctetString       MV
+Action-Type                                                 3005 Enumerated        MV
+Priority-Indication                                         3006 Enumerated        MV
+Reference-Number                                            3007 Unsigned32        MV
+Request-Status                                              3008 Enumerated        MV
+Delivery-Outcome                                            3009 Enumerated        MV
+Application-Port-Identifier                                 3010 Unsigned32        MV
+Old-Reference-Number                                        3011 Unsigned32        V 
+Feature-Supported-In-Final-Target                           3012 Unsigned32        V 
+
+@grouped
+Device-Action ::= <AVP Header: 3001>
+              { Reference-Number }
+              { Action-Type }
+              [ External-Id ]
+              [ MSISDN ]
+              [ SCS-Identity ]
+              [ Old-Reference-Number ]
+              [ Trigger-Data ]
+              [ Validity-Time ]
+          *   [ AVP ]
+
+Device-Notification ::= <AVP Header: 3002>
+              { Reference-Number }
+              { Action-Type }
+              [ External-Id ]
+              [ MSISDN ]
+              [ SCS-Identity ]
+              [ Request-Status ]
+              [ MTC-Error-Diagnostic ]
+              [ Delivery-Outcome ]
+              [ SM-RP-UI ]
+              [ Application-Port-Identifier ]
+          *   [ AVP ]
+
+Trigger-Data ::= <AVP Header: 3003>
+              { Payload }
+              [ Priority-Indication ]
+              [ Application-Port-Identifier ]
+          *   [ AVP ]
+
+@enum Action-Type
+DEVICE_TRIGGER_REQUEST                                       1
+DELIVERY_REPORT                                              2
+DEVICE_TRIGGER_RECALL                                        3
+DEVICE_TRIGGER_REPLACE                                       4
+MSISDNless_MOSMS_DELIVERY                                    5
+
+@enum Priority-Indication
+NON_PRIORITY                                                 0
+PRIORITY                                                     1
+
+@enum Request-Status
+SUCCESS                                                      0
+TEMPORARYERROR                                              201
+INVPAYLOAD                                                  101
+INVEXTID                                                    102
+INVSCSID                                                    103
+INVPERIOD                                                   104
+NOTAUTHORIZED                                               105
+SERVICEUNAVAILABLE                                          106
+PERMANENTERROR                                              107
+QUOTAEXCEEDED                                               108
+RATEEXCEEDED                                                109
+REPLACEFAIL                                                 110
+RECALLFAIL                                                  111
+ORIGINALMESSAGESENT                                         112
+
+@enum Delivery-Outcome
+SUCCESS                                                      0
+EXPIRED                                                      1
+TEMPORARYERROR                                               2
+UNDELIVERABLE                                                3
+UNCONFIRMED                                                  4

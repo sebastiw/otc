@@ -1,0 +1,73 @@
+;; 3GPP TS 29.336 S6m/S6n
+
+@id       16777310
+@name     dia_3gpp_ts_29336_S6m_S6n
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf_rfc7944
+DRMP
+
+@inherits dia_3gpp_ts_29336
+
+@messages
+Subscriber-Information-Request ::= <Diameter Header: 8388641, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identifier }
+              { SIR-Flags }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Service-ID ]
+              [ SCS-Identity ]
+              [ Service-Parameters ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Subscriber-Information-Answer ::= <Diameter Header: 8388641, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Supported-Features ]
+          *   [ User-Identifier ]
+              [ Service-Data ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+
+@avp_types
+User-Identifier                                             3102 Grouped           MV
+
+;; Reused AVPs
+@avp_types
+LMSI                                                        2400 OctetString       MV ; 3GPP TS 29.173
+
+@grouped
+User-Identifier ::= <AVP Header: 3102>
+              [ User-Name ]
+              [ MSISDN ]
+              [ External-Identifier ]
+              [ LMSI ]
+          *   [ AVP ]
+
+@define Experimental-Result
+;; 6.3.3 Permanent Failures
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_ENTITY               5510
+DIAMETER_ERROR_UNAUTHORIZED_SERVICE                         5511

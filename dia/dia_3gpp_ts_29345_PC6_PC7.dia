@@ -1,0 +1,319 @@
+;; 3GPP TS 29.345 v17.0.0 PC6/PC7
+
+@id       16777340
+@name     dia_3gpp_ts_29345_PC6_PC7
+@vendor   10415 3gpp
+
+@messages
+ProSe-Authorization-Request ::= <Diameter Header: 8388668, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identity }
+              { Visited-PLMN-Id }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Authorization-Answer ::= <Diameter Header: 8388668, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+              [ ProSe-Direct-Allowed ]
+              [ Validity-Time-Announce ]
+              [ Validity-Time-Monitor ]
+              [ Validity-Time-Communication ]
+              [ Authorized-Discovery-Range ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Discovery-Request ::= <Diameter Header: 8388669, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Discovery-Auth-Request }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ Discovery-Entry-ID ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Discovery-Answer ::= <Diameter Header: 8388669, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+              [ Discovery-Auth-Response ]
+              [ Discovery-Entry-ID ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Match-Request ::= <Diameter Header: 8388670, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Match-Request }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ PMR-Flags ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Match-Answer ::= <Diameter Header: 8388670, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Match-Report ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Match-Report-Info-Request ::= <Diameter Header: 8388671, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Match-Report-Info }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Match-Report-Info-Answer ::= <Diameter Header: 8388671, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Proximity-Request ::= <Diameter Header: 8388672, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { PRR-Flags }
+              { Requesting-EPUID }
+              { Targeted-EPUID }
+              { Time-Window }
+              { Location-Estimate }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ Location-Update-Trigger ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Proximity-Answer ::= <Diameter Header: 8388672, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+              [ Location-Estimate ]
+              [ WLAN-Link-Layer-Id ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Location-Update-Request ::= <Diameter Header: 8388673, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Targeted-EPUID }
+              { Location-Estimate }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Location-Update-Answer ::= <Diameter Header: 8388673, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Alert-Request ::= <Diameter Header: 8388674, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { App-Layer-User-Id }
+              { Targeted-EPUID }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ Assistance-Info ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Alert-Answer ::= <Diameter Header: 8388674, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Cancellation-Request ::= <Diameter Header: 8388675, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Requesting-EPUID }
+              { Targeted-EPUID }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Cancellation-Answer ::= <Diameter Header: 8388675, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNAUTHORIZED_SERVICE                         5511
+DIAMETER_ERROR_NO_ASSOCIATED_DISCOVERY_FILTER               5630
+DIAMETER_ERROR_ANNOUNCING_UNAUTHORIZED_IN_PLMN              5631
+DIAMETER_ERROR_INVALID_APPLICATION_CODE                     5632
+DIAMETER_ERROR_PROXIMITY_UNAUTHORIZED                       5633
+DIAMETER_ERROR_PROXIMITY_REJECTED                           5634
+DIAMETER_ERROR_NO_PROXIMITY_REQUEST                         5635
+DIAMETER_ERROR_UNAUTHORIZED_SERVICE_IN_THIS_PLMN            5636
+DIAMETER_ERROR_PROXIMITY_CANCELLED                          5637
+DIAMETER_ERROR_INVALID_DISCOVERY_TYPE                       5641
+DIAMETER_ERROR_INVALID_TARGET_PDUID                         5638
+DIAMETER_ERROR_INVALID_TARGET_RPAUID                        5639
+DIAMETER_ERROR_NO_ASSOCIATED_RESTRICTED_CODE                5640
+DIAMETER_ERROR_REVOCATION_FAILURE                           56x1
+DIAMETER_ERROR_ALREADY_BANNED                               56x2
+

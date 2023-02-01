@@ -1,0 +1,131 @@
+;; 3GPP TS 29.128 v17.1.0
+
+@name     dia_3gpp_ts_29128
+@vendor   10415 3gpp
+
+@inherits dia_3gpp_ts_29336
+Location-Information-Configuration
+
+@avp_types
+Monitoring-Event-Configuration                              3122 Grouped           MV ; redefined from TS 29.336
+Monitoring-Event-Report                                     3123 Grouped           MV ; redefined from TS 29.336
+Communication-Failure-Information                           4300 Grouped           MV
+Cause-Type                                                  4301 Unsigned32        MV
+S1AP-Cause                                                  4302 Unsigned32        MV
+RANAP-Cause                                                 4303 Unsigned32        MV
+BSSGP-Cause                                                 4309 Unsigned32        MV
+GMM-Cause                                                   4304 Unsigned32        MV
+SM-Cause                                                    4305 Unsigned32        MV
+Number-Of-UE-Per-Location-Configuration                     4306 Grouped           MV
+Number-Of-UE-Per-Location-Report                            4307 Grouped           MV
+UE-Count                                                    4308 Unsigned32        MV
+Connection-Action                                           4314 Unsigned32        MV
+Non-IP-Data                                                 4315 OctetString       MV
+Serving-PLMN-Rate-Control                                   4310 Grouped           MV
+Uplink-Rate-Limit                                           4311 Unsigned32        MV
+Downlink-Rate-Limit                                         4312 Unsigned32        MV
+Extended-PCO                                                4313 OctetString       MV
+SCEF-Wait-Time                                              4316 Time              MV
+CMR-Flags                                                   4317 Unsigned32        MV
+RRC-Cause-Counter                                           4318 Grouped           MV
+Counter-Value                                               4319 Unsigned32        MV
+RRC-Counter-Timestamp                                       4320 Time              MV
+TDA-Flags                                                   4321 Unsigned32        V 
+Idle-Status-Indication                                      4322 Grouped           V 
+Idle-Status-Timestamp                                       4323 Time              V 
+Active-Time                                                 4324 Unsigned32        V 
+Reachability-Cause                                          4325 Unsigned32        V 
+APN-Rate-Control-Status                                     4326 Grouped           V 
+Uplink-Number-Of-Packets-Allowed                            4327 Unsigned32        V 
+Number-Of-Additional-Exception-Reports                      4328 Unsigned32        V 
+Downlink-Number-Of-Packets-Allowed                          4329 Unsigned32        V 
+APN-Rate-Control-Status-Validity-Time                       4330 Unsigned64        V 
+
+@grouped
+Monitoring-Event-Configuration ::= <AVP Header: 3122>
+              { SCEF-ID }
+              { Monitoring-Type }
+              [ SCEF-Reference-ID ]
+              [ SCEF-Reference-ID-Ext ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+              [ Maximum-Number-of-Reports ]
+              [ Monitoring-Duration ]
+              [ Charged-Party ]
+              [ UE-Reachability-Configuration ]
+              [ Location-Information-Configuration ]
+          *   [ Number-Of-UE-Per-Location-Configuration ]
+          *   [ AVP ]
+
+Monitoring-Event-Report ::= <AVP Header: 3123>
+              { SCEF-Reference-ID }
+              [ SCEF-Reference-ID-Ext ]
+              [ SCEF-ID ]
+              [ Monitoring-Type ]
+              [ Reachability-Information ]
+              [ EPS-Location-Information ]
+              [ Communication-Failure-Information ]
+          *   [ Number-Of-UE-Per-Location-Report ]
+              [ Loss-Of-Connectivity-Reason ]
+              [ Visited-PLMN-Id ]
+              [ Idle-Status-Indication ]
+              [ Reporting-Time-Stamp ]
+              [ Maximum-UE-Availability-Time ]
+          *   [ PDN-Connectivity-Status-Report ]
+              [ Reachability-Cause ]
+          *   [ AVP ]
+
+Communication-Failure-Information ::= <AVP Header: 4300>
+              [ Cause-Type ]
+              [ S1AP-Cause ]
+              [ RANAP-Cause ]
+              [ BSSGP-Cause ]
+              [ GMM-Cause ]
+              [ SM-Cause ]
+          *   [ AVP ]
+
+Number-Of-UE-Per-Location-Configuration ::= <AVP Header: 4306>
+              { EPS-Location-Information }
+              [ IMSI-Group-Id ]
+          *   [ AVP ]
+
+Number-Of-UE-Per-Location-Report ::= <AVP Header: 4307>
+              { EPS-Location-Information }
+              { UE-Count }
+              [ IMSI-Group-Id ]
+          *   [ AVP ]
+
+Serving-PLMN-Rate-Control ::= <AVP Header: 4310>
+              [ Uplink-Rate-Limit ]
+              [ Downlink-Rate-Limit ]
+          *   [ AVP ]
+
+RRC-Cause-Counter ::= <AVP Header: 4318>
+              [ Counter-Value ]
+              [ RRC-Counter-Timestamp ]
+          *   [ AVP ]
+
+Idle-Status-Indication ::= <AVP Header: 4322>
+              [ Idle-Status-Timestamp ]
+              [ Active-Time ]
+              [ Subscribed-Periodic-RAU-TAU-Timer ]
+              [ eDRX-Cycle-Length ]
+              [ DL-Buffering-Suggested-Packet-Count ]
+          *   [ AVP ]
+
+@define Cause-Type
+RADIO_NETWORK_LAYER                                          0
+TRANSPORT_LAYER                                              1
+NAS                                                          2
+PROTOCOL                                                     3
+MISCELLANEOUS                                                4
+
+@define Connection-Action
+CONNECTION_ESTABLISHMENT                                     0
+CONNECTION_RELEASE                                           1
+CONNECTION_UPDATE                                            2
+
+@define Reachability-Cause
+CHANGE_TO_CONNECTED_MODE                                     0
+REACHABLE_FOR_PAGING                                         1
+

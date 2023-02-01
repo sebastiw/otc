@@ -1,0 +1,253 @@
+;; 3GPP TS 29.345 v17.0.0
+
+@name     dia_3gpp_ts_29345
+@vendor   10415 3gpp
+
+@avp_types
+App-Layer-User-Id                                           3801 UTF8String        MV
+Assistance-info                                             3802 Grouped           MV
+Assistance-Info-Validity-Timer                              3803 Unsigned32        MV
+Discovery-Type                                              3804 Unsigned32        MV
+Filter-Id                                                   3805 OctetString       MV
+MAC-Address                                                 3806 UTF8String        MV
+Match-Report                                                3807 Grouped           MV
+Operating-Channel                                           3808 Unsigned32        MV
+P2P-Features                                                3809 Unsigned32        MV
+ProSe-App-Code                                              3810 OctetString       MV
+ProSe-App-Id                                                3811 UTF8String        MV
+ProSe-App-Mask                                              3812 OctetString       MV
+ProSe-Discovery-Filter                                      3813 Grouped           MV
+PRR-Flags                                                   3814 Unsigned32        MV
+ProSe-Validity-Timer                                        3815 Unsigned32        MV
+Requesting-EPUID                                            3816 UTF8String        MV
+Targeted-EPUID                                              3817 UTF8String        MV
+Time-Window                                                 3818 Unsigned32        MV
+WiFi-P2P-Assistance-Info                                    3819 Grouped           MV
+WLAN-Assistance-Info                                        3820 Grouped           MV
+WLAN-Link-Layer-Id                                          3821 OctetString       MV
+WLAN-Link-Layer-Id-List                                     3822 Grouped           MV
+Location-Update-Trigger                                     3823 Grouped           MV
+Location-Update-Event-Type                                  3824 Unsigned32        MV
+Change-Of-Area-Type                                         3825 Grouped           MV
+Location-Update-Event-Trigger                               3826 Unsigned32        MV
+Report-Cardinality                                          3827 Enumerated        MV
+Minimum-Interval-Time                                       3828 Unsigned32        MV
+Periodic-Location-Type                                      3829 Grouped           MV
+Location-Report-Interval-Time                               3830 Unsigned32        MV
+Total-Number-Of-Reports                                     3831 Unsigned32        MV
+Validity-Time-Announce                                      3832 Unsigned32        MV
+Validity-Time-Monitor                                       3833 Unsigned32        MV
+Validity-Time-Communication                                 3834 Unsigned32        MV
+ProSe-App-Code-Info                                         3835 Grouped           MV
+MIC                                                         3836 OctetString       MV
+UTC-based-Counter                                           3837 Unsigned32        MV
+ProSe-Match-Refresh-Timer                                   3838 Unsigned32        MV
+ProSe-Metadata-Index-Mask                                   3839 OctetString       V 
+App-Identifier                                              3840 Group             V 
+OS-ID                                                       3841 OctetString       V 
+OS-App-ID                                                   3842 UTF8String        V 
+Requesting-RPAUID                                           3843 UTF8String        V 
+Target-RPAUID                                               3844 UTF8String        V 
+Target-PDUID                                                3845 OctetString       V 
+ProSe-Restricted-Code                                       3846 OctetString       V 
+ProSe-Restricted-Code-Suffix-Range                          3847 OctetString       V 
+Beginning-Suffix                                            3848 OctetString       V 
+Ending-Suffix                                               3849 OctetString       V 
+Discovery-Entry-ID                                          3850 Unsigned32        V 
+Match-Timestamp                                             3851 Time              V 
+PMR-Flags                                                   3852 Unsigned32        MV
+ProSe-Application-Metadata                                  3853 UTF8String        MV
+Discovery-Auth-Request                                      3854 Grouped           MV
+Discovery-Auth-Response                                     3855 Grouped           MV
+Match-Request                                               3856 Grouped           MV
+Match-Report-Info                                           3857 Grouped           MV
+Banned-RPAUID                                               3858 UTF8String        V 
+Banned-PDUID                                                3859 OctetString       V 
+Code-Receiving-Security-Material                            3860 Grouped           V 
+Code-Sending-Security-Material                              3861 Grouped           V 
+DUSK                                                        3862 OctetString       V 
+DUIK                                                        3863 OctetString       V 
+DUCK                                                        3864 OctetString       V 
+MIC-Check-indicator                                         3865 Unsigned32        V 
+Encrypted-Bitmask                                           3866 OctetString       V 
+ProSe-App-Code-Suffix-Range                                 3867 OctetString       V 
+PC5-tech                                                    3868 OctetString       V 
+
+
+@grouped
+Assistance-Info ::= <AVP Header: 3802>
+              [ WLAN-Assistance-Info ]
+          *   [ AVP ]
+
+Match-Report ::= <AVP Header: 3807>
+              { Discovery-Type }
+              [ ProSe-App-Code ]
+              [ ProSe-Metadata-Index-Mask ]
+              [ ProSe-App-Id ]
+              [ ProSe-Validity-Timer ]
+              [ ProSe-Match-Refresh-Timer ]
+              [ ProSe-Application-Metadata ]
+              [ PC5-tech ]
+          *   [ AVP ]
+
+ProSe-Discovery-Filter ::= <AVP Header: 3813>
+              { Filter-Id }
+              { ProSe-App-Id }
+              { ProSe-Validity-Timer }
+              { ProSe-App-Code }
+          *   [ ProSe-App-Mask ]
+          *   [ AVP ]
+
+
+WiFi-P2P-Assistance-Info ::= <AVP Header: 3819>
+              [ SSID ]
+              [ EAP-Master-Session-Key ]
+              [ P2P-Features ]
+              [ WLAN-Link-Layer-Id-List ]
+              [ WLAN-Link-Layer-Id-List ]
+              [ Operating-Channel ]
+              [ Assistance-Info-Validity-Timer ]
+          *   [ AVP ]
+
+WLAN-Assistance-Info ::= <AVP Header: 3820>
+              [ WiFi-P2P-Assistance-Iinfo ]
+          *   [ AVP ]
+
+WLAN-Link-Layer-Id ::= <AVP Header: 3821>
+              [ MAC-Address ]
+          *   [ AVP ]
+
+WLAN-Link-Layer-Id-List ::= <AVP Header: 3822>
+          *   [ WLAN-Link-Layer-Id ]
+          *   [ AVP ]
+
+ProSe-App-Code-Info ::= <AVP Header: 3835>
+              { ProSe-App-Code }
+              { MIC }
+              { UTC-based-Counter }
+          *   [ AVP ]
+
+Location-Update-Trigger ::= <AVP Header: 3823>
+              { Location-Update-Event-Type }
+              [ Change-Of-Area-Type ]
+              [ Periodic-Location-Type ]
+          *   [ AVP ]
+
+Change-Of-Area-Type ::= <AVP Header: 3825>
+              { Location-Update-Event-Trigger }
+              { Report-Cardinality }
+              [ Minimum-Interval-Time ]
+          *   [ AVP ]
+
+Periodic-Location-Type ::= <AVP Header: 3829>
+              { Location-Report-Interval-Time }
+              { Total-Number-Of-Reports }
+          *   [ AVP ]
+
+Discovery-Auth-Request ::= <AVP Header: 3854>
+              { Discovery-Type }
+              [ User-Identity ]
+              [ ProSe-App-ID ]
+              [ ProSe-App-Code ]
+              [ ProSe-App-Code-Suffix-Range ]
+              [ ProSe-Validity-Timer ]
+              [ App-Identifier ]
+              [ Requesting-RPAUID ]
+              [ Target-RPAUID ]
+              [ Target-PDUID ]
+              [ ProSe-Restricted-Code ]
+              [ ProSe-Query-Code ]
+              [ ProSe-Response-Code ]
+          *   [ ProSe-Restricted-Code-Suffix-Range ]
+              [ Banned-RPAUID ]
+              [ Banned-PDUID ]
+              [ Service-Result ]
+              [ PC5-tech ]
+          *   [ AVP ]
+
+Discovery-Auth-Response ::= <AVP Header: 3855>
+              { Discovery-Type }
+          *   [ ProSe-Discovery-Filter ]
+              [ Visited-PLMN-Id ]
+              [ ProSe-Restricted-Code ]
+              [ ProSe-Query-Code ]
+              [ ProSe-Response-Code ]
+              [ ProSe-Validity Timer ]
+              [ Code-Sending-Security-Material ]
+              [ Code-Receiving-Security-Material ]
+              [ DUIK ]
+              [ PC5-tech ]
+          *   [ AVP ]
+
+Match-Request ::= <AVP Header: 3856>
+              { Discovery-Type }
+              [ User Identity ]
+              [ Visited-PLMN-ID ]
+          *   [ ProSe-App-Code-Info ]
+              [ PC5-tech ]
+          *   [ AVP ]
+
+Match-Report-Info ::= <AVP Header: 3857>
+              { Discovery-Type }
+              [ User-Identity ]
+          *   [ ProSe-App-ID ]
+          *   [ AVP ]
+
+App-Identifier ::= <AVP Header: 3840>
+              { OS-ID }
+              { OS-App-ID }
+          *   [ AVP ]
+
+ProSe-Restricted-Code-Suffix-Range ::= <AVP Header: 3847>
+              { Beginning-Suffix }
+              [ Ending–Suffix ]
+          *   [ AVP ]
+
+Code-Receiving-Security-Material ::= <AVP Header: 3847>
+              [ DUSK ]
+              [ DUIK ]
+              [ MIC-Check-Indicator ]
+              [ DUCK ]
+              [ Encrypted-Bitmask ]
+          *   [ AVP ]
+
+Code-Sending-Security-Material ::= <AVP Header: 3847>
+              [ DUSK ]
+              [ DUIK ]
+              [ DUCK ]
+              [ Encrypted-Bitmask ]
+          *   [ AVP ]
+
+ProSe-App-Code-Suffix-Range ::= <AVP Header: 3847>
+              { Beginning-Suffix }
+              [ Ending–Suffix ]
+          *   [ AVP ]
+
+@enum Report-Cardinality
+SINGLE                                                       0
+MULTIPLE                                                     1
+
+@define Discovery-Type
+ANNOUNCING_REQUEST_FOR_OPEN_PROSE_DIRECT_DISCOVERY           0
+MONITORING_REQUEST_FOR_OPEN_PROSE_DIRECT_DISCOVERY           1
+ANNOUNCING_REQUEST_FOR_RESTRICTED_PROSE_DIRECT_DISCOVERY     2
+MONITORING_REQUEST_FOR_RESTRICTED_PROSE_DIRECT_DISCOVERY     3
+DISCOVEREE_REQUEST_FOR_RESTRICTED_PROSE_DIRECT_DISCOVERY     4
+DISCOVERER_REQUEST_FOR_RESTRICTED_PROSE_DIRECT_DISCOVERY     5
+DISCOVERER_ANNOUNCING_REQUEST_FOR_RESTRICTED_PROSE_DIRECT_DISCOVERY 6
+MONITORING_UPDATE_FOR_RESTRICTED_PROSE_DIRECT_DISCOVERY      7
+MONITORING_RESPONSE_FOR_RESTRICTED_PROSE_DIRECT_DISCOVERY    8
+
+@define Location-Update-Event-Type
+UE_AVAILABLE                                                 0
+CHANGE_OF_AREA                                               1
+PERIODIC_LOCATION                                            2
+
+@define Location-Update-Event-Trigger
+UE_ENTRY                                                     0
+UE_EXIT                                                      1
+UE_PRESENCE                                                  2
+
+@define MIC-Check-Indicator
+MIC_CHECK_BY_PROSE_FUNCTION                                  1
+

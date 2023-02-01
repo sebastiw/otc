@@ -1,0 +1,19 @@
+;; 3GPP TS 29.153 v17.0.0
+
+@name     dia_3gpp_ts_29153
+@vendor   10415 3gpp
+
+@avp_types
+Network-Congestion-Area-Report                              4101 Grouped           MV
+Ns-Request-Type                                             4102 Unsigned32        MV
+
+@grouped
+Network-Congestion-Area-Report ::= <AVP Header: 4101>
+              { Network-Area-Info-List }
+              [ Congestion-Level-Value ]
+          *   [ AVP ]
+
+@define Ns-Request-Type
+INITIAL_REQUEST                                              0
+CANCELLATION_REQUEST                                         1
+

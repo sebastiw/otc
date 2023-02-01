@@ -1,0 +1,263 @@
+;; 3GPP TS 29.212 v17.2.0
+
+@name     dia_3gpp_ts_29212
+@vendor   10415 3gpp
+
+@avp_types
+Bearer-Usage                                                1000 Enumerated        MV
+Charging-Rule-Install                                       1001 Grouped           MV
+Charging-Rule-Remove                                        1002 Grouped           MV
+Charging-Rule-Definition                                    1003 Grouped           MV
+Charging-Rule-Base-Name                                     1004 UTF8String        MV
+Charging-Rule-Name                                          1005 OctetString       MV
+Event-Trigger                                               1006 Enumerated        MV
+Metering-Method                                             1007 Enumerated        MV
+Offline                                                     1008 Enumerated        MV
+Online                                                      1009 Enumerated        MV
+Precedence                                                  1010 Unsigned32        MV
+Reporting-Level                                             1011 Enumerated        MV
+TFT-Filter                                                  1012 IPFilterRule      MV
+TFT-Packet-Filter-Information                               1013 Grouped           MV
+ToS-Traffic-Class                                           1014 OctetString       MV
+QoS-Information                                             1016 Grouped           MV
+Charging-Rule-Report                                        1018 Grouped           MV
+PCC-Rule-Status                                             1019 Enumerated        MV
+Bearer-Identifier                                           1020 OctetString       MV
+Bearer-Operation                                            1021 Enumerated        MV
+Access-Network-Charging-Identifier-Gx                       1022 Grouped           MV
+Bearer-Control-Mode                                         1023 Enumerated        MV
+Network-Request-Support                                     1024 Enumerated        MV
+Guaranteed-Bitrate-DL                                       1025 Unsigned32        MV
+Guaranteed-Bitrate-UL                                       1026 Unsigned32        MV
+IP-CAN-Type                                                 1027 Enumerated        MV
+QoS-Class-Identifier                                        1028 Enumerated        MV
+QoS-Negotiation                                             1029 Enumerated        MV
+QoS-Upgrade                                                 1030 Enumerated        MV
+Rule-Failure-Code                                           1031 Enumerated        MV
+RAT-Type                                                    1032 Enumerated        V 
+Event-Report-Indication                                     1033 Grouped           V 
+Allocation-Retention-Priority                               1034 Grouped           V 
+CoA-IP-Address                                              1035 Address           V 
+Tunnel-Header-Filter                                        1036 IPFilterRule      V 
+Tunnel-Header-Length                                        1037 Unsigned32        V 
+Tunnel-Information                                          1038 Grouped           V 
+CoA-Information                                             1039 Grouped           V 
+APN-Aggregate-Max-Bitrate-DL                                1040 Unsigned32        V 
+APN-Aggregate-Max-Bitrate-UL                                1041 Unsigned32        V 
+Revalidation-Time                                           1042 Time              MV
+Rule-Activation-Time                                        1043 Time              MV
+Rule-Deactivation-Time                                      1044 Time              MV
+Session-Release-Cause                                       1045 Enumerated        MV
+Priority-Level                                              1046 Unsigned32        V 
+Pre-emption-Capability                                      1047 Enumerated        V 
+Pre-emption-Vulnerability                                   1048 Enumerated        V 
+Default-EPS-Bearer-QoS                                      1049 Grouped           V 
+AN-GW-Address                                               1050 Address           V 
+QoS-Rule-Install                                            1051 Grouped           MV
+QoS-Rule-Remove                                             1052 Grouped           MV
+QoS-Rule-Definition                                         1053 Grouped           MV
+QoS-Rule-Name                                               1054 OctetString       MV
+QoS-Rule-Report                                             1055 Grouped           MV
+Security-Parameter-Index                                    1056 OctetString       V 
+Flow-Label                                                  1057 OctetString       V 
+Flow-Information                                            1058 Grouped           V 
+Packet-Filter-Content                                       1059 IPFilterRule      V 
+Packet-Filter-Identifier                                    1060 OctetString       V 
+Packet-Filter-Information                                   1061 Grouped           V 
+Packet-Filter-Operation                                     1062 Enumerated        V 
+Resource-Allocation-Notification                            1063 Enumerated        V 
+Session-Linking-Indicator                                   1064 Enumerated        MV
+PDN-Connection-ID                                           1065 OctetString       V 
+Monitoring-Key                                              1066 OctetString       V 
+Usage-Monitoring-Information                                1067 Grouped           V 
+Usage-Monitoring-Level                                      1068 Enumarated        V 
+Usage-Monitoring-Report                                     1069 Enumerated        V 
+Usage-Monitoring-Support                                    1070 Enumerated        V 
+CSG-Information-Reporting                                   1071 Enumerated        V 
+Packet-Filter-Usage                                         1072 Enumerated        V 
+Charging-Correlation-Indicator                              1073 Enumerated        V 
+QoS-Rule-Base-Name                                          1074 UTF8String        V 
+Routing-Rule-Remove                                         1075 Grouped           V 
+Routing-Rule-Definition                                     1076 Grouped           V 
+Routing-Rule-Identifier                                     1077 OctetString       V 
+Routing-Filter                                              1078 Grouped           V 
+Routing-IP-Address                                          1079 Address           V 
+Flow-Direction                                              1080 Enumerated        V 
+Routing-Rule-Install                                        1081 Grouped           V 
+Credit-Management-Status                                    1082 Unsigned32        V 
+Redirect-Information                                        1085 Grouped           V 
+Redirect-Support                                            1086 Enumerated        V 
+TDF-Information                                             1087 Grouped           V 
+TDF-Application-Identifier                                  1088 OctetString       V 
+TDF-Destination-Host                                        1089 DiameterIdentity  V 
+TDF-Destination-Realm                                       1090 DiameterIdentity  V 
+TDF-IP-Address                                              1091 Address           V 
+ADC-Rule-Install                                            1092 Grouped           MV
+ADC-Rule-Remove                                             1093 Grouped           MV
+ADC-Rule-Definition                                         1094 Grouped           MV
+ADC-Rule-Base-Name                                          1095 UTF8String        MV
+ADC-Rule-Name                                               1096 OctetString       MV
+ADC-Rule-Report                                             1097 Grouped           MV
+Application-Detection-Information                           1098 Grouped           V 
+PS-to-CS-Session-Continuity                                 1099 Enumerated        V 
+
+; Reserved                                                  2800 -
+; ADC-Revalidation-Time                                     2801 Time              V
+TDF-Application-Instance-Identifier                         2802 OctetString       V 
+; HeNB-BBF-FQDN                                             2803 UTF8String        V
+HeNB-Local-IP-Address                                       2804 Address           V 
+UE-Local-IP-Address                                         2805 Address           V 
+UDP-Source-Port                                             2806 Unsigned32        V 
+CS-Service-Qos-Request-Identifier                           2807 OctetString       MV
+CS-Service-QoS-Request-Operation                            2808 Enumerated        MV
+Mute-Notification                                           2809 Enumerated        V 
+Monitoring-Time                                             2810 Time              V 
+AN-GW-Status                                                2811 Enumerated        V 
+User-Location-Info-Time                                     2812 Time              V 
+CS-Service-Resource-Report                                  2813 Time              MV
+CS-Service-Resource-Failure-Cause                           2814 Enumerated        MV
+CS-Service-Resource-Result-Operation                        2815 Enumerated        MV
+Default-QoS-Information                                     2816 Grouped           V 
+Default-QoS-Name                                            2817 UTF8String        V 
+Conditional-APN-Aggregate-Max-Bitrate                       2818 Grouped           V 
+RAN-NAS-Release-Cause                                       2819 OctetString       V 
+Presence-Reporting-Area-Elements-List                       2820 OctetString       V 
+Presence-Reporting-Area-Identifier                          2821 OctetString       V 
+Presence-Reporting-Area-Information                         2822 Grouped           V 
+Presence-Reporting-Area-Status                              2823 Unsigned32        V 
+NetLoc-Access-Support                                       2824 Unsigned32        V 
+Fixed-User-Location-Info                                    2825 Grouped           V 
+PCSCF-Restoration-Indication                                2826 Unsigned32        V 
+IP-CAN-Session-Charging-Scope                               2827 Enumerated        V 
+Monitoring-Flags                                            2828 Unsigned32        V 
+Default-Access                                              2829 Enumerated        V 
+NBIFOM-Mode                                                 2830 Enumerated        V 
+NBIFOM-Support                                              2831 Enumerated        V 
+RAN-Rule-Support                                            2832 Unsigned32        V 
+Access-Availability-Change-Reason                           2833 Unsigned32        V 
+Routing-Rule-Failure-Code                                   2834 Unsigned32        V 
+Routing-Rule-Report                                         2835 Grouped           V 
+Traffic-Steering-Policy-Identifier-DL                       2836 OctetString       V 
+Traffic-Steering-Policy-Identifier-UL                       2837 OctetString       V 
+Request-Type                                                2838 Unsigned32        MV
+Execution-Time                                              2839 Time              V 
+Conditional-Policy-Information                              2840 Grouped           V 
+Resource-Release-Notification                               2841 Enumerated        V 
+Removal-Of-Access                                           2842 Enumerated        V 
+TCP-Source-Port                                             2843 Unsigned32        V 
+Default-Bearer-Indication                                   2844 Enumerated        V 
+PRA-Install                                                 2845 Grouped           V 
+PRA-Remove                                                  2846 Grouped           V 
+3GPP-PS-Data-Off-Status                                     2847 Enumerated        V 
+Extended-APN-AMBR-DL                                        2848 Unsigned32        V 
+Extended-APN-AMBR-UL                                        2849 Unsigned32        V 
+Extended-GBR-DL                                             2850 Unsigned32        V 
+Extended-GBR-UL                                             2851 Unsigned32        V 
+Max-PLR-DL                                                  2852 Float32           V 
+Max-PLR-UL                                                  2853 Float32           V 
+UE-Status                                                   2854 Unsigned32        V 
+Presence-Reporting-Area-Node                                2855 Unsigned32        V 
+
+@grouped
+Default-QoS-Information ::= <AVP Header: 2816>
+              [ QoS-Class-Identifier ]
+              [ Max-Requested-Bandwidth-UL ]
+              [ Max-Requested-Bandwidth-DL ]
+              [ Default-QoS-Name ]
+          *   [ AVP ]
+
+Conditional-APN-Aggregate-Max-Bitrate ::= <AVP Header: 2818>
+              [ APN-Aggregate-Max-Bitrate-UL ]
+              [ APN-Aggregate-Max-Bitrate-DL ]
+              [ Extended-APN-AMBR-UL ]
+              [ Extended-APN-AMBR-DL ]
+          *   [ IP-CAN-Type ]
+          *   [ RAT-Type ]
+          *   [ AVP ]
+
+Presence-Reporting-Area-Information ::= <AVP Header: 2822>
+              [ Presence-Reporting-Area-Identifier ]
+              [ Presence-Reporting-Area-Status ]
+              [ Presence-Reporting-Area-Elements-List ]
+              [ Presence-Reporting-Area-Node ]
+          *   [ AVP ]
+
+Fixed-User-Location-Info ::= <AVP Header: 2825>
+              [ SSID ]
+              [ BSSID ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+          *   [ AVP ]
+
+Routing-Rule-Report ::= <AVP Header: 2835>
+          *   [ Routing-Rule-Identifier ]
+              [ PCC-Rule-Status ]
+              [ Routing-Rule-Failure-Code ]
+          *   [ AVP ]
+
+Conditional-Policy-Information ::= <AVP Header: 2840>
+              [ Execution-Time ]
+              [ Default-EPS-Bearer-QoS ]
+              [ APN-Aggregate-Max-Bitrate-UL ]
+              [ APN-Aggregate-Max-Bitrate-DL ]
+              [ Extended-APN-AMBR-UL ]
+              [ Extended-APN-AMBR-DL ]
+          *   [ Conditional-APN-Aggregate-Max-Bitrate ]
+          *   [ AVP ]
+
+PRA-Install ::= <AVP Header: 2845>
+          *   [ Presence-Reporting-Area-Information ]
+          *   [ AVP ]
+
+PRA-Remove ::= <AVP Header: 2846>
+          *   [ Presence-Reporting-Area-Identifier ]
+          *   [ AVP ]
+
+@enum CS-Service-QoS-Request-Operation
+DELETION                                                     0
+MODIFICATION                                                 1
+
+@enum Mute-Notification
+MUTE_REQUIRED                                                0
+
+@enum AN-GW-Status
+AN_GW_FAILED                                                 0
+
+@enum CS-Service-Resource-Failure-Cause
+RESOURCE_RELEASED                                            0
+
+@enum CS-Service-Resource-Result-Operation
+DELETION                                                     0
+
+@enum IP-CAN-Session-Charging-Scope
+IP_CAN_SESSION_SCOPE                                         0
+
+@enum Default-Access
+;; same as the ones in IP-CAN-Type, but only 3GPP-EPS
+;; and Non-3GPP-EPS IP-CAN-Type values are applicable
+;; in this release
+3GPP_EPS                                                     5
+Non_3GPP_EPS                                                 6
+
+@enum NBIFOM-Mode
+UE_INITIATED                                                 0
+NETWORK_INITIATED                                            1
+
+@enum NBIFOM-Support
+NBIFOM_NOT_SUPPORTED                                         0
+NBIFOM_SUPPORTED                                             1
+
+@enum Resource-Release-Notification
+ENABLE_NOTIFICATION                                          0
+
+@enum Removal-Of-Access
+REMOVAL_OF_ACCESS                                            0
+
+@enum Default-Bearer-Indication
+BIND_TO_DEF_BEARER                                           0
+BIND_TO_APPLICABLE_BEARER                                    1
+
+@enum 3GPP-PS-Data-Off-Status
+ACTIVE                                                       0
+INACTIVE                                                     1
+

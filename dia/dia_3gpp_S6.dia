@@ -324,3 +324,24 @@ Notify-Answer ::= <Diameter Header: 323, PXY>
           *   [ Failed-AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
+
+@avp_types
+Monitoring-Event-Configuration                    3122 Grouped          V
+
+@grouped
+;; This is only defined for S6-interface
+Monitoring-Event-Configuration ::= <AVP Header: 3122>
+              { SCEF-ID }
+              { Monitoring-Type }
+              [ SCEF-Reference-ID ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+              [ Maximum-Number-of-Reports ]
+              [ Monitoring-Duration ]
+              [ Charged-Party ]
+              [ UE-Reachability-Configuration ]
+              [ Location-Information-Configuration ]
+              [ SCEF-Realm ]
+              [ External-Identifier ]
+              [ MTC-Provider-Info ]
+              [ PDN-Connectivity-Status-Configuration ]
+          *   [ AVP ]

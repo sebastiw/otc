@@ -1,0 +1,133 @@
+;; ETSI ES 283.035 v3.2.1 e2
+
+@id       16777231
+@name     dia_etsi_es_283035_e2
+@vendor   13019 etsi
+
+@inherits dia_etsi_es_283035
+
+@inherits dia_etsi_es_283034
+Globally-Unique-Address
+Access-Network-Type
+Initial-Gate-Setting-Description
+QoS-Profile-Description
+IP-Connectivity-Status
+
+@messages
+User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ Destination-Host ]
+              [ Globally-Unique-Address ]
+              [ User-Name ]
+              [ Global-Access-Id ]
+              [ AF-Application-Identifier ]
+          *   [ Requested-Information ]
+              [ Port-Number ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+User-Data-Answer ::= <Diameter Header: 306, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ User-Name ]
+              [ Logical-Access-Id ]
+              [ Physical-Access-Id ]
+              [ Access-Network-Type ]
+              [ Location-Information ]
+              [ Policy-Control-Contact-Point ]
+              [ Terminal-Type ]
+              [ Emergency-Call-Routing-Info ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Subscribe-Notifications-Request ::= <Diameter Header: 308, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Subs-Req-Type }
+              [ Destination-Host ]
+              [ Expiry-Time ]
+              [ Globally-Unique-Address ]
+              [ User-Name ]
+              [ AF-Application-Identifier ]
+          *   [ Event-Type ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Subscribe-Notifications-Answer ::= <Diameter Header: 308, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Expiry-Time ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+          *   [ Event-Type ]
+              [ Globally-Unique-Address ]
+              [ User-Name ]
+              [ Access-Network-Type ]
+              [ Location-Information ]
+              [ Policy-Control-Contact-Point ]
+              [ Terminal-Type ]
+              [ Logical-Access-Id ]
+              [ Physical-Access-Id ]
+              [ Access-Network-Type ]
+              [ Initial-Gate-Setting-Description ]
+          *   [ QoS-Profile-Description ]
+              [ IP-Connectivity-Status ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Answer ::= <Diameter Header: 309, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+
+@define Experimental-Result
+;; 7.2.2 Permanent failures
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_NO_SUBSCRIPTION_TO_DATA                      5107
+;; 7.2.3 Transient failures
+DIAMETER_USER_DATA_NOT_AVAILABLE                            4100
+

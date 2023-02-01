@@ -1,0 +1,137 @@
+;; 3GPP TS 29.217 v17.0.0 Np
+
+@id       16777342
+@name     dia_3gpp_ts_29217_Np
+@vendor   10415 3gpp
+
+@messages
+NR-Request ::= <Diameter Header: 8388720, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ Subscription-Id ]
+              [ Called-Station-Id ]
+              [ Congestion-Level-Value ]
+              [ Congestion-Level-Set-Id ]
+              [ Congestion-Location-Id ]
+              [ OC-Supported-Features ]
+              [ RCAF-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+NR-Answer ::= <Diameter Header: 8388720, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Reporting-Restriction ]
+              [ Conditional-Restriction ]
+              [ RUCI-Action ]
+          *   [ Congestion-Level-Definition ]
+              [ PCRF-Address ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Supported-Features ]
+          *   [ Load ]
+          *   [ AVP ]
+
+AR-Request ::= <Diameter Header: 8388721, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+          *   [ Aggregated-RUCI-Report ]
+              [ OC-Supported-Features ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+AR-Answer ::= <Diameter Header: 8388721, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Supported-Features ]
+          *   [ Load ]
+          *   [ AVP ]
+
+Modify-Uecontext-Request ::= <Diameter Header: 8388722, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              [ DRMP ]
+              [ Origin-State-Id ]
+              [ Subscription-Id ]
+              [ Called-Station-Id ]
+              [ OC-Supported-Features ]
+              [ Reporting-Restriction ]
+              [ Conditional-Restriction ]
+              [ RUCI-Action ]
+          *   [ Congestion-Level-Definition ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Modify-Uecontext-Answer ::= <Diameter Header: 8388722, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+

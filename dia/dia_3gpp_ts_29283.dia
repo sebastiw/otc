@@ -1,0 +1,44 @@
+;; 3GPP TS 29.283 v17.0.0
+
+@name     dia_3gpp_ts_29283
+@vendor   10415 3gpp
+
+@avp_types
+MCPTT-ID                                                    4500 UTF8String        MV
+Data-Identification                                         4501 Grouped           MV
+Data-Identification-Prefix                                  4502 Unsigned32        MV
+Data-Identification-Flags                                   4503 Unsigned64        MV
+DPR-Flags                                                   4504 Unsigned32        MV
+DPA-Flags                                                   4505 Unsigned32        MV
+DUR-Flags                                                   4506 Unsigned32        MV
+DUA-Flags                                                   4507 Unsigned32        MV
+NDR-Flags                                                   4508 Unsigned32        MV
+NDA-Flags                                                   4509 Unsigned32        MV
+User-Data-Id                                                4510 Unsigned32        MV
+MC-Service-User-Profile-Data                                4511 Grouped           MV
+Sequence-Number                                             4512 Unsigned32        MV
+Data                                                        4513 Grouped           MV
+MCVideo-ID                                                  4514 UTF8String        V 
+MCData-ID                                                   4515 UTF8String        V 
+
+@grouped
+Data-Identification ::= <AVP Header: 4501>
+              { Data-Identification-Prefix }
+              { Data-Identification-Flags }
+          *   [ AVP ]
+
+User-Identifier ::= <AVP Header: 3102>
+              [ MCPTT-ID ]
+              [ MCVideo-ID ]
+              [ MCData-ID ]
+          *   [ AVP ]
+
+MC-Service-User-Profile-Data ::= <AVP Header: 4511>
+              [ User-Data ]
+              [ Sequence-Number ]
+              [ User-Data-Id ]
+          *   [ AVP ]
+
+Data ::= <AVP Header: 4513>
+          *   [ MC-Service-User-Profile-Data ]
+          *   [ AVP ]

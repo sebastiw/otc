@@ -1,0 +1,152 @@
+;; 3GPP TS 29.273 v17.5.0
+
+@name     dia_3gpp_ts_29273
+@vendor   10415 3gpp
+
+@avp_types
+MIP6-Feature-Vector                                         124  Unsigned64        M 
+3GPP-AAA-Server-Name                                        318  DiameterIdentity  MV
+MIP6-Agent-Info                                             486  Grouped           M 
+Service-Selection                                           493  UTF8String        M 
+Mobile-Node-Identifier                                      506  UTF8String        M 
+; QoS-Capability                                            578  Grouped           M  ;; rfc 5777
+; APN-Configuration                                         1430 Grouped           MV ;; ts 29.272
+Non-3GPP-User-Data                                          1500 Grouped           MV
+Non-3GPP-IP-Access                                          1501 Enumerated        MV
+Non-3GPP-IP-Access-APN                                      1502 Enumerated        MV
+AN-Trusted                                                  1503 Enumerated        MV
+ANID                                                        1504 UTF8String        MV
+Trace-Info                                                  1505 Grouped           V 
+MIP-FA-RK                                                   1506 OctetString       MV
+MIP-FA-RK-SPI                                               1507 Unsigned32        MV
+PPR-Flags                                                   1508 Unsigned32        V 
+WLAN-Identifier                                             1509 Grouped           V 
+TWAN-Access-Info                                            1510 Grouped           V 
+Access-Authorization-Flags                                  1511 Unsigned32        V 
+TWAN-Default-APN-Context-Id                                 1512 Unsigned32        V 
+Trust-Relationship-Update                                   1515 Enumerated        V  ; void
+Full-Network-Name                                           1516 OctetString       V 
+Short-Network-Name                                          1517 OctetString       V 
+AAA-Failure-Indication                                      1518 Unsigned32        V 
+Transport-Access-Type                                       1519 Enumerated        V 
+DER-Flags                                                   1520 Unsigned32        V 
+DEA-Flags                                                   1521 Unsigned32        V 
+RAR-Flags                                                   1522 Unsigned32        V 
+DER-S6b-Flags                                               1523 Unsigned32        V 
+SSID                                                        1524 UTF8String        V 
+HESSID                                                      1525 UTF8String        V 
+Access-Network-Info                                         1526 Grouped           V 
+TWAN-Connection-Mode                                        1527 Unsigned32        V 
+TWAN-Connectivity-Parameters                                1528 Grouped           V 
+Connectivity-Flags                                          1529 Unsigned32        V 
+TWAN-PCO                                                    1530 OctetString       V 
+TWAG-CP-Address                                             1531 Address           V 
+TWAG-UP-Address                                             1532 UTF8String        V 
+TWAN-S2a-Failure-Cause                                      1533 Unsigned32        V 
+SM-Back-Off-Timer                                           1534 Unsigned32        V 
+WLCP-Key                                                    1535 OctetString       V 
+Origination-Time-Stamp                                      1536 Unsigned64        V 
+Maximum-Wait-Time                                           1537 Unsigned32        V 
+Emergency-Services                                          1538 Unsigned32        V 
+AAR-Flags                                                   1539 Unsigned32        V 
+IMEI-Check-In-VPLMN-Result                                  1540 Unsigned32        V 
+ERP-Authorization                                           1541 Unsigned32        V 
+
+@grouped
+MIP6-Agent-Info ::= <AVP Header: 486>
+          *2  [ MIP-Home-Agent-Address ]
+              [ MIP-Home-Agent-Host ]
+              [ MIP6-Home-Link-Prefix ]
+          *   [ AVP ]
+
+Non-3GPP-User-Data ::= <AVP Header: 1500>
+              [ Subscription-ID ]
+              [ Non-3GPP-IP-Access ]
+              [ Non-3GPP-IP-Access-APN ]
+          *   [ RAT-Type ]
+              [ Session-Timeout ]
+              [ MIP6-Feature-Vector ]
+              [ AMBR ]
+              [ 3GPP-Charging-Characteristics ]
+              [ Context-Identifier ]
+              [ APN-OI-Replacement ]
+          *   [ APN-Configuration ]
+              [ Trace-Info ]
+              [ TWAN-Default-APN-Context-Id ]
+          *   [ TWAN-Access-Info ]
+              [ UE-Usage-Type ]
+              [ Emergency-Info ]
+              [ ERP-Authorization ]
+              [ Core-Network-Restrictions ]
+          *   [ AVP ]
+
+Trace-Info ::= <AVP Header: 1505>
+              [ Trace-Data ]
+              [ Trace-Reference ]
+          *   [ AVP ]
+
+WLAN-Identifier ::= <AVP Header: 1509>
+              [ SSID ]
+              [ HESSID ]
+          *   [ AVP ]
+
+TWAN-Access-Info ::= <AVP Header: 1510>
+              [ Access-Authorization-Flags ]
+              [ WLAN-Identifier ]
+          *   [ AVP ]
+
+Access-Network-Info ::= <AVP Header: 1526>
+              [ SSID ]
+              [ BSSID ]
+              [ Location-Information ]
+              [ Location-Data ]
+              [ Operator-Name ]
+              [ Logical-Access-ID ]
+          *   [ AVP ]
+
+TWAN-Connectivity-Parameters ::= <AVP Header: 1528>
+              [ Connectivity-Flags ]
+              [ Service-Selection ]
+              [ PDN-Type ]
+          *2  [ Served-Party-IP-Address ]
+              [ TWAN-PCO ]
+              [ TWAG-UP-Address ]
+              [ TWAN-S2a-Failure-Cause ]
+              [ SM-Back-Off-Timer ]
+          *   [ AVP ]
+
+@enum Non-3GPP-IP-Access
+NON_3GPP_SUBSCRIPTION_ALLOWED                                0
+NON_3GPP_SUBSCRIPTION_BARRED                                 1
+
+@enum Non-3GPP-IP-Access-APN
+NON_3GPP_APNS_ENABLE                                         0
+NON_3GPP_APNS_DISABLE                                        1
+
+@enum AN-Trusted
+TRUSTED                                                      0
+UNTRUSTED                                                    1
+
+@enum Transport-Access-Type
+BBF                                                          0
+
+@define MIP6-Feature-Vector
+MIP6_INTEGRATED                                             0x0000000000000001
+PMIP6_SUPPORTED                                             0x0000010000000000
+ASSIGN_LOCAL_IP                                             0x0000080000000000
+MIP4_SUPPORTED                                              0x0000100000000000
+OPTIMIZED_IDLE_MODE_MOBILITY                                0x0000200000000000
+GTPv2_SUPPORTED                                             0x0000400000000000
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_IDENTITY_NOT_REGISTERED                      5003
+DIAMETER_ERROR_ROAMING_NOT_ALLOWED                          5004
+DIAMETER_ERROR_IDENTITY_ALREADY_REGISTERED                  5005
+DIAMETER_ERROR_USER_NO_NON_3GPP_SUBSCRIPTION                5450
+DIAMETER_ERROR_USER_NO_APN_SUBSCRIPTION                     5451
+DIAMETER_ERROR_RAT_TYPE_NOT_ALLOWED                         5452
+DIAMETER_ERROR_LATE_OVERLAPPING_REQUEST                     5453
+DIAMETER_ERROR_TIMED_OUT_REQUEST                            5454
+DIAMETER_ERROR_ILLEGAL_EQUIPMENT                            5554
+

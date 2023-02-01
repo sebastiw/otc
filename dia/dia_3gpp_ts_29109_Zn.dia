@@ -1,0 +1,42 @@
+;; 3GPP TS 29.109 v17.0.0 Zn
+
+@id       16777220
+@name     dia_3gpp_ts_29109_Zn
+@vendor   10415 3GPP
+
+@messages
+Bootstrapping-Info-Request ::= <Diameter Header: 310, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }                                                    ; Address of NAF
+              { Origin-Realm }                                                   ; Realm of NAF
+              { Destination-Realm }                                              ; Realm of BSF
+              { Transaction-Identifier }                                         ; B-TID
+              { NAF-Id }                                                         ; NAF_ID
+              [ Auth-Session-State ]                                             ; NO_STATE_MAINTAINED
+              [ Destination-Host ]                                               ; Address of the BSF
+          *   [ GAA-Service-Identifier ]                                         ; Service identifiers
+              [ GBA_U-Awareness-Indicator ]                                      ; GBA_U awareness of the NAF
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Boostrapping-Info-Answer ::= <Diameter Header: 310, PXY, 16777220>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }                                                    ; Address of BSF
+              { Origin-Realm }                                                   ; Realm of BSF
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Auth-Session-State ]                                             ; NO_STATE_MAINTAINED
+              [ User-Name ]                                                      ; IMPI
+              [ ME-Key-Material ]                                                ; Required
+              [ UICC-Key-Material ]                                              ; Conditional
+              [ Key-ExpiryTime ]                                                 ; Time of expiry
+              [ BootstrapInfoCreationTime ]                                      ; Bootstrapinfo creation time
+              [ GBA-UserSecSettings ]                                            ; Selected USSs
+              [ GBA-Type ]                                                       ; GBA type used in bootstrapping
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+

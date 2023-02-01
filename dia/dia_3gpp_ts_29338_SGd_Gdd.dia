@@ -1,0 +1,136 @@
+;; 3GPP TS 29.338 v17.1.0 SGd/Gdd
+
+@id       16777313
+@name     dia_3gpp_ts_29338_SGd_Gdd
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf_rfc7944
+DRMP
+
+@inherits dia_3gpp_ts_29229
+Supported-Features
+
+@inherits dia_3gpp_ts_29338
+
+@messages
+MO-Forward-Short-Message-Request ::= <Diameter Header: 8388645, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { SC-Address }
+              { User-Identifier }
+              { SM-RP-UI }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+              [ OFR-Flags ]
+          *   [ Supported-Features ]
+              [ SMSMI-Correlation-ID ]
+              [ SM-Delivery-Outcome ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+MO-Forward-Short-Message-Answer ::= <Diameter Header: 8388645, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ SM-Delivery-Failure-Cause ]
+              [ SM-RP-UI ]
+              [ External-Identifier ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+MT-Forward-Short-Message-Request ::= <Diameter Header: 8388646, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { User-Name }
+              { SC-Address }
+              { SM-RP-UI }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ SMSMI-Correlation-ID ]
+              [ MME-Number-for-MT-SMS ]
+              [ SGSN-Number ]
+              [ TFR-Flags ]
+              [ SM-Delivery-Timer ]
+              [ SM-Delivery-Start-Time ]
+              [ Maximum-Retransmission-Time ]
+              [ SMS-GMSC-Address ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+MT-Forward-Short-Message-Answer ::= <Diameter Header: 8388646, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ Absent-User-Diagnostic-SM ]
+              [ SM-Delivery-Failure-Cause ]
+              [ SM-RP-UI ]
+              [ Requested-Retransmission-Time ]
+              [ User-Identifier ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+;; Defined in S6c
+Alert-Service-Centre-Request ::= <Diameter Header: 8388648, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { SC-Address }
+              { User-Identifier }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+              [ SMSMI-Correlation-ID ]
+              [ Maximum-UE-Availability-Time ]
+              [ SMS-GMSC-Alert-Event ]
+              [ Serving-Node ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Alert-Service-Centre-Answer ::= <Diameter Header: 8388648, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+

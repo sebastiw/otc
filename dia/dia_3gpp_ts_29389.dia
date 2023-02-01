@@ -1,0 +1,22 @@
+;; 3GPP TS 29.389 v17.0.0
+
+@name     dia_3gpp_ts_29389
+@vendor   10415 3gpp
+
+@avp_types
+V2X-Authorization-Data                                      4700 Grouped           - 
+V2X-Permission-in-VPLMN                                     4701 Unsigned32        - 
+V2X-Application-Server                                      4702 Grouped           - 
+
+@grouped
+V2X-Authorization-Data ::= <AVP Header: 4700>
+              [ V2X-Permission-in-VPLMN ]
+          *   [ PC5-RAT-Type ]
+          *   [ V2X-Application-Server ]
+          *   [ AVP ]
+
+V2X-Application-Server ::= <AVP Header: 4702>
+              { Application-Server }
+          *   [ Geographical-Information ]
+          *   [ AVP ]
+

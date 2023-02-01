@@ -1,0 +1,92 @@
+;; 3GPP TS 29.215 v17.0.0 S9a*
+
+@id       16777320
+@name     dia_3gpp_ts_29215_S9a_star
+@vendor   10415 3GPP
+
+@messages
+CC-Request ::= <Diameter Header: 272, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ Subscription-Id ]
+              [ Called-Station-Id ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+          *   [ Charging-Rule-Report ]
+              [ UE-Local-IP-Address ]
+              [ UE-Local-IPv6-Prefix ]
+              [ QoS-Information ]
+              [ TDF-Information ]
+              [ Termination-Cause ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+CC-Answer ::= <Diameter Header: 272, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+          *   [ Charging-Rule-Install ]
+          *   [ Charging-Rule-Remove ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Load ]
+          *   [ AVP ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Re-Auth-Request-Type }
+              [ DRMP ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+          *   [ Charging-Rule-Install ]
+          *   [ Charging-Rule-Remove ]
+              [ Session-Release-Cause ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ QoS-Information ]
+          *   [ Charging-Rule-Report ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+

@@ -1,0 +1,701 @@
+;; IETF AVP definitions
+
+@name     dia_ietf
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+;; RFC 4740
+
+@avp_types
+SIP-Accounting-Information                         368 Grouped          M
+SIP-Accounting-Server-URI                          369 DiameterURI      M
+SIP-Credit-Control-Server-URI                      370 DiameterURI      M
+SIP-Server-URI                                     371 UTF8String       M
+SIP-Server-Capabilities                            372 Grouped          M
+SIP-Mandatory-Capability                           373 Unsigned32       M
+SIP-Optional-Capability                            374 Unsigned32       M
+SIP-Server-Assignment-Type                         375 Enumerated       M
+SIP-Auth-Data-Item                                 376 Grouped          M
+SIP-Authentication-Scheme                          377 Enumerated       M
+SIP-Item-Number                                    378 Unsigned32       M
+SIP-Authenticate                                   379 Grouped          M
+SIP-Authorization                                  380 Grouped          M
+SIP-Authentication-Info                            381 Grouped          M
+SIP-Number-Auth-Items                              382 Unsigned32       M
+SIP-Deregistration-Reason                          383 Grouped          M
+SIP-Reason-Code                                    384 Enumerated       M
+SIP-Reason-Info                                    385 UTF8String       M
+SIP-Visited-Network-Id                             386 UTF8String       M
+SIP-User-Authorization-Type                        387 Enumerated       M
+SIP-Supported-User-Data-Type                       388 UTF8String       M
+SIP-User-Data                                      389 Grouped          M
+SIP-User-Data-Type                                 390 UTF8String       M
+SIP-User-Data-Contents                             391 OctetString      M
+SIP-User-Data-Already-Available                    392 Enumerated       M
+SIP-Method                                         393 UTF8String       M
+
+;; Imported to RFC 4740 from RFC 4590.
+;; Difficult to understand which type each AVP has.
+;; TS 29.229 specifies Digest-Realm, Digest-Algorithm, Digest-QoP, and
+;; Digest-HA1.
+@avp_types
+Digest-Response                                    103 UTF8String       M
+Digest-Realm                                       104 UTF8String       M
+Digest-Nonce                                       105 UTF8String       M
+Digest-Response-Auth                               106 UTF8String       M
+Digest-Nextnonce                                   107 UTF8String       M
+Digest-Method                                      108 UTF8String       M
+Digest-URI                                         109 UTF8String       M
+Digest-QoP                                         110 UTF8String       M
+Digest-Algorithm                                   111 UTF8String       M
+Digest-Entity-Body-Hash                            112 UTF8String       M
+Digest-CNonce                                      113 UTF8String       M
+Digest-Nonce-Count                                 114 UTF8String       M
+Digest-Username                                    115 UTF8String       M
+Digest-Opaque                                      116 UTF8String       M
+Digest-Auth-Param                                  117 UTF8String       M
+Digest-AKA-Auts                                    118 UTF8String       M
+Digest-Domain                                      119 UTF8String       M
+Digest-Stale                                       120 UTF8String       M
+Digest-HA1                                         121 UTF8String       M
+
+
+@grouped
+SIP-Accounting-Information ::= < AVP Header: 368 >
+          *    [ SIP-Accounting-Server-URI ]
+          *    [ SIP-Credit-Control-Server-URI ]
+          *    [ AVP ]
+
+SIP-Server-Capabilities ::= < AVP Header: 372 >
+          *    [ SIP-Mandatory-Capability ]
+          *    [ SIP-Optional-Capability ]
+          *    [ SIP-Server-URI ]
+          *    [ AVP ]
+
+SIP-Auth-Data-Item ::= < AVP Header: 376 >
+               { SIP-Authentication-Scheme }
+               [ SIP-Item-Number ]
+               [ SIP-Authenticate ]
+               [ SIP-Authorization ]
+               [ SIP-Authentication-Info ]
+          *    [ AVP ]
+
+SIP-Authenticate ::= < AVP Header: 379 >
+               { Digest-Realm }
+               { Digest-Nonce }
+               [ Digest-Domain ]
+               [ Digest-Opaque ]
+               [ Digest-Stale ]
+               [ Digest-Algorithm ]
+               [ Digest-QoP ]
+               [ Digest-HA1 ]
+          *    [ Digest-Auth-Param ]
+          *    [ AVP ]
+
+SIP-Authorization ::= < AVP Header: 380 >
+               { Digest-Username }
+               { Digest-Realm }
+               { Digest-Nonce }
+               { Digest-URI }
+               { Digest-Response }
+               [ Digest-Algorithm ]
+               [ Digest-CNonce ]
+               [ Digest-Opaque ]
+               [ Digest-QoP ]
+               [ Digest-Nonce-Count ]
+               [ Digest-Method ]
+               [ Digest-Entity-Body-Hash ]
+          *    [ Digest-Auth-Param ]
+          *    [ AVP ]
+
+SIP-Authentication-Info ::= < AVP Header: 381 >
+               [ Digest-Nextnonce ]
+               [ Digest-QoP ]
+               [ Digest-Response-Auth ]
+               [ Digest-CNonce ]
+               [ Digest-Nonce-Count ]
+          *    [ AVP ]
+
+SIP-Deregistration-Reason ::= < AVP Header: 383 >
+               { SIP-Reason-Code }
+               [ SIP-Reason-Info ]
+          *    [ AVP ]
+
+SIP-User-Data ::= < AVP Header: 389 >
+               { SIP-User-Data-Type }
+               { SIP-User-Data-Contents }
+          *    [ AVP ]
+
+@enum SIP-Server-Assignment-Type
+NO_ASSIGNMENT                               0
+REGISTRATION                                1
+RE_REGISTRATION                             2
+UNREGISTERED_USER                           3
+TIMEOUT_DEREGISTRATION                      4
+USER_DEREGISTRATION                         5
+TIMEOUT_DEREGISTRATION_STORE_SERVER_NAME    6
+USER_DEREGISTRATION_STORE_SERVER_NAME       7
+ADMINISTRATIVE_DEREGISTRATION               8
+AUTHENTICATION_FAILURE                      9
+AUTHENTICATION_TIMEOUT                     10
+DEREGISTRATION_TOO_MUCH_DATA               11
+
+@enum SIP-Authentication-Scheme
+DIGEST                                      0
+
+@enum SIP-Reason-Code
+PERMANENT_TERMINATION                       0
+NEW_SIP_SERVER_ASSIGNED                     1
+SIP_SERVER_CHANGE                           2
+REMOVE_SIP_SERVER                           3
+
+@enum SIP-User-Authorization-Type
+REGISTRATION                                0
+DEREGISTRATION                              1
+REGISTRATION_AND_CAPABILITIES               2
+
+@enum SIP-User-Data-Already-Available
+USER_DATA_NOT_AVAILABLE                     0
+USER_DATA_ALREADY_AVAILABLE                 1
+
+;; RFC 4004
+
+@avp_types
+MIP-FA-to-HA-SPI                                   318 Unsigned32       M
+MIP-FA-to-MN-SPI                                   319 Unsigned32       M
+MIP-HA-to-FA-SPI                                   323 Unsigned32       M
+; MIP-MN-to-FA-MSA                                   325 Grouped          M
+MIP-FA-to-MN-MSA                                   326 Grouped          M
+MIP-FA-to-HA-MSA                                   328 Grouped          M
+MIP-HA-to-FA-MSA                                   329 Grouped          M
+MIP-MN-to-HA-MSA                                   331 Grouped          M
+; MIP-HA-to-MN-MSA                                   332 Grouped          M
+MIP-Nonce                                          335 OctetString      M
+MIP-Session-Key                                    343 OctetString      M
+MIP-Algorithm-Type                                 345 Enumerated       M
+MIP-Replay-Mode                                    346 Enumerated       M
+MIP-MSA-Lifetime                                   367 Unsigned32       M
+
+@grouped
+
+; MIP-MN-to-FA-MSA ::= < AVP Header: 325 >
+; Unceratin of Code and Type for MIP-MN-FA-SPI
+;                { MIP-MN-FA-SPI }
+;                { MIP-Algorithm-Type }
+;                { MIP-Nonce }
+;           *    [ AVP ]
+
+MIP-FA-to-MN-MSA ::= < AVP Header: 326 >
+               { MIP-FA-to-MN-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Session-Key }
+          *    [ AVP ]
+
+MIP-FA-to-HA-MSA ::= < AVP Header: 328 >
+               { MIP-FA-to-HA-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Session-Key }
+          *    [ AVP ]
+
+MIP-HA-to-FA-MSA ::= < AVP Header: 329 >
+               { MIP-HA-to-FA-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Session-Key }
+          *    [ AVP ]
+
+MIP-MN-to-HA-MSA ::= < AVP Header: 331 >
+               { MIP-MN-HA-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Replay-Mode }
+               { MIP-Nonce }
+          *    [ AVP ]
+
+; MIP-HA-to-MN-MSA ::= < AVP Header: 332 >
+; Unceratin of Code and Type for MIP-HA-to-MN-SPI
+;                { MIP-HA-to-MN-SPI }
+;                { MIP-Algorithm-Type }
+;                { MIP-Replay-Mode }
+;                { MIP-Session-Key }
+;           *    [ AVP ]
+
+@enum MIP-Algorithm-Type
+HMAC_SHA1                     2
+
+@enum MIP-Replay-Mode
+NONE                          1
+TIMESTAMPS                    2
+NONCES                        3
+
+;; RFC 5778
+
+@avp_types
+Chargeable-User-Identity                            89 OctetString      M
+MIP-Careof-Address                                 487 Address          M
+MIP-Authenticator                                  488 OctetString      M
+MIP-MAC-Mobility-Data                              489 OctetString      M
+MIP-Timestamp                                      490 OctetString      M
+MIP-MN-HA-SPI                                      491 Unsigned32       M
+MIP-MN-HA-MSA                                      492 Grouped          M
+Service-Selection                                  493 UTF8String       M
+MIP6-Auth-Mode                                     494 Enumerated       M
+
+@grouped
+MIP-MN-HA-MSA ::= < AVP Header: 492 >
+               { MIP-Session-Key }
+               { MIP-MSA-Lifetime }
+               [ MIP-MN-HA-SPI ]
+               [ MIP-Algorithm-Type ]
+               [ MIP-Replay-Mode ]
+          *    [ AVP ]
+
+;; RFC 7944
+
+@avp_types
+DRMP                                               301 Enumerated       -
+
+@enum DRMP
+PRIORITY_15                  15
+PRIORITY_14                  14
+PRIORITY_13                  13
+PRIORITY_12                  12
+PRIORITY_11                  11
+PRIORITY_10                  10
+PRIORITY_9                    9
+PRIORITY_8                    8
+PRIORITY_7                    7
+PRIORITY_6                    6
+PRIORITY_5                    5
+PRIORITY_4                    4
+PRIORITY_3                    3
+PRIORITY_2                    2
+PRIORITY_1                    1
+PRIORITY_0                    0
+
+;; RFC 8583
+
+@avp_types
+SourceID                                           649 DiameterIdentity -
+Load                                               650 Grouped          -
+Load-Type                                          651 Enumerated       -
+Load-Value                                         652 Unsigned64       -
+
+@grouped
+Load ::= < AVP Header: 650 >
+               [ Load-Type ]
+               [ Load-Value ]
+               [ SourceID ]
+          *    [ AVP ]
+
+@enum Load-Type
+HOST       0
+PEER       1
+
+;; RFC 7683
+
+@avp_types
+OC-Supported-Features                              621 Grouped          -
+OC-Feature-Vector                                  622 Unsigned64       -
+OC-OLR                                             623 Grouped          -
+OC-Sequence-Number                                 624 Unsigned64       -
+OC-Validity-Duration                               625 Unsigned32       -
+OC-Report-Type                                     626 Enumerated       -
+OC-Reduction-Percentage                            627 Unsigned32       -
+
+@grouped
+OC-Supported-Features ::= < AVP Header: 621 >
+               [ OC-Feature-Vector ]
+          *    [ AVP ]
+
+OC-OLR ::= < AVP Header: 623 >
+              < OC-Sequence-Number >
+              < OC-Report-Type >
+              [ OC-Reduction-Percentage ]
+              [ OC-Validity-Duration ]
+          *   [ AVP ]
+
+@enum OC-Report-Type
+HOST_REPORT   0
+REALM_REPORT  1
+
+
+;; RFC 5777
+
+@avp_types
+QoS-Resources                                      508 Grouped          -
+Filter-Rule                                        509 Grouped          -
+Filter-Rule-Precedence                             510 Unsigned32       -
+Classifier                                         511 Grouped          -
+Classifier-ID                                      512 OctetString      -
+Protocol                                           513 Enumerated       -
+Direction                                          514 Enumerated       -
+From-Spec                                          515 Grouped          -
+To-Spec                                            516 Grouped          -
+Negated                                            517 Enumerated       -
+IP-Address                                         518 Address          -
+IP-Address-Range                                   519 Grouped          -
+IP-Address-Start                                   520 Address          -
+IP-Address-End                                     521 Address          -
+IP-Address-Mask                                    522 Grouped          -
+IP-Bit-Mask-Width                                  523 Unsigned32       -
+MAC-Address                                        524 OctetString      -
+MAC-Address-Mask                                   525 Grouped          -
+MAC-Address-Mask-Pattern                           526 OctetString      -
+EUI64-Address                                      527 OctetString      -
+EUI64-Address-Mask                                 528 Grouped          -
+EUI64-Address-Mask-Pattern                         529 OctetString      -
+Port                                               530 Integer32        -
+Port-Range                                         531 Grouped          -
+Port-Start                                         532 Integer32        -
+Port-End                                           533 Integer32        -
+Use-Assigned-Address                               534 Enumerated       -
+Diffserv-Code-Point                                535 Enumerated       -
+Fragmentation-Flag                                 536 Enumerated       -
+IP-Option                                          537 Grouped          -
+IP-Option-Type                                     538 Enumerated       -
+IP-Option-Value                                    539 OctetString      -
+TCP-Option                                         540 Grouped          -
+TCP-Option-Type                                    541 Enumerated       -
+TCP-Option-Value                                   542 OctetString      -
+TCP-Flags                                          543 Grouped          -
+TCP-Flag-Type                                      544 Unsigned32       -
+ICMP-Type                                          545 Grouped          -
+ICMP-Type-Number                                   546 Enumerated       -
+ICMP-Code                                          547 Enumerated       -
+ETH-Option                                         548 Grouped          -
+ETH-Proto-Type                                     549 Grouped          -
+ETH-Ether-Type                                     550 OctetString      -
+ETH-SAP                                            551 OctetString      -
+VLAN-ID-Range                                      552 Grouped          -
+S-VID-Start                                        553 Unsigned32       -
+S-VID-End                                          554 Unsigned32       -
+C-VID-Start                                        555 Unsigned32       -
+C-VID-End                                          556 Unsigned32       -
+User-Priority-Range                                557 Grouped          -
+Low-User-Priority                                  558 Unsigned32       -
+High-User-Priority                                 559 Unsigned32       -
+Time-Of-Day-Condition                              560 Grouped          -
+Time-Of-Day-Start                                  561 Unsigned32       -
+Time-Of-Day-End                                    562 Unsigned32       -
+Day-Of-Week-Mask                                   563 Unsigned32       -
+Day-Of-Month-Mask                                  564 Unsigned32       -
+Month-Of-Year-Mask                                 565 Unsigned32       -
+Absolute-Start-Time                                566 Time             -
+Absolute-Start-Fractional-Seconds                  567 Unsigned32       -
+Absolute-End-Time                                  568 Time             -
+Absolute-End-Fractional-Seconds                    569 Unsigned32       -
+Timezone-Flag                                      570 Enumerated       -
+Timezone-Offset                                    571 Integer32        -
+Treatment-Action                                   572 Enumerated       -
+QoS-Profile-Id                                     573 Unsigned32       -
+QoS-Profile-Template                               574 Grouped          -
+QoS-Semantics                                      575 Enumerated       -
+QoS-Parameters                                     576 Grouped          -
+Excess-Treatment                                   577 Grouped          -
+QoS-Capability                                     578 Grouped          -
+
+
+@grouped
+QoS-Resources ::= < AVP Header: 508 >
+        1 *   { Filter-Rule }
+          *   [ AVP ]
+
+Filter-Rule ::= < AVP Header: 509 >
+              [ Filter-Rule-Precedence ]
+
+              ; Condition part of a Rule
+              ; ------------------------
+              [ Classifier ]
+          *   [ Time-Of-Day-Condition ]
+
+              ; Action and Meta-Data
+              ; --------------------
+              [ Treatment-Action ]
+
+              ; Info about QoS related Actions
+              ; ------------------------------
+              [ QoS-Semantics ]
+              [ QoS-Profile-Template ]
+              [ QoS-Parameters ]
+              [ Excess-Treatment ]
+
+              ; Extension Point
+              ; ---------------
+          *   [ AVP ]
+
+Classifier ::= < AVP Header: 511 >
+              { Classifier-ID }
+              [ Protocol ]
+              [ Direction ]
+          *   [ From-Spec ]
+          *   [ To-Spec ]
+          *   [ Diffserv-Code-Point ]
+              [ Fragmentation-Flag ]
+          *   [ IP-Option ]
+          *   [ TCP-Option ]
+              [ TCP-Flags ]
+          *   [ ICMP-Type ]
+          *   [ ETH-Option ]
+          *   [ AVP ]
+
+From-Spec ::= < AVP Header: 515 >
+          *   [ IP-Address ]
+          *   [ IP-Address-Range ]
+          *   [ IP-Address-Mask ]
+          *   [ MAC-Address ]
+          *   [ MAC-Address-Mask]
+          *   [ EUI64-Address ]
+          *   [ EUI64-Address-Mask]
+          *   [ Port ]
+          *   [ Port-Range ]
+              [ Negated ]
+              [ Use-Assigned-Address ]
+          *   [ AVP ]
+
+To-Spec ::= < AVP Header: 516 >
+          *   [ IP-Address ]
+          *   [ IP-Address-Range ]
+          *   [ IP-Address-Mask ]
+          *   [ MAC-Address ]
+          *   [ MAC-Address-Mask]
+          *   [ EUI64-Address ]
+          *   [ EUI64-Address-Mask]
+          *   [ Port ]
+          *   [ Port-Range ]
+              [ Negated ]
+              [ Use-Assigned-Address ]
+          *   [ AVP ]
+
+
+IP-Address-Range ::= < AVP Header: 519 >
+              [ IP-Address-Start ]
+              [ IP-Address-End ]
+          *   [ AVP ]
+
+
+IP-Address-Mask ::= < AVP Header: 522 >
+              { IP-Address }
+              { IP-Bit-Mask-Width }
+          *   [ AVP ]
+
+
+MAC-Address-Mask ::= < AVP Header: 525 >
+              { MAC-Address }
+              { MAC-Address-Mask-Pattern }
+          *   [ AVP ]
+
+EUI64-Address-Mask ::= < AVP Header: 528 >
+              { EUI64-Address }
+              { EUI64-Address-Mask-Pattern }
+          *   [ AVP ]
+
+Port-Range ::= < AVP Header: 531 >
+              [ Port-Start ]
+              [ Port-End ]
+          *   [ AVP ]
+
+IP-Option ::= < AVP Header: 537 >
+              { IP-Option-Type }
+          *   [ IP-Option-Value ]
+              [ Negated ]
+          *   [ AVP ]
+
+TCP-Option ::= < AVP Header: 540 >
+              { TCP-Option-Type }
+          *   [ TCP-Option-Value ]
+              [ Negated ]
+          *   [ AVP ]
+
+TCP-Flags ::= < AVP Header: 543 >
+              { TCP-Flag-Type }
+              [ Negated ]
+          *   [ AVP ]
+
+ICMP-Type ::= < AVP Header: 545 >
+              { ICMP-Type-Number }
+          *   [ ICMP-Code ]
+              [ Negated ]
+          *   [ AVP ]
+
+ETH-Option ::= < AVP Header: 548 >
+              { ETH-Proto-Type }
+          *   [ VLAN-ID-Range ]
+          *   [ User-Priority-Range ]
+          *   [ AVP ]
+
+ETH-Proto-Type ::= < AVP Header: 549 >
+          *   [ ETH-Ether-Type ]
+          *   [ ETH-SAP ]
+          *   [ AVP ]
+
+VLAN-ID-Range ::= < AVP Header: 552 >
+              [ S-VID-Start ]
+              [ S-VID-End ]
+              [ C-VID-Start ]
+              [ C-VID-End ]
+          *   [ AVP ]
+
+User-Priority-Range ::= < AVP Header: 557 >
+          *   [ Low-User-Priority ]
+          *   [ High-User-Priority ]
+          *   [ AVP ]
+
+Time-Of-Day-Condition ::= < AVP Header: 560 >
+              [ Time-Of-Day-Start ]
+              [ Time-Of-Day-End ]
+              [ Day-Of-Week-Mask ]
+              [ Day-Of-Month-Mask ]
+              [ Month-Of-Year-Mask ]
+              [ Absolute-Start-Time ]
+              [ Absolute-End-Time ]
+              [ Timezone-Flag ]
+          *   [ AVP ]
+
+QoS-Profile-Template ::= < AVP Header: 574 >
+              { Vendor-Id }
+              { QoS-Profile-Id }
+          *   [ AVP ]
+
+QoS-Parameters  ::= < AVP Header: 576 >
+          *   [ AVP ]
+
+Excess-Treatment ::= < AVP Header: 577 >
+              { Treatment-Action }
+              [ QoS-Profile-Template ]
+              [ QoS-Parameters ]
+          *   [ AVP ]
+
+QoS-Capability ::= < AVP Header: 578 >
+        1 *   { QoS-Profile-Template }
+          *   [ AVP ]
+
+@enum Direction
+IN            0
+OUT           1
+BOTH          2
+
+@enum Negated
+False         0
+True          1
+
+@enum Use-Assigned-Address
+False         0
+True          1
+
+@enum Diffserv-Code-Point
+;; Managed by IANA
+;; https://www.iana.org/assignments/dscp-registry/dscp-registry.xhtml
+CS0           0
+CS1           8
+CS2           16
+CS3           24
+CS4           32
+CS5           40
+CS6           48
+CS7           56
+
+@enum Fragmentation-Flag
+DONT_FRAGMENT            0
+MORE_FRAGMENTS           1
+
+@enum IP-Option-Type
+;; Managed by IANA
+;; https://www.iana.org/assignments/ip-parameters/ip-parameters.xhtml
+EOOL                     0   ; End of Options List
+NOP                      1   ; No Operation
+SEC                      2   ; Security
+LSR                      3   ; Loose Source Route
+TS                       4   ; Time Stamp
+ESEC                     5   ; Extended Security
+CIPSO                    6   ; Commercial Security
+RR                       7   ; Record Route
+SID                      8   ; Stream ID
+SSR                      9   ; Strict Source Route
+ZSU                      10  ; Experimental Measurement
+MTUP                     11  ; MTU Probe
+MTUR                     12  ; MTU Reply
+FINN                     13  ; Experimental Flow Control
+VISA                     14  ; Experimental Access Control
+ENCODE                   15  ; ???
+IMITD                    16  ; IMI Traffic Descriptor
+EIP                      17  ; Extended Internet Protocol
+TR                       18  ; Traceroute
+ADDEXT                   19  ; Address Extension
+RTRALT                   20  ; Router Alert
+SDB                      21  ; Selective Directed Broadcast
+DPS                      23  ; Dynamic Packet State
+UMP                      24  ; Upstream Multicast Pkt.
+QS                       25  ; Quick-Start
+EXP                      30  ; RFC3692-style Experiment
+
+@enum TCP-Option-Type
+;; Managed by IANA
+;; https://www.iana.org/assignments/tcp-parameters/tcp-parameters.xhtml
+EOOL                      0  ; End of Option List
+NOP                       1  ; No-Operation
+MSS                       2  ; Maximum Segment Size
+WS                        3  ; Window Scale
+SACK_PERMITTED            4  ; SACK Permitted
+SACK                      5  ; SACK
+TS                        8  ; Timestamps
+SKEETER                   16 ; Skeeter
+BUBBA                     17 ; Bubba
+TCO                       18 ; Trailer Checksum Option
+SCPS_CAP                  20 ; SCPS Capabilities
+SNA                       21 ; Selective Negative Acknowledgements
+RB                        22 ; Record Boundaries
+CE                        23 ; Corruption experienced
+SNAP                      24 ; SNAP
+TCP_CF                    26 ; TCP Compression Filter
+QSR                       27 ; Quick-Start Response
+UTO                       28 ; User Timeout Option
+TCP_AO                    29 ; TCP Authentication Option (TCP-AO)
+MPTCP                     30 ; Multipath TCP (MPTCP)
+TCP_FOC                   34 ; TCP Fast Open Cookie
+TCP_ENO                   69 ; Encryption Negotiation (TCP-ENO)
+ACC_ECN0                 172 ; Accurate ECN Order 0 (AccECN0) (TEMPORARY - registered 2022-08-03, expires 2023-08-03)
+ACC_ECN1                 174 ; Accurate ECN Order 1 (AccECN1) (TEMPORARY - registered 2022-08-03, expires 2023-08-03)
+EXP1                     253 ; RFC3692-style Experiment 1
+EXP2                     254 ; RFC3692-style Experiment 2
+
+@enum ICMP-Type-Number
+; Managed by IANA
+; https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-types
+ECHO_REPLY        0 ; Echo Reply
+DST_UNREACHABLE   3 ; Destination Unreachable
+REDIRECT          5 ; Redirect
+ECHO              8 ; Echo
+ROUTER_ADV        9 ; Router Advertisement
+ROUTER_SOL       10 ; Router Solicitation
+TIME_EXCEEDED    11 ; Time Exceeded
+PARAM_PROBLEM    12 ; Parameter Problem
+TS               13 ; Timestamp
+TS_REPLY         14 ; Timestamp Reply
+PHOTURIS         40 ; Photuris
+ICMP_EXP         41 ; ICMP messages utilized by experimental mobility protocols such as Seamoby
+ECHO_REQUEST_EXT 42 ; Extended Echo Request
+ECHO_REPLY_EXT   43 ; Extended Echo Reply
+EXP1            253 ; RFC3692-style Experiment 1
+EXP2            254 ; RFC3692-style Experiment 2
+
+@enum ICMP-Code
+; Managed by IANA
+; https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-codes
+
+@enum Timezone-Flag
+UTC          0
+LOCAL        1
+OFFSET       2
+
+@enum Treatment-Action
+DROP         0
+SHAPE        1
+MARK         2
+PERMIT       3
+
+@enum QoS-Semantics
+QoS_DESIRED        0
+QoS_AVAILABLE      1
+QoS_DELIVERED      2
+MINIMUM_QoS        3
+QoS_AUTHORIZED     4

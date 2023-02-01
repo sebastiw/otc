@@ -1,0 +1,83 @@
+;; 3GPP TS 29.154 v17.0.0 Nta
+
+@id       16777358
+@name     dia_3gpp_ts_29154_Nta
+@vendor   10415 3gpp
+
+@messages
+EC-Request ::= <Diameter Header: 8388735, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { External-Group-Identifier }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+              [ Event-Configuration ]
+              [ Group-Reporting-Guard-Timer ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+EC-Answer ::= <Diameter Header: 8388735, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Event-Reports ]
+              [ Event-Configuration-Status ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ Load ]
+          *   [ AVP ]
+
+ER-Request ::= <Diameter Header: 8388736, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              [ DRMP ]
+              [ OC-Supported-Features ]
+              [ Event-Reports ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ER-Answer ::= <Diameter Header: 8388736, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Load ]
+          *   [ AVP ]
+

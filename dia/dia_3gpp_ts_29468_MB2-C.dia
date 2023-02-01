@@ -1,0 +1,88 @@
+;; 3GPP TS 29.468 v17.1.0 MB2-C
+
+@id       16777335
+@name     dia_3gpp_ts_29468_MB2-C
+@vendor   10415 3gpp
+
+@messages
+GA-Request ::= <Diameter Header: 8388662, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+          *   { Supported-Features }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ TMGI-Allocation-Request ]
+              [ TMGI-Deallocation-Request ]
+          *   [ MBMS-Bearer-Request ]
+              [ Restart-Counter ]
+          *   [ AVP ]
+
+GA-Answer ::= <Diameter Header: 8388662, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+          *   { Supported-Features }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+              [ TMGI-Allocation-Response ]
+          *   [ TMGI-Deallocation-Response ]
+          *   [ MBMS-Bearer-Response ]
+              [ Restart-Counter ]
+          *   [ Load ]
+          *   [ AVP ]
+
+GN-Request ::= <Diameter Header: 8388663, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              [ DRMP ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ TMGI-Expiry ]
+          *   [ MBMS-Bearer-Event-Notification ]
+              [ Restart-Counter ]
+          *   [ AVP ]
+
+GN-Answer ::= <Diameter Header: 8388663, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+              [ Restart-Counter ]
+          *   [ AVP ]
+

@@ -1,10 +1,14 @@
-;; S13 (MME/SGSN-EIR)
+;; 3GPP TS 29.272 v17.4.0 S13/S13'
 
 @id       16777252
-@name     dia_3gpp_S13
+@name     dia_3gpp_ts_29272_S13_S13prim
 @vendor   10415 3gpp
 
-;; @inherits dia_ietf_
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf_rfc7944
+DRMP
+
 @inherits dia_3gpp_ts_29272
 
 @messages
@@ -37,3 +41,5 @@ ME-Identity-Check-Answer ::= <Diameter Header: 324, PXY>
               [ Failed-AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
+
+
