@@ -5,7 +5,8 @@
          codec/1,
          next/1,
          decode/1,
-         encode/1
+         encode/1,
+         encode_data/4
         ]).
 
 -include("include/sccp.hrl").
@@ -1197,8 +1198,8 @@ encode_parameter(long_data, Bin) ->
 decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
     {PC, Bin1} = case PCI of
                      0 -> {undefined, Bin0};
-                     1 -> <<LSB:8, 0:2, MSB:6, Rest0/binary>> = Bin0,
-                          {<<MSB:6, LSB:8>>, Rest0}
+                     1 -> <<P:16/little, Rest0/binary>> = Bin0,
+                          {<<P:16>>, Rest0}
                  end,
     {SSN, Bin2} = case SSNI of
                       0 -> {undefined, Bin1};
