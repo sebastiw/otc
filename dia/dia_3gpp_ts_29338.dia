@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29338
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 SC-Address                                                  3300 OctetString       MV
 SM-RP-UI                                                    3301 OctetString       MV

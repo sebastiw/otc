@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29154
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 Network-Area-Info-List                                      4201 OctetString       MV
 Reference-Id                                                4202 OctetString       MV
@@ -22,7 +24,7 @@ Event-Reports                                               4215 Grouped        
 Extended-SCEF-Reference-ID                                  4216 Unsigned64        MV
 
 @grouped
-Time-window ::= <AVP Header: 4204>
+Time-Window ::= <AVP Header: 4204>
               { Transfer-Start-Time }
               { Transfer-End-Time }
           *   [ AVP ]

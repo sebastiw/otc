@@ -105,7 +105,7 @@ Location-Report-Request ::= <Diameter Header: 8388621, REQ, PXY>
               [ Reporting-Amount ]
               [ Periodic-LDR-Information ]
               [ ESMLC-Cell-Info ]
-              [ 1xRTT-RCID ] ]
+              [ RCID-1xRTT ]
               [ Delayed-Location-Reporting-Data ]
               [ Civic-Address ]
               [ Barometric-Pressure ]

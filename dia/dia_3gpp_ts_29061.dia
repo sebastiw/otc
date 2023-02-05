@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29061
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 3GPP-Charging-Characteristics                               13   UTF8String        MV
 

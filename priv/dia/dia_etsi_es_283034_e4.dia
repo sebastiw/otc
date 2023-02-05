@@ -4,8 +4,6 @@
 @name     dia_etsi_es_283034
 @vendor   13019 etsi
 
-@inherits dia_etsi_es_283034
-
 @messages
 User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               < Session-Id >

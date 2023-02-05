@@ -3,6 +3,8 @@
 @name dia_3gpp_ts_29343
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 Origin-App-Layer-User-Id                          3600 UTF8String       MV
 Target-App-Layer-User-Id                          3601 UTF8String       MV

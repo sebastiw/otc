@@ -3,8 +3,6 @@
 @name     dia_ietf
 @vendor   10415 3gpp
 
-@inherits diameter_gen_base_rfc6733
-
 ;; RFC 4740
 
 @avp_types

@@ -41,7 +41,7 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
               { Origin-Realm }
               { Destination-Realm }
               { Auth-Request-Type }
-              { 3GPP-WLAN-APN- Id }
+              { 3GPP-WLAN-APN-Id }
               [ Destination-Host ]
               [ Visited-Network-Identifier ]
               [ User-Name ]

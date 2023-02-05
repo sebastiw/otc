@@ -4,13 +4,6 @@
 @name     dia_3gpp_ts_29272_S7a_S7d
 @vendor   10415 3gpp
 
-@inherits diameter_gen_base_rfc6733
-
-@inherits dia_ietf_rfc7944
-DRMP
-
-@inherits dia_3gpp_ts_29272
-
 @messages
 Update-VCSG-Location-Request ::= <Diameter Header: 8388638, REQ, PXY>
               < Session-Id >

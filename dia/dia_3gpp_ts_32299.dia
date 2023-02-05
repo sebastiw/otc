@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_32299
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 Event-Type                                                  823  Grouped           VM
 SIP-Method                                                  824  UTF8String        VM
@@ -11,7 +13,7 @@ Content-Type                                                826  UTF8String     
 Content-Length                                              827  Unsigned32        VM
 Content-Disposition                                         828  UTF8String        VM
 Role-Of-Node                                                829  Enumerated        VM
-User–Session-Id                                             830  UTF8String        VM                         
+User-Session-Id                                             830  UTF8String        VM
 Calling-Party-Address                                       831  UTF8String        VM
 Called-Party-Address                                        832  UTF8String        VM
 Time-Stamps                                                 833  Grouped           VM
@@ -128,7 +130,7 @@ PoC-User-Role                                               1252 Grouped        
 PoC-User-Role-IDs                                           1253 UTF8String        VM
 PoC-User-Role-Info-Units                                    1254 Enumerated        VM
 Talk-Burst-Exchange                                         1255 Grouped           VM
-Service-Generic-Information                                 1256 refer[223]                         
+Service-Generic-Information                                 1256 Grouped           MV ;; OMA DDS Charging Data
 Service-Specific-Type                                       1257 Unsigned32        VM
 Event-Charging-TimeStamp                                    1258 Time              VM
 Participant-Access-Priority                                 1259 Enumerated        VM
@@ -738,7 +740,7 @@ Next-Tariff ::= <AVP Header: 2057>
 
 Rate-Element ::= <AVP Header: 2058>
               { CC-Unit-Type }
-              [ Charge- Reason-Code ]
+              [ Charge-Reason-Code ]
               [ Unit-Value ]
               [ Unit-Cost ]
               [ Unit-Quota-Threshold ]
@@ -1003,7 +1005,7 @@ Related-Trigger ::= <AVP Header: 3926>
 CPDT-Information ::= <AVP Header: 3927>
               [ External-Identifier ]
               [ SCEF-ID ]
-              [ Serving Node Identity ]
+              [ Serving-Node-Identity ]
               [ SGW-Change ]
               [ NIDD-submission ]
 

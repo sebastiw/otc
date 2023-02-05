@@ -5,7 +5,7 @@
 @vendor   10415 3gpp
 
 @messages
-LCS-Routing-Info-Request ::= <Diameter Header: 8388622, REQ, PXY, 16777291>
+LCS-Routing-Info-Request ::= <Diameter Header: 8388622, REQ, PXY>
               < Session-Id >
               { Auth-Session-State }
               { Origin-Host }
@@ -21,7 +21,7 @@ LCS-Routing-Info-Request ::= <Diameter Header: 8388622, REQ, PXY, 16777291>
           *   [ Route-Record ]
           *   [ AVP ]
 
-LCS-Routing-Info-Answer ::= <Diameter Header: 8388622, PXY, 16777291>
+LCS-Routing-Info-Answer ::= <Diameter Header: 8388622, PXY>
               < Session-Id >
               { Auth-Session-State }
               { Origin-Host }

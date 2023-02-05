@@ -3,9 +3,7 @@
 @name     dia_etsi_es_283035
 @vendor   13019 etsi
 
-@inherits dia_etsi_es_283034
-Logical-Access-ID
-Physical-Access-ID
+@inherits diameter_gen_base_rfc6733
 
 @avp_types
 Location-Information                                        350  Grouped           V 
@@ -23,12 +21,6 @@ Operator-Specific-GI                                        360  OctetString    
 Emergency-Call-Routing-Info                                 361  UTF8String        V 
 Port-Number                                                 362  Unsigned32        V 
 PIDF-Location-Object                                        363  UTF8String        V 
-
-;; Reused
-@avp_types
-Expiry-Time 709 Time V ; ETSI TS 129 329
-Subs-Req-Type 705 Enumerated MV ; ETSI TS 129 329
-3GPP-User-Location-Info 22 OctetString V ; ETSI TS 129 061
 
 @grouped
 Location-Information ::= <AVP Header: 350>

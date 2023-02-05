@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29172
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 SLg-Location-Type                                           2500 Enumerated        MV
 LCS-EPS-Client-Name                                         2501 Grouped           MV
@@ -52,13 +54,13 @@ PLMN-ID-List                                                2544 Grouped        
 PLR-Flags                                                   2545 Unsigned32        V 
 PLA-Flags                                                   2546 Unsigned32        V 
 Deferred-MT-LR-Data                                         2547 Grouped           V 
-Termination-Cause                                           2548 Unsigned32        V 
+ELP-Termination-Cause                                       2548 Unsigned32        V 
 LRA-Flags                                                   2549 Unsigned32        V 
 Periodic-Location-Support-Indicator                         2550 Enumerated        V 
 Prioritized-List-Indicator                                  2551 Enumerated        V 
 ESMLC-Cell-Info                                             2552 Grouped           V 
 Cell-Portion-ID                                             2553 Unsigned32        V 
-1xRTT-RCID                                                  2554 OctetString       V 
+RCID-1xRTT                                                  2554 OctetString       V 
 Delayed-Location-Reporting-Data                             2555 Grouped           V 
 Civic-Address                                               2556 UTF8String        V 
 Barometric-Pressure                                         2557 Unsigned32        V 
@@ -124,7 +126,7 @@ Area ::= <AVP Header: 2535>
               { Area-Identification }
           *   [ AVP ]
 
-Periodic-LDR-Info ::= <AVP Header: 2540>
+Periodic-LDR-Information ::= <AVP Header: 2540>
               { Reporting-Amount }
               { Reporting-Interval }
           *   [ AVP ]
@@ -141,7 +143,7 @@ PLMN-ID-List ::= <AVP Header: 2544>
 
 Deferred-MT-LR-Data ::= <AVP Header: 2547>
               { Deferred-Location-Type }
-              [ Termination-Cause ]
+              [ ELP-Termination-Cause ]
               [ Serving-Node ]
           *   [ AVP ]
 
@@ -151,7 +153,7 @@ ESMLC-Cell-Info ::= <AVP Header: 2552>
           *   [ AVP ]
 
 Delayed-Location-Reporting-Data ::= <AVP Header: 2555>
-              [ Termination-Cause ]
+              [ ELP-Termination-Cause ]
               [ Serving-Node ]
           *   [ AVP ]
 
@@ -240,7 +242,7 @@ UTRAN_CELL_ID                                                5
 TRACKING_AREA_ID                                             6
 EUTRAN_CELL_GLOBAL_ID                                        7
 
-@define Termination-Cause
+@define ELP-Termination-Cause
 NORMAL                                                       0
 ERROR_UNDEFINED                                              1
 INTERNAL_TIMEOUT                                             2

@@ -55,7 +55,7 @@ Update-ProSe-Subscriber-Data-Request ::= <Diameter Header: 8388665, REQ, PXY>
               [ DRMP ]
               [ Vendor-Specific-Application-Id ]
           *   [ Supported-Features ]
-              [ ProSe Subscription-Data ]
+              [ ProSe-Subscription-Data ]
               [ Visited-PLMN-Id ]
           *   [ Reset-ID ]
           *   [ AVP ]
@@ -144,7 +144,7 @@ Reset-Answer ::= <Diameter Header: 322, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
-ProSe-Subscriber-Information-Request ::= <Diameter Header: 8388713, REQ, PXY>
+ProSe-Initial-Location-Information-Request ::= <Diameter Header: 8388713, REQ, PXY>
               < Session-Id >
               { Auth-Session-State }
               { Origin-Host }
@@ -159,7 +159,7 @@ ProSe-Subscriber-Information-Request ::= <Diameter Header: 8388713, REQ, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
-ProSe-Subscriber-Information-Answer ::= <Diameter Header: 8388713, PXY>
+ProSe-Initial-Location-Information-Answer ::= <Diameter Header: 8388713, PXY>
               < Session-Id >
               { Auth-Session-State }
               { Origin-Host }

@@ -5,18 +5,6 @@
 
 @inherits diameter_gen_base_rfc6733
 
-@inherits dia_ietf_rfc5447
-MIP6-Agent-Info
-
-; @inherits dia_3gpp_ts_29061
-; @inherits dia_3gpp_ts_29212
-; @inherits dia_3gpp_ts_29214
-; @inherits dia_3gpp_ts_29229
-; @inherits dia_3gpp_ts_29299
-; @inherits dia_3gpp_ts_29336
-; SCEF-ID
-; SCEF-Reference-ID-for-Deletion
-
 @avp_types
 Subscription-Data                                 1400 Grouped          MV
 Terminal-Information                              1401 Grouped          MV
@@ -229,117 +217,7 @@ PC5-Range                                         1717 Integer32        V
 PC5-Link-AMBR                                     1718 Integer32        V
 Monitoring-Event-Configuration                    3122 Grouped          V
 
-;; Reused AVPs
-@avp_types
-3GPP-Charging-Characteristics                       13 UTF8String       MV ; TS 29.061
-Service-Selection                                  493 UTF8String       M  ; TS 29.273
-Max-Requested-Bandwidth-DL                         515 Unsigned32       MV ; TS 29.214
-Max-Requested-Bandwidth-UL                         516 Unsigned32       MV ; TS 29.214
-Extended-Max-Requested-BW-DL                       554 Unsigned32       V  ; TS 29.214
-Extended-Max-Requested-BW-UL                       555 Unsigned32       V  ; TS 29.214
-Time-Of-Day-Start                                           561  Unsigned32        -  ; IETF RFC 5777
-Time-Of-Day-End                                             562  Unsigned32        -  ; IETF RFC 5777
-Day-Of-Week-Mask                                            563  Unsigned32        -  ; IETF RFC 5777
-Visited-Network-Identifier                         600 OctetString      MV ; TS 29.229
-OC-Supported-Features                                       621  Grouped           -  ; IETF RFC7683
-OC-Feature-Vector                                           622  Unsigned64        -  ; IETF RFC7683
-OC-OLR                                                      623  Grouped           -  ; IETF RFC7683
-OC-Sequence-Number                                          624  Unsigned64        -  ; IETF RFC7683
-OC-Validity-Duration                                        625  Unsigned32        -  ; IETF RFC7683
-Confidentiality-Key                                625 OctetString      MV ; TS 29.229
-OC-Report-Type                                              626  Enumerated        -  ; IETF RFC7683
-Integrity-Key                                      626 OctetString      MV ; TS 29.229
-OC-Reduction-Percentage                                     627  Unsigned32        -  ; IETF RFC7683
-Supported-Features                                          628  Grouped           V  ; 3GPP TS 29.229
-Feature-List-ID                                             629  Unsigned32        V  ; 3GPP TS 29.229
-Feature-List                                                630  Unsigned32        V  ; 3GPP TS 29.229
-SourceID                                                    649  DiameterIdentity  -  ; IETF RFC8583
-Load                                                        650  Grouped           -  ; IETF RFC8583
-Load-Type                                                   651  Enumerated        -  ; IETF RFC8583
-Load-Value                                                  652  Unsigned64        -  ; IETF RFC8583
-MSISDN                                             701 OctetString      MV ; TS 29.329
-Served-Party-IP-Address                            848 Address          VM ; TS 32.299
-Charged-Party                                               857  UTF8String        VM ; 3GPP TS 32.299
-QoS-Class-Identifier                              1028 Enumerated       MV ; TS 29.212
-RAT-Type                                          1032 Enumerated       V  ; TS 29.212
-Allocation-Retention-Priority                     1034 Grouped          V  ; TS 29.212
-Priority-Level                                    1046 Unsigned32       V  ; TS 29.212
-Pre-emption-Capability                            1047 Enumerated       V  ; TS 29.212
-Pre-emption-Vulnerability                         1048 Enumerated       V  ; TS 29.212
-PDP-Address                                                 1227 Address              VM ; TS 32.299
-CSG-Access-Mode                                             2317 Enumerated           VM ; TS 32.299
-CSG-Membership-Indication                                   2318 Enumerated           VM ; TS 32.299
-User-CSG-Information                              2319 Grouped          VM ; TS 32.299
-GMLC-Address                                                2405 Address           MV ; 3GPP TS 29.173
-External-Identifier                                         3111 UTF8String        MV ; TS 29.336
-AESE-Communication-Pattern                                  3113 Grouped           MV ; TS 29.336
-Communication-Pattern-Set                                   3114 Grouped           MV ; TS 29.336
-Periodic-Communication-Indicator                            3115 Unsigned32        MV ; TS 29.336
-Communication-Duration-Time                                 3116 Unsigned32        MV ; TS 29.336
-Periodic-Time                                     3117 Unsigned32       MV ; TS 29.336
-Scheduled-Communication-Time                                3118 Grouped           MV ; TS 29.336
-Stationary-Indication                                       3119 Unsigned32        MV ; TS 29.336
-SCEF-ID                                           3125 DiameterIdentity MV ; TS 29.336
-SCEF-Reference-ID                                           3124 Unsigned32        MV ; TS 29.336
-SCEF-Reference-ID-for-Deletion                    3126 Unsigned32       MV ; TS 29.336
-Monitoring-Type                                             3127 Unsigned32        MV ; TS 29.336
-Maximum-Number-of-Reports                         3128 Unsigned32       MV ; TS 29.336
-UE-Reachability-Configuration                     3129 Grouped          MV ; TS 29.336
-Monitoring-Duration                               3130 Time             MV ; TS 29.336
-Location-Information-Configuration                3135 Grouped          MV ; TS 29.336
-MONTE-Location-Type                               3136 Unsigned32       MV ; TS 29.336
-Accuracy                                          3137 Unsigned32       MV ; TS 29.336
-Monitoring-Event-Config-Status                              3142 Grouped           MV ; TS 29.336
-Supported-Services                                          3143 Grouped           MV ; TS 29.336
-Supported-Monitoring-Events                                 3144 Unsigned64        MV ; TS 29.336
-Reference-ID-Validity-Time                                  3148 Time              MV ; TS 29.336
-Node-Type                                                   3153 Unsigned32        MV ; TS 29.336
-MTC-Provider-Info                                 3178 Grouped          V  ; TS 29.336
-MTC-Provider-ID                                   3179 UTF8String       V  ; TS 29.336
-PDN-Connectivity-Status-Configuration             3180 Grouped          V  ; TS 29.336
-Traffic-Profile                                             3183 Unsigned32        V  ; TS 29.336
-Battery-Indicator                                           3185 Unsigned32        V  ; TS 29.336
-SCEF-Reference-ID-Ext                                       3186 Unsigned64        V  ; TS 29.336
-SCEF-Reference-ID-for-Deletion-Ext                          3187 Unsigned64        V  ; TS 29.336
-ProSe-Subscription-Data                                     3701 Grouped           MV ; TS 29.344
-ProSe-Permission                                            3702 Unsigned32        MV ; TS 29.344
-ProSe-Allowed-PLMN                                          3703 Grouped           MV ; TS 29.344
-ProSe-Direct-Allowed                                        3704 Unsigned32        MV ; TS 29.344
-Authorized-Discovery-Range                                  3708 Unsigned32        MV ; TS 29.344
-eNodeB-Id                                         4008 OctetString      VM ; TS 29.217
-Extended-eNodeB-Id                                4013 OctetString      V  ; TS 29.217
-Active-Time                                       4324 Unsigned32       V  ; TS 29.128
-
-
 @grouped
-OC-Supported-Features ::= <AVP Header: 621>
-              [ OC-Feature-Vector ]
-          *   [ AVP ]
-
-OC-OLR ::= <AVP Header: 623>
-              < OC-Sequence-Number >
-              < OC-Report-Type >
-              [ OC-Reduction-Percentage ]
-              [ OC-Validity-Duration ]
-          *   [ AVP ]
-
-Supported-Features ::= <AVP Header: 628>
-              { Vendor-Id }
-              { Feature-List-ID }
-              { Feature-List }
-          *   [ AVP ]
-
-Load ::= <AVP Header: 650>
-              [ Load-Type ]
-              [ Load-Value ]
-              [ SourceID ]
-          *   [ AVP ]
-
-Allocation-Retention-Priority ::= < AVP Header: 1034 >
-              { Priority-Level }
-              [ Pre-emption-Capability ]
-              [ Pre-emption-Vulnerability ]
-
 Subscription-Data ::= <AVP Header: 1400>
               [ Subscriber-Status ]
               [ MSISDN ]
@@ -752,38 +630,6 @@ PC5-Flow-Bitrates ::= <AVP Header: 1714>
               [ Guaranteed-Flow-Bitrates ]
               [ Maximum-Flow-Bitrates ]
 
-User-CSG-Information ::= < AVP Header: 2319>
-{ CSG-Id }
-{ CSG-Access-Mode }
-[ CSG-Membership-Indication ]
-
-AESE-Communication-Pattern ::= <AVP Header: 3113>
-              { SCEF-ID }
-              [ SCEF-Reference-ID ]
-              [ SCEF-Reference-ID-Ext ]
-          *   [ SCEF-Reference-ID-for-Deletion ]
-          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
-          *   [ Communication-Pattern-Set ]
-              [ MTC-Provider-Info ]
-          *   [ AVP ]
-
-Communication-Pattern-Set ::= <AVP Header: 3114>
-              [ Periodic-Communication-Indicator ]
-              [ Communication-Duration-Time ]
-              [ Periodic-Time ]
-          *   [ Scheduled-Communication-Time ]
-              [ Stationary-Indication ]
-              [ Reference-ID-Validity-Time ]
-              [ Traffic-Profile ]
-              [ Battery-Indicator ]
-          *   [ AVP ]
-
-Scheduled-Communication-Time ::= <AVP Header: 3118>
-              [ Day-Of-Week-Mask ]
-              [ Time-Of-Day-Start ]
-              [ Time-Of-Day-End ]
-          *   [ AVP ]
-
 ;; This is only defined for S6-interface
 Monitoring-Event-Configuration ::= <AVP Header: 3122>
               { SCEF-ID }
@@ -799,46 +645,6 @@ Monitoring-Event-Configuration ::= <AVP Header: 3122>
               [ External-Identifier ]
               [ MTC-Provider-Info ]
               [ PDN-Connectivity-Status-Configuration ]
-          *   [ AVP ]
-
-UE-Reachability-Configuration ::= <AVP Header: 3129>
-
-Location-Information-Configuration ::= <AVP Header: 3135>
-              [ MONTE-Location-Type ]
-              [ Accuracy ]
-              [ Periodic-Time ]
-          *   [ AVP ]
-
-Monitoring-Event-Config-Status ::= <AVP Header: 3142>
-              { SCEF-Reference-ID }
-          *   [ Service-Report ]
-              [ SCEF-Reference-ID-Ext ]
-              [ SCEF-ID ]
-          *   [ AVP ]
-
-Supported-Services ::= <AVP Header: 3143>
-              [ Supported-Monitoring-Events ]
-              [ Node-Type ]
-          *   [ AVP ]
-
-MTC-Provider-Info ::= <AVP Header: 3178>
-              [ MTC-Provider-ID ]
-          *   [ AVP ]
-
-PDN-Connectivity-Status-Configuration ::= <AVP Header: 3180>
-              [ Service-Selection ]
-          *   [ AVP ]
-
-ProSe-Subscription-Data ::= <AVP Header: 3701>
-              { ProSe-Permission }
-          *   [ ProSe-Allowed-PLMN ]
-              [ 3GPP-Charging-Characteristics ]
-          *   [ AVP ]
-
-ProSe-Allowed-PLMN ::= <AVP Header: 3703>
-              [ Visited-PLMN-Id ]
-              [ Authorized-Discovery-Range ]
-              [ ProSe-Direct-Allowed ]
           *   [ AVP ]
 
 @enum Network-Access-Mode

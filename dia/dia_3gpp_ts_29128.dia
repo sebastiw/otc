@@ -3,8 +3,7 @@
 @name     dia_3gpp_ts_29128
 @vendor   10415 3gpp
 
-@inherits dia_3gpp_ts_29336
-Location-Information-Configuration
+@inherits diameter_gen_base_rfc6733
 
 @avp_types
 Monitoring-Event-Configuration                              3122 Grouped           MV ; redefined from TS 29.336

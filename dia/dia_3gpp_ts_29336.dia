@@ -5,8 +5,6 @@
 
 @inherits diameter_gen_base_rfc6733
 
-;; S6m/S6n
-
 @avp_types
 IP-SM-GW-Number                                             3100 OctetString       MV
 IP-SM-GW-Name                                               3101 DiameterIdentity  MV
@@ -21,11 +19,6 @@ HSS-Cause                                                   3109 Unsigned32     
 SIR-Flags                                                   3110 Unsigned32        MV
 External-Identifier                                         3111 UTF8String        MV
 IP-SM-GW-Realm                                              3112 DiameterIdentity  MV
-
-
-;; S6t
-
-@avp_types
 AESE-Communication-Pattern                                  3113 Grouped           MV
 Communication-Pattern-Set                                   3114 Grouped           MV
 Periodic-Communication-Indicator                            3115 Unsigned32        MV
@@ -78,6 +71,8 @@ NIDD-Authorization-Update                                   3161 Grouped        
 Loss-Of-Connectivity-Reason                                 3162 Unsigned32        V 
 Group-Reporting-Guard-Timer                                 3163 Unsigned32        V 
 CIA-Flags                                                   3164 Unsigned32        V 
+Group-Report                                                3165 Grouped           V 
+Group-Report-Item                                           3166 Grouped           V 
 RIR-Flags                                                   3167 Unsigned32        V 
 Type-Of-External-Identifier                                 3168 Unsigned32        V 
 APN-Validity-Time                                           3169 Grouped           V 
@@ -107,7 +102,8 @@ User-Identifier ::= <AVP Header: 3102>
               [ User-Name ]
               [ MSISDN ]
               [ External-Identifier ]
-              [ Type-Of-External-Identifier ]
+              [ Type-Of-External-Identifier ]  ; S6t
+              [ LMSI ]                         ; S6m/S6n
           *   [ AVP ]
 
 Service-Parameters ::= <AVP Header: 3105>
@@ -276,6 +272,32 @@ Allowed-PLMN-List ::= <AVP Header: 3158>
 
 NIDD-Authorization-Update ::= <AVP Header: 3161>
           *   [ APN-Validity-Time ]
+          *   [ AVP ]
+
+Group-Report ::= <AVP Header: 3165>
+              { SCEF-Reference-ID }
+              [ SCEF-Reference-ID-Ext ]
+              [ SCEF-ID ]
+          *   [ Group-Report-Item ]
+          *   [ AVP ]
+
+Group-Report-Item ::= <AVP Header: 3166>
+              { User-Identifier }
+              [ Visited-PLMN-Id ]
+              [ Roaming-Information ]
+              [ IMEI-Change ]
+              [ Reachability-Information ]
+              [ Maximum-UE-Availability-Time ]
+              [ EPS-Location-Information ]
+              [ Monitoring-Type ]
+          *   [ Service-Report ]
+              [ S6t-HSS-Cause ]
+              [ Idle-Status-Indication ]
+              [ Reporting-Time-Stamp ]
+              [ Updated-Network-Configuration ]
+          *   [ SCEF-Reference-ID-for-Deletion ]
+          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
+              [ Event-Handling ]
           *   [ AVP ]
 
 APN-Validity-Time ::= <AVP Header: 3169>

@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29389
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 V2X-Authorization-Data                                      4700 Grouped           - 
 V2X-Permission-in-VPLMN                                     4701 Unsigned32        - 

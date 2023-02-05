@@ -4,13 +4,6 @@
 @name     dia_3gpp_ts_29229_Cx
 @vendor   10415 3gpp
 
-@inherits diameter_gen_base_rfc6733
-
-@inherits dia_ietf_rfc7944
-DRMP
-
-@inherits dia_3gpp_ts_29229
-
 @messages
 User-Authorization-Request ::= <Diameter Header: 300, REQ, PXY>
               < Session-Id >

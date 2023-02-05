@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29214
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 Abort-Cause                                        500 Enumerated       MV
 Access-Network-Charging-Address                    501 Address          MV
@@ -84,3 +86,206 @@ HFC-Node-Identifier                                579 OctetString      V
 GLI-Identifier                                     580 OctetString      V
 Line-Type                                          581 Unsigned32       V
 MPS-Action                                         582 Enumerated       V
+
+@grouped
+Access-Network-Charging-Identifier ::= <AVP Header: 502>
+              { Access-Network-Charging-Identifier-Value }
+          *   [ Flows ]
+
+Flow-Grouping ::= <AVP Header: 508>
+          *   [ Flows ]
+
+Flows ::= <AVP Header: 510>
+              { Media-Component-Number }
+          *   [ Flow-Number ]
+          *   [ Content-Version ]
+              [ Final-Unit-Action ]
+              [ Media-Component-Status ]
+          *   [ AVP ]
+
+Media-Component-Description ::= <AVP Header: 517>
+              { Media-Component-Number }                                         ; Ordinal number of the media comp.
+          *   [ Media-Sub-Component ]                                            ; Set of flows for one flow identifier
+              [ AF-Application-Identifier ]
+              [ FLUS-Identifier ]
+              [ Media-Type ]
+              [ Max-Requested-Bandwidth-UL ]
+              [ Max-Requested-Bandwidth-DL ]
+              [ Max-Supported-Bandwidth-UL ]
+              [ Max-Supported-Bandwidth-DL ]
+              [ Min-Desired-Bandwidth-UL ]
+              [ Min-Desired-Bandwidth-DL ]
+              [ Min-Requested-Bandwidth-UL ]
+              [ Min-Requested-Bandwidth-DL ]
+              [ Extended-Max-Requested-BW-UL ]
+              [ Extended-Max-Requested-BW-DL ]
+              [ Extended-Max-Supported-BW-UL ]
+              [ Extended-Max-Supported-BW-DL ]
+              [ Extended-Min-Desired-BW-UL ]
+              [ Extended-Min-Desired-BW-DL ]
+              [ Extended-Min-Requested-BW-UL ]
+              [ Extended-Min-Requested-BW-DL ]
+              [ Flow-Status ]
+              [ Priority-Sharing-Indicator ]
+              [ Pre-emption-Capability ]
+              [ Pre-emption-Vulnerability ]
+              [ Reservation-Priority ]
+              [ RS-Bandwidth ]
+              [ RR-Bandwidth ]
+         0*2  [ Codec-Data ]
+              [ Sharing-Key-DL ]
+              [ Sharing-Key-UL ]
+              [ Content-Version ]
+              [ Max-PLR-DL ]
+              [ Max-PLR-UL ]
+              [ Desired-Max-Latency ]
+              [ Desired-Max-Loss ]
+          *   [ AVP ]
+
+Media-Sub-Component ::= <AVP Header: 519>
+              { Flow-Number }                                                    ; Ordinal number of the IP flow
+         0*2  [ Flow-Description ]                                               ; UL and/or DL
+              [ Flow-Status ]
+              [ Flow-Usage ]
+              [ Max-Requested-Bandwidth-UL ]
+              [ Max-Requested-Bandwidth-DL ]
+              [ Extended-Max-Requested-BW-UL ]
+              [ Extended-Max-Requested-BW-DL ]
+              [ AF-Signalling-Protocol ]
+              [ ToS-Traffic-Class ]
+          *   [ AVP ]
+
+Acceptable-Service-Info ::= <AVP Header: 526>
+          *   [ Media-Component-Description ]
+              [ Max-Requested-Bandwidth-DL ]
+              [ Max-Requested-Bandwidth-UL ]
+              [ Extended-Max-Requested-BW-DL ]
+              [ Extended-Max-Requested-BW-UL ]
+          *   [ AVP ]
+
+Sponsored-Connectivity-Data ::= <AVP Header: 530>
+              [ Sponsor-Identity ]
+              [ Application-Service-Provider-Identity ]
+              [ Granted-Service-Unit ]
+              [ Used-Service-Unit ]
+              [ Sponsoring-Action ]
+          *   [ AVP ]
+
+Callee-Information ::= <AVP Header: 565>
+              [ Called-Party-Address ]
+          *   [ Requested-Party-Address ]
+          *   [ Called-Asserted-Identity ]
+          *   [ AVP ]
+
+MA-Information ::= <AVP Header: 570>
+              [ IP-CAN-Type ]
+              [ RAT-Type ]
+              [ MA-Information-Action ]
+          *   [ AVP ]
+
+5GS-RAN-NAS-Release-Cause ::= <AVP Header: 572>
+              [ 5GMM-Cause ]
+              [ 5GSM-Cause ]
+              [ NGAP-Cause ]
+          *   [ AVP ]
+
+NGAP-Cause ::= <AVP Header: 575>
+              { NGAP-Group }
+              { NGAP-Value }
+
+Wireline-User-Location-Info ::= <AVP Header: 578>
+              [ HFC-Node-Identifier ]
+              [ GLI-Identifier ]
+              [ Line-Type ]
+          *   [ AVP ]
+
+
+@enum Abort-Cause
+BEARER_RELEASED                                              0
+INSUFFICIENT_SERVER_RESOURCES                                1
+INSUFFICIENT_BEARER_RESOURCES                                2
+PS_TO_CS_HANDOVER                                            3
+SPONSORED_DATA_CONNECTIVITY_DISALLOWED                       4
+
+@enum Flow-Status
+ENABLED_UPLINK                                               0
+ENABLED_DOWNLINK                                             1
+ENABLED                                                      2
+DISABLED                                                     3
+REMOVED                                                      4
+
+@enum Flow-Usage
+NO_INFORMATION                                               0
+RTCP                                                         1
+AF_SIGNALLING                                                2
+
+@enum Specific-Action
+CHARGING_CORRELATION_EXCHANGE                                1
+INDICATION_OF_LOSS_OF_BEARER                                 2
+INDICATION_OF_RECOVERY_OF_BEARER                             3
+INDICATION_OF_RELEASE_OF_BEARER                              4
+IP_CAN_CHANGE                                                6
+INDICATION_OF_OUT_OF_CREDIT                                  7
+INDICATION_OF_SUCCESSFUL_RESOURCES_ALLOCATION                8
+INDICATION_OF_FAILED_RESOURCES_ALLOCATION                    9
+INDICATION_OF_LIMITED_PCC_DEPLOYMENT                        10
+USAGE_REPORT                                                11
+ACCESS_NETWORK_INFO_REPORT                                  12
+INDICATION_OF_RECOVERY_FROM_LIMITED_PCC_DEPLOYMENT          13
+INDICATION_OF_ACCESS_NETWORK_INFO_REPORTING_FAILURE         14
+INDICATION_OF_TRANSFER_POLICY_EXPIRED                       15
+PLMN_CHANGE                                                 16
+EPS_FALLBACK                                                17
+INDICATION_OF_REALLOCATION_OF_CREDIT                        18
+SUCCESSFUL_QOS_UPDATE                                       19
+FAILED_QOS_UPDATE                                           20
+
+@enum Media-Type
+AUDIO                                                        0
+VIDEO                                                        1
+DATA                                                         2
+APPLICATION                                                  3
+CONTROL                                                      4
+TEXT                                                         5
+MESSAGE                                                      6
+OTHER                                                       0xFFFFFFFF
+
+@enum SIP-Forking-Indication
+SINGLE_DIALOGUE                                              0
+SEVERAL_DIALOGUES                                            1
+
+@enum Service-Info-Status
+FINAL_SERVICE_INFORMATION                                    0
+PRELIMINARY_SERVICE_INFORMATION                              1
+
+@enum AF-Signalling-Protocol
+NO_INFORMATION                                               0
+SIP                                                          1
+
+@enum Rx-Request-Type
+INITIAL_REQUEST                                              0
+UPDATE_REQUEST                                               1
+PCSCF_RESTORATION                                            2
+
+@enum Required-Access-Info
+USER_LOCATION                                                0
+MS_TIME_ZONE                                                 1
+
+@enum Sponsoring-Action
+DISABLE_SPONSORING                                           0
+ENABLE_SPONSORING                                            1
+
+@enum Priority-Sharing-Indicator
+PRIORITY_SHARING_ENABLED                                     0
+PRIORITY_SHARING_DISABLED                                    1
+
+@enum IMS-Content-Type
+NO_CONTENT_DETAIL                                            0
+CAT                                                          1
+CONFERENCE                                                   2
+
+@enum MPS-Action
+DISABLE_MPS_FOR_DTS                                          0
+ENABLE_MPS_FOR_DTS                                           1
+AUTHORIZE_AND_ENABLE_MPS_FOR_DTS                             2
+

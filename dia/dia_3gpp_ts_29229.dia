@@ -3,13 +3,10 @@
 @name     dia_3gpp_ts_29229
 @vendor   10415 3gpp
 
-@inherits diameter_gen_base_rfc6733
-
-@inherits dia_etsi_es_283035
-Line-Identifier
-
 @avp_vendor_id 13019
 Line-Identifier
+
+@inherits diameter_gen_base_rfc6733
 
 @avp_types
 Visited-Network-Identifier                                  600  OctetString       MV
@@ -78,27 +75,6 @@ Failed-PCSCF                                                664  Grouped        
 PCSCF-FQDN                                                  665  DiameterIdentity  V 
 PCSCF-IP-Address                                            666  Address           V 
 
-;; Reused AVPs
-@avp_types
-Framed-IP-Address                                           8    OctetString       M  ; IETF RFC4005
-Framed-Interface-Id                                         96   Unsigned64        M  ; IETF RFC4005
-Framed-IPv6-Prefix                                          97   OctetString       M  ; IETF RFC4005
-Digest-Realm                                                104  UTF8String        M  ; IETF RFC4590
-Digest-QoP                                                  110  UTF8String        M  ; IETF RFC4590
-Digest-Algorithm                                            111  UTF8String        M  ; IETF RFC4590
-Digest-HA1                                                  121  UTF8String        M  ; IETF RFC4590
-OC-Supported-Features                                       621  Grouped           -  ; IETF RFC7683
-OC-Feature-Vector                                           622  Unsigned64        -  ; IETF RFC7683
-OC-OLR                                                      623  Grouped           -  ; IETF RFC7683
-OC-Sequence-Number                                          624  Unsigned64        -  ; IETF RFC7683
-OC-Validity-Duration                                        625  Unsigned32        -  ; IETF RFC7683
-OC-Report-Type                                              626  Enumerated        -  ; IETF RFC7683
-OC-Reduction-Percentage                                     627  Unsigned32        -  ; IETF RFC7683
-SourceID                                                    649  DiameterIdentity  -  ; IETF RFC8583
-Load                                                        650  Grouped           -  ; IETF RFC8583
-Load-Type                                                   651  Enumerated        -  ; IETF RFC8583
-Load-Value                                                  652  Unsigned64        -  ; IETF RFC8583
-
 @grouped
 
 Server-Capabilities ::= <AVP Header: 603>
@@ -132,17 +108,6 @@ Charging-Information ::= <AVP Header: 618>
               [ Secondary-Event-Charging-Function-Name ]
               [ Primary-Charging-Collection-Function-Name ]
               [ Secondary-Charging-Collection-Function-Name ]
-          *   [ AVP ]
-
-OC-Supported-Features ::= <AVP Header: 621>
-              [ OC-Feature-Vector ]
-          *   [ AVP ]
-
-OC-OLR ::= <AVP Header: 623>
-              < OC-Sequence-Number >
-              < OC-Report-Type >
-              [ OC-Reduction-Percentage ]
-              [ OC-Validity-Duration ]
           *   [ AVP ]
 
 Supported-Features ::= <AVP Header: 628>
@@ -196,12 +161,6 @@ Restoration-Info ::= <AVP Header: 649>
               [ Call-ID-SIP-Header ]
               [ Subscription-Info ]
               [ P-CSCF-Subscription-Info ]
-          *   [ AVP ]
-
-Load ::= <AVP Header: 650>
-              [ Load-Type ]
-              [ Load-Value ]
-              [ SourceID ]
           *   [ AVP ]
 
 Identity-with-Emergency-Registration ::= <AVP Header: 651>
@@ -275,10 +234,6 @@ PRIORITY_1                                                   1
 PRIORITY_2                                                   2
 PRIORITY_3                                                   3
 PRIORITY_4                                                   4
-
-@enum Load-Type
-HOST                                                         0
-PEER                                                         1
 
 @enum Priviledged-Sender-Indication
 NOT_PRIVILEDGED_SENDER                                       0

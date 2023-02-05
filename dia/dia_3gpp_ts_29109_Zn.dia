@@ -21,7 +21,7 @@ Bootstrapping-Info-Request ::= <Diameter Header: 310, REQ, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
-Boostrapping-Info-Answer ::= <Diameter Header: 310, PXY, 16777220>
+Boostrapping-Info-Answer ::= <Diameter Header: 310, PXY>
               < Session-Id >
               { Vendor-Specific-Application-Id }
               { Origin-Host }                                                    ; Address of BSF

@@ -4,13 +4,6 @@
 @name     dia_3gpp_ts_29336_S6t
 @vendor   10415 3gpp
 
-@inherits diameter_gen_base_rfc6733
-
-@inherits dia_ietf_rfc7944
-DRMP
-
-@inherits dia_3gpp_ts_29336
-
 @messages
 Configuration-Information-Request ::= <Diameter Header: 8388718, REQ, PXY>
               < Session-Id >
@@ -134,59 +127,6 @@ NIDD-Information-Answer ::= <Diameter Header: 8388726, PXY>
               [ Failed-AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
-          *   [ AVP ]
-
-@avp_types
-User-Identifier                                             3102 Grouped           MV
-Group-Report                                                3165 Grouped           V 
-Group-Report-Item                                           3166 Grouped           V 
-
-;; Reused AVPs
-@avp_types
-IMSI-Group-Id                                               1675 Grouped           V  ; 3GPP TS 29.272
-Group-Service-Id                                            1676 Unsigned32        V  ; 3GPP TS 29.272
-Group-PLMN-Id                                               1677 OctetString       V  ; 3GPP TS 29.272
-Local-Group-Id                                              1678 OctetString       V  ; 3GPP TS 29.272
-Number-Of-UEs                                               4209 Unsigned32        MV ; 3GPP TS 29.154
-
-@grouped
-IMSI-Group-Id ::= <AVP Header: 1675>
-              { Group-Service-Id }
-              { Group-PLMN-Id }
-              { Local-Group-Id }
-          *   [ AVP ]
-
-User-Identifier ::= <AVP Header: 3102>
-              [ User-Name ]
-              [ MSISDN ]
-              [ External-Identifier ]
-              [ Type-Of-External-Identifier ]
-          *   [ AVP ]
-
-Group-Report ::= <AVP Header: 3165>
-              { SCEF-Reference-ID }
-              [ SCEF-Reference-ID-Ext ]
-              [ SCEF-ID ]
-          *   [ Group-Report-Item ]
-          *   [ AVP ]
-
-Group-Report-Item ::= <AVP Header: 3166>
-              { User-Identifier }
-              [ Visited-PLMN-Id ]
-              [ Roaming-Information ]
-              [ IMEI-Change ]
-              [ Reachability-Information ]
-              [ Maximum-UE-Availability-Time ]
-              [ EPS-Location-Information ]
-              [ Monitoring-Type ]
-          *   [ Service-Report ]
-              [ S6t-HSS-Cause ]
-              [ Idle-Status-Indication ]
-              [ Reporting-Time-Stamp ]
-              [ Updated-Network-Configuration ]
-          *   [ SCEF-Reference-ID-for-Deletion ]
-          *   [ SCEF-Reference-ID-for-Deletion-Ext ]
-              [ Event-Handling ]
           *   [ AVP ]
 
 @define Experimental-Result

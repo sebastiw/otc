@@ -4,15 +4,6 @@
 @name     dia_etsi_es_283035_e2
 @vendor   13019 etsi
 
-@inherits dia_etsi_es_283035
-
-@inherits dia_etsi_es_283034
-Globally-Unique-Address
-Access-Network-Type
-Initial-Gate-Setting-Description
-QoS-Profile-Description
-IP-Connectivity-Status
-
 @messages
 User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               < Session-Id >

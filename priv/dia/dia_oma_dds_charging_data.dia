@@ -3,6 +3,8 @@
 @name     dia_oma_dda_charging_data
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 Service-Generic-Information                       1256 Grouped          VM
 Application-Server-ID                             2101 UTF8String       VM

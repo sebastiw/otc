@@ -2,6 +2,8 @@
 
 @name dia_ietf_rfc7944
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 DRMP                                               301 Enumerated       -
 

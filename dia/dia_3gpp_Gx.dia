@@ -4,8 +4,6 @@
 @name     dia_3gpp_Gx
 @vendor   10415 3gpp
 
-@inherits dia_3gpp
-
 @messages
 
 CC-Request ::= < Diameter Header: 272, REQ, PXY >

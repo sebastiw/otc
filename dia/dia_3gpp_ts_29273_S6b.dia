@@ -68,7 +68,7 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
               [ Origination-Time-Stamp ]
               [ Maximum-Wait-Time ]
           *   [ Supported-Features ]
-              [ Emergency- Services ]
+              [ Emergency-Services ]
           *   [ AVP ]
 
 AA-Answer ::= <Diameter Header: 265, PXY>

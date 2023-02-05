@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29344
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 ProSe-Subscription-Data                                     3701 Grouped           MV
 ProSe-Permission                                            3702 Unsigned32        MV

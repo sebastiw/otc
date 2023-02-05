@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29468
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 BMSC-Address                                                3500 Address           MV
 BMSC-Port                                                   3501 Unsigned32        MV
@@ -37,7 +39,7 @@ Userplane-Protocol-Result                                   3529 Grouped        
 ROHC-Result                                                 3530 Unsigned32        V 
 FEC-Result                                                  3531 Unsigned32        V 
 ROHC-Max-CID                                                3532 Unsigned32        V 
-MBMS-Bearer-Event-Diagnostic-Info                           3533 Unsigned32        V 
+MBMS-Bearer-Event-Diagnostic-Info                           3533 Enumerated        V 
 
 @grouped
 MBMS-Bearer-Event-Notification ::= <AVP Header: 3503>
@@ -111,13 +113,13 @@ Local-MB2-U-Information ::= <AVP Header: 3519>
          0*2  [ BMSC-Address ]
               [ BMSC-Port ]
 
-ROHC-Request ::= <AVP Header: 3525>
+ROHC-Request ::= <AVP Header: 3526>
          1*   { Flow-Description }
               { ROHC-Profile }
               [ ROHC-Full-Header-Periodicity ]
           *   [ AVP ]
 
-Userplane-Protocol-Result ::= <AVP Header: 3525>
+Userplane-Protocol-Result ::= <AVP Header: 3529>
           *   [ Flow-Description ]
               [ ROHC-Result ]
               [ FEC-Result ]

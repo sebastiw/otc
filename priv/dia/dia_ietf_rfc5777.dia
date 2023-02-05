@@ -3,6 +3,8 @@
 @name     dia_ietf_rfc5777
 
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 QoS-Resources                         508 Grouped     -
 Filter-Rule                           509 Grouped     -

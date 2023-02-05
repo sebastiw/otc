@@ -26,7 +26,7 @@ Diameter-EAP-Request ::= <Diameter Header: 268, REQ, PXY>
               [ UE-Local-IP-Address ]
               [ OC-Supported-Features ]
               [ Terminal-Information ]
-              [ Emergency- Services ]
+              [ Emergency-Services ]
           *   [ AVP ]
 
 Diameter-EAP-Answer ::= <Diameter Header: 268, PXY>

@@ -4,13 +4,6 @@
 @name     dia_3gpp_ts_29336_S6m_S6n
 @vendor   10415 3gpp
 
-@inherits diameter_gen_base_rfc6733
-
-@inherits dia_ietf_rfc7944
-DRMP
-
-@inherits dia_3gpp_ts_29336
-
 @messages
 Subscriber-Information-Request ::= <Diameter Header: 8388641, REQ, PXY>
               < Session-Id >
@@ -48,22 +41,6 @@ Subscriber-Information-Answer ::= <Diameter Header: 8388641, PXY>
               [ Failed-AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
-          *   [ AVP ]
-
-
-@avp_types
-User-Identifier                                             3102 Grouped           MV
-
-;; Reused AVPs
-@avp_types
-LMSI                                                        2400 OctetString       MV ; 3GPP TS 29.173
-
-@grouped
-User-Identifier ::= <AVP Header: 3102>
-              [ User-Name ]
-              [ MSISDN ]
-              [ External-Identifier ]
-              [ LMSI ]
           *   [ AVP ]
 
 @define Experimental-Result

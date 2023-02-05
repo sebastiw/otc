@@ -4,9 +4,6 @@
 @name     dia_3gpp_Sy
 @vendor   10415 3gpp
 
-@inherits dia_3gpp_ietf
-@inherits dia_3gpp
-
 @messages
 
 Spending-Limit-Request ::= <Diameter Header: 8388635, REQ, PXY>

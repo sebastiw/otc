@@ -6,7 +6,7 @@
 
 @messages
 
-GBA-Push-Info-Request ::= <Diameter Header: xxx, REQ, PXY>
+GBA-Push-Info-Request ::= <Diameter Header: 312, REQ, PXY>
               < Session-Id >
               { Vendor-Specific-Application-Id }
               { Origin-Host }                                                    ; Address of NAF
@@ -28,7 +28,7 @@ GBA-Push-Info-Request ::= <Diameter Header: xxx, REQ, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
-GBA-Push-Info-Answer ::= <Diameter Header: xxx, PXY>
+GBA-Push-Info-Answer ::= <Diameter Header: 312, PXY>
               < Session-Id >
               { Vendor-Specific-Application-Id }
               { Origin-Host }                                                    ; Address of BSF

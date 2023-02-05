@@ -10,17 +10,7 @@ MIP6-Home-Link-Prefix                              125 OctetString      -
 MIP-Home-Agent-Address                             334 Address          -
 MIP6-Agent-Info                                    486 Grouped          -
 
-;; Reused AVPs
-@avp_types
-MIP-Home-Agent-Host                                348 Grouped          -  ; IETF RFC 4004
-
-
 @grouped
-MIP-Home-Agent-Host ::= < AVP Header: 348 >
-                    { Destination-Realm }
-                    { Destination-Host }
-               *    [ AVP ]
-
 MIP6-Agent-Info ::= < AVP-Header: 486 >
                * 2  [ MIP-Home-Agent-Address ]
                     [ MIP-Home-Agent-Host ]

@@ -3,6 +3,8 @@
 @name     dia_3gpp_ts_29283
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types
 MCPTT-ID                                                    4500 UTF8String        MV
 Data-Identification                                         4501 Grouped           MV
@@ -20,6 +22,9 @@ Sequence-Number                                             4512 Unsigned32     
 Data                                                        4513 Grouped           MV
 MCVideo-ID                                                  4514 UTF8String        V 
 MCData-ID                                                   4515 UTF8String        V 
+
+;; Redefines
+User-Identifier                                             3102 Grouped           MV ; 3GPP TS 29.336
 
 @grouped
 Data-Identification ::= <AVP Header: 4501>
