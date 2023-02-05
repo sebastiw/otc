@@ -132,13 +132,15 @@ UNTRUSTED                                                    1
 @enum Transport-Access-Type
 BBF                                                          0
 
-@define MIP6-Feature-Vector
-MIP6_INTEGRATED                                             0x0000000000000001
-PMIP6_SUPPORTED                                             0x0000010000000000
-ASSIGN_LOCAL_IP                                             0x0000080000000000
-MIP4_SUPPORTED                                              0x0000100000000000
-OPTIMIZED_IDLE_MODE_MOBILITY                                0x0000200000000000
-GTPv2_SUPPORTED                                             0x0000400000000000
+;; Bug in OTP for type checking Unsigned64
+;; See https://github.com/erlang/otp/issues/6789
+; @define MIP6-Feature-Vector
+; MIP6_INTEGRATED                                             0x0000000000000001
+; PMIP6_SUPPORTED                                             0x0000010000000000
+; ASSIGN_LOCAL_IP                                             0x0000080000000000
+; MIP4_SUPPORTED                                              0x0000100000000000
+; OPTIMIZED_IDLE_MODE_MOBILITY                                0x0000200000000000
+; GTPv2_SUPPORTED                                             0x0000400000000000
 
 @define Experimental-Result-Code
 DIAMETER_ERROR_USER_UNKNOWN                                 5001

@@ -65,10 +65,11 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
               [ QoS-Capability ]
               [ Service-Selection ]
               [ OC-Supported-Features ]
-              [ Origination-Time-Stamp ]
-              [ Maximum-Wait-Time ]
           *   [ Supported-Features ]
-              [ Emergency-Services ]
+              [ Origination-Time-Stamp ]                  ; 9.2.2.2 PMIPv6, GTPv2 or DSMIPv6 Authorization
+              [ Maximum-Wait-Time ]                       ; 9.2.2.2 PMIPv6, GTPv2 or DSMIPv6 Authorization
+              [ Emergency-Services ]                      ; 9.2.2.2 PMIPv6, GTPv2 or DSMIPv6 Authorization
+              [ MIP-MN-HA-SPI ]                           ; 9.2.2.5 MIPv4 FACoA Authorization
           *   [ AVP ]
 
 AA-Answer ::= <Diameter Header: 265, PXY>
@@ -83,9 +84,10 @@ AA-Answer ::= <Diameter Header: 265, PXY>
               [ Session-Timeout ]
               [ APN-Configuration ]
               [ QoS-Resources ]
-              [ AN-Trusted ]
+              [ AN-Trusted ]                              ; 9.2.2.2 PMIPv6, GTPv2 or DSMIPv6 Authorization
+              [ Trace-Info ]                              ; 9.2.2.2 PMIPv6, GTPv2 or DSMIPv6 Authorization
+              [ MIP-Session-Key ]                         ; 9.2.2.5 MIPv4 FACoA Authorization
           *   [ Redirect-Host ]
-              [ Trace-Info ]
               [ OC-Supported-Features ]
               [ OC-OLR ]
           *   [ Load ]
@@ -133,68 +135,6 @@ Abort-Session-Answer ::= <Diameter Header: 274, PXY>
               { Origin-Host }
               { Origin-Realm }
               [ DRMP ]
-          *   [ AVP ]
-
-Session-Termination-Request ::= <Diameter Header: 275, REQ, PXY>
-              < Session-Id >
-              { Origin-Host }
-              { Origin-Realm }
-              { Destination-Realm }
-              { Auth-Application-Id }
-              { Termination-Cause }
-              [ DRMP ]
-              [ User-Name ]
-              [ OC-Supported-Features ]
-          *   [ AVP ]
-
-Session-Termination-Answer ::= <Diameter Header: 275, PXY>
-              < Session-Id >
-              { Result-Code }
-              { Origin-Host }
-              { Origin-Realm }
-              [ DRMP ]
-              [ OC-Supported-Features ]
-              [ OC-OLR ]
-          *   [ Load ]
-          *   [ AVP ]
-
-AA-Request ::= <Diameter Header: 265, REQ, PXY>
-              < Session-Id >
-              { Auth-Application-Id }
-              { Origin-Host }
-              { Origin-Realm }
-              { Destination-Realm }
-              { Auth-Request-Type }
-              [ DRMP ]
-              [ User-Name ]
-              [ MIP6-Agent-Info ]
-              [ MIP6-Feature-Vector ]
-              [ Visited-Network-Identifier ]
-              [ QoS-Capability ]
-              [ Service-Selection ]
-          *   [ Supported-Features ]
-              [ MIP-MN-HA-SPI ]
-              [ OC-Supported-Features ]
-          *   [ AVP ]
-
-AA-Answer ::= <Diameter Header: 265, PXY>
-              < Session-Id >
-              { Auth-Application-Id }
-              { Auth-Request-Type }
-              { Result-Code }
-              { Origin-Host }
-              { Origin-Realm }
-              [ DRMP ]
-              [ OC-Supported-Features ]
-              [ OC-OLR ]
-          *   [ Load ]
-              [ MIP6-Feature-Vector ]
-              [ Session-Timeout ]
-              [ APN-Configuration ]
-              [ QoS-Resources ]
-          *   [ Redirect-Host ]
-          *   [ Supported-Features ]
-              [ MIP-Session-Key ]
           *   [ AVP ]
 
 Re-Auth-Request ::= <Diameter Header: 258, REQ, PXY>

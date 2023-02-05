@@ -129,7 +129,6 @@ Flows                                                       510  Grouped        
 Flow-Status                                                 511  Enumerated        MV
 Flow-Usage                                                  512  Enumerated        MV
 Specific-Action                                             513  Enumerated        MV
-Max-Requested-Bandwidth                                     514  Unsigned32        - 
 Max-Requested-Bandwidth-DL                                  515  Unsigned32        MV
 Max-Requested-Bandwidth-UL                                  516  Unsigned32        MV
 Media-Component-Description                                 517  Grouped           MV
@@ -270,7 +269,7 @@ PCSCF-IP-Address                                            666  Address        
 ;; 29.329
 User-Identity                                               700  Grouped           MV
 MSISDN                                                      701  OctetString       MV
-User-Data                                                   702  OctetString       MV
+Sh-User-Data                                                702  OctetString       MV ; User-Data in spec
 Data-Reference                                              703  Enumerated        MV
 Service-Indication                                          704  OctetString       MV
 Subs-Req-Type                                               705  Enumerated        MV
@@ -284,7 +283,7 @@ One-Time-Notification                                       712  Enumerated     
 Requested-Nodes                                             713  Unsigned32        V 
 Serving-Node-Indication                                     714  Enumerated        V 
 Repository-Data-ID                                          715  Grouped           V 
-Sequence-Number                                             716  Unsigned32        V 
+Sh-Sequence-Number                                          716  Unsigned32        V 
 Pre-paging-Supported                                        717  Enumerated        V 
 Local-Time-Zone-Indication                                  718  Enumerated        V 
 UDR-Flags                                                   719  Unsigned32        V 
@@ -372,10 +371,10 @@ Address-Domain                                              898  Grouped        
 Address-Type                                                899  Enumerated        MV
 
 ;; 29.061
-TMGI                                                        900  OctectString      MV
+TMGI                                                        900  OctetString       MV
 Required-MBMS-Bearer-Capabilities                           901  UTF8String        MV
 MBMS-StartStop-Indication                                   902  Enumerated        MV
-MBMS-Service-Area                                           903  OctectString      MV
+MBMS-Service-Area                                           903  OctetString       MV
 MBMS-Session-Duration                                       904  Unsigned32        MV
 Alternative-APN                                             905  UTF8String        MV
 MBMS-Service-Type                                           906  Enumerated        MV
@@ -475,7 +474,7 @@ Session-Linking-Indicator                                   1064 Enumerated     
 PDN-Connection-ID                                           1065 OctetString       V 
 Monitoring-Key                                              1066 OctetString       V 
 Usage-Monitoring-Information                                1067 Grouped           V 
-Usage-Monitoring-Level                                      1068 Enumarated        V 
+Usage-Monitoring-Level                                      1068 Enumerated        V 
 Usage-Monitoring-Report                                     1069 Enumerated        V 
 Usage-Monitoring-Support                                    1070 Enumerated        V 
 CSG-Information-Reporting                                   1071 Enumerated        V 
@@ -514,8 +513,8 @@ Trigger-Event                                               1103 Enumerated     
 Sender-Address                                              1104 UTF8String        MV
 Initial-Recipient-Address                                   1105 Grouped           MV
 Result-Recipient-Address                                    1106 Grouped           MV
-Sequence-Number                                             1107 Unsigned32        MV
-Recipient-Address                                           1108 UTF8String        MV
+MM-Sequence-Number                                          1107 Unsigned32        MV ; Sequence-Number in spec
+MM-Recipient-Address                                        1108 UTF8String        MV ; Recipient-Address in spec
 Routeing-Address                                            1109 UTF8String        MV
 Originating-Interface                                       1110 Enumerated        MV
 Delivery-Report                                             1111 Enumerated        MV
@@ -560,7 +559,7 @@ SGSN-Address                                                1228 Address        
 PoC-Session-Id                                              1229 UTF8String        MV
 Deferred-Location-Even-Type                                 1230 UTF8String        MV
 LCS-APN                                                     1231 UTF8String        MV
-LCS-Client-Id                                               1232 Grouped           MV
+LCS-Client-ID                                               1232 Grouped           MV
 LCS-Client-Dialed-By-MS                                     1233 UTF8String        MV
 LCS-Client-External-ID                                      1234 UTF8String        MV
 LCS-Client-Name                                             1235 Grouped           MV
@@ -654,7 +653,7 @@ Software-Version                                            1403 UTF8String     
 QoS-Subscribed                                              1404 UTF8String        MV
 ULR-Flags                                                   1405 Unsigned32        MV
 ULA-Flags                                                   1406 Unsigned32        MV
-Visited                                                     1407 PLMN              MV
+Visited-PLMN-Id                                             1407 OctetString       MV
 Requested-EUTRAN-Authentication-Info                        1408 Grouped           MV
 Requested-UTRAN-GERAN-Authentication-Info                   1409 Grouped           MV
 Number-Of-Requested-Vectors                                 1410 Unsigned32        MV
@@ -1107,13 +1106,13 @@ PLMN-ID-List                                                2544 Grouped        
 PLR-Flags                                                   2545 Unsigned32        V 
 PLA-Flags                                                   2546 Unsigned32        V 
 Deferred-MT-LR-Data                                         2547 Grouped           V 
-Termination-Cause                                           2548 Unsigned32        V 
+MT-LR-Termination-Cause                                     2548 Unsigned32        V ; Termination-Cause in spec
 LRA-Flags                                                   2549 Unsigned32        V 
 Periodic-Location-Support-Indicator                         2550 Enumerated        V 
 Prioritized-List-Indicator                                  2551 Enumerated        V 
 ESMLC-Cell-Info                                             2552 Grouped           V 
 Cell-Portion-ID                                             2553 Unsigned32        V 
-RCID-1xRTT                                                  2554 OctetString       V  ; called 1xRTT-RCID
+RCID-1xRTT                                                  2554 OctetString       V  ; 1xRTT-RCID in spec
 Delayed-Location-Reporting-Data                             2555 Grouped           V 
 Civic-Address                                               2556 UTF8String        V 
 Barometric-Pressure                                         2557 Unsigned32        V 
@@ -1203,7 +1202,7 @@ TCP-Source-Port                                             2843 Unsigned32     
 Default-Bearer-Indication                                   2844 Enumerated        V 
 PRA-Install                                                 2845 Grouped           V 
 PRA-Remove                                                  2846 Grouped           V 
-3GPP-PS-Data-Off-Status                                     2847 Enumerated        V 
+3GPP-EPS-PS-Data-Off-Status                                 2847 Enumerated        V ; 3GPP-PS-Data-Off-Status in spec
 Extended-APN-AMBR-DL                                        2848 Unsigned32        V 
 Extended-APN-AMBR-UL                                        2849 Unsigned32        V 
 Extended-GBR-DL                                             2850 Unsigned32        V 
@@ -1464,7 +1463,7 @@ MBMS-Bearer-Request                                         3504 Grouped        
 MBMS-Bearer-Response                                        3505 Grouped           MV
 MBMS-Bearer-Result                                          3506 Unsigned32        MV
 MBMS-Start-Time                                             3507 Time              MV
-Radio-Frequency                                             3508 Unsigned32        MV
+BMSC-Radio-Frequency                                        3508 Unsigned32        MV ; Radio-Frequency in spec
 TMGI-Allocation-Request                                     3509 Grouped           MV
 TMGI-Allocation-Response                                    3510 Grouped           MV
 TMGI-Allocation-Result                                      3511 Unsigned32        MV
@@ -1478,8 +1477,8 @@ Local-M1-Information                                        3518 Grouped        
 Local-MB2-U-Information                                     3519 Grouped           V 
 MBMS-eNB-IP-Multicast-Address                               3520 Address           V 
 MBMS-eNB-IPv6-Multicast-Address                             3521 Address           V 
-MBMS-GW-SSM-IP-Address                                      3522 Address           V 
-MBMS-GW-SSM-IPv6-Address                                    3523 Address           V 
+M1-MBMS-GW-SSM-IP-Address                                   3522 Address           V  ; MBMS-GW-SSM-IP-Address in spec
+M1-MBMS-GW-SSM-IPv6-Address                                 3523 Address           V  ; MBMS-GW-SSM-IPv6-Address in spec
 Common-Tunnel-Endpoint-Identifier                           3524 OctetString       V 
 FEC-Request                                                 3525 OctetString       V 
 ROHC-Request                                                3526 Grouped           V 
@@ -1519,7 +1518,7 @@ Authorized-Discovery-Range                                  3708 Unsigned32     
 ;; 29.345
 ; Reserved                                                  3800 -
 App-Layer-User-Id                                           3801 UTF8String        MV
-Assistance-info                                             3802 Grouped           MV
+Assistance-Info                                             3802 Grouped           MV
 Assistance-Info-Validity-Timer                              3803 Unsigned32        MV
 Discovery-Type                                              3804 Unsigned32        MV
 Filter-Id                                                   3805 OctetString       MV
@@ -1538,7 +1537,7 @@ Targeted-EPUID                                              3817 UTF8String     
 Time-Window                                                 3818 Unsigned32        MV
 WiFi-P2P-Assistance-Info                                    3819 Grouped           MV
 WLAN-Assistance-Info                                        3820 Grouped           MV
-WLAN-Link-Layer-Id                                          3821 OctetString       MV
+WLAN-Link-Layer-Id                                          3821 Grouped           MV
 WLAN-Link-Layer-Id-List                                     3822 Grouped           MV
 Location-Update-Trigger                                     3823 Grouped           MV
 Location-Update-Event-Type                                  3824 Unsigned32        MV
@@ -1557,14 +1556,14 @@ MIC                                                         3836 OctetString    
 UTC-based-Counter                                           3837 Unsigned32        MV
 ProSe-Match-Refresh-Timer                                   3838 Unsigned32        MV
 ProSe-Metadata-Index-Mask                                   3839 OctetString       V 
-App-Identifier                                              3840 Group             V 
+App-Identifier                                              3840 Grouped           V 
 OS-ID                                                       3841 OctetString       V 
 OS-App-ID                                                   3842 UTF8String        V 
 Requesting-RPAUID                                           3843 UTF8String        V 
 Target-RPAUID                                               3844 UTF8String        V 
 Target-PDUID                                                3845 OctetString       V 
 ProSe-Restricted-Code                                       3846 OctetString       V 
-ProSe-Restricted-Code-Suffix-Range                          3847 OctetString       V 
+ProSe-Restricted-Code-Suffix-Range                          3847 Grouped           V 
 Beginning-Suffix                                            3848 OctetString       V 
 Ending-Suffix                                               3849 OctetString       V 
 Discovery-Entry-ID                                          3850 Unsigned32        V 
@@ -1584,7 +1583,7 @@ DUIK                                                        3863 OctetString    
 DUCK                                                        3864 OctetString       V 
 MIC-Check-indicator                                         3865 Unsigned32        V 
 Encrypted-Bitmask                                           3866 OctetString       V 
-ProSe-App-Code-Suffix-Range                                 3867 OctetString       V 
+ProSe-App-Code-Suffix-Range                                 3867 Grouped           V 
 PC5-tech                                                    3868 OctetString       V 
 
 ;; 32.299
@@ -1656,7 +1655,7 @@ Ns-Request-Type                                             4102 Unsigned32     
 Network-Area-Info-List                                      4201 OctetString       MV
 Reference-Id                                                4202 OctetString       MV
 Transfer-Request-Type                                       4203 Unsigned32        MV
-Time-Window                                                 4204 Grouped           MV
+SCSAS-Time-Window                                           4204 Grouped           MV ; Time-Window in spec
 Transfer-End-Time                                           4205 Time              MV
 Transfer-Start-Time                                         4206 Time              MV
 Transfer-Policy                                             4207 Grouped           MV
@@ -1927,17 +1926,6 @@ Charging-Information ::= <AVP Header: 618>
               [ Secondary-Charging-Collection-Function-Name ]
           *   [ AVP ]
 
-OC-Supported-Features ::= <AVP Header: 621>
-              [ OC-Feature-Vector ]
-          *   [ AVP ]
-
-OC-OLR ::= <AVP Header: 623>
-              < OC-Sequence-Number >
-              < OC-Report-Type >
-              [ OC-Reduction-Percentage ]
-              [ OC-Validity-Duration ]
-          *   [ AVP ]
-
 Supported-Features ::= <AVP Header: 628>
               { Vendor-Id }
               { Feature-List-ID }
@@ -1989,12 +1977,6 @@ Restoration-Info ::= <AVP Header: 649>
               [ Call-ID-SIP-Header ]
               [ Subscription-Info ]
               [ P-CSCF-Subscription-Info ]
-          *   [ AVP ]
-
-Load ::= <AVP Header: 650>
-              [ Load-Type ]
-              [ Load-Value ]
-              [ SourceID ]
           *   [ AVP ]
 
 Identity-with-Emergency-Registration ::= <AVP Header: 651>
@@ -2067,9 +2049,9 @@ Application-Server-Information ::= <AVP Header: 850>
           *   [ Application-Provided-Called-Party-Address ]
               [ Status-AS-Code ]
 
-Trunk-Group-ID ::= <AVP Header: 851>
-              [ Incoming-Trunk-Group-ID ]
-              [ Outgoing-Trunk-Group-ID ]
+Trunk-Group-Id ::= <AVP Header: 851>
+              [ Incoming-Trunk-Group-Id ]
+              [ Outgoing-Trunk-Group-Id ]
 
 PS-Furnish-Charging-Information ::= <AVP Header: 865>
               { 3GPP-Charging-Id }
@@ -2196,7 +2178,7 @@ IMS-Information ::= <AVP Header: 876>
           *   [ SDP-Media-Component ]
               [ Served-Party-IP-Address ]
               [ Server-Capabilities ]
-              [ Trunk-Group-ID ]
+              [ Trunk-Group-Id ]
               [ Bearer-Service ]
               [ Service-Id ]
           *   [ Service-Specific-Info ]
@@ -2527,13 +2509,13 @@ Served-User-Identity ::= <AVP Header: 1100>
           *   [ AVP ]
 
 Initial-Recipient-Address ::= <AVP Header: 1105>
-              { Sequence-Number }
-              { Recipient-Address }
+              { MM-Sequence-Number }
+              { MM-Recipient-Address }
           *   [ AVP ]
 
 Result-Recipient-Address ::= <AVP Header: 1106>
-              { Sequence-Number }
-              [ Recipient-Address ]
+              { MM-Sequence-Number }
+              [ MM-Recipient-Address ]
               [ Routeing-Address ]
               [ Sender-Address ]
           *   [ AVP ]
@@ -3379,7 +3361,7 @@ Area ::= <AVP Header: 2535>
               { Area-Identification }
           *   [ AVP ]
 
-Periodic-LDR-Info ::= <AVP Header: 2540>
+Periodic-LDR-Information ::= <AVP Header: 2540>
               { Reporting-Amount }
               { Reporting-Interval }
           *   [ AVP ]
@@ -3396,7 +3378,7 @@ PLMN-ID-List ::= <AVP Header: 2544>
 
 Deferred-MT-LR-Data ::= <AVP Header: 2547>
               { Deferred-Location-Type }
-              [ Termination-Cause ]
+              [ MT-LR-Termination-Cause ]
               [ Serving-Node ]
           *   [ AVP ]
 
@@ -3406,7 +3388,7 @@ ESMLC-Cell-Info ::= <AVP Header: 2552>
           *   [ AVP ]
 
 Delayed-Location-Reporting-Data ::= <AVP Header: 2555>
-              [ Termination-Cause ]
+              [ MT-LR-Termination-Cause ]
               [ Serving-Node ]
           *   [ AVP ]
 
@@ -3545,11 +3527,14 @@ Trigger-Data ::= <AVP Header: 3003>
           *   [ AVP ]
 
 User-Identifier ::= <AVP Header: 3102>
-              [ User-Name ]
-              [ MSISDN ]
-              [ External-Identifier ]
-              [ Type-Of-External-Identifier ]                                    ; S6t
-              [ LMSI ]                                                           ; S6m/S6n
+              [ User-Name ]                                                      ; 29.336 
+              [ MSISDN ]                                                         ; 29.336 
+              [ External-Identifier ]                                            ; 29.336 
+              [ Type-Of-External-Identifier ]                                    ; 29.336 S6t
+              [ LMSI ]                                                           ; 29.336 S6m/S6n
+              [ MCPTT-ID ]                                                       ; 29.283
+              [ MCVideo-ID ]                                                     ; 29.283
+              [ MCData-ID ]                                                      ; 29.283
           *   [ AVP ]
 
 Service-Parameters ::= <AVP Header: 3105>
@@ -4030,7 +4015,7 @@ MBMS-Bearer-Response ::= <AVP Header: 3505>
          0*2  [ BMSC-Address ]
               [ BMSC-Port ]
               [ MB2U-Security ]
-          *   [ Radio-Frequency ]
+          *   [ BMSC-Radio-Frequency ]
           *   [ Userplane-Protocol-Result ]
           *   [ AVP ]
 
@@ -4061,21 +4046,21 @@ TMGI-Expiry ::= <AVP Header: 3515>
 Local-M1-Information ::= <AVP Header: 3518>
               [ MBMS-eNB-IP-Multicast-Address ]
               [ MBMS-eNB-IPv6-Multicast-Address ]
-              [ MBMS-GW-SSM-IP-Address ]
-              [ MBMS-GW-SSM-IPv6-Address ]
+              [ M1-MBMS-GW-SSM-IP-Address ]
+              [ M1-MBMS-GW-SSM-IPv6-Address ]
               [ Common-Tunnel-Endpoint-Identifier ]
 
 Local-MB2-U-Information ::= <AVP Header: 3519>
          0*2  [ BMSC-Address ]
               [ BMSC-Port ]
 
-ROHC-Request ::= <AVP Header: 3525>
+ROHC-Request ::= <AVP Header: 3526>
          1*   { Flow-Description }
               { ROHC-Profile }
               [ ROHC-Full-Header-Periodicity ]
           *   [ AVP ]
 
-Userplane-Protocol-Result ::= <AVP Header: 3525>
+Userplane-Protocol-Result ::= <AVP Header: 3529>
           *   [ Flow-Description ]
               [ ROHC-Result ]
               [ FEC-Result ]
@@ -4128,7 +4113,6 @@ WiFi-P2P-Assistance-Info ::= <AVP Header: 3819>
               [ SSID ]
               [ EAP-Master-Session-Key ]
               [ P2P-Features ]
-              [ WLAN-Link-Layer-Id-List ]
               [ WLAN-Link-Layer-Id-List ]
               [ Operating-Channel ]
               [ Assistance-Info-Validity-Timer ]
@@ -4228,7 +4212,7 @@ ProSe-Restricted-Code-Suffix-Range ::= <AVP Header: 3847>
               [ Ending-Suffix ]
           *   [ AVP ]
 
-Code-Receiving-Security-Material ::= <AVP Header: 3847>
+Code-Receiving-Security-Material ::= <AVP Header: 3860>
               [ DUSK ]
               [ DUIK ]
               [ MIC-Check-Indicator ]
@@ -4236,14 +4220,14 @@ Code-Receiving-Security-Material ::= <AVP Header: 3847>
               [ Encrypted-Bitmask ]
           *   [ AVP ]
 
-Code-Sending-Security-Material ::= <AVP Header: 3847>
+Code-Sending-Security-Material ::= <AVP Header: 3861>
               [ DUSK ]
               [ DUIK ]
               [ DUCK ]
               [ Encrypted-Bitmask ]
           *   [ AVP ]
 
-ProSe-App-Code-Suffix-Range ::= <AVP Header: 3847>
+ProSe-App-Code-Suffix-Range ::= <AVP Header: 3867>
               { Beginning-Suffix }
               [ Ending-Suffix ]
           *   [ AVP ]
@@ -4383,14 +4367,14 @@ Network-Congestion-Area-Report ::= <AVP Header: 4101>
               [ Congestion-Level-Value ]
           *   [ AVP ]
 
-Time-window ::= <AVP Header: 4204>
+SCSAS-Time-Window ::= <AVP Header: 4204>
               { Transfer-Start-Time }
               { Transfer-End-Time }
           *   [ AVP ]
 
 Transfer-Policy ::= <AVP Header: 4207>
               { Transfer-Policy-Id }
-              [ Time-Window ]
+              [ SCSAS-Time-Window ]
               [ Rating-Group ]
               [ Max-Requested-Bandwidth-DL ]
               [ Max-Requested-Bandwidth-UL ]
@@ -4475,12 +4459,6 @@ Data-Identification ::= <AVP Header: 4501>
               { Data-Identification-Flags }
           *   [ AVP ]
 
-User-Identifier ::= <AVP Header: 3102>
-              [ MCPTT-ID ]
-              [ MCVideo-ID ]
-              [ MCData-ID ]
-          *   [ AVP ]
-
 MC-Service-User-Profile-Data ::= <AVP Header: 4511>
               [ User-Data ]
               [ Sequence-Number ]
@@ -4496,7 +4474,7 @@ V2X-PC5-Allowed-PLMN ::= <AVP Header: 4600>
           *   [ PLMN-Allowed-PC5-RATs ]
           *   [ AVP ]
 
-V2X-PC5-Allowed-PLMN ::= <AVP Header: 4603>
+PLMN-Allowed-PC5-RATs ::= <AVP Header: 4603>
               { Visited-PLMN-Id }
          1*   { PC5-RAT-Type }
           *   [ AVP ]
@@ -4698,10 +4676,6 @@ PRIORITY_1                                                   1
 PRIORITY_2                                                   2
 PRIORITY_3                                                   3
 PRIORITY_4                                                   4
-
-@enum Load-Type
-HOST                                                         0
-PEER                                                         1
 
 @enum Priviledged-Sender-Indication
 NOT_PRIVILEDGED_SENDER                                       0
@@ -5898,7 +5872,7 @@ REMOVAL_OF_ACCESS                                            0
 BIND_TO_DEF_BEARER                                           0
 BIND_TO_APPLICABLE_BEARER                                    1
 
-@enum 3GPP-PS-Data-Off-Status
+@enum 3GPP-EPS-PS-Data-Off-Status
 ACTIVE                                                       0
 INACTIVE                                                     1
 
@@ -6148,7 +6122,7 @@ UTRAN_CELL_ID                                                5
 TRACKING_AREA_ID                                             6
 EUTRAN_CELL_GLOBAL_ID                                        7
 
-@define Termination-Cause
+@define MT-LR-Termination-Cause
 NORMAL                                                       0
 ERROR_UNDEFINED                                              1
 INTERNAL_TIMEOUT                                             2

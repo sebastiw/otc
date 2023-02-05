@@ -91,7 +91,7 @@ CC-Request ::= <Diameter Header: 272, REQ, PXY>
               [ Physical-Access-ID ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
-              [ 3GPP-PS-Data-Off-Status ]
+              [ 3GPP-EPS-PS-Data-Off-Status ]
           *   [ AVP ]
 
 CC-Answer ::= <Diameter Header: 272, PXY>

@@ -7,7 +7,7 @@
 
 @avp_types
 App-Layer-User-Id                                           3801 UTF8String        MV
-Assistance-info                                             3802 Grouped           MV
+Assistance-Info                                             3802 Grouped           MV
 Assistance-Info-Validity-Timer                              3803 Unsigned32        MV
 Discovery-Type                                              3804 Unsigned32        MV
 Filter-Id                                                   3805 OctetString       MV
@@ -26,7 +26,7 @@ Targeted-EPUID                                              3817 UTF8String     
 Time-Window                                                 3818 Unsigned32        MV
 WiFi-P2P-Assistance-Info                                    3819 Grouped           MV
 WLAN-Assistance-Info                                        3820 Grouped           MV
-WLAN-Link-Layer-Id                                          3821 OctetString       MV
+WLAN-Link-Layer-Id                                          3821 Grouped           MV
 WLAN-Link-Layer-Id-List                                     3822 Grouped           MV
 Location-Update-Trigger                                     3823 Grouped           MV
 Location-Update-Event-Type                                  3824 Unsigned32        MV
@@ -45,14 +45,14 @@ MIC                                                         3836 OctetString    
 UTC-based-Counter                                           3837 Unsigned32        MV
 ProSe-Match-Refresh-Timer                                   3838 Unsigned32        MV
 ProSe-Metadata-Index-Mask                                   3839 OctetString       V 
-App-Identifier                                              3840 Group             V 
+App-Identifier                                              3840 Grouped           V 
 OS-ID                                                       3841 OctetString       V 
 OS-App-ID                                                   3842 UTF8String        V 
 Requesting-RPAUID                                           3843 UTF8String        V 
 Target-RPAUID                                               3844 UTF8String        V 
 Target-PDUID                                                3845 OctetString       V 
 ProSe-Restricted-Code                                       3846 OctetString       V 
-ProSe-Restricted-Code-Suffix-Range                          3847 OctetString       V 
+ProSe-Restricted-Code-Suffix-Range                          3847 Grouped           V 
 Beginning-Suffix                                            3848 OctetString       V 
 Ending-Suffix                                               3849 OctetString       V 
 Discovery-Entry-ID                                          3850 Unsigned32        V 
@@ -72,7 +72,7 @@ DUIK                                                        3863 OctetString    
 DUCK                                                        3864 OctetString       V 
 MIC-Check-indicator                                         3865 Unsigned32        V 
 Encrypted-Bitmask                                           3866 OctetString       V 
-ProSe-App-Code-Suffix-Range                                 3867 OctetString       V 
+ProSe-App-Code-Suffix-Range                                 3867 Grouped           V 
 PC5-tech                                                    3868 OctetString       V 
 
 
@@ -105,7 +105,6 @@ WiFi-P2P-Assistance-Info ::= <AVP Header: 3819>
               [ SSID ]
               [ EAP-Master-Session-Key ]
               [ P2P-Features ]
-              [ WLAN-Link-Layer-Id-List ]
               [ WLAN-Link-Layer-Id-List ]
               [ Operating-Channel ]
               [ Assistance-Info-Validity-Timer ]
@@ -205,7 +204,7 @@ ProSe-Restricted-Code-Suffix-Range ::= <AVP Header: 3847>
               [ Ending-Suffix ]
           *   [ AVP ]
 
-Code-Receiving-Security-Material ::= <AVP Header: 3847>
+Code-Receiving-Security-Material ::= <AVP Header: 3860>
               [ DUSK ]
               [ DUIK ]
               [ MIC-Check-Indicator ]
@@ -213,14 +212,14 @@ Code-Receiving-Security-Material ::= <AVP Header: 3847>
               [ Encrypted-Bitmask ]
           *   [ AVP ]
 
-Code-Sending-Security-Material ::= <AVP Header: 3847>
+Code-Sending-Security-Material ::= <AVP Header: 3861>
               [ DUSK ]
               [ DUIK ]
               [ DUCK ]
               [ Encrypted-Bitmask ]
           *   [ AVP ]
 
-ProSe-App-Code-Suffix-Range ::= <AVP Header: 3847>
+ProSe-App-Code-Suffix-Range ::= <AVP Header: 3867>
               { Beginning-Suffix }
               [ Ending-Suffix ]
           *   [ AVP ]

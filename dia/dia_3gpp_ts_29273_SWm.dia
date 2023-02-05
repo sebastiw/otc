@@ -75,7 +75,7 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
               [ UE-Local-IP-Address ]
           *   [ AVP ]
 
-AA-Answer ::= <Diameter Header: 265, REQ, PXY>
+AA-Answer ::= <Diameter Header: 265, PXY>
               < Session-Id >
               { Auth-Application-Id }
               { Auth-Request-Type }
@@ -139,30 +139,6 @@ Abort-Session-Answer ::= <Diameter Header: 274, PXY>
               { Origin-Host }
               { Origin-Realm }
               [ DRMP ]
-          *   [ AVP ]
-
-Session-Termination-Request ::= <Diameter Header: 275, REQ, PXY>
-              < Session-Id >
-              { Origin-Host }
-              { Origin-Realm }
-              { Destination-Realm }
-              { Auth-Application-Id }
-              { Termination-Cause }
-              [ DRMP ]
-              [ Destination-Host ]
-              [ User-Name ]
-              [ OC-Supported-Features ]
-          *   [ AVP ]
-
-Session-Termination-Answer ::= <Diameter Header: 275, PXY>
-              < Session-Id >
-              { Result-Code }
-              { Origin-Host }
-              { Origin-Realm }
-              [ DRMP ]
-              [ OC-Supported-Features ]
-              [ OC-OLR ]
-          *   [ Load ]
           *   [ AVP ]
 
 Re-Auth-Request ::= <Diameter Header: 258, REQ, PXY>

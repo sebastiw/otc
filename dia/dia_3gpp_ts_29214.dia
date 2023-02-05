@@ -92,9 +92,6 @@ Access-Network-Charging-Identifier ::= <AVP Header: 502>
               { Access-Network-Charging-Identifier-Value }
           *   [ Flows ]
 
-Flow-Grouping ::= <AVP Header: 508>
-          *   [ Flows ]
-
 Flows ::= <AVP Header: 510>
               { Media-Component-Number }
           *   [ Flow-Number ]

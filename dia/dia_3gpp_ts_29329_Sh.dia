@@ -50,7 +50,7 @@ User-Data-Answer ::= <Diameter Header: 306, PXY>
           *   [ Supported-Features ]
               [ Wildcarded-Public-Identity ]
               [ Wildcarded-IMPU ]
-              [ User-Data ]
+              [ Sh-User-Data ]
               [ OC-Supported-Features ]
               [ OC-OLR ]
           *   [ Load ]
@@ -68,7 +68,7 @@ Profile-Update-Request ::= <Diameter Header: 307, REQ, PXY>
               { Destination-Realm }
               { User-Identity }
           *   { Data-Reference }
-              { User-Data }
+              { Sh-User-Data }
               [ DRMP ]
               [ Destination-Host ]
           *   [ Supported-Features ]
@@ -142,7 +142,7 @@ Subscribe-Notifications-Answer ::= <Diameter Header: 308, PXY>
               [ Wildcarded-Public-Identity ]
               [ Wildcarded-IMPU ]
           *   [ Supported-Features ]
-              [ User-Data ]
+              [ Sh-User-Data ]
               [ Expiry-Time ]
               [ OC-Supported-Features ]
               [ OC-OLR ]
@@ -161,7 +161,7 @@ Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
               { Destination-Host }
               { Destination-Realm }
               { User-Identity }
-              { User-Data }
+              { Sh-User-Data }
               [ DRMP ]
           *   [ Supported-Features ]
               [ Wildcarded-Public-Identity ]

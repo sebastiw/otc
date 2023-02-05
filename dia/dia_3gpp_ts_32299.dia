@@ -107,7 +107,7 @@ SGSN-Address                                                1228 Address        
 PoC-Session-Id                                              1229 UTF8String        VM
 Deferred-Location-Event-Type                                1230 UTF8String        VM
 LCS-APN                                                     1231 UTF8String        VM
-LCS-Client-Id                                               1232 Grouped           VM
+LCS-Client-ID                                               1232 Grouped           VM
 LCS-Client-Dialed-By-MS                                     1233 UTF8String        VM
 LCS-Client-External-ID                                      1234 UTF8String        VM
 LCS-Client-Name                                             1235 Grouped           VM
@@ -497,13 +497,6 @@ Talk-Burst-Exchange ::= <AVP Header: 1255>
               [ Received-Talk-Burst-Time ]
               [ Number-Of-Participants ]
               [ PoC-Change-Condition ]
-
-Services-Generic-Information ::= <AVP Header: 1256>
-;; Defined in OMA-DDS-Charging_Data
-              [ Application-Server-ID ]
-              [ Application-Service-Type ]
-              [ Application-Session-ID ]
-              [ Delivery-Status ]
 
 Participant-Group ::= <AVP Header: 1260>
               [ Called-Party-Address ]

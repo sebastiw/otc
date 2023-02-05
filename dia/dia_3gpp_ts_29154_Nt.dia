@@ -21,7 +21,7 @@ BT-Request ::= <Diameter Header: 8388723, REQ, PXY>
               [ CC-Input-Octets ]
               [ CC-Total-Octets ]
               [ Number-Of-UEs ]
-              [ Time-Window ]
+              [ SCSAS-Time-Window ]
               [ Network-Area-Info-List ]
               [ Reference-Id ]
               [ Transfer-Policy-Id ]
