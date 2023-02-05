@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29209_Gq
 @vendor   10415 3GPP
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 
 AA-Request ::= <Diameter Header: 265, REQ, PXY>

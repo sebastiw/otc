@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29273_STa
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 Diameter-EAP-Request ::= <Diameter Header: 268, REQ, PXY>
               < Session-Id >

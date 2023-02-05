@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29215_S9a
 @vendor   10415 3GPP
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 CC-Request ::= <Diameter Header: 272, REQ, PXY>
               < Session-Id >

@@ -161,6 +161,223 @@ UE-Status                                                   2854 Unsigned32     
 Presence-Reporting-Area-Node                                2855 Unsigned32        V 
 
 @grouped
+Charging-Rule-Install ::= <AVP Header: 1001>
+          *   [ Charging-Rule-Definition ]
+          *   [ Charging-Rule-Name ]
+          *   [ Charging-Rule-Base-Name ]
+              [ Bearer-Identifier ]
+              [ Monitoring-Flags ]
+              [ Rule-Activation-Time ]
+              [ Rule-Deactivation-Time ]
+              [ Resource-Allocation-Notification ]
+              [ Charging-Correlation-Indicator ]
+              [ IP-CAN-Type ]
+          *   [ AVP ]
+
+Charging-Rule-Remove ::= <AVP Header: 1002>
+          *   [ Charging-Rule-Name ]
+          *   [ Charging-Rule-Base-Name ]
+          *   [ Required-Access-Info ]
+              [ Resource-Release-Notification ]
+          *   [ AVP ]
+
+Charging-Rule-Definition ::= <AVP Header: 1003>
+              { Charging-Rule-Name }
+              [ Service-Identifier ]
+              [ Rating-Group ]
+          *   [ Flow-Information ]
+              [ Default-Bearer-Indication ]
+              [ TDF-Application-Identifier ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ PS-to-CS-Session-Continuity ]
+              [ Reporting-Level ]
+              [ Online ]
+              [ Offline ]
+              [ Max-PLR-DL ]
+              [ Max-PLR-UL ]
+              [ Metering-Method ]
+              [ Precedence ]
+              [ AF-Charging-Identifier ]
+          *   [ Flows ]
+              [ Monitoring-Key ]
+         0*2  [ Redirect-Information ]
+              [ Mute-Notification ]
+              [ AF-Signalling-Protocol ]
+              [ Sponsor-Identity ]
+              [ Application-Service-Provider-Identity ]
+          *   [ Required-Access-Info ]
+              [ Sharing-Key-DL ]
+              [ Sharing-Key-UL ]
+              [ Traffic-Steering-Policy-Identifier-DL ]
+              [ Traffic-Steering-Policy-Identifier-UL ]
+              [ Content-Version ]
+          *   [ Calling-Party-Address ]
+              [ Callee-Information ]
+          *   [ AVP ]
+
+TFT-Packet-Filter-Information ::= <AVP Header: 1013>
+              [ Precedence ]
+              [ TFT-Filter ]
+              [ ToS-Traffic-Class ]
+              [ Security-Parameter-Index ]
+              [ Flow-Label ]
+              [ Flow-Direction ]
+          *   [ AVP ]
+
+QoS-Information ::= <AVP Header: 1016>
+              [ QoS-Class-Identifier ]
+              [ Max-Requested-Bandwidth-UL ]
+              [ Max-Requested-Bandwidth-DL ]
+              [ Extended-Max-Requested-BW-UL ]
+              [ Extended-Max-Requested-BW-DL ]
+              [ Guaranteed-Bitrate-UL ]
+              [ Guaranteed-Bitrate-DL ]
+              [ Extended-GBR-UL ]
+              [ Extended-GBR-DL ]
+              [ Bearer-Identifier ]
+              [ Allocation-Retention-Priority ]
+              [ APN-Aggregate-Max-Bitrate-UL ]
+              [ APN-Aggregate-Max-Bitrate-DL ]
+              [ Extended-APN-AMBR-UL ]
+              [ Extended-APN-AMBR-DL ]
+          *   [ Conditional-APN-Aggregate-Max-Bitrate ]
+          *   [ AVP ]
+
+Charging-Rule-Report ::= <AVP Header: 1018>
+          *   [ Charging-Rule-Name ]
+          *   [ Charging-Rule-Base-Name ]
+              [ Bearer-Identifier ]
+              [ PCC-Rule-Status ]
+              [ Rule-Failure-Code ]
+              [ Final-Unit-Indication ]
+          *   [ RAN-NAS-Release-Cause ]
+          *   [ Content-Version ]
+          *   [ AVP ]
+
+Access-Network-Charging-Identifier-Gx ::= <AVP Header: 1022>
+              { Access-Network-Charging-Identifier-Value }
+          *   [ Charging-Rule-Base-Name ]
+          *   [ Charging-Rule-Name ]
+              [ IP-CAN-Session-Charging-Scope ]
+          *   [ AVP ]
+
+Event-Report-Indication ::= <AVP Header: 1033>
+              [ AN-Trusted ]
+          *   [ Event-Trigger ]
+              [ User-CSG-Information ]
+              [ IP-CAN-Type ]
+         0*2  [ AN-GW-Address ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-SGSN-Ipv6-Address ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ Framed-IP-Address ]
+              [ RAT-Type ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ Trace-Data ]
+              [ Trace-Reference ]
+              [ 3GPP2-BSID ]
+              [ 3GPP-MS-TimeZone ]
+              [ Routing-IP-Address ]
+              [ UE-Local-IP-Address ]
+              [ HeNB-Local-IP-Address ]
+              [ UDP-Source-Port ]
+              [ Presence-Reporting-Area-Information ]
+          *   [ AVP ]
+
+Allocation-Retention-Priority ::= <AVP Header: 1034>
+              { Priority-Level }
+              [ Pre-emption-Capability ]
+              [ Pre-emption-Vulnerability ]
+
+Tunnel-Information ::= <AVP Header: 1038>
+              [ Tunnel-Header-Length ]
+         2*2  [ Tunnel-Header-Filter ]
+          *   [ AVP ]
+
+CoA-Information ::= <AVP Header: 1039>
+              { Tunnel-Information }
+              { CoA-IP-Address }
+          *   [ AVP ]
+
+Default-EPS-Bearer-QoS ::= <AVP Header: 1049>
+              [ QoS-Class-Identifier ]
+              [ Allocation-Retention-Priority ]
+          *   [ AVP ]
+
+Flow-Information ::= <AVP Header: 1058>
+              [ Flow-Description ]
+              [ Packet-Filter-Identifier ]
+              [ Packet-Filter-Usage ]
+              [ ToS-Traffic-Class ]
+              [ Security-Parameter-Index ]
+              [ Flow-Label ]
+              [ Flow-Direction ]
+              [ Routing-Rule-Identifier ]
+          *   [ AVP ]
+
+Packet-Filter-Information ::= <AVP Header: 1061>
+              [ Packet-Filter-Identifier ]
+              [ Precedence ]
+              [ Packet-Filter-Content ]
+              [ ToS-Traffic-Class ]
+              [ Security-Parameter-Index ]
+              [ Flow-Label ]
+              [ Flow-Direction ]
+          *   [ AVP ]
+
+Usage-Monitoring-Information ::= <AVP Header: 1067>
+              [ Monitoring-Key ]
+         0*2  [ Granted-Service-Unit ]
+         0*2  [ Used-Service-Unit ]
+              [ Quota-Consumption-Time ]
+              [ Usage-Monitoring-Level ]
+              [ Usage-Monitoring-Report ]
+              [ Usage-Monitoring-Support ]
+          *   [ AVP ]
+
+Routing-Rule-Install ::= <AVP Header: 1081>
+          *   [ Routing-Rule-Definition ]
+          *   [ AVP ]
+
+Routing-Rule-Remove ::= <AVP Header: 1075>
+          *   [ Routing-Rule-Identifier ]
+          *   [ AVP ]
+
+Routing-Rule-Definition ::= <AVP Header: 1076>
+              { Routing-Rule-Identifier }
+          *   [ Routing-Filter ]
+              [ Precedence ]
+              [ Routing-IP-Address ]
+              [ IP-CAN-Type ]
+          *   [ AVP ]
+
+Routing-Filter ::= <AVP Header: 1078>
+              { Flow-Description }
+              { Flow-Direction }
+              [ ToS-Traffic-Class ]
+              [ Security-Parameter-Index ]
+              [ Flow-Label ]
+          *   [ AVP ]
+
+TDF-Information ::= <AVP Header: 1087>
+              [ TDF-Destination-Realm ]
+              [ TDF-Destination-Host ]
+              [ TDF-IP-Address ]
+
+Redirect-Information ::= <AVP Header: 1085>
+              [ Redirect-Support ]
+              [ Redirect-Address-Type ]
+              [ Redirect-Server-Address ]
+          *   [ AVP ]
+
+Application-Detection-Information ::= <AVP Header: 1098>
+              { TDF-Application-Identifier }
+              [ TDF-Application-Instance-Identifier ]
+          *   [ Flow-Information ]
+          *   [ AVP ]
+
 Default-QoS-Information ::= <AVP Header: 2816>
               [ QoS-Class-Identifier ]
               [ Max-Requested-Bandwidth-UL ]

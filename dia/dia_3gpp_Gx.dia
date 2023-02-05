@@ -4,6 +4,8 @@
 @name     dia_3gpp_Gx
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 
 CC-Request ::= < Diameter Header: 272, REQ, PXY >

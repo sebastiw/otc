@@ -4,6 +4,8 @@
 @name     dia_3gpp_S6
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 Update-Location-Request ::= <Diameter Header: 316, REQ, PXY>
               < Session-Id >

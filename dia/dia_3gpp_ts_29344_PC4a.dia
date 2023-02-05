@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29344_PC4a
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 ProSe-Subscriber-Information-Request ::= <Diameter Header: 8388664, REQ, PXY>
               < Session-Id >

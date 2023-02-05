@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29337
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 Device-Trigger-Request ::= <Diameter Header: 8388643, REQ, PXY>
               < Session-Id >

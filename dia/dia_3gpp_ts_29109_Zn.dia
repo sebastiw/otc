@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29109_Zn
 @vendor   10415 3GPP
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 Bootstrapping-Info-Request ::= <Diameter Header: 310, REQ, PXY>
               < Session-Id >

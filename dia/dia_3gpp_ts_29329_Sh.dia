@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29329_Sh
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               < Session-Id >

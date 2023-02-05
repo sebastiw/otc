@@ -1003,7 +1003,7 @@ CPDT-Information ::= <AVP Header: 3927>
               [ NIDD-submission ]
 
 NIDD-Submission ::= <AVP Header: 3928>
-              [ Submission-Timestamp ]
+              [ Submission-Time ]
               [ Event-Timestamp ]
               [ Accounting-Input-Octets ]
               [ Accounting-Output-Octets ]

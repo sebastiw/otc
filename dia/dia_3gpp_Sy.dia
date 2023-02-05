@@ -4,6 +4,8 @@
 @name     dia_3gpp_Sy
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 
 Spending-Limit-Request ::= <Diameter Header: 8388635, REQ, PXY>

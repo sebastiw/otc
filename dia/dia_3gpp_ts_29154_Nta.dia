@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29154_Nta
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 EC-Request ::= <Diameter Header: 8388735, REQ, PXY>
               < Session-Id >

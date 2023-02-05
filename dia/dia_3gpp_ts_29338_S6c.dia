@@ -4,6 +4,8 @@
 @name     dia_3gpp_ts_29338_S6c
 @vendor   10415 3gpp
 
+@inherits diameter_gen_base_rfc6733
+
 @messages
 
 Send-Routing-Info-for-SM-Request ::= <Diameter Header: 8388647, REQ, PXY>
