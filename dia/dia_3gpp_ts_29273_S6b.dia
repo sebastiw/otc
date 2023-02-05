@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 Diameter-EAP-Request ::= <Diameter Header: 268, REQ, PXY>
               < Session-Id >

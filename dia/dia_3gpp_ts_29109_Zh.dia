@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 Multimedia-Auth-Request ::= <Diameter Header: 303, REQ, PXY>
               < Session-Id >

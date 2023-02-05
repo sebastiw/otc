@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 Update-Location-Request ::= <Diameter Header: 316, REQ, PXY>
               < Session-Id >
@@ -325,6 +327,8 @@ Notify-Answer ::= <Diameter Header: 323, PXY>
           *   [ Route-Record ]
 
 @inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
 
 @avp_types
 Monitoring-Event-Configuration                    3122 Grouped          V

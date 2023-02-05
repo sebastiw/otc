@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 V2X-PC5-Allowed-PLMN                                        4600 Grouped           MV
 V2X-Update-Flags                                            4601 Unsigned32        MV

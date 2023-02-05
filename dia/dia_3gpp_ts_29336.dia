@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 IP-SM-GW-Number                                             3100 OctetString       MV
 IP-SM-GW-Name                                               3101 DiameterIdentity  MV

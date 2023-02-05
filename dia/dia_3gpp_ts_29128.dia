@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 Monitoring-Event-Configuration                              3122 Grouped           MV ; redefined from TS 29.336
 Monitoring-Event-Report                                     3123 Grouped           MV ; redefined from TS 29.336

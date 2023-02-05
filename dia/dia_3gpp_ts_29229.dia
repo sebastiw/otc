@@ -8,6 +8,8 @@ Line-Identifier
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 Visited-Network-Identifier                                  600  OctetString       MV
 Public-Identity                                             601  UTF8String        MV

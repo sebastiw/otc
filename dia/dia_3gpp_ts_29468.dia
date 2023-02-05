@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 BMSC-Address                                                3500 Address           MV
 BMSC-Port                                                   3501 Unsigned32        MV

@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 
 CC-Request ::= < Diameter Header: 272, REQ, PXY >

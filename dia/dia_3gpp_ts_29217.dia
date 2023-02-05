@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 Aggregated-Congestion-Info                                  4000 Grouped           VM
 Aggregated-RUCI-Report                                      4001 Grouped           VM

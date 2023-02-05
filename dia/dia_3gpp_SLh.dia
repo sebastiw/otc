@@ -3,6 +3,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 LCS-Routing-Info-Request ::= <Diameter Header: 8388622, REQ, PXY>
               < Session-Id >

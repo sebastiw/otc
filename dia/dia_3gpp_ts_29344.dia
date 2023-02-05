@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 ProSe-Subscription-Data                                     3701 Grouped           MV
 ProSe-Permission                                            3702 Unsigned32        MV

@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 Abort-Cause                                        500 Enumerated       MV
 Access-Network-Charging-Address                    501 Address          MV

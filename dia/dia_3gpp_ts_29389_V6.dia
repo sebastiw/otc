@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 ProSe-Authorization-Request ::= <Diameter Header: 8388668, REQ, PXY>
               < Session-Id >

@@ -7,6 +7,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 Data-Pull-Request ::= <Diameter Header: 8388728, REQ, PXY>
               < Session-Id >

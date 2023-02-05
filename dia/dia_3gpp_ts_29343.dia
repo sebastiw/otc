@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 Origin-App-Layer-User-Id                          3600 UTF8String       MV
 Target-App-Layer-User-Id                          3601 UTF8String       MV

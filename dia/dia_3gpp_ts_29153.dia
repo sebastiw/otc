@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 Network-Congestion-Area-Report                              4101 Grouped           MV
 Ns-Request-Type                                             4102 Unsigned32        MV

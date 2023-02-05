@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 Subscription-Data                                 1400 Grouped          MV
 Terminal-Information                              1401 Grouped          MV

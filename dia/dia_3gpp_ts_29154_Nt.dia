@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @messages
 BT-Request ::= <Diameter Header: 8388723, REQ, PXY>
               < Session-Id >

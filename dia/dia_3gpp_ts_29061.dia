@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 3GPP-IMSI                                                   1    UTF8String        V 
 3GPP-Charging-Id                                            2    OctetString       V 

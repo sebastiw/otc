@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 SC-Address                                                  3300 OctetString       MV
 SM-RP-UI                                                    3301 OctetString       MV

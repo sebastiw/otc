@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 LMSI                                                        2400 OctetString       MV
 Serving-Node                                                2401 Grouped           MV

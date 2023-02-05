@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 MIP6-Feature-Vector                                         124  Unsigned64        M 
 3GPP-AAA-Server-Name                                        318  DiameterIdentity  MV

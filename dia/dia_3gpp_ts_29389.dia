@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+
 @avp_types
 V2X-Authorization-Data                                      4700 Grouped           - 
 V2X-Permission-in-VPLMN                                     4701 Unsigned32        - 
