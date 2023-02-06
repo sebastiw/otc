@@ -74,7 +74,7 @@ Session-Linking-Indicator                                   1064 Enumerated     
 PDN-Connection-ID                                           1065 OctetString       V 
 Monitoring-Key                                              1066 OctetString       V 
 Usage-Monitoring-Information                                1067 Grouped           V 
-Usage-Monitoring-Level                                      1068 Enumarated        V 
+Usage-Monitoring-Level                                      1068 Enumerated        V 
 Usage-Monitoring-Report                                     1069 Enumerated        V 
 Usage-Monitoring-Support                                    1070 Enumerated        V 
 CSG-Information-Reporting                                   1071 Enumerated        V 
