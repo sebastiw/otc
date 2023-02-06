@@ -2,533 +2,532 @@
 
 @name     dia_ietf_rfc5777
 
-
 @inherits diameter_gen_base_rfc6733
 
 @avp_types
-QoS-Resources                         508 Grouped     -
-Filter-Rule                           509 Grouped     -
-Filter-Rule-Precedence                510 Unsigned32  -
-Classifier                            511 Grouped     -
-Classifier-ID                         512 OctetString -
-Protocol                              513 Enumerated  -
-Direction                             514 Enumerated  -
-From-Spec                             515 Grouped     -
-To-Spec                               516 Grouped     -
-Negated                               517 Enumerated  -
-IP-Address                            518 Address     -
-IP-Address-Range                      519 Grouped     -
-IP-Address-Start                      520 Address     -
-IP-Address-End                        521 Address     -
-IP-Address-Mask                       522 Grouped     -
-IP-Mask-Bit-Mask-Width                523 Unsigned32  -
-MAC-Address                           524 OctetString -
-MAC-Address-Mask                      525 Grouped     -
-MAC-Address-Mask-Pattern              526 OctetString -
-EUI64-Address                         527 OctetString -
-EUI64-Address-Mask                    528 Grouped     -
-EUI64-Address-Mask-Pattern            529 OctetString -
-Port                                  530 Integer32   -
-Port-Range                            531 Grouped     -
-Port-Start                            532 Integer32   -
-Port-End                              533 Integer32   -
-Use-Assigned-Address                  534 Enumerated  -
-Diffserv-Code-Point                   535 Enumerated  -
-Fragmentation-Flag                    536 Enumerated  -
-IP-Option                             537 Grouped     -
-IP-Option-Type                        538 Enumerated  -
-IP-Option-Value                       539 OctetString -
-TCP-Option                            540 Grouped     -
-TCP-Option-Type                       541 Enumerated  -
-TCP-Option-Value                      542 OctetString -
-TCP-Flags                             543 Grouped     -
-TCP-Flag-Type                         544 Unsigned32  -
-ICMP-Type                             545 Grouped     -
-ICMP-Type-Number                      546 Enumerated  -
-ICMP-Code                             547 Enumerated  -
-ETH-Option                            548 Grouped     -
-ETH-Proto-Type                        549 Grouped     -
-ETH-Ether-Type                        550 OctetString -
-ETH-SAP                               551 OctetString -
-VLAN-ID-Range                         552 Grouped     -
-S-VID-Start                           553 Unsigned32  -
-S-VID-End                             554 Unsigned32  -
-C-VID-Start                           555 Unsigned32  -
-C-VID-End                             556 Unsigned32  -
-User-Priority-Range                   557 Grouped     -
-Low-User-Priority                     558 Unsigned32  -
-High-User-Priority                    559 Unsigned32  -
-Time-Of-Day-Condition                 560 Grouped     -
-Time-Of-Day-Start                     561 Unsigned32  -
-Time-Of-Day-End                       562 Unsigned32  -
-Day-Of-Week-Mask                      563 Unsigned32  -
-Day-Of-Month-Mask                     564 Unsigned32  -
-Month-Of-Year-Mask                    565 Unsigned32  -
-Absolute-Start-Time                   566 Time        -
-Absolute-Start-Fractional-Seconds     567 Unsigned32  -
-Absolute-End-Time                     568 Time        -
-Absolute-End-Fractional-Seconds       569 Unsigned32  -
-Timezone-Flag                         570 Enumerated  -
-Timezone-Offset                       571 Integer32   -
-Treatment-Action                      572 Grouped     -
-QoS-Profile-Id                        573 Unsigned32  -
-QoS-Profile-Template                  574 Grouped     -
-QoS-Semantics                         575 Enumerated  -
-QoS-Parameters                        576 Grouped     -
-Excess-Treatment                      577 Grouped     -
-QoS-Capability                        578 Grouped     -
+QoS-Resources                                               508  Grouped           - 
+Filter-Rule                                                 509  Grouped           - 
+Filter-Rule-Precedence                                      510  Unsigned32        - 
+Classifier                                                  511  Grouped           - 
+Classifier-ID                                               512  OctetString       - 
+Protocol                                                    513  Enumerated        - 
+Direction                                                   514  Enumerated        - 
+From-Spec                                                   515  Grouped           - 
+To-Spec                                                     516  Grouped           - 
+Negated                                                     517  Enumerated        - 
+IP-Address                                                  518  Address           - 
+IP-Address-Range                                            519  Grouped           - 
+IP-Address-Start                                            520  Address           - 
+IP-Address-End                                              521  Address           - 
+IP-Address-Mask                                             522  Grouped           - 
+IP-Mask-Bit-Mask-Width                                      523  Unsigned32        - 
+MAC-Address                                                 524  OctetString       - 
+MAC-Address-Mask                                            525  Grouped           - 
+MAC-Address-Mask-Pattern                                    526  OctetString       - 
+EUI64-Address                                               527  OctetString       - 
+EUI64-Address-Mask                                          528  Grouped           - 
+EUI64-Address-Mask-Pattern                                  529  OctetString       - 
+Port                                                        530  Integer32         - 
+Port-Range                                                  531  Grouped           - 
+Port-Start                                                  532  Integer32         - 
+Port-End                                                    533  Integer32         - 
+Use-Assigned-Address                                        534  Enumerated        - 
+Diffserv-Code-Point                                         535  Enumerated        - 
+Fragmentation-Flag                                          536  Enumerated        - 
+IP-Option                                                   537  Grouped           - 
+IP-Option-Type                                              538  Enumerated        - 
+IP-Option-Value                                             539  OctetString       - 
+TCP-Option                                                  540  Grouped           - 
+TCP-Option-Type                                             541  Enumerated        - 
+TCP-Option-Value                                            542  OctetString       - 
+TCP-Flags                                                   543  Grouped           - 
+TCP-Flag-Type                                               544  Unsigned32        - 
+ICMP-Type                                                   545  Grouped           - 
+ICMP-Type-Number                                            546  Enumerated        - 
+ICMP-Code                                                   547  Enumerated        - 
+ETH-Option                                                  548  Grouped           - 
+ETH-Proto-Type                                              549  Grouped           - 
+ETH-Ether-Type                                              550  OctetString       - 
+ETH-SAP                                                     551  OctetString       - 
+VLAN-ID-Range                                               552  Grouped           - 
+S-VID-Start                                                 553  Unsigned32        - 
+S-VID-End                                                   554  Unsigned32        - 
+C-VID-Start                                                 555  Unsigned32        - 
+C-VID-End                                                   556  Unsigned32        - 
+User-Priority-Range                                         557  Grouped           - 
+Low-User-Priority                                           558  Unsigned32        - 
+High-User-Priority                                          559  Unsigned32        - 
+Time-Of-Day-Condition                                       560  Grouped           - 
+Time-Of-Day-Start                                           561  Unsigned32        - 
+Time-Of-Day-End                                             562  Unsigned32        - 
+Day-Of-Week-Mask                                            563  Unsigned32        - 
+Day-Of-Month-Mask                                           564  Unsigned32        - 
+Month-Of-Year-Mask                                          565  Unsigned32        - 
+Absolute-Start-Time                                         566  Time              - 
+Absolute-Start-Fractional-Seconds                           567  Unsigned32        - 
+Absolute-End-Time                                           568  Time              - 
+Absolute-End-Fractional-Seconds                             569  Unsigned32        - 
+Timezone-Flag                                               570  Enumerated        - 
+Timezone-Offset                                             571  Integer32         - 
+Treatment-Action                                            572  Grouped           - 
+QoS-Profile-Id                                              573  Unsigned32        - 
+QoS-Profile-Template                                        574  Grouped           - 
+QoS-Semantics                                               575  Enumerated        - 
+QoS-Parameters                                              576  Grouped           - 
+Excess-Treatment                                            577  Grouped           - 
+QoS-Capability                                              578  Grouped           - 
 
 @grouped
-QoS-Resources ::= < AVP Header: 508 >
-                1*{ Filter-Rule }
-                * [ AVP ]
+QoS-Resources ::= <AVP Header: 508>
+         1*   { Filter-Rule }
+          *   [ AVP ]
 
-Filter-Rule ::= < AVP Header: 509 >
-             [ Filter-Rule-Precedence ]
+Filter-Rule ::= <AVP Header: 509>
+              [ Filter-Rule-Precedence ]
 
              ; Condition part of a Rule
              ; ------------------------
-             [ Classifier ]
-           * [ Time-Of-Day-Condition ]
+              [ Classifier ]
+          *   [ Time-Of-Day-Condition ]
 
              ; Action and Meta-Data
              ; --------------------
-             [ Treatment-Action ]
+              [ Treatment-Action ]
 
              ; Info about QoS related Actions
              ; ------------------------------
-             [ QoS-Semantics ]
-             [ QoS-Profile-Template ]
-             [ QoS-Parameters ]
-             [ Excess-Treatment ]
+              [ QoS-Semantics ]
+              [ QoS-Profile-Template ]
+              [ QoS-Parameters ]
+              [ Excess-Treatment ]
 
 
              ; Extension Point
              ; ---------------
-           * [ AVP ]
+          *   [ AVP ]
 
-Classifier ::= < AVP Header: 511 >
-               { Classifier-ID }
-               [ Protocol ]
-               [ Direction ]
-             * [ From-Spec ]
-             * [ To-Spec ]
-             * [ Diffserv-Code-Point ]
-               [ Fragmentation-Flag ]
-             * [ IP-Option ]
-             * [ TCP-Option ]
-               [ TCP-Flags ]
-             * [ ICMP-Type ]
-             * [ ETH-Option ]
-             * [ AVP ]
+Classifier ::= <AVP Header: 511>
+              { Classifier-ID }
+              [ Protocol ]
+              [ Direction ]
+          *   [ From-Spec ]
+          *   [ To-Spec ]
+          *   [ Diffserv-Code-Point ]
+              [ Fragmentation-Flag ]
+          *   [ IP-Option ]
+          *   [ TCP-Option ]
+              [ TCP-Flags ]
+          *   [ ICMP-Type ]
+          *   [ ETH-Option ]
+          *   [ AVP ]
 
-From-Spec ::= < AVP Header: 515 >
-            * [ IP-Address ]
-            * [ IP-Address-Range ]
-            * [ IP-Address-Mask ]
-            * [ MAC-Address ]
-            * [ MAC-Address-Mask]
-            * [ EUI64-Address ]
-            * [ EUI64-Address-Mask]
-            * [ Port ]
-            * [ Port-Range ]
+From-Spec ::= <AVP Header: 515>
+          *   [ IP-Address ]
+          *   [ IP-Address-Range ]
+          *   [ IP-Address-Mask ]
+          *   [ MAC-Address ]
+          *   [ MAC-Address-Mask ]
+          *   [ EUI64-Address ]
+          *   [ EUI64-Address-Mask ]
+          *   [ Port ]
+          *   [ Port-Range ]
               [ Negated ]
               [ Use-Assigned-Address ]
-            * [ AVP ]
+          *   [ AVP ]
 
 
-To-Spec ::= < AVP Header: 516 >
-          * [ IP-Address ]
-          * [ IP-Address-Range ]
-          * [ IP-Address-Mask ]
-          * [ MAC-Address ]
-          * [ MAC-Address-Mask]
-          * [ EUI64-Address ]
-          * [ EUI64-Address-Mask]
-          * [ Port ]
-          * [ Port-Range ]
-            [ Negated ]
-            [ Use-Assigned-Address ]
-          * [ AVP ]
-
-IP-Address-Range ::= < AVP Header: 519 >
-                     [ IP-Address-Start ]
-                     [ IP-Address-End ]
-                   * [ AVP ]
-
-IP-Address-Mask ::= < AVP Header: 522 >
-                    { IP-Address }
-                    { IP-Bit-Mask-Width }
-                  * [ AVP ]
-
-MAC-Address-Mask ::= < AVP Header: 525 >
-                     { MAC-Address }
-                     { MAC-Address-Mask-Pattern }
-                   * [ AVP ]
-
-EUI64-Address-Mask ::= < AVP Header: 528 >
-                       { EUI64-Address }
-                       { EUI64-Address-Mask-Pattern }
-                     * [ AVP ]
-
-Port-Range ::= < AVP Header: 531 >
-               [ Port-Start ]
-               [ Port-End ]
-             * [ AVP ]
-
-IP-Option ::= < AVP Header: 537 >
-              { IP-Option-Type }
-            * [ IP-Option-Value ]
+To-Spec ::= <AVP Header: 516>
+          *   [ IP-Address ]
+          *   [ IP-Address-Range ]
+          *   [ IP-Address-Mask ]
+          *   [ MAC-Address ]
+          *   [ MAC-Address-Mask ]
+          *   [ EUI64-Address ]
+          *   [ EUI64-Address-Mask ]
+          *   [ Port ]
+          *   [ Port-Range ]
               [ Negated ]
-            * [ AVP ]
+              [ Use-Assigned-Address ]
+          *   [ AVP ]
 
-TCP-Option ::= < AVP Header: 540 >
-               { TCP-Option-Type }
-             * [ TCP-Option-Value ]
-               [ Negated ]
-             * [ AVP ]
+IP-Address-Range ::= <AVP Header: 519>
+              [ IP-Address-Start ]
+              [ IP-Address-End ]
+          *   [ AVP ]
 
-TCP-Flags ::= < AVP Header: 543 >
+IP-Address-Mask ::= <AVP Header: 522>
+              { IP-Address }
+              { IP-Bit-Mask-Width }
+          *   [ AVP ]
+
+MAC-Address-Mask ::= <AVP Header: 525>
+              { MAC-Address }
+              { MAC-Address-Mask-Pattern }
+          *   [ AVP ]
+
+EUI64-Address-Mask ::= <AVP Header: 528>
+              { EUI64-Address }
+              { EUI64-Address-Mask-Pattern }
+          *   [ AVP ]
+
+Port-Range ::= <AVP Header: 531>
+              [ Port-Start ]
+              [ Port-End ]
+          *   [ AVP ]
+
+IP-Option ::= <AVP Header: 537>
+              { IP-Option-Type }
+          *   [ IP-Option-Value ]
+              [ Negated ]
+          *   [ AVP ]
+
+TCP-Option ::= <AVP Header: 540>
+              { TCP-Option-Type }
+          *   [ TCP-Option-Value ]
+              [ Negated ]
+          *   [ AVP ]
+
+TCP-Flags ::= <AVP Header: 543>
               { TCP-Flag-Type }
               [ Negated ]
-            * [ AVP ]
+          *   [ AVP ]
 
-ICMP-Type ::= < AVP Header: 545 >
+ICMP-Type ::= <AVP Header: 545>
               { ICMP-Type-Number }
-            * [ ICMP-Code ]
+          *   [ ICMP-Code ]
               [ Negated ]
-            * [ AVP ]
+          *   [ AVP ]
 
-ETH-Option ::= < AVP Header: 548 >
-               { ETH-Proto-Type }
-             * [ VLAN-ID-Range ]
-             * [ User-Priority-Range ]
-             * [ AVP ]
+ETH-Option ::= <AVP Header: 548>
+              { ETH-Proto-Type }
+          *   [ VLAN-ID-Range ]
+          *   [ User-Priority-Range ]
+          *   [ AVP ]
 
-ETH-Proto-Type ::= < AVP Header: 549 >
-                 * [ ETH-Ether-Type ]
-                 * [ ETH-SAP ]
-                 * [ AVP ]
+ETH-Proto-Type ::= <AVP Header: 549>
+          *   [ ETH-Ether-Type ]
+          *   [ ETH-SAP ]
+          *   [ AVP ]
 
-VLAN-ID-Range ::= < AVP Header: 552 >
-                  [ S-VID-Start ]
-                  [ S-VID-End ]
-                  [ C-VID-Start ]
-                  [ C-VID-End ]
-                * [ AVP ]
+VLAN-ID-Range ::= <AVP Header: 552>
+              [ S-VID-Start ]
+              [ S-VID-End ]
+              [ C-VID-Start ]
+              [ C-VID-End ]
+          *   [ AVP ]
 
-User-Priority-Range ::= < AVP Header: 557 >
-                      * [ Low-User-Priority ]
-                      * [ High-User-Priority ]
-                      * [ AVP ]
+User-Priority-Range ::= <AVP Header: 557>
+          *   [ Low-User-Priority ]
+          *   [ High-User-Priority ]
+          *   [ AVP ]
 
-Time-Of-Day-Condition ::= < AVP Header: 560 >
-                          [ Time-Of-Day-Start ]
-                          [ Time-Of-Day-End ]
-                          [ Day-Of-Week-Mask ]
-                          [ Day-Of-Month-Mask ]
-                          [ Month-Of-Year-Mask ]
-                          [ Absolute-Start-Time ]
-                          [ Absolute-End-Time ]
-                          [ Timezone-Flag ]
-                        * [ AVP ]
+Time-Of-Day-Condition ::= <AVP Header: 560>
+              [ Time-Of-Day-Start ]
+              [ Time-Of-Day-End ]
+              [ Day-Of-Week-Mask ]
+              [ Day-Of-Month-Mask ]
+              [ Month-Of-Year-Mask ]
+              [ Absolute-Start-Time ]
+              [ Absolute-End-Time ]
+              [ Timezone-Flag ]
+          *   [ AVP ]
 
-QoS-Profile-Template ::= < AVP Header: 574 >
-                         { Vendor-Id }
-                         { QoS-Profile-Id }
-                       * [ AVP ]
+QoS-Profile-Template ::= <AVP Header: 574>
+              { Vendor-Id }
+              { QoS-Profile-Id }
+          *   [ AVP ]
 
-QoS-Parameters  ::= < AVP Header: 576 >
-                     * [ AVP ]
+QoS-Parameters ::= <AVP Header: 576>
+          *   [ AVP ]
 
-Excess-Treatment ::= < AVP Header: 577 >
-                     { Treatment-Action }
-                     [ QoS-Profile-Template ]
-                     [ QoS-Parameters ]
-                   * [ AVP ]
+Excess-Treatment ::= <AVP Header: 577>
+              { Treatment-Action }
+              [ QoS-Profile-Template ]
+              [ QoS-Parameters ]
+          *   [ AVP ]
 
-QoS-Capability ::= < AVP Header: 578 >
-                 1*{ QoS-Profile-Template }
-                 * [ AVP ]
+QoS-Capability ::= <AVP Header: 578>
+         1*   { QoS-Profile-Template }
+          *   [ AVP ]
 
 
 @enum Protocol
 ;; Managed by IANA
 ;; https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
-HOPOPT                                        0
-ICMP                                          1
-IGMP                                          2
-GGP                                           3
-IPv4                                          4
-ST                                            5
-TCP                                           6
-CBT                                           7
-EGP                                           8
-IGP                                           9
-BBN-RCC-MON                                   10
-NVP-II                                        11
-PUP                                           12
-ARGUS-(deprecated)                            13
-EMCON                                         14
-XNET                                          15
-CHAOS                                         16
-UDP                                           17
-MUX                                           18
-DCN-MEAS                                      19
-HMP                                           20
-PRM                                           21
-XNS-IDP                                       22
-TRUNK-1                                       23
-TRUNK-2                                       24
-LEAF-1                                        25
-LEAF-2                                        26
-RDP                                           27
-IRTP                                          28
-ISO-TP4                                       29
-NETBLT                                        30
-MFE-NSP                                       31
-MERIT-INP                                     32
-DCCP                                          33
-3PC                                           34
-IDPR                                          35
-XTP                                           36
-DDP                                           37
-IDPR-CMTP                                     38
-TP++                                          39
-IL                                            40
-IPv6                                          41
-SDRP                                          42
-IPv6-Route                                    43
-IPv6-Frag                                     44
-IDRP                                          45
-RSVP                                          46
-GRE                                           47
-DSR                                           48
-BNA                                           49
-ESP                                           50
-AH                                            51
-I-NLSP                                        52
-SWIPE-(deprecated)                            53
-NARP                                          54
-MOBILE                                        55
-TLSP                                          56
-SKIP                                          57
-IPv6-ICMP                                     58
-IPv6-NoNxt                                    59
-IPv6-Opts                                     60
-any-host-internal-protocol                    61
-CFTP                                          62
-any-local-network                             63
-SAT-EXPAK                                     64
-KRYPTOLAN                                     65
-RVD                                           66
-IPPC                                          67
-any-distributed-file-system                   68
-SAT-MON                                       69
-VISA                                          70
-IPCV                                          71
-CPNX                                          72
-CPHB                                          73
-WSN                                           74
-PVP                                           75
-BR-SAT-MON                                    76
-SUN-ND                                        77
-WB-MON                                        78
-WB-EXPAK                                      79
-ISO-IP 	                                      80
-VMTP 	                                      81
-SECURE-VMTP                                   82
-VINES                                         83
-TTP                                           84
-IPTM                                          84
-NSFNET-IGP                                    85
-DGP                                           86
-TCF                                           87
-EIGRP                                         88
-OSPFIGP                                       89
-Sprite-RPC                                    90
-LARP                                          91
-MTP                                           92
-AX.25                                         93
-IPIP                                          94
-MICP-(deprecated)                             95
-SCC-SP                                        96
-ETHERIP                                       97
-ENCAP                                         98
-any-private-encryption-scheme                 99
-GMTP                                          100
-IFMP                                          101
-PNNI                                          102
-PIM                                           103
-ARIS                                          104
-SCPS                                          105
-QNX                                           106
-A/N                                           107
-IPComp                                        108
-SNP                                           109
-Compaq-Peer                                   110
-IPX-in-IP                                     111
-VRRP                                          112
-PGM                                           113
-any-0hop-protocol                            114
-L2TP                                          115
-DDX                                           116
-IATP                                          117
-STP                                           118
-SRP                                           119
-UTI                                           120
-SMP                                           121
-SM-(deprecated)                               122
-PTP                                           123
-ISIS-over-IPv4                                124
-FIRE                                          125
-CRTP                                          126
-CRUDP                                         127
-SSCOPMCE                                      128
-IPLT                                          129
-SPS                                           130
-PIPE                                          131
-SCTP                                          132
-FC                                            133
-RSVP-E2E-IGNORE                               134
-Mobility Header                               135
-UDPLite                                       136
-MPLS-in-IP                                    137
-manet                                         138
-HIP                                           139
-Shim6                                         140
-WESP                                          141
-ROHC                                          142
-Ethernet                                      143
-AGGFRAG                                       144
+HOPOPT                                                       0
+ICMP                                                         1
+IGMP                                                         2
+GGP                                                          3
+IPv4                                                         4
+ST                                                           5
+TCP                                                          6
+CBT                                                          7
+EGP                                                          8
+IGP                                                          9
+BBN_RCC_MON                                                 10
+NVP_II                                                      11
+PUP                                                         12
+ARGUS_(deprecated)                                          13
+EMCON                                                       14
+XNET                                                        15
+CHAOS                                                       16
+UDP                                                         17
+MUX                                                         18
+DCN_MEAS                                                    19
+HMP                                                         20
+PRM                                                         21
+XNS_IDP                                                     22
+TRUNK_1                                                     23
+TRUNK_2                                                     24
+LEAF_1                                                      25
+LEAF_2                                                      26
+RDP                                                         27
+IRTP                                                        28
+ISO_TP4                                                     29
+NETBLT                                                      30
+MFE_NSP                                                     31
+MERIT_INP                                                   32
+DCCP                                                        33
+3PC                                                         34
+IDPR                                                        35
+XTP                                                         36
+DDP                                                         37
+IDPR_CMTP                                                   38
+TP++                                                        39
+IL                                                          40
+IPv6                                                        41
+SDRP                                                        42
+IPv6_Route                                                  43
+IPv6_Frag                                                   44
+IDRP                                                        45
+RSVP                                                        46
+GRE                                                         47
+DSR                                                         48
+BNA                                                         49
+ESP                                                         50
+AH                                                          51
+I_NLSP                                                      52
+SWIPE_(deprecated)                                          53
+NARP                                                        54
+MOBILE                                                      55
+TLSP                                                        56
+SKIP                                                        57
+IPv6_ICMP                                                   58
+IPv6_NoNxt                                                  59
+IPv6_Opts                                                   60
+any_host_internal_protocol                                  61
+CFTP                                                        62
+any_local_network                                           63
+SAT_EXPAK                                                   64
+KRYPTOLAN                                                   65
+RVD                                                         66
+IPPC                                                        67
+any_distributed_file_system                                 68
+SAT_MON                                                     69
+VISA                                                        70
+IPCV                                                        71
+CPNX                                                        72
+CPHB                                                        73
+WSN                                                         74
+PVP                                                         75
+BR_SAT_MON                                                  76
+SUN_ND                                                      77
+WB_MON                                                      78
+WB_EXPAK                                                    79
+ISO_IP                                                      80
+VMTP                                                        81
+SECURE_VMTP                                                 82
+VINES                                                       83
+TTP                                                         84
+IPTM                                                        84
+NSFNET_IGP                                                  85
+DGP                                                         86
+TCF                                                         87
+EIGRP                                                       88
+OSPFIGP                                                     89
+Sprite_RPC                                                  90
+LARP                                                        91
+MTP                                                         92
+AX.25                                                       93
+IPIP                                                        94
+MICP_(deprecated)                                           95
+SCC_SP                                                      96
+ETHERIP                                                     97
+ENCAP                                                       98
+any_private_encryption_scheme                               99
+GMTP                                                        100
+IFMP                                                        101
+PNNI                                                        102
+PIM                                                         103
+ARIS                                                        104
+SCPS                                                        105
+QNX                                                         106
+A/N                                                         107
+IPComp                                                      108
+SNP                                                         109
+Compaq_Peer                                                 110
+IPX_in_IP                                                   111
+VRRP                                                        112
+PGM                                                         113
+any_0hop_protocol                                           114
+L2TP                                                        115
+DDX                                                         116
+IATP                                                        117
+STP                                                         118
+SRP                                                         119
+UTI                                                         120
+SMP                                                         121
+SM_(deprecated)                                             122
+PTP                                                         123
+ISIS_over_IPv4                                              124
+FIRE                                                        125
+CRTP                                                        126
+CRUDP                                                       127
+SSCOPMCE                                                    128
+IPLT                                                        129
+SPS                                                         130
+PIPE                                                        131
+SCTP                                                        132
+FC                                                          133
+RSVP_E2E_IGNORE                                             134
+Mobility_Header                                             135
+UDPLite                                                     136
+MPLS_in_IP                                                  137
+manet                                                       138
+HIP                                                         139
+Shim6                                                       140
+WESP                                                        141
+ROHC                                                        142
+Ethernet                                                    143
+AGGFRAG                                                     144
 
 @enum Direction
-IN      0
-OUT    1
-BOTH  2
+IN                                                           0
+OUT                                                          1
+BOTH                                                         2
 
 @enum Negated
-False  0   
-True   1   
+False                                                        0
+True                                                         1
 
 @enum Use-Assigned-Address
-False  0   
-True   1   
+False                                                        0
+True                                                         1
 
 @enum Diffserv-Code-Point
 ;; Managed by IANA
 ;; https://www.iana.org/assignments/dscp-registry/dscp-registry.xhtml
-CS0           0
-CS1           8
-CS2           16
-CS3           24
-CS4           32
-CS5           40
-CS6           48
-CS7           56
+CS0                                                          0
+CS1                                                          8
+CS2                                                         16
+CS3                                                         24
+CS4                                                         32
+CS5                                                         40
+CS6                                                         48
+CS7                                                         56
 
 @enum Fragmentation-Flag
-DONT_FRAGMENT            0
-MORE_FRAGMENTS           1
+DONT_FRAGMENT                                                0
+MORE_FRAGMENTS                                               1
 
 @enum IP-Option-Type
 ;; Managed by IANA
 ;; https://www.iana.org/assignments/ip-parameters/ip-parameters.xhtml
-EOOL                     0   ; End of Options List
-NOP                      1   ; No Operation
-SEC                      2   ; Security
-LSR                      3   ; Loose Source Route
-TS                       4   ; Time Stamp
-ESEC                     5   ; Extended Security
-CIPSO                    6   ; Commercial Security
-RR                       7   ; Record Route
-SID                      8   ; Stream ID
-SSR                      9   ; Strict Source Route
-ZSU                      10  ; Experimental Measurement
-MTUP                     11  ; MTU Probe
-MTUR                     12  ; MTU Reply
-FINN                     13  ; Experimental Flow Control
-VISA                     14  ; Experimental Access Control
-ENCODE                   15  ; ???
-IMITD                    16  ; IMI Traffic Descriptor
-EIP                      17  ; Extended Internet Protocol
-TR                       18  ; Traceroute
-ADDEXT                   19  ; Address Extension
-RTRALT                   20  ; Router Alert
-SDB                      21  ; Selective Directed Broadcast
-DPS                      23  ; Dynamic Packet State
-UMP                      24  ; Upstream Multicast Pkt.
-QS                       25  ; Quick-Start
-EXP                      30  ; RFC3692-style Experiment
+EOOL                                                         0 ; End of Options List
+NOP                                                          1 ; No Operation
+SEC                                                          2 ; Security
+LSR                                                          3 ; Loose Source Route
+TS                                                           4 ; Time Stamp
+ESEC                                                         5 ; Extended Security
+CIPSO                                                        6 ; Commercial Security
+RR                                                           7 ; Record Route
+SID                                                          8 ; Stream ID
+SSR                                                          9 ; Strict Source Route
+ZSU                                                         10 ; Experimental Measurement
+MTUP                                                        11 ; MTU Probe
+MTUR                                                        12 ; MTU Reply
+FINN                                                        13 ; Experimental Flow Control
+VISA                                                        14 ; Experimental Access Control
+ENCODE                                                      15 ; ???
+IMITD                                                       16 ; IMI Traffic Descriptor
+EIP                                                         17 ; Extended Internet Protocol
+TR                                                          18 ; Traceroute
+ADDEXT                                                      19 ; Address Extension
+RTRALT                                                      20 ; Router Alert
+SDB                                                         21 ; Selective Directed Broadcast
+DPS                                                         23 ; Dynamic Packet State
+UMP                                                         24 ; Upstream Multicast Pkt.
+QS                                                          25 ; Quick-Start
+EXP                                                         30 ; RFC3692-style Experiment
 
 @enum TCP-Option-Type
 ;; Managed by IANA
 ;; https://www.iana.org/assignments/tcp-parameters/tcp-parameters.xhtml
-EOOL                      0  ; End of Option List
-NOP                       1  ; No-Operation
-MSS                       2  ; Maximum Segment Size
-WS                        3  ; Window Scale
-SACK_PERMITTED            4  ; SACK Permitted
-SACK                      5  ; SACK
-TS                        8  ; Timestamps
-SKEETER                   16 ; Skeeter
-BUBBA                     17 ; Bubba
-TCO                       18 ; Trailer Checksum Option
-SCPS_CAP                  20 ; SCPS Capabilities
-SNA                       21 ; Selective Negative Acknowledgements
-RB                        22 ; Record Boundaries
-CE                        23 ; Corruption experienced
-SNAP                      24 ; SNAP
-TCP_CF                    26 ; TCP Compression Filter
-QSR                       27 ; Quick-Start Response
-UTO                       28 ; User Timeout Option
-TCP_AO                    29 ; TCP Authentication Option (TCP-AO)
-MPTCP                     30 ; Multipath TCP (MPTCP)
-TCP_FOC                   34 ; TCP Fast Open Cookie
-TCP_ENO                   69 ; Encryption Negotiation (TCP-ENO)
-ACC_ECN0                 172 ; Accurate ECN Order 0 (AccECN0) (TEMPORARY - registered 2022-08-03, expires 2023-08-03)
-ACC_ECN1                 174 ; Accurate ECN Order 1 (AccECN1) (TEMPORARY - registered 2022-08-03, expires 2023-08-03)
-EXP1                     253 ; RFC3692-style Experiment 1
-EXP2                     254 ; RFC3692-style Experiment 2
+EOOL                                                         0 ; End of Option List
+NOP                                                          1 ; No-Operation
+MSS                                                          2 ; Maximum Segment Size
+WS                                                           3 ; Window Scale
+SACK_PERMITTED                                               4 ; SACK Permitted
+SACK                                                         5 ; SACK
+TS                                                           8 ; Timestamps
+SKEETER                                                     16 ; Skeeter
+BUBBA                                                       17 ; Bubba
+TCO                                                         18 ; Trailer Checksum Option
+SCPS_CAP                                                    20 ; SCPS Capabilities
+SNA                                                         21 ; Selective Negative Acknowledgements
+RB                                                          22 ; Record Boundaries
+CE                                                          23 ; Corruption experienced
+SNAP                                                        24 ; SNAP
+TCP_CF                                                      26 ; TCP Compression Filter
+QSR                                                         27 ; Quick-Start Response
+UTO                                                         28 ; User Timeout Option
+TCP_AO                                                      29 ; TCP Authentication Option (TCP-AO)
+MPTCP                                                       30 ; Multipath TCP (MPTCP)
+TCP_FOC                                                     34 ; TCP Fast Open Cookie
+TCP_ENO                                                     69 ; Encryption Negotiation (TCP-ENO)
+ACC_ECN0                                                    172 ; Accurate ECN Order 0 (AccECN0) (TEMPORARY - registered 2022-08-03, expires 2023-08-03)
+ACC_ECN1                                                    174 ; Accurate ECN Order 1 (AccECN1) (TEMPORARY - registered 2022-08-03, expires 2023-08-03)
+EXP1                                                        253 ; RFC3692-style Experiment 1
+EXP2                                                        254 ; RFC3692-style Experiment 2
 
 @enum ICMP-Type-Number
 ; Managed by IANA
 ; https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-types
-ECHO_REPLY        0 ; Echo Reply
-DST_UNREACHABLE   3 ; Destination Unreachable
-REDIRECT          5 ; Redirect
-ECHO              8 ; Echo
-ROUTER_ADV        9 ; Router Advertisement
-ROUTER_SOL       10 ; Router Solicitation
-TIME_EXCEEDED    11 ; Time Exceeded
-PARAM_PROBLEM    12 ; Parameter Problem
-TS               13 ; Timestamp
-TS_REPLY         14 ; Timestamp Reply
-PHOTURIS         40 ; Photuris
-ICMP_EXP         41 ; ICMP messages utilized by experimental mobility protocols such as Seamoby
-ECHO_REQUEST_EXT 42 ; Extended Echo Request
-ECHO_REPLY_EXT   43 ; Extended Echo Reply
-EXP1            253 ; RFC3692-style Experiment 1
-EXP2            254 ; RFC3692-style Experiment 2
+ECHO_REPLY                                                   0 ; Echo Reply
+DST_UNREACHABLE                                              3 ; Destination Unreachable
+REDIRECT                                                     5 ; Redirect
+ECHO                                                         8 ; Echo
+ROUTER_ADV                                                   9 ; Router Advertisement
+ROUTER_SOL                                                  10 ; Router Solicitation
+TIME_EXCEEDED                                               11 ; Time Exceeded
+PARAM_PROBLEM                                               12 ; Parameter Problem
+TS                                                          13 ; Timestamp
+TS_REPLY                                                    14 ; Timestamp Reply
+PHOTURIS                                                    40 ; Photuris
+ICMP_EXP                                                    41 ; ICMP messages utilized by experimental mobility protocols such as Seamoby
+ECHO_REQUEST_EXT                                            42 ; Extended Echo Request
+ECHO_REPLY_EXT                                              43 ; Extended Echo Reply
+EXP1                                                        253 ; RFC3692-style Experiment 1
+EXP2                                                        254 ; RFC3692-style Experiment 2
 
 @enum ICMP-Code
 ; Managed by IANA
 ; https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-codes
 
 @enum Timezone-Flag
-UTC       0
-LOCAL     1
-OFFSET     2 
+UTC                                                          0
+LOCAL                                                        1
+OFFSET                                                       2
 
 @enum Treatment-Action
-DROP         0
-SHAPE        1
-MARK         2
-PERMIT       3
+DROP                                                         0
+SHAPE                                                        1
+MARK                                                         2
+PERMIT                                                       3
 
 @enum QoS-Semantics
-QoS_DESIRED        0
-QoS_AVAILABLE      1
-QoS_DELIVERED      2
-MINIMUM_QoS        3
-QoS_AUTHORIZED     4
+QoS_DESIRED                                                  0
+QoS_AVAILABLE                                                1
+QoS_DELIVERED                                                2
+MINIMUM_QoS                                                  3
+QoS_AUTHORIZED                                               4

@@ -1,11 +1,72 @@
 ;; IETF AVP definitions
+; https://www.iana.org/assignments/aaa-parameters/aaa-parameters.xhtml#aaa-parameters-1
 
 @name     dia_ietf
-@vendor   10415 3gpp
 
-;; RFC 4740
 
 @avp_types
+;; RFC 5778
+Chargeable-User-Identity                            89 OctetString      M
+
+;; Imported to RFC 4740 from RFC 4590.
+;; Difficult to understand which type each AVP has.
+;; TS 29.229 specifies Digest-Realm, Digest-Algorithm, Digest-QoP, and
+;; Digest-HA1.
+Digest-Response                                    103 UTF8String       M
+Digest-Realm                                       104 UTF8String       M
+Digest-Nonce                                       105 UTF8String       M
+Digest-Response-Auth                               106 UTF8String       M
+Digest-Nextnonce                                   107 UTF8String       M
+Digest-Method                                      108 UTF8String       M
+Digest-URI                                         109 UTF8String       M
+Digest-QoP                                         110 UTF8String       M
+Digest-Algorithm                                   111 UTF8String       M
+Digest-Entity-Body-Hash                            112 UTF8String       M
+Digest-CNonce                                      113 UTF8String       M
+Digest-Nonce-Count                                 114 UTF8String       M
+Digest-Username                                    115 UTF8String       M
+Digest-Opaque                                      116 UTF8String       M
+Digest-Auth-Param                                  117 UTF8String       M
+Digest-AKA-Auts                                    118 UTF8String       M
+Digest-Domain                                      119 UTF8String       M
+Digest-Stale                                       120 UTF8String       M
+Digest-HA1                                         121 UTF8String       M
+
+;; RFC 7944
+DRMP                                               301 Enumerated       -
+
+;; RFC 4004
+MIP-FA-to-HA-SPI                                            318  Unsigned32        M 
+MIP-FA-to-MN-SPI                                            319  Unsigned32        M 
+MIP-Reg-Request                                             320  OctetString       M 
+MIP-Reg-Reply                                               321  OctetString       M 
+MIP-MN-AAA-Auth                                             322  Grouped           M 
+MIP-HA-to-FA-SPI                                            323  Unsigned32        M 
+; MIP-MN-to-FA-MSA                                          325  Grouped           M
+MIP-FA-to-MN-MSA                                            326  Grouped           M 
+MIP-FA-to-HA-MSA                                            328  Grouped           M 
+MIP-HA-to-FA-MSA                                            329  Grouped           M 
+MIP-MN-to-HA-MSA                                            331  Grouped           M 
+; MIP-HA-to-MN-MSA                                          332  Grouped           M
+MIP-Mobile-Node-Address                                     333  Address           M 
+MIP-Home-Agent-Address                                      334  Address           M 
+MIP-Nonce                                                   335  OctetString       M 
+MIP-Candidate-Home-Agent-Host                               336  DiamIdent         M 
+MIP-Feature-Vector                                          337  Unsigned32        M 
+MIP-Auth-Input-Data-Length                                  338  Unsigned32        M 
+MIP-Authenticator-Length                                    339  Unsigned32        M 
+MIP-Authenticator-Offset                                    340  Unsigned32        M 
+MIP-MN-AAA-SPI                                              341  Unsigned32        M 
+MIP-Filter-Rule                                             342  IPFiltrRule       M 
+MIP-Session-Key                                             343  OctetString       M 
+MIP-FA-Challenge                                            344  OctetString       M 
+MIP-Algorithm-Type                                          345  Enumerated        M 
+MIP-Replay-Mode                                             346  Enumerated        M 
+MIP-Originating-Foreign-AAA                                 347  Grouped           M 
+MIP-Home-Agent-Host                                         348  Grouped           M 
+MIP-MSA-Lifetime                                            367  Unsigned32        M 
+
+;; RFC 4740
 SIP-Accounting-Information                         368 Grouped          M
 SIP-Accounting-Server-URI                          369 DiameterURI      M
 SIP-Credit-Control-Server-URI                      370 DiameterURI      M
@@ -33,202 +94,7 @@ SIP-User-Data-Contents                             391 OctetString      M
 SIP-User-Data-Already-Available                    392 Enumerated       M
 SIP-Method                                         393 UTF8String       M
 
-;; Imported to RFC 4740 from RFC 4590.
-;; Difficult to understand which type each AVP has.
-;; TS 29.229 specifies Digest-Realm, Digest-Algorithm, Digest-QoP, and
-;; Digest-HA1.
-@avp_types
-Digest-Response                                    103 UTF8String       M
-Digest-Realm                                       104 UTF8String       M
-Digest-Nonce                                       105 UTF8String       M
-Digest-Response-Auth                               106 UTF8String       M
-Digest-Nextnonce                                   107 UTF8String       M
-Digest-Method                                      108 UTF8String       M
-Digest-URI                                         109 UTF8String       M
-Digest-QoP                                         110 UTF8String       M
-Digest-Algorithm                                   111 UTF8String       M
-Digest-Entity-Body-Hash                            112 UTF8String       M
-Digest-CNonce                                      113 UTF8String       M
-Digest-Nonce-Count                                 114 UTF8String       M
-Digest-Username                                    115 UTF8String       M
-Digest-Opaque                                      116 UTF8String       M
-Digest-Auth-Param                                  117 UTF8String       M
-Digest-AKA-Auts                                    118 UTF8String       M
-Digest-Domain                                      119 UTF8String       M
-Digest-Stale                                       120 UTF8String       M
-Digest-HA1                                         121 UTF8String       M
-
-
-@grouped
-SIP-Accounting-Information ::= < AVP Header: 368 >
-          *    [ SIP-Accounting-Server-URI ]
-          *    [ SIP-Credit-Control-Server-URI ]
-          *    [ AVP ]
-
-SIP-Server-Capabilities ::= < AVP Header: 372 >
-          *    [ SIP-Mandatory-Capability ]
-          *    [ SIP-Optional-Capability ]
-          *    [ SIP-Server-URI ]
-          *    [ AVP ]
-
-SIP-Auth-Data-Item ::= < AVP Header: 376 >
-               { SIP-Authentication-Scheme }
-               [ SIP-Item-Number ]
-               [ SIP-Authenticate ]
-               [ SIP-Authorization ]
-               [ SIP-Authentication-Info ]
-          *    [ AVP ]
-
-SIP-Authenticate ::= < AVP Header: 379 >
-               { Digest-Realm }
-               { Digest-Nonce }
-               [ Digest-Domain ]
-               [ Digest-Opaque ]
-               [ Digest-Stale ]
-               [ Digest-Algorithm ]
-               [ Digest-QoP ]
-               [ Digest-HA1 ]
-          *    [ Digest-Auth-Param ]
-          *    [ AVP ]
-
-SIP-Authorization ::= < AVP Header: 380 >
-               { Digest-Username }
-               { Digest-Realm }
-               { Digest-Nonce }
-               { Digest-URI }
-               { Digest-Response }
-               [ Digest-Algorithm ]
-               [ Digest-CNonce ]
-               [ Digest-Opaque ]
-               [ Digest-QoP ]
-               [ Digest-Nonce-Count ]
-               [ Digest-Method ]
-               [ Digest-Entity-Body-Hash ]
-          *    [ Digest-Auth-Param ]
-          *    [ AVP ]
-
-SIP-Authentication-Info ::= < AVP Header: 381 >
-               [ Digest-Nextnonce ]
-               [ Digest-QoP ]
-               [ Digest-Response-Auth ]
-               [ Digest-CNonce ]
-               [ Digest-Nonce-Count ]
-          *    [ AVP ]
-
-SIP-Deregistration-Reason ::= < AVP Header: 383 >
-               { SIP-Reason-Code }
-               [ SIP-Reason-Info ]
-          *    [ AVP ]
-
-SIP-User-Data ::= < AVP Header: 389 >
-               { SIP-User-Data-Type }
-               { SIP-User-Data-Contents }
-          *    [ AVP ]
-
-@enum SIP-Server-Assignment-Type
-NO_ASSIGNMENT                               0
-REGISTRATION                                1
-RE_REGISTRATION                             2
-UNREGISTERED_USER                           3
-TIMEOUT_DEREGISTRATION                      4
-USER_DEREGISTRATION                         5
-TIMEOUT_DEREGISTRATION_STORE_SERVER_NAME    6
-USER_DEREGISTRATION_STORE_SERVER_NAME       7
-ADMINISTRATIVE_DEREGISTRATION               8
-AUTHENTICATION_FAILURE                      9
-AUTHENTICATION_TIMEOUT                     10
-DEREGISTRATION_TOO_MUCH_DATA               11
-
-@enum SIP-Authentication-Scheme
-DIGEST                                      0
-
-@enum SIP-Reason-Code
-PERMANENT_TERMINATION                       0
-NEW_SIP_SERVER_ASSIGNED                     1
-SIP_SERVER_CHANGE                           2
-REMOVE_SIP_SERVER                           3
-
-@enum SIP-User-Authorization-Type
-REGISTRATION                                0
-DEREGISTRATION                              1
-REGISTRATION_AND_CAPABILITIES               2
-
-@enum SIP-User-Data-Already-Available
-USER_DATA_NOT_AVAILABLE                     0
-USER_DATA_ALREADY_AVAILABLE                 1
-
-;; RFC 4004
-
-@avp_types
-MIP-FA-to-HA-SPI                                   318 Unsigned32       M
-MIP-FA-to-MN-SPI                                   319 Unsigned32       M
-MIP-HA-to-FA-SPI                                   323 Unsigned32       M
-; MIP-MN-to-FA-MSA                                   325 Grouped          M
-MIP-FA-to-MN-MSA                                   326 Grouped          M
-MIP-FA-to-HA-MSA                                   328 Grouped          M
-MIP-HA-to-FA-MSA                                   329 Grouped          M
-MIP-MN-to-HA-MSA                                   331 Grouped          M
-; MIP-HA-to-MN-MSA                                   332 Grouped          M
-MIP-Nonce                                          335 OctetString      M
-MIP-Session-Key                                    343 OctetString      M
-MIP-Algorithm-Type                                 345 Enumerated       M
-MIP-Replay-Mode                                    346 Enumerated       M
-MIP-MSA-Lifetime                                   367 Unsigned32       M
-
-@grouped
-
-; MIP-MN-to-FA-MSA ::= < AVP Header: 325 >
-; Unceratin of Code and Type for MIP-MN-FA-SPI
-;                { MIP-MN-FA-SPI }
-;                { MIP-Algorithm-Type }
-;                { MIP-Nonce }
-;           *    [ AVP ]
-
-MIP-FA-to-MN-MSA ::= < AVP Header: 326 >
-               { MIP-FA-to-MN-SPI }
-               { MIP-Algorithm-Type }
-               { MIP-Session-Key }
-          *    [ AVP ]
-
-MIP-FA-to-HA-MSA ::= < AVP Header: 328 >
-               { MIP-FA-to-HA-SPI }
-               { MIP-Algorithm-Type }
-               { MIP-Session-Key }
-          *    [ AVP ]
-
-MIP-HA-to-FA-MSA ::= < AVP Header: 329 >
-               { MIP-HA-to-FA-SPI }
-               { MIP-Algorithm-Type }
-               { MIP-Session-Key }
-          *    [ AVP ]
-
-MIP-MN-to-HA-MSA ::= < AVP Header: 331 >
-               { MIP-MN-HA-SPI }
-               { MIP-Algorithm-Type }
-               { MIP-Replay-Mode }
-               { MIP-Nonce }
-          *    [ AVP ]
-
-; MIP-HA-to-MN-MSA ::= < AVP Header: 332 >
-; Unceratin of Code and Type for MIP-HA-to-MN-SPI
-;                { MIP-HA-to-MN-SPI }
-;                { MIP-Algorithm-Type }
-;                { MIP-Replay-Mode }
-;                { MIP-Session-Key }
-;           *    [ AVP ]
-
-@enum MIP-Algorithm-Type
-HMAC_SHA1                     2
-
-@enum MIP-Replay-Mode
-NONE                          1
-TIMESTAMPS                    2
-NONCES                        3
-
 ;; RFC 5778
-
-@avp_types
-Chargeable-User-Identity                            89 OctetString      M
 MIP-Careof-Address                                 487 Address          M
 MIP-Authenticator                                  488 OctetString      M
 MIP-MAC-Mobility-Data                              489 OctetString      M
@@ -238,88 +104,7 @@ MIP-MN-HA-MSA                                      492 Grouped          M
 Service-Selection                                  493 UTF8String       M
 MIP6-Auth-Mode                                     494 Enumerated       M
 
-@grouped
-MIP-MN-HA-MSA ::= < AVP Header: 492 >
-               { MIP-Session-Key }
-               { MIP-MSA-Lifetime }
-               [ MIP-MN-HA-SPI ]
-               [ MIP-Algorithm-Type ]
-               [ MIP-Replay-Mode ]
-          *    [ AVP ]
-
-;; RFC 7944
-
-@avp_types
-DRMP                                               301 Enumerated       -
-
-@enum DRMP
-PRIORITY_15                  15
-PRIORITY_14                  14
-PRIORITY_13                  13
-PRIORITY_12                  12
-PRIORITY_11                  11
-PRIORITY_10                  10
-PRIORITY_9                    9
-PRIORITY_8                    8
-PRIORITY_7                    7
-PRIORITY_6                    6
-PRIORITY_5                    5
-PRIORITY_4                    4
-PRIORITY_3                    3
-PRIORITY_2                    2
-PRIORITY_1                    1
-PRIORITY_0                    0
-
-;; RFC 8583
-
-@avp_types
-SourceID                                           649 DiameterIdentity -
-Load                                               650 Grouped          -
-Load-Type                                          651 Enumerated       -
-Load-Value                                         652 Unsigned64       -
-
-@grouped
-Load ::= < AVP Header: 650 >
-               [ Load-Type ]
-               [ Load-Value ]
-               [ SourceID ]
-          *    [ AVP ]
-
-@enum Load-Type
-HOST       0
-PEER       1
-
-;; RFC 7683
-
-@avp_types
-OC-Supported-Features                              621 Grouped          -
-OC-Feature-Vector                                  622 Unsigned64       -
-OC-OLR                                             623 Grouped          -
-OC-Sequence-Number                                 624 Unsigned64       -
-OC-Validity-Duration                               625 Unsigned32       -
-OC-Report-Type                                     626 Enumerated       -
-OC-Reduction-Percentage                            627 Unsigned32       -
-
-@grouped
-OC-Supported-Features ::= < AVP Header: 621 >
-               [ OC-Feature-Vector ]
-          *    [ AVP ]
-
-OC-OLR ::= < AVP Header: 623 >
-              < OC-Sequence-Number >
-              < OC-Report-Type >
-              [ OC-Reduction-Percentage ]
-              [ OC-Validity-Duration ]
-          *   [ AVP ]
-
-@enum OC-Report-Type
-HOST_REPORT   0
-REALM_REPORT  1
-
-
 ;; RFC 5777
-
-@avp_types
 QoS-Resources                                      508 Grouped          -
 Filter-Rule                                        509 Grouped          -
 Filter-Rule-Precedence                             510 Unsigned32       -
@@ -392,8 +177,153 @@ QoS-Parameters                                     576 Grouped          -
 Excess-Treatment                                   577 Grouped          -
 QoS-Capability                                     578 Grouped          -
 
+;; RFC 7683
+OC-Supported-Features                              621 Grouped          -
+OC-Feature-Vector                                  622 Unsigned64       -
+OC-OLR                                             623 Grouped          -
+OC-Sequence-Number                                 624 Unsigned64       -
+OC-Validity-Duration                               625 Unsigned32       -
+OC-Report-Type                                     626 Enumerated       -
+OC-Reduction-Percentage                            627 Unsigned32       -
+
+;; RFC 8583
+SourceID                                           649 DiameterIdentity -
+Load                                               650 Grouped          -
+Load-Type                                          651 Enumerated       -
+Load-Value                                         652 Unsigned64       -
+
 
 @grouped
+MIP-MN-AAA-Auth ::= <AVP Header: 322>
+              { MIP-MN-AAA-SPI }
+              { MIP-Auth-Input-Data-Length }
+              { MIP-Authenticator-Length }
+              { MIP-Authenticator-Offset }
+          *   [ AVP ]
+
+; MIP-MN-to-FA-MSA ::= < AVP Header: 325 >
+; Unceratin of Code and Type for MIP-MN-FA-SPI
+;                { MIP-MN-FA-SPI }
+;                { MIP-Algorithm-Type }
+;                { MIP-Nonce }
+;           *    [ AVP ]
+
+MIP-FA-to-MN-MSA ::= < AVP Header: 326 >
+               { MIP-FA-to-MN-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Session-Key }
+          *    [ AVP ]
+
+MIP-FA-to-HA-MSA ::= < AVP Header: 328 >
+               { MIP-FA-to-HA-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Session-Key }
+          *    [ AVP ]
+
+MIP-HA-to-FA-MSA ::= < AVP Header: 329 >
+               { MIP-HA-to-FA-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Session-Key }
+          *    [ AVP ]
+
+MIP-MN-to-HA-MSA ::= < AVP Header: 331 >
+               { MIP-MN-HA-SPI }
+               { MIP-Algorithm-Type }
+               { MIP-Replay-Mode }
+               { MIP-Nonce }
+          *    [ AVP ]
+
+; MIP-HA-to-MN-MSA ::= < AVP Header: 332 >
+; Unceratin of Code and Type for MIP-HA-to-MN-SPI
+;                { MIP-HA-to-MN-SPI }
+;                { MIP-Algorithm-Type }
+;                { MIP-Replay-Mode }
+;                { MIP-Session-Key }
+;           *    [ AVP ]
+
+MIP-Originating-Foreign-AAA ::= < AVP Header: 347 >
+              { Origin-Realm }
+              { Origin-Host }
+            * [ AVP ]
+
+MIP-Home-Agent-Host ::= < AVP Header: 348 >
+                         { Destination-Realm }
+                         { Destination-Host }
+                       * [ AVP ]
+
+SIP-Accounting-Information ::= < AVP Header: 368 >
+          *    [ SIP-Accounting-Server-URI ]
+          *    [ SIP-Credit-Control-Server-URI ]
+          *    [ AVP ]
+
+SIP-Server-Capabilities ::= < AVP Header: 372 >
+          *    [ SIP-Mandatory-Capability ]
+          *    [ SIP-Optional-Capability ]
+          *    [ SIP-Server-URI ]
+          *    [ AVP ]
+
+SIP-Auth-Data-Item ::= < AVP Header: 376 >
+               { SIP-Authentication-Scheme }
+               [ SIP-Item-Number ]
+               [ SIP-Authenticate ]
+               [ SIP-Authorization ]
+               [ SIP-Authentication-Info ]
+          *    [ AVP ]
+
+SIP-Authenticate ::= < AVP Header: 379 >
+               { Digest-Realm }
+               { Digest-Nonce }
+               [ Digest-Domain ]
+               [ Digest-Opaque ]
+               [ Digest-Stale ]
+               [ Digest-Algorithm ]
+               [ Digest-QoP ]
+               [ Digest-HA1 ]
+          *    [ Digest-Auth-Param ]
+          *    [ AVP ]
+
+SIP-Authorization ::= < AVP Header: 380 >
+               { Digest-Username }
+               { Digest-Realm }
+               { Digest-Nonce }
+               { Digest-URI }
+               { Digest-Response }
+               [ Digest-Algorithm ]
+               [ Digest-CNonce ]
+               [ Digest-Opaque ]
+               [ Digest-QoP ]
+               [ Digest-Nonce-Count ]
+               [ Digest-Method ]
+               [ Digest-Entity-Body-Hash ]
+          *    [ Digest-Auth-Param ]
+          *    [ AVP ]
+
+SIP-Authentication-Info ::= < AVP Header: 381 >
+               [ Digest-Nextnonce ]
+               [ Digest-QoP ]
+               [ Digest-Response-Auth ]
+               [ Digest-CNonce ]
+               [ Digest-Nonce-Count ]
+          *    [ AVP ]
+
+SIP-Deregistration-Reason ::= < AVP Header: 383 >
+               { SIP-Reason-Code }
+               [ SIP-Reason-Info ]
+          *    [ AVP ]
+
+SIP-User-Data ::= < AVP Header: 389 >
+               { SIP-User-Data-Type }
+               { SIP-User-Data-Contents }
+          *    [ AVP ]
+
+MIP-MN-HA-MSA ::= < AVP Header: 492 >
+               { MIP-Session-Key }
+               { MIP-MSA-Lifetime }
+               [ MIP-MN-HA-SPI ]
+               [ MIP-Algorithm-Type ]
+               [ MIP-Replay-Mode ]
+          *    [ AVP ]
+
 QoS-Resources ::= < AVP Header: 508 >
         1 *   { Filter-Rule }
           *   [ AVP ]
@@ -567,6 +497,81 @@ QoS-Capability ::= < AVP Header: 578 >
         1 *   { QoS-Profile-Template }
           *   [ AVP ]
 
+OC-Supported-Features ::= < AVP Header: 621 >
+               [ OC-Feature-Vector ]
+          *    [ AVP ]
+
+OC-OLR ::= < AVP Header: 623 >
+              < OC-Sequence-Number >
+              < OC-Report-Type >
+              [ OC-Reduction-Percentage ]
+              [ OC-Validity-Duration ]
+          *   [ AVP ]
+
+Load ::= < AVP Header: 650 >
+               [ Load-Type ]
+               [ Load-Value ]
+               [ SourceID ]
+          *    [ AVP ]
+
+@enum DRMP
+PRIORITY_15                  15
+PRIORITY_14                  14
+PRIORITY_13                  13
+PRIORITY_12                  12
+PRIORITY_11                  11
+PRIORITY_10                  10
+PRIORITY_9                    9
+PRIORITY_8                    8
+PRIORITY_7                    7
+PRIORITY_6                    6
+PRIORITY_5                    5
+PRIORITY_4                    4
+PRIORITY_3                    3
+PRIORITY_2                    2
+PRIORITY_1                    1
+PRIORITY_0                    0
+
+@enum MIP-Algorithm-Type
+HMAC_SHA1                     2
+
+@enum MIP-Replay-Mode
+NONE                          1
+TIMESTAMPS                    2
+NONCES                        3
+
+@enum SIP-Server-Assignment-Type
+NO_ASSIGNMENT                               0
+REGISTRATION                                1
+RE_REGISTRATION                             2
+UNREGISTERED_USER                           3
+TIMEOUT_DEREGISTRATION                      4
+USER_DEREGISTRATION                         5
+TIMEOUT_DEREGISTRATION_STORE_SERVER_NAME    6
+USER_DEREGISTRATION_STORE_SERVER_NAME       7
+ADMINISTRATIVE_DEREGISTRATION               8
+AUTHENTICATION_FAILURE                      9
+AUTHENTICATION_TIMEOUT                     10
+DEREGISTRATION_TOO_MUCH_DATA               11
+
+@enum SIP-Authentication-Scheme
+DIGEST                                      0
+
+@enum SIP-Reason-Code
+PERMANENT_TERMINATION                       0
+NEW_SIP_SERVER_ASSIGNED                     1
+SIP_SERVER_CHANGE                           2
+REMOVE_SIP_SERVER                           3
+
+@enum SIP-User-Authorization-Type
+REGISTRATION                                0
+DEREGISTRATION                              1
+REGISTRATION_AND_CAPABILITIES               2
+
+@enum SIP-User-Data-Already-Available
+USER_DATA_NOT_AVAILABLE                     0
+USER_DATA_ALREADY_AVAILABLE                 1
+
 @enum Direction
 IN            0
 OUT           1
@@ -697,3 +702,11 @@ QoS_AVAILABLE      1
 QoS_DELIVERED      2
 MINIMUM_QoS        3
 QoS_AUTHORIZED     4
+
+@enum OC-Report-Type
+HOST_REPORT   0
+REALM_REPORT  1
+
+@enum Load-Type
+HOST       0
+PEER       1

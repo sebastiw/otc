@@ -5,30 +5,29 @@
 @inherits diameter_gen_base_rfc6733
 
 @avp_types
-Chargeable-User-Identity                            89 OctetString      M
-MIP-Careof-Address                                 487 Address          M
-MIP-Authenticator                                  488 OctetString      M
-MIP-MAC-Mobility-Data                              489 OctetString      M
-MIP-Timestamp                                      490 OctetString      M
-MIP-MN-HA-SPI                                      491 Unsigned32       M
-MIP-MN-HA-MSA                                      492 Grouped          M
-Service-Selection                                  493 UTF8String       M
-MIP6-Auth-Mode                                     494 Enumerated       M
+Chargeable-User-Identity                                    89   OctetString       M 
+MIP-Careof-Address                                          487  Address           M 
+MIP-Authenticator                                           488  OctetString       M 
+MIP-MAC-Mobility-Data                                       489  OctetString       M 
+MIP-Timestamp                                               490  OctetString       M 
+MIP-MN-HA-SPI                                               491  Unsigned32        M 
+MIP-MN-HA-MSA                                               492  Grouped           M 
+Service-Selection                                           493  UTF8String        M 
+MIP6-Auth-Mode                                              494  Enumerated        M 
 
 @grouped
-MIP6-Agent-Info ::= < AVP-Header: 486 >
-          * 2  [ MIP-Home-Agent-Address ]
-               [ MIP-Home-Agent-Host ]
-               [ MIP6-Home-Link-Prefix ]
-               [ PMIP6-IPv4-Home-Address ]
-          *    [ AVP ]
+MIP6-Agent-Info ::= <AVP Header: 486>
+          *2  [ MIP-Home-Agent-Address ]
+              [ MIP-Home-Agent-Host ]
+              [ MIP6-Home-Link-Prefix ]
+              [ PMIP6-IPv4-Home-Address ]
+          *   [ AVP ]
 
+MIP-MN-HA-MSA ::= <AVP Header: 492>
+              { MIP-Session-Key }
+              { MIP-MSA-Lifetime }
+              [ MIP-MN-HA-SPI ]
+              [ MIP-Algorithm-Type ]
+              [ MIP-Replay-Mode ]
+          *   [ AVP ]
 
-
-MIP-MN-HA-MSA ::= < AVP Header: 492 >
-               { MIP-Session-Key }
-               { MIP-MSA-Lifetime }
-               [ MIP-MN-HA-SPI ]
-               [ MIP-Algorithm-Type ]
-               [ MIP-Replay-Mode ]
-          *    [ AVP ]

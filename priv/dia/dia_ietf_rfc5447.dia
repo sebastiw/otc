@@ -5,18 +5,18 @@
 @inherits diameter_gen_base_rfc6733
 
 @avp_types
-MIP6-Feature-Vector                                124 Unsigned64       -
-MIP6-Home-Link-Prefix                              125 OctetString      -
-MIP-Home-Agent-Address                             334 Address          -
-MIP6-Agent-Info                                    486 Grouped          -
+MIP6-Feature-Vector                                         124  Unsigned64        - 
+MIP6-Home-Link-Prefix                                       125  OctetString       - 
+MIP-Home-Agent-Address                                      334  Address           - 
+MIP6-Agent-Info                                             486  Grouped           - 
 
 @grouped
-MIP6-Agent-Info ::= < AVP-Header: 486 >
-               * 2  [ MIP-Home-Agent-Address ]
-                    [ MIP-Home-Agent-Host ]
-                    [ MIP6-Home-Link-Prefix ]
-               *    [ AVP ]
+MIP6-Agent-Info ::= <AVP Header: 486>
+          *2  [ MIP-Home-Agent-Address ]
+              [ MIP-Home-Agent-Host ]
+              [ MIP6-Home-Link-Prefix ]
+          *   [ AVP ]
 
 @define MIP6-Feature-Vector
-MIP6_INTEGRATED                    0x0000000000000001
-LOCAL_HOME_AGENT_ASSIGNMENT        0x0000000000000002
+MIP6_INTEGRATED                                             0x0000000000000001
+LOCAL_HOME_AGENT_ASSIGNMENT                                 0x0000000000000002
