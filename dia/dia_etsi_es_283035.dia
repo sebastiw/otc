@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_etsi
+
 @avp_types
 Location-Information                                        350  Grouped           V 
 Policy-Control-Contact-Point                                351  DiameterIdentity  V 
@@ -19,7 +21,7 @@ Fixed-Access-ID                                             358  Grouped        
 Relay-Agent                                                 359  OctetString       V 
 Operator-Specific-GI                                        360  OctetString       V 
 Emergency-Call-Routing-Info                                 361  UTF8String        V 
-Port-Number                                                 362  Unsigned32        V 
+Originating-Port-Number                                     362  Unsigned32        V ; Port-Number in spec
 PIDF-Location-Object                                        363  UTF8String        V 
 
 @grouped
@@ -36,7 +38,7 @@ Global-Access-Id ::= <AVP Header: 357>
               [ 3GPP-User-Location-Info ]
           *   [ AVP ]
 
-Fixed-Access-ID ::= <AVP Header: 358 13019>
+Fixed-Access-ID ::= <AVP Header: 358>
               { Relay-Agent }
               [ Logical-Access-ID ]
               [ Physical-Access-ID ]
@@ -51,10 +53,10 @@ TERMINAL_TYPE                                                4
 LOGICAL_ACCESS_ID                                            5
 PHYSICAL_ACCESS_ID                                           6
 ;; Reserved for future
-; ACCESS_NETWORK_TYPE                                          7
-; INITIAL_GATE_SETTING                                         8
-; QOS_PROFILE                                                  9
-; IP_CONNECTIVITY_STATUS                                      10
+; ACCESS_NETWORK_TYPE                                        7
+; INITIAL_GATE_SETTING                                       8
+; QOS_PROFILE                                                9
+; IP_CONNECTIVITY_STATUS                                    10
 EMERGENCY_CALL_ROUTING_INFO                                 11
 
 @enum Event-Type

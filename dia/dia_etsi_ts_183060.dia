@@ -3,6 +3,10 @@
 @name     dia_etsi_ts_183060
 @vendor   13019 etsi
 
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
 @avp_types
 Policy-Rule-Install                                         550  Grouped           MV
 Policy-Rule-Remove                                          551  Grouped           MV

@@ -5,6 +5,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_etsi
+
 @avp_types
 Globally-Unique-Address                                     300  Grouped           MV
 Address-Realm                                               301  OctetString       MV

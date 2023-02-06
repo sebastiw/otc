@@ -3,5 +3,9 @@
 @name     dia_etsi_es_283026
 @vendor   13019 etsi
 
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
 @avp_types
 Session-Bundle-Id                                           400  Unsigned32        MV

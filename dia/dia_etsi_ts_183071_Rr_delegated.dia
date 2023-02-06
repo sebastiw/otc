@@ -4,6 +4,10 @@
 @name     dia_etsi_ts_183071_Rr_delegated
 @vendor   13019 etsi
 
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
 @messages
 User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               < Session-Id >

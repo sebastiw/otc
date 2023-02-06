@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_etsi
+
 @messages
 User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               < Session-Id >
@@ -20,7 +22,7 @@ User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               [ Global-Access-Id ]
               [ AF-Application-Identifier ]
           *   [ Requested-Information ]
-              [ Port-Number ]
+              [ Originating-Port-Number ]
           *   [ AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
@@ -95,7 +97,6 @@ Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
               [ Terminal-Type ]
               [ Logical-Access-Id ]
               [ Physical-Access-Id ]
-              [ Access-Network-Type ]
               [ Initial-Gate-Setting-Description ]
           *   [ QoS-Profile-Description ]
               [ IP-Connectivity-Status ]

@@ -3,6 +3,10 @@
 @name     dia_etsi_ts_183059-1
 @vendor   13019 etsi
 
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
 @avp_types
 CNGCF-Address                                               600  Grouped           V 
 SIP-Outbound-Proxy                                          601  OctetString       V 

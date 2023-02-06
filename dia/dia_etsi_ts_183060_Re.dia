@@ -4,6 +4,10 @@
 @name     dia_etsi_ts_183060_Re
 @vendor   13019 etsi
 
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
 @messages
 Policy-Install-Request ::= <Diameter Header: 315, REQ, PXY>
               < Session-Id >

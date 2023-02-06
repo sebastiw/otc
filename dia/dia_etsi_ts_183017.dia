@@ -3,23 +3,27 @@
 @name     dia_etsi_ts_183017
 @vendor   13019 etsi
 
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
 @avp_types
-Binding-information                                         450  Grouped           V 
-Binding-input-list                                          451  Grouped           V 
-Binding-output-list                                         452  Grouped           V 
-V6-transport-address                                        453  Grouped           V 
-V4-transport-address                                        454  Grouped           V 
-Port-number                                                 455  Unsigned32        V 
-Reservation-class                                           456  Unsigned32        V 
-Latching-indication                                         457  Enumerated        V 
-Reservation-priority                                        458  Enumerated        V 
+Binding-Information                                         450  Grouped           V 
+Binding-Input-List                                          451  Grouped           V 
+Binding-Output-List                                         452  Grouped           V 
+V6-Transport-Address                                        453  Grouped           V 
+V4-Transport-Address                                        454  Grouped           V 
+Port-Number                                                 455  Unsigned32        V 
+Reservation-Class                                           456  Unsigned32        V 
+Latching-Indication                                         457  Enumerated        V 
+Reservation-Priority                                        458  Enumerated        V 
 Service-Class                                               459  UTF8String        V 
-Overbooking-indicator                                       460  Enumerated        V 
+Overbooking-Indicator                                       460  Enumerated        V 
 Authorization-Package-Id                                    461  UTF8String        V 
 Media-Authorization-Context-Id                              462  UTF8String        V 
 
 @grouped
-Binding-information ::= <AVP Header: 450>
+Binding-Information ::= <AVP Header: 450>
               { Binding-Input-List }
               [ Binding-Output-List ]
 
@@ -39,11 +43,11 @@ V4-Transport-Address ::= <AVP Header: 454>
               { Framed-IP-Address }
               { Port-Number }
 
-@enum Latching-indication
+@enum Latching-Indication
 LATCH                                                        0
 RELATCH                                                      1
 
-@enum Reservation-priority
+@enum Reservation-Priority
 DEFAULT                                                      0 ; Lowest priority
 PRIORITY_ONE                                                 1
 PRIORITY_TWO                                                 2
@@ -61,7 +65,7 @@ PRIORITY_THIRTEEN                                           13
 PRIORITY_FOURTEEN                                           14
 PRIORITY_FIFTEEN                                            15
 
-@enum Overbooking-indicator
+@enum Overbooking-Indicator
 NOT_REQUIRED                                                 0
 REQUIRED                                                     1
 
