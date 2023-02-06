@@ -1,0 +1,77 @@
+;; ETSI TS 183 059-1 v2.1.1 e4
+
+@id       16777231
+@name     dia_etsi_ts_183059-1_e4
+@vendor   13019 etsi
+
+@messages
+Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              [ Globally-Unique-Address ]
+              [ Logical-Access-Id ]
+              [ Physical-Access-Id ]
+              [ Terminal-Type ]
+              [ Access-Network-Type ]
+              [ IP-Connectivity-Status ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Answer ::= <Diameter Header: 309, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ CNGCF-Address ]
+              [ Location-Data ]
+              [ SIP-Outbound-Proxy ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ Destination-Host ]
+              [ Globally-Unique-Address ]
+              [ Logical-Access-Id ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+User-Data-Answer ::= <Diameter Header: 306, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Globally-Unique-Address ]
+              [ Logical-Access-Id ]
+              [ Physical-Access-Id ]
+              [ Terminal-Type ]
+              [ Access-Network-Type ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_SYSTEM_UNAVAILABLE                                 4001
+DIAMETER_USER_DATA_NOT_AVAILABLE                            4100

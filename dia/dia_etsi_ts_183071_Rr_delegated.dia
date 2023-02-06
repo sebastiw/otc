@@ -1,0 +1,151 @@
+;; ETSI TS 183 071 v3.1.1 Rr delegated model
+
+@id       16777279
+@name     dia_etsi_ts_183071_Rr_delegated
+@vendor   13019 etsi
+
+@messages
+User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ Destination-Host ]
+              [ Network-Resource-Id ]
+              [ Preferred-Delegated-Bandwidth-UL ]
+              [ Preferred-Delegated-Bandwidth-DL ]
+              [ Required-Delegated-Bandwidth-UL ]
+              [ Required-Delegated-Bandwidth-DL ]
+              [ Reservation-priority ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+User-Data-Answer ::= <Diameter Header: 306, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Granted-Delegated-Bandwidth-UL ]
+              [ Granted-Delegated-Bandwidth-DL ]
+              [ Total-Bandwidth-UL ]
+              [ Total-Bandwidth-DL ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              [ Network-Resource-Id ]
+              [ Granted-Delegated-Bandwidth-UL ]
+              [ Granted-Delegated-Bandwidth-DL ]
+              [ Preferred-Delegated-Bandwidth-UL ]
+              [ Preferred-Delegated-Bandwidth-DL ]
+              [ Required-Delegated-Bandwidth-UL ]
+              [ Required-Delegated-Bandwidth-DL ]
+              [ Reservation-priority ]
+              [ Total-Bandwidth-UL ]
+              [ Total-Bandwidth-DL ]
+          *   [ Authorization-Package-Id ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Answer ::= <Diameter Header: 309, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Granted-Delegated-Bandwidth-UL ]
+              [ Granted-Delegated-Bandwidth-DL ]
+              [ Total-Bandwidth-UL ]
+              [ Total-Bandwidth-DL ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { Auth-Application-Id }
+          *   { Specific-Action }
+          *   [ Flow-Description ]
+              [ Globally-Unique-Address ]
+              [ Logical-Access-Id ]
+              [ Abort-Cause ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+CC-Request ::= <Diameter Header: 272, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+          *   { Specific-Action }
+          *   [ Flow-Description ]
+              [ Globally-Unique-Address ]
+              [ Logical-Access-Id ]
+              [ Abort-Cause ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+CC-Answer ::= <Diameter Header: 272, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Auth-Application-Id }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_SYSTEM_UNAVAILABLE                                 4001
+NETWORK_RESOURCE_UNAVAILABLE                                4061
+NETWORK_RESOURCE_INSUFFICIENT                               4062

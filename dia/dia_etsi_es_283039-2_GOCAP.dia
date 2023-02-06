@@ -1,0 +1,103 @@
+;; ETSI ES 283 039-2 v3.1.1 GOCAP
+
+@id       16777254
+@name     dia_etsi_es_283039-2_GOCAP
+@vendor   13019 etsi
+
+@messages
+AA-Request ::= <Diameter Header: 265, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { Auth-Request-Type }
+              { Auth-Session-State }
+              { Auth-Scope }
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+AA-Answer ::= <Diameter Header: 265, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Auth-Request-Type }
+              { Auth-Session-State }
+              { Result-Code }
+              [ Auth-Scope ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+
+PU-Request ::= <Diameter Header: 307, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { GOCAP-Body }
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+PU-Answer ::= <Diameter Header: 307, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Result-Code }
+              [ GOCAP-Body ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ST-Request ::= <Diameter Header: 275, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { Termination-Cause }
+              { Auth-Application-Id }
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ST-Answer ::= <Diameter Header: 275, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+AS-Request ::= <Diameter Header: 274, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              { Abort-Cause }
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+AS-Answer ::= <Diameter Header: 274, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Redirected-Host ]
+              [ Redirected-Host-Usage ]
+              [ Redirected-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+

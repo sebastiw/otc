@@ -1,0 +1,7 @@
+;; ETSI ES 283 026 v1.6.0
+
+@name     dia_etsi_es_283026
+@vendor   13019 etsi
+
+@avp_types
+Session-Bundle-Id                                           400  Unsigned32        MV

@@ -1,0 +1,77 @@
+;; ETSI TS 183 017 v3.1.1
+
+@name     dia_etsi_ts_183060
+@vendor   13019 etsi
+
+@avp_types
+Policy-Rule-Install                                         550  Grouped           MV
+Policy-Rule-Remove                                          551  Grouped           MV
+Policy-Rule-Definition                                      552  Grouped           MV
+Policy-Rule-Base-Name                                       553  UTF8String        MV
+Policy-Rule-Name                                            554  OctetString       MV
+Policy-Rule-Report                                          555  Grouped           MV
+Policy-Rule-Status                                          556  Enumerated        MV
+Traffic-Flow                                                557  Grouped           MV
+Policy-Update-Request                                       558  Grouped           MV
+
+@grouped
+Policy-Rule-Install ::= <AVP Header: 550>
+          *   [ Policy-Rule-Definition ]
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+          *   [ AVP ]
+
+Policy-Rule-Remove ::= <AVP Header: 551>
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+          *   [ AVP ]
+
+Policy-Rule-Definition ::= <AVP Header: 552>
+              { Policy-Rule-Name }
+              [ Service-Identifier ]
+              [ Rating-Group ]
+              [ User-Name ]
+              [ Logical-Access-Id ]
+              [ Framed-IP-Address ]
+              [ Address-Realm ]
+              [ Called-Station-ID ]
+              [ Physical-Access-Id ]
+              [ Flow-Description ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ Reporting-Level ]
+              [ Precedence ]
+          *   [ Flows ]
+          *   [ AVP ]
+
+Policy-Rule-Report ::= <AVP Header: 555>
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+              [ Policy-Rule-Status ]
+              [ Rule-Failure-Code ]
+          *   [ AVP ]
+
+Traffic-Flow ::= <AVP Header: 557>
+              [ Flow-Description ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ User-Name ]
+              [ Called-Station-ID ]
+              [ Framed-IP-Address ]
+              [ Framed-Ipv6-Prefix ]
+              [ Address-Realm ]
+              [ Logical-Access-Id ]
+              [ Physical-Access-ID ]
+
+Policy-Update-Request ::= <AVP Header: 558>
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+              [ Policy-Rule-Status ]
+              [ QoS-Information ]
+          *   [ AVP ]
+
+@enum Policy-Rule-Status
+ACTIVE                                                       0
+INACTIVE                                                     1
+TEMPORARY_INACTIVE                                           2
+

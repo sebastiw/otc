@@ -1,0 +1,13 @@
+;; ETSI TS 183 020 v1.1.1
+
+@name     dia_etsi_ts_183020
+@vendor   13019 etsi
+
+@avp_types
+Privacy-Indicator                                           440  Grouped           V 
+
+@grouped
+Privacy-Indicator ::= <AVP Header: 440>
+          *   { Requested-Information }
+          *   [ AF-Application-Identifier ]
+
