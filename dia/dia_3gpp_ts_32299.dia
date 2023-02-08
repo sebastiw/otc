@@ -8,8 +8,8 @@
 @inherits dia_3gpp
 
 @avp_types
-Event-Type                                                  823  Grouped           VM
-SIP-Method                                                  824  UTF8String        VM
+3GPP-Event-Type                                                  823  Grouped           VM ; Event-Type in spec
+3GPP-SIP-Method                                             824  UTF8String        VM ; SIP-Method in spec
 Event                                                       825  UTF8String        VM
 Content-Type                                                826  UTF8String        VM
 Content-Length                                              827  Unsigned32        VM
@@ -335,7 +335,7 @@ CN-Operator-Selection-Entity                                3421 Enumerated     
 ISUP-Cause-Diagnostics                                      3422 OctetString       VM
 ISUP-Cause-Location                                         3423 Unsigned32        VM
 ISUP-Cause-Value                                            3424 Unsigned32        VM
-EPDG-Address                                                3425 Address           VM
+ePDG-Address                                                3425 Address           VM
 Announcing-UE-HPLMN-Identifier                              3426 UTF8String        VM
 Announcing-UE-VPLMN-Identifier                              3427 UTF8String        VM
 Coverage-Status                                             3428 Enumerated        VM
@@ -439,6 +439,274 @@ Target-IP-Address                                           4412 Address        
 FE-Identifier-List                                          4413 UTF8String        VM
 
 @grouped
+3GPP-Event-Type ::= <AVP Header: 823>
+              [ 3GPP-SIP-Method ]
+              [ Event ]
+              [ Expires ]
+
+Time-Stamps ::= <AVP Header: 833>
+              [ SIP-Request-Timestamp ]
+              [ SIP-Response-Timestamp ]
+              [ SIP-Request-Timestamp-Fraction ]
+              [ SIP-Response-Timestamp-Fraction ]
+
+Inter-Operator-Identifier ::= <AVP Header: 838>
+              [ Originating-IOI ]
+              [ Terminating-IOI ]
+
+SDP-Media-Component ::= <AVP Header: 843>
+              [ SDP-Media-Name ]
+          *   [ SDP-Media-Description ]
+              [ Local-GW-Inserted-Indication ]
+              [ IP-Realm-Default-Indication ]
+              [ Transcoder-Inserted-Indication ]
+              [ Media-Initiator-Flag ]
+              [ Media-Initiator-Party ]
+              [ 3GPP-Charging-Id ]
+              [ Access-Network-Charging-Identifier-Value ]
+              [ SDP-Type ]
+
+Application-Server-Information ::= <AVP Header: 850>
+              [ Application-Server ]
+          *   [ Application-Provided-Called-Party-Address ]
+              [ Status-AS-Code ]
+
+Trunk-Group-Id ::= <AVP Header: 851>
+              [ Incoming-Trunk-Group-Id ]
+              [ Outgoing-Trunk-Group-Id ]
+
+PS-Furnish-Charging-Information ::= <AVP Header: 865>
+              { 3GPP-Charging-Id }
+              { PS-Free-Format-Data }
+              [ PS-Append-Free-Format-Data ]
+
+Service-Information ::= <AVP Header: 873>
+          *   [ Subscription-Id ]
+              [ AoC-Information ]
+              [ PS-Information ]
+              [ IMS-Information ]
+              [ MMS-Information ]
+              [ LCS-Information ]
+              [ PoC-Information ]
+              [ MBMS-Information ]
+              [ SMS-Information ]
+              [ VCS-Information ]
+              [ MMTel-Information ]
+              [ ProSe-Information ]
+              [ Service-Generic-Information ]
+              [ IM-Information ]
+              [ DCD-Information ]
+              [ M2M-Information ]
+              [ CPDT-Information ]
+
+PS-Information ::= <AVP Header: 874>
+          *   [ Supported-Features ]
+              [ 3GPP-Charging-Id ]
+              [ PDN-Connection-Charging-ID ]
+              [ Node-Id ]
+              [ 3GPP-PDP-Type ]
+          *   [ PDP-Address ]
+              [ PDP-Address-Prefix-Length ]
+              [ Dynamic-Address-Flag ]
+              [ Dynamic-Address-Flag-Extension ]
+              [ QoS-Information ]
+          *   [ SGSN-Address ]
+          *   [ GGSN-Address ]
+          *   [ TDF-IP-Address ]
+          *   [ SGW-Address ]
+          *   [ ePDG-Address ]
+          *   [ TWAG-Address ]
+              [ CG-Address ]
+              [ Serving-Node-Type ]
+              [ SGW-Change ]
+              [ 3GPP-IMSI-MCC-MNC ]
+              [ IMSI-Unauthenticated-Flag ]
+              [ 3GPP-GGSN-MCC-MNC ]
+              [ 3GPP-NSAPI ]
+              [ Called-Station-Id ]
+              [ 3GPP-Session-Stop-Indicator ]
+              [ 3GPP-Selection-Mode ]
+              [ 3GPP-Charging-Characteristics ]
+              [ Charging-Characteristics-Selection-Mode ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-MS-TimeZone ]
+              [ Charging-Rule-Base-Name ]
+              [ ADC-Rule-Base-Name ]
+              [ 3GPP-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ User-CSG-Information ]
+          *   [ Presence-Reporting-Area-Information ]
+              [ 3GPP2-BSID ]
+              [ TWAN-User-Location-Info ]
+              [ UWAN-User-Location-Info ]
+              [ 3GPP-RAT-Type ]
+              [ PS-Furnish-Charging-Information ]
+              [ PDP-Context-Type ]
+              [ Offline-Charging ]
+          *   [ Traffic-Data-Volumes ]
+          *   [ Service-Data-Container ]
+              [ User-Equipment-Info ]
+              [ Terminal-Information ]
+              [ Start-Time ]
+              [ Stop-Time ]
+              [ Change-Condition ]
+              [ Diagnostics ]
+              [ Low-Priority-Indicator ]
+              [ NBIFOM-Mode ]
+              [ NBIFOM-Support ]
+              [ MME-Number-for-MT-SMS ]
+              [ MME-Name ]
+              [ MME-Realm ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+              [ Fixed-User-Location-Info ]
+              [ CN-Operator-Selection-Entity ]
+              [ Enhanced-Diagnostics ]
+              [ SGi-PtP-Tunnelling-Method ]
+              [ CP-CIoT-EPS-Optimisation-Indicator ]
+              [ UNI-PDU-CP-Only-Flag ]
+              [ Serving-PLMN-Rate-Control ]
+              [ APN-Rate-Control ]
+              [ Charging-Per-IP-CAN-Session-Indicator ]
+              [ RRC-Cause-Counter ]
+              [ 3GPP-PS-Data-Off-Status ]
+              [ SCS-AS-Address ]
+              [ Unused-Quota-Timer ]
+          *   [ RAN-Secondary-RAT-Usage-Report ]
+              [ PSCell-Info ]
+
+IMS-Information ::= <AVP Header: 876>
+              { Node-Functionality }
+              [ 3GPP-Event-Type ]
+              [ Role-Of-Node ]
+              [ User-Session-Id ]
+              [ Outgoing-Session-Id ]
+              [ Session-Priority ]
+          *   [ Calling-Party-Address ]
+              [ Called-Party-Address ]
+          *   [ Called-Asserted-Identity ]
+              [ Called-Identity-Change ]
+              [ Number-Portability-Routing-Information ]
+              [ Carrier-Select-Routing-Information ]
+              [ Alternate-Charged-Party-Address ]
+          *   [ Requested-Party-Address ]
+          *   [ Associated-URI ]
+              [ Time-Stamps ]
+          *   [ Application-Server-Information ]
+          *   [ Inter-Operator-Identifier ]
+          *   [ Transit-IOI-List ]
+              [ IMS-Charging-Identifier ]
+          *   [ SDP-Session-Description ]
+          *   [ SDP-Media-Component ]
+              [ Served-Party-IP-Address ]
+              [ Server-Capabilities ]
+              [ Trunk-Group-Id ]
+              [ Bearer-Service ]
+              [ Service-Id ]
+          *   [ Service-Specific-Info ]
+          *   [ Message-Body ]
+              [ Cause-Code ]
+          *   [ Reason-Header ]
+          *   [ Access-Network-Information ]
+              [ Cellular-Network-Information ]
+          *   [ Early-Media-Description ]
+              [ IMS-Communication-Service-Identifier ]
+              [ IMS-Application-Reference-Identifier ]
+              [ Online-Charging-Flag ]
+              [ Real-Time-Tariff-Information ]
+              [ Account-Expiration ]
+              [ Initial-IMS-Charging-Identifier ]
+          *   [ NNI-Information ]
+              [ From-Address ]
+              [ IMS-Emergency-Indicator ]
+              [ IMS-Visited-Network-Identifier ]
+          *   [ Access-Network-Info-Change ]
+          *   [ Access-Transfer-Information ]
+              [ Related-IMS-Charging-Identifier ]
+              [ Related-IMS-Charging-Identifier-Node ]
+              [ Route-Header-Received ]
+              [ Route-Header-Transmitted ]
+              [ Instance-Id ]
+              [ TAD-Identifier ]
+              [ FE-Identifier-List ]
+
+MMS-Information ::= <AVP Header: 877>
+              [ Originator-Address ]
+          *   [ Recipient-Address ]
+              [ Submission-Time ]
+              [ MM-Content-Type ]
+              [ Priority ]
+              [ Message-ID ]
+              [ Message-Type ]
+              [ Message-Size ]
+              [ Message-Class ]
+              [ Delivery-Report-Requested ]
+              [ Read-Reply-Report-Requested ]
+              [ MMBox-Storage-Requested ]
+              [ Applic-ID ]
+              [ Reply-Applic-ID ]
+              [ Aux-Applic-Info ]
+              [ Content-Class ]
+              [ DRM-Content ]
+              [ Adaptations ]
+              [ VASP-ID ]
+              [ VAS-ID ]
+
+LCS-Information ::= <AVP Header: 878>
+              [ LCS-Client-ID ]
+              [ Location-Type ]
+              [ Location-Estimate ]
+              [ Positioning-Data ]
+              [ 3GPP-IMSI ]
+              [ MSISDN ]
+
+PoC-Information ::= <AVP Header: 879>
+              [ PoC-Server-Role ]
+              [ PoC-Session-Type ]
+              [ PoC-User-Role ]
+              [ PoC-Session-Initiation-type ]
+              [ PoC-Event-Type ]
+              [ Number-Of-Participants ]
+          *   [ Participants-Involved ]
+          *   [ Participant-Group ]
+          *   [ Talk-Burst-Exchange ]
+              [ PoC-Controlling-Address ]
+              [ PoC-Group-Name ]
+              [ PoC-Session-Id ]
+              [ Charged-Party ]
+
+MBMS-Information ::= <AVP Header: 880>
+              [ TMGI ]
+              [ MBMS-Service-Type ]
+              [ MBMS-User-Service-Type ]
+              [ File-Repair-Supported ]
+              [ Required-MBMS-Bearer-Capabilities ]
+              [ MBMS-2G-3G-Indicator ]
+              [ RAI ]
+          *   [ MBMS-Service-Area ]
+              [ MBMS-Session-Identity ]
+              [ CN-IP-Multicast-Distribution ]
+              [ MBMS-GW-Address ]
+              [ MBMS-Charged-Party ]
+          *   [ MSISDN ]
+              [ MBMS-Data-Transfer-Start ]
+              [ MBMS-Data-Transfer-Stop ]
+
+Originator-Address ::= <AVP Header: 886>
+              [ Address-Type ]
+              [ Address-Data ]
+              [ Address-Domain ]
+
+Message-Body ::= <AVP Header: 889>
+              { Content-Type }
+              { Content-Length }
+              [ Content-Disposition ]
+              [ Originator ]
+
+Address-Domain ::= <AVP Header: 898>
+              [ Domain-Name ]
+              [ 3GPP-IMSI-MCC-MNC ]
+
 Recipient-Address ::= <AVP Header: 1201>
               [ Address-Type ]
               [ Address-Data ]
@@ -486,8 +754,8 @@ Service-Specific-Info ::= <AVP Header: 1249>
               [ Service-Specific-Type ]
 
 PoC-User-Role ::= <AVP Header: 1252>
-              [ PoC-User-Role-Ids ]
-              [ PoC-User-Role-info-Units ]
+              [ PoC-User-Role-IDs ]
+              [ PoC-User-Role-Info-Units ]
 
 Talk-Burst-Exchange ::= <AVP Header: 1255>
               { PoC-Change-Time }
@@ -542,8 +810,8 @@ Offline-Charging ::= <AVP Header: 1278>
 
 RAN-Secondary-RAT-Usage-Report ::= <AVP Header: 1302>
               [ Secondary-RAT-Type ]
-              [ RAN-Start-Timestamp ]
-              [ RAN-End-Timestamp ]
+              [ RAN-Start-Time ]
+              [ RAN-End-Time ]
               [ Accounting-Input-Octets ]
               [ Accounting-Output-Octets ]
               [ 3GPP-Charging-Id ]
@@ -561,7 +829,7 @@ Exposure-Function-API-Information ::= <AVP Header: 1316>
               [ API-Network-Service-Node ]
               [ API-Result-Code ]
               [ API-Size ]
-              [ Network-Element ]
+;               [ Network-Element ]     ; Not defined in spec
               [ SCEF-Address ]
               [ SCS-AS-Address ]
               [ TLTRI ]
@@ -680,7 +948,7 @@ Traffic-Data-Volumes ::= <AVP Header: 2046>
               [ QoS-Information ]
               [ Accounting-Input-Octets ]
               [ Accounting-Output-Octets ]
-              [ Change-condition ]
+              [ Change-Condition ]
               [ Change-Time ]
               [ 3GPP-User-Location-Info ]
               [ UWAN-User-Location-Info ]
@@ -832,7 +1100,7 @@ ISUP-Cause ::= <AVP Header: 3416>
 
 ProSe-Direct-Communication-Transmission-Data-Container ::= <AVP Header: 3441>
               [ Local-Sequence-Number ]
-              [ Coverage-status ]
+              [ Coverage-Status ]
               [ 3GPP-User-Location-Info ]
               [ Accounting-Output-Octets ]
               [ Change-Time ]
@@ -848,7 +1116,7 @@ ProSe-Information ::= <AVP Header: 3447>
               [ Announcing-UE-VPLMN-Identifier ]
               [ Monitoring-UE-HPLMN-Identifier ]
               [ Monitoring-UE-VPLMN-Identifier ]
-              [ Monitored-HPLMN-Identifier ]
+              [ Monitored-PLMN-Identifier ]
               [ Role-Of-ProSe-Function ]
               [ ProSe-App-Id ]
               [ ProSe-3rd-Party-Application-ID ]
@@ -861,7 +1129,7 @@ ProSe-Information ::= <AVP Header: 3447>
               [ ProSe-Role-Of-UE ]
               [ PC3-Control-Protocol-Cause ]
               [ Monitoring-UE-Identifier ]
-              [ Prose-Function-PLMN-Identifier ]
+              [ ProSe-Function-PLMN-Identifier ]
               [ Requestor-PLMN-Identifier ]
               [ Origin-App-Layer-User-Id ]
               [ WLAN-Link-Layer-Id ]
@@ -1002,7 +1270,7 @@ CPDT-Information ::= <AVP Header: 3927>
               [ SCEF-ID ]
               [ Serving-Node-Identity ]
               [ SGW-Change ]
-              [ NIDD-submission ]
+              [ NIDD-Submission ]
 
 NIDD-Submission ::= <AVP Header: 3928>
               [ Submission-Time ]
@@ -1033,6 +1301,125 @@ Access-Network-Info-Change ::= <AVP Header: 4401>
           *   [ Access-Network-Information ]
               [ Cellular-Network-Information ]
               [ Change-Time ]
+
+@enum Role-Of-Node
+ORIGINATING_ROLE                                             0
+TERMINATING_ROLE                                             1
+FORWARDING_ROLE                                              2
+
+@enum Node-Functionality
+S_CSCF                                                       0
+P_CSCF                                                       1
+I_CSCF                                                       2
+MRFC                                                         3
+MGCF                                                         4
+BGCF                                                         5
+AS                                                           6
+IBCF                                                         7
+S_GW                                                         8
+P_GW                                                         9
+HSGW                                                        10
+E_CSCF                                                      11
+MME                                                         12
+TRF                                                         13
+TF                                                          14
+ATCF                                                        15
+Proxy_Function                                              16
+ePDG                                                        17
+TDF                                                         18
+TWAG                                                        19
+SCEF                                                        20
+IWK_SCEF                                                    21
+
+@enum Originator
+CALLING_PARTY                                                0
+CALLED_PARTY                                                 1
+
+@enum PS-Append-Free-Format-Data
+APPEND                                                       0
+OVERWRITE                                                    1
+
+@enum Trigger-Type
+CHANGE_IN_SGSN_IP_ADDRESS                                    1
+CHANGE_IN_QOS                                                2
+CHANGE_IN_LOCATION                                           3
+CHANGE_IN_RAT                                                4
+CHANGE_IN_UE_TIMEZONE                                        5
+CHANGEINQOS_TRAFFIC_CLASS                                   10
+CHANGEINQOS_RELIABILITY_CLASS                               11
+CHANGEINQOS_DELAY_CLASS                                     12
+CHANGEINQOS_PEAK_THROUGHPUT                                 13
+CHANGEINQOS_PRECEDENCE_CLASS                                14
+CHANGEINQOS_MEAN_THROUGHPUT                                 15
+CHANGEINQOS_MAXIMUM_BIT_RATE_FOR_UPLINK                     16
+CHANGEINQOS_MAXIMUM_BIT_RATE_FOR_DOWNLINK                   17
+CHANGEINQOS_RESIDUAL_BER                                    18
+CHANGEINQOS_SDU_ERROR_RATIO                                 19
+CHANGEINQOS_TRANSFER_DELAY                                  20
+CHANGEINQOS_TRAFFIC_HANDLING_PRIORITY                       21
+CHANGEINQOS_GUARANTEED_BIT_RATE_FOR_UPLINK                  22
+CHANGEINQOS_GUARANTEED_BIT_RATE_FOR_DOWNLINK                23
+CHANGEINQOS_APN_AGGREGATE_MAXIMUM_BIT_RATE                  24
+CHANGEINLOCATION_MCC                                        30
+CHANGEINLOCATION_MNC                                        31
+CHANGEINLOCATION_RAC                                        32
+CHANGEINLOCATION_LAC                                        33
+CHANGEINLOCATION_CellId                                     34
+CHANGEINLOCATION_TAC                                        35
+CHANGEINLOCATION_ECGI                                       36
+CHANGE_IN_MEDIA_COMPOSITION                                 40
+CHANGE_IN_PARTICIPANTS_NMB                                  50
+CHANGE_IN_THRSHLD_OF_PARTICIPANTS_NMB                       51
+CHANGE_IN_USER_PARTICIPATING_TYPE                           52
+CHANGE_IN_SERVICE_CONDITION                                 60
+CHANGE_IN_SERVING_NODE                                      61
+CHANGE_IN_ACCESS_FOR_A_SERVICE_DATA_FLOW                    62
+CHANGE_IN_USER_CSG_INFORMATION                              70
+CHANGE_IN_HYBRID_SUBSCRIBED_USER_CSG_INFORMATION            71
+CHANGE_IN_HYBRID_UNSUBSCRIBED_USER_CSG_INFORMATION          72
+CHANGE_OF_UE_PRESENCE_IN_PRESENCE_REPORTING_AREA            73
+CHANGE_IN_SERVING_PLMN_RATE_CONTROL                         74
+CHANGE_IN_APN_RATE_CONTROL                                  75
+CHANGE_IN_3GPP_PS_DATA_OFF                                  76
+
+@enum Reporting-Reason
+THRESHOLD                                                    0
+QHT                                                          1
+FINAL                                                        2
+QUOTA_EXHAUSTED                                              3
+VALIDITY_TIME                                                4
+OTHER_QUOTA_TYPE                                             5
+RATING_CONDITION_CHANGE                                      6
+FORCED_REAUTHORISATION                                       7
+POOL_EXHAUSTED                                               8
+UNUSED_QUOTA_TIMER                                           9
+
+@enum Media-Initiator-Flag
+CALLED_PARTY                                                 0
+CALLING_PARTY                                                1
+UNKNOWN                                                      2
+
+@enum PoC-Server-Role
+PARTICIPATING_POC_SERVER                                     0
+CONTROLLING_POC_SERVER                                       1
+INTERWORKING_FUNCTION                                        2
+INTERWORKING_SELECTION_FUNCTION                              3
+
+@enum PoC-Session-Type
+PoC_SESSION_1_TO_1                                           0
+PoC_GROUP_SESSION_CHAT                                       1
+PoC_GROUP_SESSION_PRE_ARRANGED                               2
+PoC_GROUP_SESSION_AD_HOC                                     3
+
+@enum Address-Type
+EMAIL_ADDRESS                                                0
+MSISDN                                                       1
+IPv4_ADDRESS                                                 2
+IPv6_ADDRESS                                                 3
+NUMERIC_SHORTCODE                                            4
+ALPHANUMERIC_SHORTCODE                                       5
+OTHER                                                        6
+IMSI                                                         7
 
 @enum Type-Number
 ;; OMNA WSP Content Type Numbers
@@ -1133,7 +1520,7 @@ SECONDARY                                                    1
 NO                                                           0
 YES                                                          1
 
-@enum PoC-User-Role-info-Units
+@enum PoC-User-Role-Info-Units
 MODERATOR                                                    1
 DISPATCHER                                                   2
 SESSION_OWNER                                                3

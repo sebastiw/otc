@@ -1,6 +1,6 @@
-;; OMA DDA Charging Data 2011-02-01
+;; OMA DDS Charging Data 2011-02-01
 
-@name     dia_oma_dda_charging_data
+@name     dia_oma_dds_charging_data
 @vendor   10415 3gpp
 
 @inherits diameter_gen_base_rfc6733

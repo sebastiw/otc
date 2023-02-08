@@ -87,7 +87,7 @@ External-Client                                   1479 Grouped          MV
 Client-Identity                                   1480 OctetString      MV
 GMLC-Restriction                                  1481 Enumerated       MV
 PLMN-Client                                       1482 Enumerated       MV
-Service-Type                                      1483 Grouped          MV
+LCS-Service-Type                                  1483 Grouped          MV ; Service-Type in spec
 ServiceTypeIdentity                               1484 Unsigned32       MV
 MO-LR                                             1485 Grouped          MV
 Teleservice-List                                  1486 Grouped          MV
@@ -430,7 +430,7 @@ LCS-PrivacyException ::= <AVP Header: 1475>
               [ Notification-To-UE-User ]
           *   [ External-Client ]
           *   [ PLMN-Client ]
-          *   [ Service-Type ]
+          *   [ LCS-Service-Type ]
           *   [ AVP ]
 
 External-Client ::= <AVP Header: 1479>
@@ -439,7 +439,7 @@ External-Client ::= <AVP Header: 1479>
               [ Notification-To-UE-User ]
           *   [ AVP ]
 
-Service-Type ::= <AVP Header: 1483>
+LCS-Service-Type ::= <AVP Header: 1483>
               { ServiceTypeIdentity }
               [ GMLC-Restriction ]
               [ Notification-To-UE-User ]

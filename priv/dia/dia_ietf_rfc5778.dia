@@ -16,13 +16,6 @@ Service-Selection                                           493  UTF8String     
 MIP6-Auth-Mode                                              494  Enumerated        M 
 
 @grouped
-MIP6-Agent-Info ::= <AVP Header: 486>
-          *2  [ MIP-Home-Agent-Address ]
-              [ MIP-Home-Agent-Host ]
-              [ MIP6-Home-Link-Prefix ]
-              [ PMIP6-IPv4-Home-Address ]
-          *   [ AVP ]
-
 MIP-MN-HA-MSA ::= <AVP Header: 492>
               { MIP-Session-Key }
               { MIP-MSA-Lifetime }

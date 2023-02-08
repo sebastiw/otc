@@ -112,7 +112,10 @@ function trim(s){
 }
 
 !/@enum/ && !/@define/ && ("@enum" == section || "@define" == section) {
-    enum=gensub(/-/, "_", "g", $1)
+    enum=gensub(/[-/()]/, "_", "g", $1)
+    enum=gensub(/[.]/, "", "g", enum)
+    enum=gensub(/_+/, "_", "g", enum)
+    enum=gensub(/_$/, "", "g", enum)
     value=gensub(/[().,]/, "", "g", $2)
     if("" != enum) {
         printf("%-60s%2s%s\n", enum, value, comment)

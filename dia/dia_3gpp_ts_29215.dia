@@ -30,7 +30,7 @@ Subsession-Decision-Info ::= <AVP Header: 2200>
           *   [ QoS-Rule-Install ]
           *   [ QoS-Rule-Remove ]
               [ Default-EPS-Bearer-QoS ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
           *   [ Usage-Monitoring-Information ]
               [ Session-Release-Cause ]
               [ Bearer-Control-Mode ]

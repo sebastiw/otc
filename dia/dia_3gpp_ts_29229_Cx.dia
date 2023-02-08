@@ -154,8 +154,8 @@ Multimedia-Auth-Request ::= <Diameter Header: 303, REQ, PXY>
               { Destination-Realm }
               { User-Name }
               { Public-Identity }
-              { SIP-Auth-Data-Item }
-              { SIP-Number-Auth-Items }
+              { 3GPP-SIP-Auth-Data-Item }
+              { 3GPP-SIP-Number-Auth-Items }
               { Server-Name }
               [ DRMP ]
               [ Destination-Host ]
@@ -180,8 +180,8 @@ Multimedia-Auth-Answer ::= <Diameter Header: 303, PXY>
           *   [ Load ]
           *   [ Supported-Features ]
               [ Public-Identity ]
-              [ SIP-Number-Auth-Items ]
-          *   [ SIP-Auth-Data-Item ]
+              [ 3GPP-SIP-Number-Auth-Items ]
+          *   [ 3GPP-SIP-Auth-Data-Item ]
           *   [ AVP ]
               [ Failed-AVP ]
           *   [ Proxy-Info ]
@@ -235,7 +235,7 @@ Push-Profile-Request ::= <Diameter Header: 305, REQ, PXY>
           *   [ Supported-Features ]
               [ User-Data ]
               [ Charging-Information ]
-              [ SIP-Auth-Data-Item ]
+              [ 3GPP-SIP-Auth-Data-Item ]
               [ Allowed-WAF-WWSF-Identities ]
           *   [ AVP ]
           *   [ Proxy-Info ]

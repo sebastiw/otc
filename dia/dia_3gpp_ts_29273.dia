@@ -64,7 +64,7 @@ MIP6-Agent-Info ::= <AVP Header: 486>
           *   [ AVP ]
 
 Non-3GPP-User-Data ::= <AVP Header: 1500>
-              [ Subscription-ID ]
+              [ Subscription-Id ]
               [ Non-3GPP-IP-Access ]
               [ Non-3GPP-IP-Access-APN ]
           *   [ RAT-Type ]

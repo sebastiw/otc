@@ -114,6 +114,14 @@ Idle-Status-Indication ::= <AVP Header: 4322>
               [ DL-Buffering-Suggested-Packet-Count ]
           *   [ AVP ]
 
+;; defined in TS 29.274
+APN-Rate-Control-Status ::= <AVP Header: 4326>
+              [ Uplink-Number-Of-Packets-Allowed ]
+              [ Number-Of-Additional-Exception-Reports ]
+              [ Downlink-Number-Of-Packets-Allowed ]
+              [ APN-Rate-Control-Status-Validity-Time ]
+          *   [ AVP ]
+
 @define Cause-Type
 RADIO_NETWORK_LAYER                                          0
 TRANSPORT_LAYER                                              1

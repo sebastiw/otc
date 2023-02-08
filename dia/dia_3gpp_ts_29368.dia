@@ -25,7 +25,7 @@ Feature-Supported-In-Final-Target                           3012 Unsigned32     
 Device-Action ::= <AVP Header: 3001>
               { Reference-Number }
               { Action-Type }
-              [ External-Id ]
+              [ External-Identifier ]
               [ MSISDN ]
               [ SCS-Identity ]
               [ Old-Reference-Number ]
@@ -36,7 +36,7 @@ Device-Action ::= <AVP Header: 3001>
 Device-Notification ::= <AVP Header: 3002>
               { Reference-Number }
               { Action-Type }
-              [ External-Id ]
+              [ External-Identifier ]
               [ MSISDN ]
               [ SCS-Identity ]
               [ Request-Status ]

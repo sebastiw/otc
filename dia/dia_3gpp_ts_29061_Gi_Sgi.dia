@@ -1,0 +1,333 @@
+;; 3GPP TS 29.061 v17.6.0 Gi/Sgi
+
+@id       1     
+@name     dia_3gpp_ts_29061_Gi_Sgi
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@messages
+AA-Request ::= <Diameter Header: 265, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Request-Type }
+              [ Destination-Host ]
+              [ NAS-Port ]
+              [ NAS-Port-Id ]
+              [ NAS-Port-Type ]
+              [ Origin-State-Id ]
+              [ Port-Limit ]
+              [ User-Name ]
+              [ User-Password ]
+              [ Service-Type ]
+              [ Authorization-Lifetime ]
+              [ Auth-Grace-Period ]
+              [ Auth-Session-State ]
+              [ Callback-Number ]
+              [ Called-Station-Id ]
+              [ Calling-Station-Id ]
+              [ Originating-Line-Info ]
+              [ Connect-Info ]
+              [ CHAP-Auth ]
+              [ CHAP-Challenge ]
+          *   [ Framed-Compression ]
+              [ Framed-Interface-Id ]
+              [ Framed-IP-Address ]
+          *   [ Framed-IPv6-Prefix ]
+          *   [ Delegated-IPv6-Prefix ]
+              [ Framed-IP-Netmask ]
+              [ Framed-MTU ]
+              [ Framed-Protocol ]
+          *   [ Login-IP-Host ]
+          *   [ Login-IPv6-Host ]
+              [ Login-LAT-Group ]
+              [ Login-LAT-Node ]
+              [ Login-LAT-Port ]
+              [ Login-LAT-Service ]
+          *   [ Tunneling ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ 3GPP-IMSI ]
+              [ 3GPP-External-Identifier ]
+              [ 3GPP-Charging-ID ]
+              [ 3GPP-PDP-Type ]
+              [ 3GPP-CG-Address ]
+              [ 3GPP-GPRS-Negotiated-QoS-Profile ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-GGSN-Address ]
+              [ 3GPP-IMSI-MCC-MNC ]
+              [ 3GPP-GGSN-MCC-MNC ]
+              [ 3GPP-NSAPI ]
+              [ 3GPP-Selection-Mode ]
+              [ 3GPP-Charging-Characteristics ]
+              [ 3GPP-CG-IPv6-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ 3GPP-GGSN-IPv6-Address ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-User-Location-Info ]
+              [ 3GPP-RAT-Type ]
+              [ 3GPP-CAMEL-Charging-Info ]
+              [ 3GPP-Negotiated-DSCP ]
+              [ 3GPP-Allocate-IP-Type ]
+              [ TWAN-Identifier ]
+              [ 3GPP-UE-Local-IP-Address ]
+              [ 3GPP-UE-Source-Port ]
+          *   [ AVP ]
+
+AA-Answer ::= <Diameter Header: 265, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Request-Type }
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ User-Name ]
+              [ Service-Type ]
+          *   [ Class ]
+              [ Acct-Interim-Interval ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Idle-Timeout ]
+              [ Authorization-Lifetime ]
+              [ Auth-Grace-Period ]
+              [ Auth-Session-State ]
+              [ Re-Auth-Request-Type ]
+              [ Multi-Round-Time-Out ]
+              [ Session-Timeout ]
+          *   [ Reply-Message ]
+              [ Origin-State-Id ]
+          *   [ Filter-Id ]
+              [ Port-Limit ]
+              [ Prompt ]
+              [ Callback-Id ]
+              [ Callback-Number ]
+          *   [ Framed-Compression ]
+              [ Framed-Interface-Id ]
+              [ Framed-IP-Address ]
+          *   [ Framed-IPv6-Prefix ]
+              [ Framed-IPv6-Pool ]
+          *   [ Framed-IPv6-Route ]
+          *   [ Delegated-IPv6-Prefix ]
+              [ Framed-IP-Netmask ]
+          *   [ Framed-Route ]
+              [ Framed-Pool ]
+              [ Framed-IPX-Network ]
+              [ Framed-MTU ]
+              [ Framed-Protocol ]
+              [ Framed-Routing ]
+          *   [ Login-IP-Host ]
+          *   [ Login-IPv6-Host ]
+              [ Login-LAT-Group ]
+              [ Login-LAT-Node ]
+              [ Login-LAT-Port ]
+              [ Login-LAT-Service ]
+              [ Login-Service ]
+              [ Login-TCP-Port ]
+          *   [ NAS-Filter-Rule ]
+          *   [ QoS-Filter-Rule ]
+          *   [ Tunneling ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+              [ 3GPP-IPv6-DNS-Servers ]
+          *   [ 3GPP-External-Identifier ]
+          *   [ AVP ]
+
+AC-Request ::= <Diameter Header: 271, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Accounting-Record-Type }
+              { Accounting-Record-Number }
+              [ Acct-Application-Id ]
+              [ User-Name ]
+              [ Origin-State-Id ]
+              [ Destination-Host ]
+              [ Event-Timestamp ]
+              [ Acct-Delay-Time ]
+              [ NAS-Identifier ]
+              [ NAS-IP-Address ]
+              [ NAS-IPv6-Address ]
+              [ NAS-Port ]
+              [ NAS-Port-Id ]
+              [ NAS-Port-Type ]
+          *   [ Class ]
+              [ Service-Type ]
+              [ Accounting-Input-Octets ]
+              [ Accounting-Input-Packets ]
+              [ Accounting-Output-Octets ]
+              [ Accounting-Output-Packets ]
+              [ Acct-Authentic ]
+              [ Accounting-Auth-Method ]
+              [ Acct-Session-Time ]
+              [ Acct-Tunnel-Connection ]
+              [ Acct-Tunnel-Packets-Lost ]
+              [ Callback-Id ]
+              [ Callback-Number ]
+              [ Called-Station-Id ]
+              [ Calling-Station-Id ]
+          *   [ Connection-Info ]
+              [ Originating-Line-Info ]
+              [ Authorization-Lifetime ]
+              [ Session-Timeout ]
+              [ Idle-Timeout ]
+              [ Port-Limit ]
+              [ Accounting-Realtime-Required ]
+              [ Acct-Interim-Interval ]
+          *   [ Filter-Id ]
+          *   [ NAS-Filter-Rule ]
+          *   [ Qos-Filter-Rule ]
+              [ Framed-Compression ]
+              [ Framed-Interface-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IP-Netmask ]
+          *   [ Framed-IPv6-Prefix ]
+              [ Framed-IPv6-Pool ]
+          *   [ Framed-IPv6-Route ]
+          *   [ Delegated-IPv6-Prefix ]
+              [ Framed-IPX-Network ]
+              [ Framed-MTU ]
+              [ Framed-Pool ]
+              [ Framed-Protocol ]
+          *   [ Framed-Route ]
+              [ Framed-Routing ]
+          *   [ Login-IP-Host ]
+          *   [ Login-IPv6-Host ]
+              [ Login-LAT-Group ]
+              [ Login-LAT-Node ]
+              [ Login-LAT-Port ]
+              [ Login-LAT-Service ]
+              [ Login-Service ]
+              [ Login-TCP-Port ]
+          *   [ Tunneling ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ 3GPP-IMSI ]
+              [ External-Identifier ]
+              [ 3GPP-Charging-ID ]
+              [ 3GPP-PDP-Type ]
+              [ 3GPP-CG-Address ]
+              [ 3GPP-GPRS-Negotiated-QoS-Profile ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-GGSN-Address ]
+              [ 3GPP-IMSI-MCC-MNC ]
+              [ 3GPP-GGSN-MCC-MNC ]
+              [ 3GPP-NSAPI ]
+              [ 3GPP-Selection-Mode ]
+              [ 3GPP-Charging-Characteristics ]
+              [ 3GPP-CG-IPv6-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ 3GPP-GGSN-IPv6-Address ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-IMEISV ]
+              [ 3GPP-RAT-Type ]
+              [ 3GPP-User-Location-Info ]
+              [ 3GPP-MS-Time-Zone ]
+              [ 3GPP-CAMEL-Charging-Info ]
+              [ 3GPP-Packet-Filter ]
+              [ 3GPP-Negotiated-DSCP ]
+              [ TWAN-Identifier ]
+              [ 3GPP-User-Location-Info-Time ]
+          *   [ 3GPP-Secondary-RAT-Usage ]
+              [ 3GPP-UE-Local-IP-Address ]
+              [ 3GPP-UE-Source-Port ]
+          *   [ AVP ]
+
+AC-Answer ::= <Diameter Header: 271, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              { Accounting-Record-Type }
+              { Accounting-Record-Number }
+              [ Acct-Application-Id ]
+              [ User-Name ]
+              [ Event-Timestamp ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+              [ NAS-Identifier ]
+              [ NAS-IP-Address ]
+              [ NAS-IPv6-Address ]
+              [ NAS-Port ]
+              [ NAS-Port-Id ]
+              [ NAS-Port-Type ]
+              [ Service-Type ]
+              [ Accounting-Realtime-Required ]
+              [ Acct-Interim-Interval ]
+          *   [ Class ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ST-Request ::= <Diameter Header: 275, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Termination-Cause }
+              [ User-Name ]
+              [ Destination-Host ]
+          *   [ Class ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ST-Answer ::= <Diameter Header: 275, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ User-Name ]
+          *   [ Class ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+ASR ::= <Diameter Header: 274, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+              [ 3GPP-NSAPI ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ASA ::= <Diameter Header: 274, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ User-Name ]
+              [ Origin-State-Id ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirected-Host ]
+              [ Redirected-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+

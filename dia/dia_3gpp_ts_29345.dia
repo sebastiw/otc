@@ -72,7 +72,7 @@ Code-Sending-Security-Material                              3861 Grouped        
 DUSK                                                        3862 OctetString       V 
 DUIK                                                        3863 OctetString       V 
 DUCK                                                        3864 OctetString       V 
-MIC-Check-indicator                                         3865 Unsigned32        V 
+MIC-Check-Indicator                                         3865 Unsigned32        V 
 Encrypted-Bitmask                                           3866 OctetString       V 
 ProSe-App-Code-Suffix-Range                                 3867 Grouped           V 
 PC5-tech                                                    3868 OctetString       V 
@@ -113,7 +113,7 @@ WiFi-P2P-Assistance-Info ::= <AVP Header: 3819>
           *   [ AVP ]
 
 WLAN-Assistance-Info ::= <AVP Header: 3820>
-              [ WiFi-P2P-Assistance-Iinfo ]
+              [ WiFi-P2P-Assistance-Info ]
           *   [ AVP ]
 
 WLAN-Link-Layer-Id ::= <AVP Header: 3821>
@@ -150,7 +150,7 @@ Periodic-Location-Type ::= <AVP Header: 3829>
 Discovery-Auth-Request ::= <AVP Header: 3854>
               { Discovery-Type }
               [ User-Identity ]
-              [ ProSe-App-ID ]
+              [ ProSe-App-Id ]
               [ ProSe-App-Code ]
               [ ProSe-App-Code-Suffix-Range ]
               [ ProSe-Validity-Timer ]
@@ -159,8 +159,8 @@ Discovery-Auth-Request ::= <AVP Header: 3854>
               [ Target-RPAUID ]
               [ Target-PDUID ]
               [ ProSe-Restricted-Code ]
-              [ ProSe-Query-Code ]
-              [ ProSe-Response-Code ]
+;               [ ProSe-Query-Code ]    ; Not defined in spec
+;               [ ProSe-Response-Code ] ; Not defined in spec
           *   [ ProSe-Restricted-Code-Suffix-Range ]
               [ Banned-RPAUID ]
               [ Banned-PDUID ]
@@ -173,8 +173,8 @@ Discovery-Auth-Response ::= <AVP Header: 3855>
           *   [ ProSe-Discovery-Filter ]
               [ Visited-PLMN-Id ]
               [ ProSe-Restricted-Code ]
-              [ ProSe-Query-Code ]
-              [ ProSe-Response-Code ]
+;               [ ProSe-Query-Code ]    ; Not defined in spec
+;               [ ProSe-Response-Code ] ; Not defined in spec
               [ ProSe-Validity-Timer ]
               [ Code-Sending-Security-Material ]
               [ Code-Receiving-Security-Material ]
@@ -185,7 +185,7 @@ Discovery-Auth-Response ::= <AVP Header: 3855>
 Match-Request ::= <AVP Header: 3856>
               { Discovery-Type }
               [ User-Identity ]
-              [ Visited-PLMN-ID ]
+              [ Visited-PLMN-Id ]
           *   [ ProSe-App-Code-Info ]
               [ PC5-tech ]
           *   [ AVP ]
@@ -193,7 +193,7 @@ Match-Request ::= <AVP Header: 3856>
 Match-Report-Info ::= <AVP Header: 3857>
               { Discovery-Type }
               [ User-Identity ]
-          *   [ ProSe-App-ID ]
+          *   [ ProSe-App-Id ]
           *   [ AVP ]
 
 App-Identifier ::= <AVP Header: 3840>

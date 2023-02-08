@@ -18,13 +18,13 @@ Server-Capabilities                                         603  Grouped        
 Mandatory-Capability                                        604  Unsigned32        MV
 Optional-Capability                                         605  Unsigned32        MV
 User-Data                                                   606  OctetString       MV
-SIP-Number-Auth-Items                                       607  Unsigned32        MV
-SIP-Authentication-Scheme                                   608  UTF8String        MV
-SIP-Authenticate                                            609  OctetString       MV
-SIP-Authorization                                           610  OctetString       MV
-SIP-Authentication-Context                                  611  OctetString       MV
-SIP-Auth-Data-Item                                          612  Grouped           MV
-SIP-Item-Number                                             613  Unsigned32        MV
+3GPP-SIP-Number-Auth-Items                                  607  Unsigned32        MV ; SIP-Number-Auth-Items in spec
+3GPP-SIP-Authentication-Scheme                              608  UTF8String        MV ; SIP-Authentication-Scheme in spec
+3GPP-SIP-Authenticate                                       609  OctetString       MV ; SIP-Authenticate in spec
+3GPP-SIP-Authorization                                      610  OctetString       MV ; SIP-Authorization in spec
+3GPP-SIP-Authentication-Context                             611  OctetString       MV ; SIP-Authentication-Context in spec
+3GPP-SIP-Auth-Data-Item                                     612  Grouped           MV ; SIP-Auth-Data-Item in spec
+3GPP-SIP-Item-Number                                        613  Unsigned32        MV ; SIP-Item-Number in spec
 Server-Assignment-Type                                      614  Enumerated        MV
 Deregistration-Reason                                       615  Grouped           MV
 Reason-Code                                                 616  Enumerated        MV
@@ -85,12 +85,12 @@ Server-Capabilities ::= <AVP Header: 603>
           *   [ Server-Name ]
           *   [ AVP ]
 
-SIP-Auth-Data-Item ::= <AVP Header: 612>
-              [ SIP-Item-Number ]
-              [ SIP-Authentication-Scheme ]
-              [ SIP-Authenticate ]
-              [ SIP-Authorization ]
-              [ SIP-Authentication-Context ]
+3GPP-SIP-Auth-Data-Item ::= <AVP Header: 612>
+              [ 3GPP-SIP-Item-Number ]
+              [ 3GPP-SIP-Authentication-Scheme ]
+              [ 3GPP-SIP-Authenticate ]
+              [ 3GPP-SIP-Authorization ]
+              [ 3GPP-SIP-Authentication-Context ]
               [ Confidentiality-Key ]
               [ Integrity-Key ]
               [ SIP-Digest-Authenticate ]
@@ -141,7 +141,7 @@ SCSCF-Restoration-Info ::= <AVP Header: 639>
               { User-Name }
          1*   { Restoration-Info }
               [ Registration-Time-Out ]
-              [ SIP-Authentication-Scheme ]
+              [ 3GPP-SIP-Authentication-Scheme ]
           *   [ AVP ]
 
 Subscription-Info ::= <AVP Header: 642>

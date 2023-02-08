@@ -1,0 +1,7 @@
+;; 3GPP2
+
+@name     dia_3gpp2
+@vendor   5535  3gpp2
+
+@avp_types
+3GPP2-BSID                                                  9010 UTF8String        MV

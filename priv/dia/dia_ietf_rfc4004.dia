@@ -22,7 +22,7 @@ MIP-Auth-Input-Data-Length                                  338  Unsigned32     
 MIP-Authenticator-Length                                    339  Unsigned32        M 
 MIP-Authenticator-Offset                                    340  Unsigned32        M 
 MIP-MN-AAA-SPI                                              341  Unsigned32        M 
-MIP-Filter-Rule                                             342  IPFiltrRule       M 
+MIP-Filter-Rule                                             342  IPFilterRule      M 
 MIP-Session-Key                                             343  OctetString       M 
 MIP-FA-Challenge                                            344  OctetString       M 
 MIP-Algorithm-Type                                          345  Enumerated        M 

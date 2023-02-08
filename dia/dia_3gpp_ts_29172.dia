@@ -45,7 +45,7 @@ Area-Event-Info                                             2533 Grouped        
 Area-Definition                                             2534 Grouped           V 
 Area                                                        2535 Grouped           V 
 Area-Type                                                   2536 Unsigned32        V 
-Area-Identification                                         2537 Grouped           V 
+Area-Identification                                         2537 OctetString       V 
 Occurrence-Info                                             2538 Enumerated        V 
 Interval-Time                                               2539 Unsigned32        V 
 Periodic-LDR-Information                                    2540 Grouped           V 

@@ -1,0 +1,15 @@
+;; IETF RFC 5580
+
+@name     dia_ietf_rfc5580
+
+@inherits diameter_gen_base_rfc6733
+
+@avp_types
+Operator-Name                                               126  OctetString       - 
+Location-Information                                        127  OctetString       - 
+Location-Data                                               128  OctetString       - 
+Basic-Location-Policy-Rules                                 129  OctetString       - 
+Extended-Location-Policy-Rules                              130  OctetString       - 
+Location-Capable                                            131  OctetString       - 
+Requested-Location-Info                                     132  OctetString       - 
+

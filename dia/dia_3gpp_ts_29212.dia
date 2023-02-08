@@ -271,7 +271,7 @@ Event-Report-Indication ::= <AVP Header: 1033>
               [ IP-CAN-Type ]
          0*2  [ AN-GW-Address ]
               [ 3GPP-SGSN-Address ]
-              [ 3GPP-SGSN-Ipv6-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
               [ 3GPP-SGSN-MCC-MNC ]
               [ Framed-IP-Address ]
               [ RAT-Type ]
@@ -295,7 +295,7 @@ Allocation-Retention-Priority ::= <AVP Header: 1034>
 
 Tunnel-Information ::= <AVP Header: 1038>
               [ Tunnel-Header-Length ]
-         2*2  [ Tunnel-Header-Filter ]
+          *2  [ Tunnel-Header-Filter ]
           *   [ AVP ]
 
 CoA-Information ::= <AVP Header: 1039>
@@ -306,6 +306,46 @@ CoA-Information ::= <AVP Header: 1039>
 Default-EPS-Bearer-QoS ::= <AVP Header: 1049>
               [ QoS-Class-Identifier ]
               [ Allocation-Retention-Priority ]
+          *   [ AVP ]
+
+QoS-Rule-Install ::= <AVP Header: 1051>
+          *   [ QoS-Rule-Definition ]
+          *   [ QoS-Rule-Name ]
+          *   [ QoS-Rule-Base-Name ]
+              [ Tunnel-Information ]
+              [ Access-Network-Charging-Identifier-Value ]
+              [ Resource-Allocation-Notification ]
+              [ Rule-Activation-Time ]
+              [ Rule-Deactivation-Time ]
+              [ 3GPP-GGSN-Address ]
+              [ 3GPP-GGSN-IPv6-Address ]
+         0*2  [ AN-GW-Address ]
+              [ UDP-Source-Port ]
+          *   [ AVP ]
+
+QoS-Rule-Remove ::= <AVP Header: 1052>
+          *   [ QoS-Rule-Name ]
+          *   [ QoS-Rule-Base-Name ]
+          *   [ Required-Access-Info ]
+          *   [ AVP ]
+
+QoS-Rule-Definition ::= <AVP Header: 1053>
+              { QoS-Rule-Name }
+          *   [ Flow-Information ]
+              [ QoS-Information ]
+              [ Precedence ]
+          *   [ Required-Access-Info ]
+              [ Sharing-Key-DL ]
+              [ Sharing-Key-UL ]
+              [ Content-Version ]
+          *   [ AVP ]
+
+QoS-Rule-Report ::= <AVP Header: 1055>
+          *   [ QoS-Rule-Name ]
+          *   [ QoS-Rule-Base-Name ]
+              [ PCC-Rule-Status ]
+              [ Rule-Failure-Code ]
+          *   [ Content-Version ]
           *   [ AVP ]
 
 Flow-Information ::= <AVP Header: 1058>
@@ -363,15 +403,60 @@ Routing-Filter ::= <AVP Header: 1078>
               [ Flow-Label ]
           *   [ AVP ]
 
+Redirect-Information ::= <AVP Header: 1085>
+              [ Redirect-Support ]
+              [ Redirect-Address-Type ]
+              [ Redirect-Server-Address ]
+          *   [ AVP ]
+
 TDF-Information ::= <AVP Header: 1087>
               [ TDF-Destination-Realm ]
               [ TDF-Destination-Host ]
               [ TDF-IP-Address ]
 
-Redirect-Information ::= <AVP Header: 1085>
-              [ Redirect-Support ]
-              [ Redirect-Address-Type ]
-              [ Redirect-Server-Address ]
+ADC-Rule-Install ::= <AVP Header: 1092>
+          *   [ ADC-Rule-Definition ]
+          *   [ ADC-Rule-Name ]
+          *   [ ADC-Rule-Base-Name ]
+              [ Monitoring-Flags ]
+              [ Rule-Activation-Time ]
+              [ Rule-Deactivation-Time ]
+          *   [ AVP ]
+
+ADC-Rule-Remove ::= <AVP Header: 1093>
+          *   [ ADC-Rule-Name ]
+          *   [ ADC-Rule-Base-Name ]
+          *   [ AVP ]
+
+ADC-Rule-Definition ::= <AVP Header: 1094>
+              { ADC-Rule-Name }
+              [ TDF-Application-Identifier ]
+          *   [ Flow-Information ]
+              [ Service-Identifier ]
+              [ Rating-Group ]
+              [ Reporting-Level ]
+              [ Online ]
+              [ Offline ]
+              [ Metering-Method ]
+              [ Precedence ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ Monitoring-Key ]
+              [ Sponsor-Identity ]
+              [ Application-Service-Provider-Identity ]
+         0*2  [ Redirect-Information ]
+              [ Mute-Notification ]
+              [ Traffic-Steering-Policy-Identifier-DL ]
+              [ Traffic-Steering-Policy-Identifier-UL ]
+              [ ToS-Traffic-Class ]
+          *   [ AVP ]
+
+ADC-Rule-Report ::= <AVP Header: 1097>
+          *   [ ADC-Rule-Name ]
+          *   [ ADC-Rule-Base-Name ]
+              [ PCC-Rule-Status ]
+              [ Rule-Failure-Code ]
+              [ Final-Unit-Indication ]
           *   [ AVP ]
 
 Application-Detection-Information ::= <AVP Header: 1098>
@@ -433,6 +518,275 @@ PRA-Install ::= <AVP Header: 2845>
 PRA-Remove ::= <AVP Header: 2846>
           *   [ Presence-Reporting-Area-Identifier ]
           *   [ AVP ]
+
+@enum Bearer-Usage
+GENERAL                                                      0
+IMS_SIGNALLING                                               1
+
+@enum Event-Trigger
+SGSN_CHANGE                                                  0
+QOS_CHANGE                                                   1
+RAT_CHANGE                                                   2
+TFT_CHANGE                                                   3
+PLMN_CHANGE                                                  4
+LOSS_OF_BEARER                                               5
+RECOVERY_OF_BEARER                                           6
+IP_CAN_CHANGE                                                7
+QOS_CHANGE_EXCEEDING_AUTHORIZATION                          11
+RAI_CHANGE                                                  12
+USER_LOCATION_CHANGE                                        13
+NO_EVENT_TRIGGERS                                           14
+OUT_OF_CREDIT                                               15
+REALLOCATION_OF_CREDIT                                      16
+REVALIDATION_TIMEOUT                                        17
+UE_IP_ADDRESS_ALLOCATE                                      18
+UE_IP_ADDRESS_RELEASE                                       19
+DEFAULT_EPS_BEARER_QOS_CHANGE                               20
+AN_GW_CHANGE                                                21
+SUCCESSFUL_RESOURCE_ALLOCATION                              22
+RESOURCE_MODIFICATION_REQUEST                               23
+PGW_TRACE_CONTROL                                           24
+UE_TIME_ZONE_CHANGE                                         25
+TAI_CHANGE                                                  26
+ECGI_CHANGE                                                 27
+CHARGING_CORRELATION_EXCHANGE                               28
+APN_AMBR_MODIFICATION_FAILURE                               29
+USER_CSG_INFORMATION_CHANGE                                 30
+USAGE_REPORT                                                33
+DEFAULT_EPS_BEARER_QOS_MODIFICATION_FAILURE                 34
+USER_CSG_HYBRID_SUBSCRIBED_INFORMATION_CHANGE               35
+USER_CSG_HYBRID_UNSUBSCRIBED_INFORMATION_CHANGE             36
+ROUTING_RULE_CHANGE                                         37
+APPLICATION_START                                           39
+APPLICATION_STOP                                            40
+CS_TO_PS_HANDOVER                                           42
+UE_LOCAL_IP_ADDRESS_CHANGE                                  43
+HENB_LOCAL_IP_ADDRESS_CHANGE                                44
+ACCESS_NETWORK_INFO_REPORT                                  45
+CREDIT_MANAGEMENT_SESSION_FAILURE                           46
+DEFAULT_QOS_CHANGE                                          47
+CHANGE_OF_UE_PRESENCE_IN_PRESENCE_REPORTING_AREA_REPORT     48
+ADDITION_OF_ACCESS                                          49
+REMOVAL_OF_ACCESS                                           50
+UNAVAILABLITY_OF_ACCESS                                     51
+AVAILABLITY_OF_ACCESS                                       52
+RESOURCE_RELEASE                                            53
+ENODEB_CHANGE                                               54
+3GPP_PS_DATA_OFF_CHANGE                                     55
+UE_STATUS_RESUME                                            56
+SUCCESSFUL_QOS_UPDATE                                       57
+
+@enum Metering-Method
+DURATION                                                     0
+VOLUME                                                       1
+DURATION_VOLUME                                              2
+EVENT                                                        3
+
+@enum Offline
+DISABLE_OFFLINE                                              0
+ENABLE_OFFLINE                                               1
+
+@enum Online
+DISABLE_ONLINE                                               0
+ENABLE_ONLINE                                                1
+
+@enum Reporting-Level
+SERVICE_IDENTIFIER_LEVEL                                     0
+RATING_GROUP_LEVEL                                           1
+SPONSORED_CONNECTIVITY_LEVEL                                 2
+
+@enum PCC-Rule-Status
+ACTIVE                                                       0
+INACTIVE                                                     1
+TEMPORARILY_INACTIVE                                         2
+
+@enum Bearer-Operation
+TERMINATION                                                  0
+ESTABLISHMENT                                                1
+MODIFICATION                                                 2
+
+@enum Bearer-Control-Mode
+UE_ONLY                                                      0
+RESERVED                                                     1
+UE_NW                                                        2
+
+@enum Network-Request-Support
+NETWORK_REQUEST_NOT_SUPPORTED                                0
+NETWORK_REQUEST_SUPPORTED                                    1
+
+@enum IP-CAN-Type
+3GPP_GPRS                                                    0
+DOCSIS                                                       1
+xDSL                                                         2
+WiMAX                                                        3
+3GPP2                                                        4
+3GPP_EPS                                                     5
+Non_3GPP_EPS                                                 6
+FBA                                                          7
+3GPP_5GS                                                     8
+Non_3GPP_5GS                                                 9
+
+@enum QoS-Class-Identifier
+QCI_1                                                        1
+QCI_2                                                        2
+QCI_3                                                        3
+QCI_4                                                        4
+QCI_5                                                        5
+QCI_6                                                        6
+QCI_7                                                        7
+QCI_8                                                        8
+QCI_9                                                        9
+QCI_65                                                      65
+QCI_66                                                      66
+QCI_67                                                      67
+QCI_69                                                      69
+QCI_70                                                      70
+QCI_71                                                      71
+QCI_72                                                      72
+QCI_73                                                      73
+QCI_74                                                      74
+QCI_75                                                      75
+QCI_76                                                      76
+QCI_79                                                      79
+QCI_80                                                      80
+QCI_82                                                      82
+QCI_83                                                      83
+QCI_84                                                      84
+QCI_85                                                      85
+
+@enum QoS-Negotiation
+NO_QoS_NEGOTIATION                                           0
+QoS_NEGOTIATION_SUPPORTED                                    1
+
+@enum QoS-Upgrade
+QoS_UPGRADE_NOT_SUPPORTED                                    0
+QoS_UPGRADE_SUPPORTED                                        1
+
+@enum Rule-Failure-Code
+UNKNOWN_RULE_NAME                                            1
+RATING_GROUP_ERROR                                           2
+SERVICE_IDENTIFIER_ERROR                                     3
+GW_PCEF_MALFUNCTION                                          4
+RESOURCES_LIMITATION                                         5
+MAX_NR_BEARERS_REACHED                                       6
+UNKNOWN_BEARER_ID                                            7
+MISSING_BEARER_ID                                            8
+MISSING_FLOW_INFORMATION                                     9
+RESOURCE_ALLOCATION_FAILURE                                 10
+UNSUCCESSFUL_QOS_VALIDATION                                 11
+INCORRECT_FLOW_INFORMATION                                  12
+PS_TO_CS_HANDOVER                                           13
+TDF_APPLICATION_IDENTIFIER_ERROR                            14
+NO_BEARER_BOUND                                             15
+FILTER_RESTRICTIONS                                         16
+AN_GW_FAILED                                                17
+MISSING_REDIRECT_SERVER_ADDRESS                             18
+CM_END_USER_SERVICE_DENIED                                  19
+CM_CREDIT_CONTROL_NOT_APPLICABLE                            20
+CM_AUTHORIZATION_REJECTED                                   21
+CM_USER_UNKNOWN                                             22
+CM_RATING_FAILED                                            23
+ROUTING_RULE_REJECTION                                      24
+UNKNOWN_ROUTING_ACCESS_INFORMATION                          25
+NO_NBIFOM_SUPPORT                                           26
+UE_STATE_SUSPEND                                            27
+TRAFFIC_STEERING_ERROR                                      28
+SAME_TIME_ERROR                                             29
+
+@enum RAT-Type
+WLAN                                                         0
+VIRTUAL                                                      1
+TRUSTED_N3GA                                                 2
+WIRELINE                                                     3
+WIRELINE_CABLE                                               4
+WIRELINE_BBF                                                 5
+UTRAN                                                       1000
+GERAN                                                       1001
+GAN                                                         1002
+HSPA_EVOLUTION                                              1003
+EUTRAN                                                      1004
+EUTRAN_NB_IoT                                               1005
+NR                                                          1006
+LTE_M                                                       1007
+NR_U                                                        1008
+EUTRAN_LEO                                                  1011
+EUTRAN_MEO                                                  1012
+EUTRAN_GEO                                                  1013
+EUTRAN_OTHERSAT                                             1014
+EUTRAN_NB_IoT_LEO                                           1021
+EUTRAN_NB_IoT_MEO                                           1022
+EUTRAN_NB_IoT_GEO                                           1023
+EUTRAN_NB_IoT_OTHERSAT                                      1024
+LTE_M_LEO                                                   1031
+LTE_M_MEO                                                   1032
+LTE_M_GEO                                                   1033
+LTE_M_OTHERSAT                                              1034
+CDMA2000_1X                                                 2000
+HRPD                                                        2001
+UMB                                                         2002
+EHRPD                                                       2003
+
+@enum Session-Release-Cause
+UNSPECIFIED_REASON                                           0
+UE_SUBSCRIPTION_REASON                                       1
+INSUFFICIENT_SERVER_RESOURCES                                2
+IP_CAN_SESSION_TERMINATION                                   3
+UE_IP_ADDRESS_RELEASE                                        4
+
+@enum Pre-emption-Capability
+PRE_EMPTION_CAPABILITY_ENABLED                               0
+PRE_EMPTION_CAPABILITY_DISABLED                              1
+
+@enum Pre-emption-Vulnerability
+PRE_EMPTION_VULNERABILITY_ENABLED                            0
+PRE_EMPTION_VULNERABILITY_DISABLED                           1
+
+@enum Packet-Filter-Operation
+DELETION                                                     0
+ADDITION                                                     1
+MODIFICATION                                                 2
+
+@enum Resource-Allocation-Notification
+ENABLE_NOTIFICATION                                          0
+
+@enum Session-Linking-Indicator
+SESSION_LINKING_IMMEDIATE                                    0
+SESSION_LINKING_DEFERRED                                     1
+
+@enum Usage-Monitoring-Level
+SESSION_LEVEL                                                0
+PCC_RULE_LEVEL                                               1
+ADC_RULE_LEVEL                                               2
+
+@enum Usage-Monitoring-Report
+USAGE_MONITORING_REPORT_REQUIRED                             0
+
+@enum Usage-Monitoring-Support
+USAGE_MONITORING_DISABLED                                    0
+
+@enum CSG-Information-Reporting
+CHANGE_CSG_CELL                                              0
+CHANGE_CSG_SUBSCRIBED_HYBRID_CELL                            1
+CHANGE_CSG_UNSUBSCRIBED_HYBRID_CELL                          2
+
+@enum Packet-Filter-Usage
+SEND_TO_UE                                                   1
+
+@enum Charging-Correlation-Indicator
+CHARGING_IDENTIFIER_REQUIRED                                 0
+
+@enum Flow-Direction
+UNSPECIFIED                                                  0
+DOWNLINK                                                     1
+UPLINK                                                       2
+BIDIRECTIONAL                                                3
+
+@enum Redirect-Support
+REDIRECTION_DISABLED                                         0
+REDIRECTION_ENABLED                                          1
+
+@enum PS-to-CS-Session-Continuity
+VIDEO_PS2CS_CONT_CANDIDATE                                   0
 
 @enum CS-Service-QoS-Request-Operation
 DELETION                                                     0
