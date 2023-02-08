@@ -8,6 +8,8 @@
 
 @inherits dia_3gpp
 
+@inherits dia_ietf
+
 @messages
 AA-Request ::= <Diameter Header: 265, REQ, PXY>
               < Session-Id >
@@ -129,9 +131,9 @@ RAA ::= <Diameter Header: 258, PXY>
               [ Error-Message ]
               [ Error-Reporting-Host ]
               [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
-              [ Redirected-Host-Cache-Time ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
 
 ASR ::= <Diameter Header: 274, REQ, PXY>
@@ -154,8 +156,8 @@ ASA ::= <Diameter Header: 274, PXY>
               [ Error-Message ]
               [ Error-Reporting-Host ]
               [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
               [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
 

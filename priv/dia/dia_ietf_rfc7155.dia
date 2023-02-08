@@ -3,6 +3,7 @@
 @name     dia_ietf_rfc7155
 
 @avp_types
+NAS-IP-Address                                              4    OctetString       M 
 NAS-Port                                                    5    Unsigned32        M 
 Service-Type                                                6    Enumerated        M 
 Framed-Protocol                                             7    Enumerated        M 
@@ -62,6 +63,7 @@ Framed-Pool                                                 88   OctetString    
 Tunnel-Client-Auth-Id                                       90   UTF8String        M 
 Tunnel-Server-Auth-Id                                       91   UTF8String        M 
 Originating-Line-Info                                       94   OctetString       M 
+NAS-IPv6-Address                                            95   OctetString       M 
 Framed-Interface-Id                                         96   Unsigned64        M 
 Framed-IPv6-Prefix                                          97   OctetString       M 
 Login-IPv6-Host                                             98   OctetString       M 

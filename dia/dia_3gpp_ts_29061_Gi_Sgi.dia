@@ -1,12 +1,14 @@
 ;; 3GPP TS 29.061 v17.6.0 Gi/Sgi
 
-@id       1     
+@id       1
 @name     dia_3gpp_ts_29061_Gi_Sgi
 @vendor   10415 3gpp
 
 @inherits diameter_gen_base_rfc6733
 
 @inherits dia_3gpp
+
+@inherits dia_ietf
 
 @messages
 AA-Request ::= <Diameter Header: 265, REQ, PXY>
@@ -174,7 +176,7 @@ AC-Request ::= <Diameter Header: 271, REQ, PXY>
               [ Callback-Number ]
               [ Called-Station-Id ]
               [ Calling-Station-Id ]
-          *   [ Connection-Info ]
+          *   [ Connect-Info ]
               [ Originating-Line-Info ]
               [ Authorization-Lifetime ]
               [ Session-Timeout ]
@@ -184,7 +186,7 @@ AC-Request ::= <Diameter Header: 271, REQ, PXY>
               [ Acct-Interim-Interval ]
           *   [ Filter-Id ]
           *   [ NAS-Filter-Rule ]
-          *   [ Qos-Filter-Rule ]
+          *   [ QoS-Filter-Rule ]
               [ Framed-Compression ]
               [ Framed-Interface-Id ]
               [ Framed-IP-Address ]
@@ -325,8 +327,8 @@ ASA ::= <Diameter Header: 274, PXY>
               [ Error-Message ]
               [ Error-Reporting-Host ]
               [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
               [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
           *   [ AVP ]

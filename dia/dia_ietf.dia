@@ -7,6 +7,7 @@
 
 @avp_types
 ;; RFC 7155
+NAS-IP-Address                                              4    OctetString       M 
 NAS-Port                                                    5    Unsigned32        M 
 Service-Type                                                6    Enumerated        M 
 Framed-Protocol                                             7    Enumerated        M 
@@ -71,6 +72,7 @@ Chargeable-User-Identity                                    89   OctetString    
 Tunnel-Client-Auth-Id                                       90   UTF8String        M 
 Tunnel-Server-Auth-Id                                       91   UTF8String        M 
 Originating-Line-Info                                       94   OctetString       M 
+NAS-IPv6-Address                                            95   OctetString       M 
 Framed-Interface-Id                                         96   Unsigned64        M 
 Framed-IPv6-Prefix                                          97   OctetString       M 
 Login-IPv6-Host                                             98   OctetString       M 
@@ -103,6 +105,9 @@ Digest-AKA-Auts                                             118  UTF8String     
 Digest-Domain                                               119  UTF8String        M 
 Digest-Stale                                                120  UTF8String        M 
 Digest-HA1                                                  121  UTF8String        M 
+
+;; RFC 4818
+Delegated-IPv6-Prefix                                       123  OctetString       M 
 
 ;; RFC 5447
 MIP6-Feature-Vector                                         124  Unsigned64        M 
