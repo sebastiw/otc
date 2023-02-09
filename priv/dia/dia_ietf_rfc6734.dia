@@ -1,0 +1,27 @@
+;; IEFT RFC 6734
+
+@name     dia_ietf_rfc6734
+
+@inherits diameter_gen_base_rfc6733
+
+@avp_types
+Key                                                         581  Grouped           - 
+Key-Type                                                    582  Enumerated        - 
+Keying-Material                                             583  OctetString       - 
+Key-Lifetime                                                584  Unsigned32        - 
+Key-SPI                                                     585  Unsigned32        - 
+Key-Name                                                    586  OctetString       - 
+
+@grouped
+Key ::= <AVP Header: 581>
+              < Key-Type >
+              { Keying-Material }
+              [ Key-Lifetime ]
+              [ Key-Name ]
+              [ Key-SPI ]
+          *   [ AVP ]
+
+@enum Key-Type
+DSRK                                                         0
+rRK                                                          1
+rMSK                                                         2

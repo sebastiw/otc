@@ -6,10 +6,11 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
-
 Send-Routing-Info-for-SM-Request ::= <Diameter Header: 8388647, REQ, PXY>
               < Session-Id >
               { Auth-Session-State }

@@ -19,7 +19,7 @@ Multimedia-Auth-Request ::= <Diameter Header: 303, REQ, PXY>
               [ Destination-Host ]                                               ; Address of the HSS
               [ User-Name ]                                                      ; IMPI from UE
               [ Public-Identity ]                                                ; IMPU from UE
-              [ SIP-Auth-Data-Item ]                                             ; Authentication Scheme, Synchronization Failure
+              [ 3GPP-SIP-Auth-Data-Item ]                                        ; Authentication Scheme, Synchronization Failure
               [ GUSS-Timestamp ]                                                 ; Timestamp of GUSS in BSF
           *   [ AVP ]
           *   [ Proxy-Info ]
@@ -36,7 +36,7 @@ Multimedia-Auth-Answer ::= <Diameter Header: 303, PXY>
               [ Experimental-Result ]
               [ User-Name ]                                                      ; IMPI
               [ Public-Identity ]                                                ; IMPU
-              [ SIP-Auth-Data-Item ]
+              [ 3GPP-SIP-Auth-Data-Item ]
               [ GBA-UserSecSettings ]                                            ; GUSS
           *   [ AVP ]
           *   [ Proxy-Info ]

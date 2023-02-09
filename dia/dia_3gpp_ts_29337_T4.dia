@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -25,8 +27,8 @@ Device-Trigger-Request ::= <Diameter Header: 8388643, REQ, PXY>
               [ Reference-Number ]
               [ Validity-Time ]
               [ Priority-Indication ]
-              [ SMS-Application-Port-ID ]
-              [ Old-Rference-Number ]
+              [ Application-Port-Identifier ]
+              [ Old-Reference-Number ]
               [ Trigger-Action ]
           *   [ Supported-Features ]
           *   [ AVP ]

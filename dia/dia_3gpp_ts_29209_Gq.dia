@@ -9,7 +9,6 @@
 @inherits dia_3gpp
 
 @messages
-
 AA-Request ::= <Diameter Header: 265, REQ, PXY>
               < Session-Id >
               { Auth-Application-Id }
@@ -126,9 +125,9 @@ AS-Answer ::= <Diameter Header: 274, PXY>
               [ Error-Message ]
               [ Error-Reporting-Host ]
           *   [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
-              [ Redirected-Max-Cache-Time ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
           *   [ AVP ]
 

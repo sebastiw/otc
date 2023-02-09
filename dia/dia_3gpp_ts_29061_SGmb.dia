@@ -8,6 +8,8 @@
 
 @inherits dia_3gpp
 
+@inherits dia_ietf
+
 @messages
 RAR ::= <Diameter Header: 258, REQ, PXY>
               < Session-Id >
@@ -27,7 +29,7 @@ RAR ::= <Diameter Header: 258, REQ, PXY>
               [ QoS-Information ]
               [ MBMS-Session-Duration ]
               [ MBMS-Session-Identity ]
-              [ MBMS-Session-Repetition-number ]
+              [ MBMS-Session-Identity-Repetition-Number ]
               [ TMGI ]
           *   [ 3GPP-SGSN-Address ]
           *   [ 3GPP-SGSN-IPv6-Address ]
@@ -61,16 +63,16 @@ RAA ::= <Diameter Header: 258, PXY>
               [ Experimental-Result ]
               [ MBMS-StartStop-Indication ]
               [ MBMS-GGSN-Address ]                                              ; for unicast encapsulated user data
-              [ MBMS-GGSN-Ipv6-Address ]                                         ; for unicast encapsulated user data
+              [ MBMS-GGSN-IPv6-Address ]                                         ; for unicast encapsulated user data
               [ MBMS-User-Data-Mode-Indication ]
               [ MBMS-GW-UDP-Port ]                                               ; for unicast encapsulated user data
               [ Origin-State-Id ]
               [ Error-Message ]
               [ Error-Reporting-Host ]
               [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
-              [ Redirected-Host-Cache-Time ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
               [ Proxy-Info ]
           *   [ Supported-Features ]
               [ Restart-Counter ]
@@ -127,8 +129,8 @@ ASA ::= <Diameter Header: 274, PXY>
               [ Error-Message ]
               [ Error-Reporting-Host ]
               [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
               [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
               [ Restart-Counter ]

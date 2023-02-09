@@ -7,6 +7,7 @@
 
 @avp_types
 ;; RFC 7155
+User-Password                                               2    OctetString       M
 NAS-IP-Address                                              4    OctetString       M 
 NAS-Port                                                    5    Unsigned32        M 
 Service-Type                                                6    Enumerated        M 
@@ -28,6 +29,7 @@ Framed-IPX-Network                                          23   Unsigned32     
 Idle-Timeout                                                28   Unsigned32        M 
 Called-Station-Id                                           30   UTF8String        M 
 Calling-Station-Id                                          31   UTF8String        M 
+NAS-Identifier                                              32   UTF8String        M 
 Login-LAT-Service                                           34   OctetString       M 
 Login-LAT-Node                                              35   OctetString       M 
 Login-LAT-Group                                             36   OctetString       M 
@@ -274,6 +276,12 @@ MIP-MN-HA-MSA                                               492  Grouped        
 Service-Selection                                           493  UTF8String        M 
 MIP6-Auth-Mode                                              494  Enumerated        M 
 
+;; RFC 5779
+PMIP6-DHCP-Server-Address                                   504  Address           M
+PMIP6-IPv4-Home-Address                                     505  Address           M
+Mobile-Node-Identifier                                      506  UTF8String        M
+Service-Configuration                                       507  Grouped           M
+
 ;; RFC 5777
 QoS-Resources                                               508  Grouped           - 
 Filter-Rule                                                 509  Grouped           - 
@@ -346,6 +354,18 @@ QoS-Semantics                                               575  Enumerated     
 QoS-Parameters                                              576  Grouped           - 
 Excess-Treatment                                            577  Grouped           - 
 QoS-Capability                                              578  Grouped           - 
+
+;; RFC 6734
+Key                                                         581  Grouped           - 
+Key-Type                                                    582  Enumerated        - 
+Keying-Material                                             583  OctetString       - 
+Key-Lifetime                                                584  Unsigned32        - 
+Key-SPI                                                     585  Unsigned32        - 
+Key-Name                                                    586  OctetString       - 
+
+;; RFC 6942
+ERP-RK-Request                                              618  Grouped           - 
+ERP-Realm                                                   619  DiameterIdentity  - 
 
 ;; RFC 7683
 OC-Supported-Features                                       621  Grouped           - 
@@ -621,6 +641,11 @@ MIP-MN-HA-MSA ::= <AVP Header: 492>
               [ MIP-Replay-Mode ]
           *   [ AVP ]
 
+Service-Configuration ::= <AVP-Header: 507>
+              [ MIP6-Agent-Info ]
+              [ Service-Selection ]
+          *   [ AVP ]
+
 QoS-Resources ::= <AVP Header: 508>
          1*   { Filter-Rule }
           *   [ AVP ]
@@ -792,6 +817,18 @@ Excess-Treatment ::= <AVP Header: 577>
 
 QoS-Capability ::= <AVP Header: 578>
          1*   { QoS-Profile-Template }
+          *   [ AVP ]
+
+Key ::= <AVP Header: 581>
+              < Key-Type >
+              { Keying-Material }
+              [ Key-Lifetime ]
+              [ Key-Name ]
+              [ Key-SPI ]
+          *   [ AVP ]
+
+ERP-RK-Request ::= <AVP Header: 618>
+              { ERP-Realm }
           *   [ AVP ]
 
 OC-Supported-Features ::= <AVP Header: 621>
@@ -1252,6 +1289,11 @@ QoS_AVAILABLE                                                1
 QoS_DELIVERED                                                2
 MINIMUM_QoS                                                  3
 QoS_AUTHORIZED                                               4
+
+@enum Key-Type
+DSRK                                                         0
+rRK                                                          1
+rMSK                                                         2
 
 @enum OC-Report-Type
 HOST_REPORT                                                  0

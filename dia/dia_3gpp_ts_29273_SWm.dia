@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -49,7 +51,7 @@ Diameter-EAP-Answer ::= <Diameter Header: 268, PXY>
               [ MIP6-Feature-Vector ]
               [ Mobile-Node-Identifier ]
               [ Trace-Info ]
-              [ Subscription-ID ]
+              [ Subscription-Id ]
               [ Session-Timeout ]
               [ MIP6-Agent-Info ]
               [ 3GPP-Charging-Characteristics ]
@@ -91,7 +93,7 @@ AA-Answer ::= <Diameter Header: 265, PXY>
               [ APN-OI-Replacement ]
               [ APN-Configuration ]
               [ Trace-Info ]
-              [ Subscription-ID ]
+              [ Subscription-Id ]
               [ 3GPP-Charging-Characteristics ]
               [ Session-Timeout ]
               [ OC-Supported-Features ]

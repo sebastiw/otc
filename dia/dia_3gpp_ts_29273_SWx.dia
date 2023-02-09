@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -17,8 +19,8 @@ Multimedia-Auth-Request ::= <Diameter Header: 303, REQ, PXY>
               { Origin-Realm }
               { Destination-Realm }
               { User-Name }
-              { SIP-Auth-Data-Item }
-              { SIP-Number-Auth-Items }
+              { 3GPP-SIP-Auth-Data-Item }
+              { 3GPP-SIP-Number-Auth-Items }
               [ DRMP ]
               [ Destination-Host ]
               [ RAT-Type ]
@@ -40,8 +42,8 @@ Multimedia-Auth-Answer ::= <Diameter Header: 303, PXY>
               [ DRMP ]
               [ Result-Code ]
               [ Experimental-Result ]
-              [ SIP-Number-Auth-Items ]
-          *   [ SIP-Auth-Data-Item ]
+              [ 3GPP-SIP-Number-Auth-Items ]
+          *   [ 3GPP-SIP-Auth-Data-Item ]
               [ 3GPP-AAA-Server-Name ]
               [ OC-Supported-Features ]
               [ OC-OLR ]

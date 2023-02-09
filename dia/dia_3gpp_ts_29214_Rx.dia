@@ -6,10 +6,14 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
+@inherits dia_etsi
+Reservation-Priority
+
 @inherits dia_3gpp
 
 @messages
-
 AA-Request ::= <Diameter Header: 265, REQ, PXY>
               < Session-Id >
               { Auth-Application-Id }
@@ -31,7 +35,7 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
           *   [ Supported-Features ]
               [ Reservation-Priority ]
               [ Framed-IP-Address ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
               [ Called-Station-Id ]
               [ Service-URN ]
               [ Sponsored-Connectivity-Data ]
@@ -198,7 +202,7 @@ ST-Answer ::= <Diameter Header: 275, PXY>
               [ TCP-Source-Port ]
               [ UDP-Source-Port ]
               [ UE-Local-IP-Address ]
-              [ Netloc-Access-Support ]
+              [ NetLoc-Access-Support ]
               [ Wireline-User-Location-Info ]
           *   [ Class ]
           *   [ Redirect-Host ]

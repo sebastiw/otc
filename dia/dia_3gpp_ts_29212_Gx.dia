@@ -6,6 +6,12 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
+@inherits dia_etsi
+Logical-Access-ID
+Physical-Access-ID
+
 @inherits dia_3gpp
 
 @messages
@@ -34,7 +40,7 @@ CC-Request ::= <Diameter Header: 272, REQ, PXY>
               [ Dynamic-Address-Flag-Extension ]
               [ PDN-Connection-Charging-ID ]
               [ Framed-IP-Address ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
               [ IP-CAN-Type ]
               [ 3GPP-RAT-Type ]
               [ AN-Trusted ]
@@ -51,9 +57,9 @@ CC-Request ::= <Diameter Header: 272, REQ, PXY>
               [ AN-GW-Status ]
               [ 3GPP-SGSN-MCC-MNC ]
               [ 3GPP-SGSN-Address ]
-              [ 3GPP-SGSN-Ipv6-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
               [ 3GPP-GGSN-Address ]
-              [ 3GPP-GGSN-Ipv6-Address ]
+              [ 3GPP-GGSN-IPv6-Address ]
               [ 3GPP-Selection-Mode ]
               [ RAI ]
               [ 3GPP-User-Location-Info ]
@@ -199,7 +205,7 @@ RA-Answer ::= <Diameter Header: 258, PXY>
          0*2  [ AN-GW-Address ]
               [ 3GPP-SGSN-MCC-MNC ]
               [ 3GPP-SGSN-Address ]
-              [ 3GPP-SGSN-Ipv6-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
               [ RAI ]
               [ 3GPP-User-Location-Info ]
               [ User-Location-Info-Time ]

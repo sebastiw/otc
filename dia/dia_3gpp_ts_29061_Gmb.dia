@@ -100,7 +100,7 @@ RAR ::= <Diameter Header: 258, REQ, PXY>
               [ MBMS-Service-Type ]
               [ MBMS-Counting-Information ]
               [ MBMS-Session-Identity ]
-              [ MBMS-Session-Repetition-number ]
+              [ MBMS-Session-Identity-Repetition-Number ]
               [ TMGI ]
           *   [ 3GPP-SGSN-Address ]                                              ; broadcast case only
           *   [ 3GPP-SGSN-IPv6-Address ]                                         ; broadcast case only

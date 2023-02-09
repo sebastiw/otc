@@ -144,12 +144,12 @@ Maximum-Number-Accesses                                     319  Unsigned32     
 ;; 29.109
 GBA-UserSecSettings                                         400  OctetString       MV
 Transaction-Identifier                                      401  OctetString       MV
-NAF-Hostname                                                402  OctetString       MV
+NAF-Id                                                      402  OctetString       MV
 GAA-Service-Identifier                                      403  OctetString       MV
 Key-ExpiryTime                                              404  Time              MV
 ME-Key-Material                                             405  OctetString       MV
 UICC-Key-Material                                           406  OctetString       MV
-GBA_U-Awareness-Indicator                                   407  Enumerated        MV                         
+GBA_U-Awareness-Indicator                                   407  Enumerated        MV
 BootstrapInfoCreationTime                                   408  Time              MV
 GUSS-Timestamp                                              409  Time              V 
 GBA-Type                                                    410  Enumerated        MV
@@ -1208,13 +1208,13 @@ TAD-Identifier                                              2717 Enumerated     
 
 ;; 29.212
 ; Reserved                                                  2800 -
-; ADC-Revalidation-Time                                     2801 Time                V
+; ADC-Revalidation-Time                                     2801 Time              V
 TDF-Application-Instance-Identifier                         2802 OctetString       V 
-; HeNB-BBF-FQDN                                             2803 UTF8String          V
+; HeNB-BBF-FQDN                                             2803 UTF8String        V
 HeNB-Local-IP-Address                                       2804 Address           V 
 UE-Local-IP-Address                                         2805 Address           V 
 UDP-Source-Port                                             2806 Unsigned32        V 
-CS-Service-Qos-Request-Identifier                           2807 OctetString       MV
+CS-Service-QoS-Request-Identifier                           2807 OctetString       MV
 CS-Service-QoS-Request-Operation                            2808 Enumerated        MV
 Mute-Notification                                           2809 Enumerated        V 
 Monitoring-Time                                             2810 Time              V 

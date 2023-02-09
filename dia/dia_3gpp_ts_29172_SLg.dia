@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -27,7 +29,7 @@ Provide-Location-Request ::= <Diameter Header: 8388620, REQ, PXY>
               [ LCS-Priority ]
               [ LCS-QoS ]
               [ Velocity-Requested ]
-              [ LCS-Supported-GAD-Shapes ]
+              [ Supported-GAD-Shapes ]
               [ LCS-Service-Type-ID ]
               [ LCS-Codeword ]
               [ LCS-Privacy-Check-Non-Session ]

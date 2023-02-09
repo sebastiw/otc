@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -112,7 +114,7 @@ Connection-Management-Answer ::= <Diameter Header: 8388732, PXY>
               [ OC-OLR ]
           *   [ Load ]
           *   [ Supported-Features ]
-              [ PDN-Connection-Charging-Id ]
+              [ PDN-Connection-Charging-ID ]
               [ Extended-PCO ]
               [ APN-Rate-Control-Status ]
               [ Failed-AVP ]

@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -15,7 +17,7 @@ EC-Request ::= <Diameter Header: 8388735, REQ, PXY>
               { Origin-Host }
               { Origin-Realm }
               { Destination-Realm }
-              { External-Group-Identifier }
+              { External-Identifier }      ; External-Group-Identifier in spec, see TS 29.336 and TS 23.003
               [ DRMP ]
               [ Destination-Host ]
               [ OC-Supported-Features ]

@@ -6,7 +6,11 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
+
+@inherits dia_3gpp2
 
 @messages
 CC-Request ::= <Diameter Header: 272, REQ, PXY>
@@ -27,7 +31,7 @@ CC-Request ::= <Diameter Header: 272, REQ, PXY>
           *   [ Packet-Filter-Information ]
               [ Packet-Filter-Operation ]
               [ Framed-IP-Address ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
               [ IP-CAN-Type ]
               [ RAT-Type ]
               [ Termination-Cause ]
@@ -72,7 +76,7 @@ CC-Answer ::= <Diameter Header: 272, PXY>
           *   [ Supported-Features ]
               [ Bearer-Control-Mode ]
           *   [ Event-Trigger ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
               [ Origin-State-Id ]
           *   [ Redirect-Host ]
               [ Redirect-Host-Usage ]

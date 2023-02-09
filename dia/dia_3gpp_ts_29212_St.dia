@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -22,7 +24,7 @@ TS-Request ::= <Diameter Header: 8388637, REQ, PXY>
               [ OC-Supported-Features ]
               [ Event-Report-Indication ]
               [ Framed-IP-Address ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
               [ Called-Station-Id ]
           *   [ ADC-Rule-Install ]
           *   [ ADC-Rule-Remove ]

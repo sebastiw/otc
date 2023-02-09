@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_3gpp
 
 @messages
@@ -53,7 +55,7 @@ Diameter-EAP-Answer ::= <Diameter Header: 268, PXY>
               [ EAP-Payload ]
               [ User-Name ]
               [ Session-Timeout ]
-              [ Accounting-Interim-Interval ]
+              [ Acct-Interim-Interval ]
               [ EAP-Master-Session-Key ]
               [ Context-Identifier ]
               [ APN-OI-Replacement ]
@@ -66,14 +68,14 @@ Diameter-EAP-Answer ::= <Diameter Header: 268, PXY>
           *   [ Redirect-Host ]
               [ AN-Trusted ]
               [ Trace-Info ]
-              [ Subscription-ID ]
+              [ Subscription-Id ]
               [ OC-Supported-Features ]
               [ OC-OLR ]
           *   [ Load ]
           *   [ Supported-Features ]
               [ MIP-FA-RK ]
               [ MIP-FA-RK-SPI ]
-              [ NSWO-Authorization ]
+;              [ NSWO-Authorization ]          ; Not defined in spec
               [ DEA-Flags ]
               [ TWAN-Connection-Mode ]
               [ TWAN-Connectivity-Parameters ]
@@ -176,13 +178,13 @@ AA-Answer ::= <Diameter Header: 265, PXY>
               [ DRMP ]
               [ Experimental-Result ]
               [ Session-Timeout ]
-              [ Accounting-Interim-Interval ]
+              [ Acct-Interim-Interval ]
               [ Context-Identifier ]
               [ APN-OI-Replacement ]
           *   [ APN-Configuration ]
               [ 3GPP-Charging-Characteristics ]
               [ Trace-Info ]
-              [ Subscription-ID ]
+              [ Subscription-Id ]
               [ OC-Supported-Features ]
               [ OC-OLR ]
               [ UE-Usage-Type ]

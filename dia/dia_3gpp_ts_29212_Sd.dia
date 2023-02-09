@@ -6,7 +6,15 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
+@inherits dia_etsi
+Logical-Access-ID
+Physical-Access-ID
+
 @inherits dia_3gpp
+
+@inherits dia_3gpp2
 
 @messages
 TS-Request ::= <Diameter Header: 8388637, REQ, PXY>
@@ -22,7 +30,7 @@ TS-Request ::= <Diameter Header: 8388637, REQ, PXY>
           *   [ Subscription-Id ]
           *   [ Supported-Features ]
               [ Framed-IP-Address ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
               [ IP-CAN-Type ]
               [ RAT-Type ]
               [ AN-Trusted ]
@@ -31,9 +39,9 @@ TS-Request ::= <Diameter Header: 8388637, REQ, PXY>
               [ QoS-Information ]
          0*2  [ AN-GW-Address ]
               [ 3GPP-SGSN-Address ]
-              [ 3GPP-SGSN-Ipv6-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
               [ 3GPP-GGSN-Address ]
-              [ 3GPP-GGSN-Ipv6-Address ]
+              [ 3GPP-GGSN-IPv6-Address ]
               [ 3GPP-Selection-Mode ]
               [ Dynamic-Address-Flag ]
               [ Dynamic-Address-Flag-Extension ]
@@ -99,7 +107,7 @@ CC-Request ::= <Diameter Header: 272, REQ, PXY>
               [ Destination-Host ]
               [ Origin-State-Id ]
               [ Framed-IP-Address ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
           *   [ ADC-Rule-Report ]
           *   [ Application-Detection-Information ]
           *   [ Event-Trigger ]
@@ -122,7 +130,7 @@ CC-Answer ::= <Diameter Header: 272, PXY>
               [ Experimental-Result ]
               [ OC-Supported-Features ]
               [ OC-OLR ]
-              [ Framed-Ipv6-Prefix ]
+              [ Framed-IPv6-Prefix ]
               [ QoS-Information ]
           *   [ Event-Trigger ]
           *   [ CSG-Information-Reporting ]

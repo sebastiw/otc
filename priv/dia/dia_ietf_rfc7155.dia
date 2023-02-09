@@ -3,6 +3,7 @@
 @name     dia_ietf_rfc7155
 
 @avp_types
+User-Password                                               2    OctetString       M
 NAS-IP-Address                                              4    OctetString       M 
 NAS-Port                                                    5    Unsigned32        M 
 Service-Type                                                6    Enumerated        M 
@@ -24,6 +25,7 @@ Framed-IPX-Network                                          23   Unsigned32     
 Idle-Timeout                                                28   Unsigned32        M 
 Called-Station-Id                                           30   UTF8String        M 
 Calling-Station-Id                                          31   UTF8String        M 
+NAS-Identifier                                              32   UTF8String        M 
 Login-LAT-Service                                           34   OctetString       M 
 Login-LAT-Node                                              35   OctetString       M 
 Login-LAT-Group                                             36   OctetString       M 
