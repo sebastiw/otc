@@ -8,7 +8,7 @@
 
 @inherits dia_ietf
 
-@inherits dia_itu-t
+@inherits dia_itu
 
 @inherits dia_etsi
 

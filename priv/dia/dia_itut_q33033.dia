@@ -1,18 +1,20 @@
-;; ITU-T
+;; ITU-T Q.3303.3 (08/2013)
 
-@name     dia_itu-t
+@name     dia_itut_q33033
 @vendor   11502 ITU-T
 
 @avp_types
-;; NGN-GSI/DOC - 127
-PI-Request-Type                                             1010 Enumerated        V 
-PI-Request-Number                                           1011 Unsigned32        V 
+PI-Request-Type                                             1010 Enumerated        MV
+PI-Request-Number                                           1011 Unsigned32        MV
 Traffic-Descriptor-UL                                       1012 Grouped           V 
 Traffic-Descriptor-DL                                       1013 Grouped           V 
 Maximum-Burst-Size                                          1014 Unsigned32        V 
 Committed-Data-Rate                                         1015 Unsigned32        V 
 Committed-Burst-Size                                        1016 Unsigned32        V 
 Excess-Burst-Size                                           1017 Unsigned32        V 
+Removal-Cause                                               1018 Enumerated        MV
+Traffic-Information                                         1019 Grouped           MV
+Multicast-ACL                                               1020 Grouped           V 
 
 @grouped
 Traffic-Descriptor-UL ::= <AVP Header: 1012>
@@ -27,9 +29,27 @@ Traffic-Descriptor-DL ::= <AVP Header: 1013>
               [ Committed-Burst-Size ]
               [ Excess-Burst-Size ]
 
+Traffic-Information ::= <AVP Header: 1019>
+          *   [ Flow-Description ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ User-Name ]
+              [ Called-Station-ID ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Address-Realm ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+
+Multicast-ACL ::= <AVP Header: 1020>
+;; Not defined in spec
+
 @enum PI-Request-Type
 INITIAL_REQUEST                                              1
 UPDATE_REQUEST                                               2
 TERMINATION_REQUEST                                          3
-QUERY_REQUEST                                                4
 
+@enum Removal-Cause
+SESSION_RELEASED                                             0
+INSUFFICIENT_SERVER_RESOURCES                                1
+INSUFFICIENT_BEARER_RESOURCES                                2
