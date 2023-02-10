@@ -6,6 +6,10 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
+@inherits dia_itu-t
+
 @inherits dia_etsi
 
 @messages
@@ -24,10 +28,10 @@ Policy-Install-Request ::= <Diameter Header: 315, REQ, PXY>
           *   [ Policy-Rule-Remove ]
           *   [ Policy-Rule-Install ]
               [ User-Name ]
-              [ Logical-Access-Id ]
+              [ Logical-Access-ID ]
               [ Framed-IP-Address ]
               [ Address-Realm ]
-              [ Called-Station-ID ]
+              [ Called-Station-Id ]
               [ ToS-Traffic-Class ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
@@ -67,8 +71,8 @@ CC-Request ::= <Diameter Header: 272, REQ, PXY>
               [ Event-Timestamp ]
               [ Auth-Session-State ]
               [ Termination-Cause ]
-              [ Called-Station-ID ]
-              [ Logical-Access-Id ]
+              [ Called-Station-Id ]
+              [ Logical-Access-ID ]
               [ Physical-Access-ID ]
           *   [ Traffic-Flow ]
           *   [ Flow-Description ]
@@ -95,7 +99,7 @@ CC-Answer ::= <Diameter Header: 272, PXY>
               [ Framed-IP-Address ]
               [ Address-Realm ]
               [ Called-Station-Id ]
-              [ Logical-Access-Id ]
+              [ Logical-Access-ID ]
               [ ToS-Traffic-Class ]
               [ Origin-State-Id ]
               [ Event-Timestamp ]

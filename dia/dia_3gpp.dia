@@ -67,10 +67,10 @@
 @inherits dia_ietf
 
 @inherits dia_etsi
+Line-Identifier
 Logical-Access-ID
 Physical-Access-ID
 Reservation-Priority
-Line-Identifier
 
 @inherits dia_3gpp2
 

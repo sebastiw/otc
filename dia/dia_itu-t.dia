@@ -1,0 +1,35 @@
+;; ITU-T
+
+@name     dia_itu-t
+@vendor   11502 ITU-T
+
+@avp_types
+;; NGN-GSI/DOC - 127
+PI-Request-Type                                             1010 Enumerated        V 
+PI-Request-Number                                           1011 Unsigned32        V 
+Traffic-Descriptor-UL                                       1012 Grouped           V 
+Traffic-Descriptor-DL                                       1013 Grouped           V 
+Maximum-Burst-Size                                          1014 Unsigned32        V 
+Committed-Data-Rate                                         1015 Unsigned32        V 
+Committed-Burst-Size                                        1016 Unsigned32        V 
+Excess-Burst-Size                                           1017 Unsigned32        V 
+
+@grouped
+Traffic-Descriptor-UL ::= <AVP Header: 1012>
+              [ Maximum-Burst-Size ]
+              [ Committed-Data-Rate ]
+              [ Committed-Burst-Size ]
+              [ Excess-Burst-Size ]
+
+Traffic-Descriptor-DL ::= <AVP Header: 1013>
+              [ Maximum-Burst-Size ]
+              [ Committed-Data-Rate ]
+              [ Committed-Burst-Size ]
+              [ Excess-Burst-Size ]
+
+@enum PI-Request-Type
+INITIAL_REQUEST                                              1
+UPDATE_REQUEST                                               2
+TERMINATION_REQUEST                                          3
+QUERY_REQUEST                                                4
+

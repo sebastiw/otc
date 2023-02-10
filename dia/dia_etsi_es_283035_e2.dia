@@ -6,6 +6,10 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+AF-Application-Identifier
+Expiry-Time
+
 @inherits dia_etsi
 
 @messages
@@ -36,10 +40,10 @@ User-Data-Answer ::= <Diameter Header: 306, PXY>
               [ Result-Code ]
               [ Experimental-Result ]
               [ User-Name ]
-              [ Logical-Access-Id ]
-              [ Physical-Access-Id ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
               [ Access-Network-Type ]
-              [ Location-Information ]
+              [ ETSI-Location-Information ]
               [ Policy-Control-Contact-Point ]
               [ Terminal-Type ]
               [ Emergency-Call-Routing-Info ]
@@ -92,11 +96,11 @@ Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
               [ Globally-Unique-Address ]
               [ User-Name ]
               [ Access-Network-Type ]
-              [ Location-Information ]
+              [ ETSI-Location-Information ]
               [ Policy-Control-Contact-Point ]
               [ Terminal-Type ]
-              [ Logical-Access-Id ]
-              [ Physical-Access-Id ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
               [ Initial-Gate-Setting-Description ]
           *   [ QoS-Profile-Description ]
               [ IP-Connectivity-Status ]

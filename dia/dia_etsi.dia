@@ -37,14 +37,14 @@ Initial-Gate-Setting-ID                                     314  Unsigned32     
 QoS-Profile-ID                                              315  Unsigned32        V 
 
 ;;  ES 283 035
-Location-Information                                        350  Grouped           V 
+ETSI-Location-Information                                   350  Grouped           V ; Location-Information in spec
 Policy-Control-Contact-Point                                351  DiameterIdentity  V 
 Terminal-Type                                               352  OctetString       V 
 Requested-Information                                       353  Enumerated        V 
 Event-Type                                                  354  Enumerated        V 
 Civic-Location                                              355  OctetString       V 
 Geospatial-Location                                         356  OctetString       V 
-; Global-Access-Id                                            357  Grouped           V ; Inherits from dia_3gpp
+; Global-Access-Id                                          357  Grouped           V ; Inherits from dia_3gpp
 Fixed-Access-ID                                             358  Grouped           V 
 Relay-Agent                                                 359  OctetString       V 
 Operator-Specific-GI                                        360  OctetString       V 
@@ -158,7 +158,7 @@ Access-Network-Type ::= <AVP Header: 306>
               { NAS-Port-Type }
               [ Aggregation-Network-Type ]
 
-Location-Information ::= <AVP Header: 350>
+ETSI-Location-Information ::= <AVP Header: 350>
               [ Line-Identifier ]
               [ Civic-Location ]
               [ Geospatial-Location ]

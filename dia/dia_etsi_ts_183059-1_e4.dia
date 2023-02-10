@@ -6,6 +6,8 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
 @inherits dia_etsi
 
 @messages
@@ -18,8 +20,8 @@ Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
               { Destination-Host }
               { Destination-Realm }
               [ Globally-Unique-Address ]
-              [ Logical-Access-Id ]
-              [ Physical-Access-Id ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
               [ Terminal-Type ]
               [ Access-Network-Type ]
               [ IP-Connectivity-Status ]
@@ -52,7 +54,7 @@ User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               { Destination-Realm }
               [ Destination-Host ]
               [ Globally-Unique-Address ]
-              [ Logical-Access-Id ]
+              [ Logical-Access-ID ]
           *   [ AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
@@ -66,8 +68,8 @@ User-Data-Answer ::= <Diameter Header: 306, PXY>
               [ Result-Code ]
               [ Experimental-Result ]
               [ Globally-Unique-Address ]
-              [ Logical-Access-Id ]
-              [ Physical-Access-Id ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
               [ Terminal-Type ]
               [ Access-Network-Type ]
           *   [ AVP ]

@@ -6,6 +6,11 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+Abort-Cause
+Flow-Description
+Specific-Action
+
 @inherits dia_etsi
 
 @messages
@@ -22,7 +27,7 @@ User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
               [ Preferred-Delegated-Bandwidth-DL ]
               [ Required-Delegated-Bandwidth-UL ]
               [ Required-Delegated-Bandwidth-DL ]
-              [ Reservation-priority ]
+              [ Reservation-Priority ]
           *   [ AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
@@ -59,7 +64,7 @@ Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
               [ Preferred-Delegated-Bandwidth-DL ]
               [ Required-Delegated-Bandwidth-UL ]
               [ Required-Delegated-Bandwidth-DL ]
-              [ Reservation-priority ]
+              [ Reservation-Priority ]
               [ Total-Bandwidth-UL ]
               [ Total-Bandwidth-DL ]
           *   [ Authorization-Package-Id ]
@@ -95,7 +100,7 @@ RA-Request ::= <Diameter Header: 258, REQ, PXY>
           *   { Specific-Action }
           *   [ Flow-Description ]
               [ Globally-Unique-Address ]
-              [ Logical-Access-Id ]
+              [ Logical-Access-ID ]
               [ Abort-Cause ]
               [ Origin-State-Id ]
           *   [ Proxy-Info ]
@@ -127,7 +132,7 @@ CC-Request ::= <Diameter Header: 272, REQ, PXY>
           *   { Specific-Action }
           *   [ Flow-Description ]
               [ Globally-Unique-Address ]
-              [ Logical-Access-Id ]
+              [ Logical-Access-ID ]
               [ Abort-Cause ]
               [ Origin-State-Id ]
           *   [ Proxy-Info ]

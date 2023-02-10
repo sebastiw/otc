@@ -6,6 +6,18 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_ietf
+
+@inherits dia_3gpp
+AF-Charging-Identifier
+Abort-Cause
+Flow-Description
+Flow-Grouping
+Flows
+Media-Component-Description
+SIP-Forking-Indication
+Specific-Action
+
 @inherits dia_etsi
 
 @messages
@@ -30,7 +42,7 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
               [ Authorization-Lifetime ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
-              [ Overbooking-indicator ]
+              [ Overbooking-Indicator ]
           *   [ Authorization-Package-Id ]
           *   [ AVP ]
 
@@ -61,7 +73,7 @@ RA-Request ::= <Diameter Header: 258, REQ, PXY>
           *   { Specific-Action }
           *   [ Flow-Description ]
               [ Globally-Unique-Address ]
-              [ Logical-Access-Id ]
+              [ Logical-Access-ID ]
           *   [ Flows ]
               [ Abort-Cause ]
               [ Origin-State-Id ]
@@ -137,9 +149,9 @@ AS-Answer ::= <Diameter Header: 274, PXY>
               [ Error-Message ]
               [ Error-Reporting-Host ]
           *   [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
-              [ Redirected-Max-Cache-Time ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
           *   [ AVP ]
 

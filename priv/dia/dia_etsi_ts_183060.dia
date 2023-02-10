@@ -78,4 +78,3 @@ Policy-Update-Request ::= <AVP Header: 558>
 ACTIVE                                                       0
 INACTIVE                                                     1
 TEMPORARY_INACTIVE                                           2
-

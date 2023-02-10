@@ -6,12 +6,19 @@
 
 @inherits diameter_gen_base_rfc6733
 
+@inherits dia_3gpp
+Abort-Cause
+AF-Charging-Identifier
+Flows
+Media-Component-Description
+Specific-Action
+
 @inherits dia_etsi
 
 @messages
 AA-Request ::= <Diameter Header: 265, REQ, PXY>
               < Session-Id >
-              { Auth-Application-ID }
+              { Auth-Application-Id }
               { Origin-Host }
               { Origin-Realm }
               { Destination-Realm }
@@ -20,7 +27,7 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
               [ AF-Charging-Identifier ]
           *   [ Media-Component-Description ]
               [ User-Name ]
-              [ Logical-Access-Id ]
+              [ Logical-Access-ID ]
               [ Globally-Unique-Address ]
               [ Service-Class ]
               [ Authorization-Lifetime ]
@@ -30,7 +37,7 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
 
 AA-Answer ::= <Diameter Header: 265, PXY>
               < Session-Id >
-              { Auth-Application-ID }
+              { Auth-Application-Id }
               { Origin-Host }
               { Origin-Realm }
               [ Result-Code ]
@@ -78,7 +85,7 @@ ST-Request ::= <Diameter Header: 275, REQ, PXY>
               { Origin-Host }
               { Origin-Realm }
               { Destination-Realm }
-              { Auth-Application-ID }
+              { Auth-Application-Id }
               { Termination-Cause }
               [ Destination-Host ]
           *   [ Class ]
@@ -109,7 +116,7 @@ AS-Request ::= <Diameter Header: 274, REQ, PXY>
               { Origin-Realm }
               { Destination-Realm }
               { Destination-Host }
-              { Auth-Application-ID }
+              { Auth-Application-Id }
               { Abort-Cause }
           *   [ Session-Bundle-Id ]
               [ Origin-State-Id ]
@@ -127,9 +134,9 @@ AS-Answer ::= <Diameter Header: 274, PXY>
               [ Error-Message ]
               [ Error-Reporting-Host ]
           *   [ Failed-AVP ]
-          *   [ Redirected-Host ]
-              [ Redirected-Host-Usage ]
-              [ Redirected-Max-Cache-Time ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
           *   [ AVP ]
 

@@ -9,7 +9,6 @@
 @inherits dia_3gpp
 
 @messages
-
 GBA-Push-Info-Request ::= <Diameter Header: 312, REQ, PXY>
               < Session-Id >
               { Vendor-Specific-Application-Id }
