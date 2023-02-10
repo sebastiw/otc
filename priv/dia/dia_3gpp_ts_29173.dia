@@ -1,0 +1,48 @@
+;; 3GPP TS 29.173 v17.0.0
+
+@name     dia_3gpp_ts_29173
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+LMSI                                                        2400 OctetString       MV
+Serving-Node                                                2401 Grouped           MV
+MME-Name                                                    2402 DiameterIdentity  MV
+MSC-Number                                                  2403 OctetString       MV
+LCS-Capabilities-Sets                                       2404 Unsigned32        MV
+GMLC-Address                                                2405 Address           MV
+Additional-Serving-Node                                     2406 Grouped           MV
+PPR-Address                                                 2407 Address           MV
+MME-Realm                                                   2408 DiameterIdentity  V 
+SGSN-Name                                                   2409 DiameterIdentity  V 
+SGSN-Realm                                                  2410 DiameterIdentity  V 
+RIA-Flags                                                   2411 Unsigned32        V 
+
+@grouped
+Serving-Node ::= <AVP Header: 2401>
+              [ SGSN-Number ]
+              [ SGSN-Name ]
+              [ SGSN-Realm ]
+              [ MME-Name ]
+              [ MME-Realm ]
+              [ MSC-Number ]
+              [ 3GPP-AAA-Server-Name ]
+              [ LCS-Capabilities-Sets ]
+              [ GMLC-Address ]
+          *   [ AVP ]
+
+Additional-Serving-Node ::= <AVP Header: 2406>
+              [ SGSN-Number ]
+              [ MME-Name ]
+              [ SGSN-Name ]
+              [ SGSN-Realm ]
+              [ MME-Realm ]
+              [ MSC-Number ]
+              [ 3GPP-AAA-Server-Name ]
+              [ LCS-Capabilities-Sets ]
+              [ GMLC-Address ]
+          *   [ AVP ]
+

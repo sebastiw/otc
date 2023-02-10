@@ -1,0 +1,50 @@
+* Overview
+
+  There are three types of dictionaries in OTC:
+  - Application
+  - AVP-definitions
+  - Vendor/combined
+
+  Applications (Interfaces) and vendor dictionaries are put inside the `/dia/`
+  directory, while AVP-definitions are in `/priv/dia/`.
+
+  The Application dictionaries define the `@messages`-parts and other
+  application/interface specific values, such as valid Experimental-Result-Code
+  values.
+
+  AVP-definition dictionaries are focused on AVPs defined in ONE
+  specification. It includes the AVPs defined in that specification,
+  but does not redefine the inherited ones*.
+
+  The vendor dictionaries are combined from all specifications for that vendor.
+  They should be generated from the AVP-definitions.
+  The different vendors could be looked up in [[https://www.iana.org/assignments/enterprise-numbers/enterprise-numbers][IANA Enterprise registry]].
+  - IETF  -
+  - ITU   11502
+  - ETSI  13019
+  - 3GPP  10415
+
+  Application dictionaries inherit AVPs from the Vendor dictionaries,
+  which in turn is combined from the AVP-definition dictionaries.
+
+* Dictionary style decisions
+
+  Inherited AVPs in sorted order by AVP Name. i.e. for `@inherits`
+
+  Definitions in sorted order by AVP Code. i.e. for `@avp_types`,
+  `@grouped`, `@enum`, and `@define`
+
+  The script [[scripts/diameter_format_codec.awk][diameter_format_codec.awk]] will help with some formatting
+  when copying stuff from the specification.
+
+  In case of circular dependencies try to solve it by one or multiple
+  of the following means (in order bad to worse):
+  - Restrict inherited dicitionaries by including only essential AVPs.
+  - Redefine specific AVPs inside the "wrong" dictionary.
+  - Comment out uses of the inherited AVPs.
+
+  In case of AVP name collision between vendors at least one of the
+  AVPs need to be renamed.
+
+  In case of miss-spelled AVPs or missing AVPs, use judgement and in
+  some cases a short comment is good practice.

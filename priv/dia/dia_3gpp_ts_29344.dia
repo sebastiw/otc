@@ -1,0 +1,39 @@
+;; 3GPP TS 29.344 v17.0.0
+
+@name     dia_3gpp_ts_29344
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+ProSe-Subscription-Data                                     3701 Grouped           MV
+ProSe-Permission                                            3702 Unsigned32        MV
+ProSe-Allowed-PLMN                                          3703 Grouped           MV
+ProSe-Direct-Allowed                                        3704 Unsigned32        MV
+UPR-Flags                                                   3705 Unsigned32        MV
+PNR-Flags                                                   3706 Unsigned32        MV
+ProSe-Initial-Location-Information                          3707 Grouped           MV
+Authorized-Discovery-Range                                  3708 Unsigned32        MV ; Uncertain about MV-flags here.
+
+@grouped
+ProSe-Subscription-Data ::= <AVP Header: 3701>
+              { ProSe-Permission }
+          *   [ ProSe-Allowed-PLMN ]
+              [ 3GPP-Charging-Characteristics ]
+          *   [ AVP ]
+
+ProSe-Allowed-PLMN ::= <AVP Header: 3703>
+              [ Visited-PLMN-Id ]
+              [ Authorized-Discovery-Range ]
+              [ ProSe-Direct-Allowed ]
+          *   [ AVP ]
+
+ProSe-Initial-Location-Information ::= <AVP Header: 3707>
+              [ MME-Name ]
+              [ E-UTRAN-Cell-Global-Identity ]
+              [ Tracking-Area-Identity ]
+              [ Age-Of-Location-Information ]
+          *   [ AVP ]
+

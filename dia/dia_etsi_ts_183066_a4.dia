@@ -1,0 +1,90 @@
+;; ETSI TS 183 066 v2.1.1 a4
+
+@id       16777257
+@name     dia_etsi_ts_183066_a4
+@vendor   13019 etsi
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
+@messages
+User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ Destination-Host ]
+              [ Globally-Unique-Address ]
+              [ Logical-Access-ID ]
+              [ User-Name ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+User-Data-Answer ::= <Diameter Header: 306, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Globally-Unique-Address ]
+              [ User-Name ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+              [ CNGCF-Address ]
+              [ SIP-Outbound-Proxy ]
+              [ Initial-Gate-Setting-Description ]
+          *   [ QoS-Profile-Description ]
+              [ QoS-Profile-ID ]
+              [ Initial-Gate-Setting-ID ]
+          *   [ Privacy-Indicator ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              [ Globally-Unique-Address ]
+              [ User-Name ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+              [ CNGCF-Address ]
+              [ SIP-Outbound-Proxy ]
+              [ Initial-Gate-Setting-Description ]
+          *   [ QoS-Profile-Description ]
+              [ QoS-Profile-ID ]
+              [ Initial-Gate-Setting-ID ]
+          *   [ Privacy-Indicator ]
+              [ Data-Operation-Indicator ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Answer ::= <Diameter Header: 309, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ AVP ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_USER_DATA_NOT_AVAILABLE                            4100

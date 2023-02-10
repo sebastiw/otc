@@ -1,0 +1,333 @@
+;; https://portal.etsi.org/pnns/Protocol-Specification-Allocation/diameteravpcodeallocation
+
+@name     dia_etsi
+@vendor   13019 etsi
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Application Id ;; Reference                            ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 16777231       ;; ETSI e4                  ES 283 034  ;;
+;; 16777253       ;; ETSI Re                  TS 183 060  ;;
+;; 16777254       ;; ETSI GOCAP               ES 283 039  ;;
+;; 16777257       ;; ETSI a4                  TS 183 066  ;;
+;; 16777278       ;; ETSI Rr request model    TS 183 071  ;;
+;; 16777279       ;; ETSI Rr delegated model  TS 183 071  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@avp_types
+;;  ES 283 034
+Globally-Unique-Address                                     300  Grouped           MV
+Address-Realm                                               301  OctetString       MV
+Logical-Access-ID                                           302  OctetString       V 
+Initial-Gate-Setting-Description                            303  Grouped           V 
+; QoS-Profile-Description                                     304  Grouped           V ; Inherits from dia_3gpp
+IP-Connectivity-Status                                      305  Enumerated        V 
+Access-Network-Type                                         306  Grouped           V 
+Aggregation-Network-Type                                    307  Enumerated        V 
+Maximum-Allowed-Bandwidth-UL                                308  Unsigned32        V 
+Maximum-Allowed-Bandwidth-DL                                309  Unsigned32        V 
+Transport-Class                                             311  Unsigned32        V 
+Application-Class-ID                                        312  UTF8String        V 
+Physical-Access-ID                                          313  UTF8String        V 
+Initial-Gate-Setting-ID                                     314  Unsigned32        V 
+QoS-Profile-ID                                              315  Unsigned32        V 
+
+;;  ES 283 035
+ETSI-Location-Information                                   350  Grouped           V ; Location-Information in spec
+Policy-Control-Contact-Point                                351  DiameterIdentity  V 
+Terminal-Type                                               352  OctetString       V 
+Requested-Information                                       353  Enumerated        V 
+Event-Type                                                  354  Enumerated        V 
+Civic-Location                                              355  OctetString       V 
+Geospatial-Location                                         356  OctetString       V 
+; Global-Access-Id                                          357  Grouped           V ; Inherits from dia_3gpp
+Fixed-Access-ID                                             358  Grouped           V 
+Relay-Agent                                                 359  OctetString       V 
+Operator-Specific-GI                                        360  OctetString       V 
+Emergency-Call-Routing-Info                                 361  UTF8String        V 
+Originating-Port-Number                                     362  Unsigned32        V ; Port-Number in spec
+PIDF-Location-Object                                        363  UTF8String        V 
+Line-Identifier                                             500  OctetString       V 
+
+;; ES 283 026
+Session-Bundle-Id                                           400  Unsigned32        MV
+
+;; TS 183 066
+Data-Operation-Indicator                                    420  Enumerated        V 
+
+;; TS 183 020
+; Inherits from dia_3gpp
+; Privacy-Indicator                                           440  Grouped           V 
+
+;; TS 183 017
+Binding-Information                                         450  Grouped           V 
+Binding-Input-List                                          451  Grouped           V 
+Binding-Output-List                                         452  Grouped           V 
+V6-Transport-Address                                        453  Grouped           V 
+V4-Transport-Address                                        454  Grouped           V 
+Port-Number                                                 455  Unsigned32        V 
+Reservation-Class                                           456  Unsigned32        V 
+Latching-Indication                                         457  Enumerated        V 
+Reservation-Priority                                        458  Enumerated        V 
+Service-Class                                               459  UTF8String        V 
+Overbooking-Indicator                                       460  Enumerated        V 
+Authorization-Package-Id                                    461  UTF8String        V 
+Media-Authorization-Context-Id                              462  UTF8String        V 
+
+;; TS 183 033 obsolete
+; ETSI-SIP-Authenticate                                     501  Grouped           V 
+; ETSI-SIP-Authorization                                    502  Grouped           V 
+; ETSI-SIP-Authentication-Info                              503  Grouped           V 
+; ETSI-Digest-Realm                                         504  UTF8String        V 
+; ETSI-Digest-Nonce                                         505  UTF8String        V 
+; ETSI-Digest-Domain                                        506  UTF8String        V 
+; ETSI-Digest-Opaque                                        507  UTF8String        V 
+; ETSI-Digest-Stale                                         508  UTF8String        V 
+; ETSI-Digest-Algorithm                                     509  UTF8String        V 
+; ETSI-Digest-QoP                                           510  UTF8String        V 
+; ETSI-Digest-HA1                                           511  UTF8String        V 
+; ETSI-Digest-Auth-Param                                    512  UTF8String        V 
+; ETSI-Digest-Username                                      513  UTF8String        V 
+; ETSI-Digest-URI                                           514  UTF8String        V 
+; ETSI-Digest-Response                                      515  UTF8String        V 
+; ETSI-Digest-CNonce                                        516  UTF8String        V 
+; ETSI-Digest-Nonce-Count                                   517  UTF8String        V 
+; ETSI-Digest-Method                                        518  UTF8String        V 
+; ETSI-Digest-Entity-Body-Hash                              519  UTF8String        V 
+; ETSI-Digest-Nextnonce                                     520  UTF8String        V 
+; ETSI-Digest-Response-Auth                                 521  UTF8String        V 
+
+;; TS 183 060
+; Inherits from dia_3gpp
+; Policy-Rule-Install                                         550  Grouped           MV
+; Policy-Rule-Remove                                          551  Grouped           MV
+; Policy-Rule-Definition                                      552  Grouped           MV
+; Policy-Rule-Base-Name                                       553  UTF8String        MV
+; Policy-Rule-Name                                            554  OctetString       MV
+; Policy-Rule-Report                                          555  Grouped           MV
+; Policy-Rule-Status                                          556  Enumerated        MV
+; Traffic-Flow                                                557  Grouped           MV
+; Policy-Update-Request                                       558  Grouped           MV
+
+;; TS 183 059-1
+CNGCF-Address                                               600  Grouped           V 
+SIP-Outbound-Proxy                                          601  OctetString       V 
+TFTP-Server                                                 602  UTF8String        V 
+ACS-Server                                                  603  UTF8String        V 
+
+;; ES 283 039-2
+Auth-Scope                                                  620  UTF8String        MV
+GOCAP-Body                                                  621  UTF8String        MV
+
+;; TS 183 071
+Network-Resource-Id                                         650  OctetString       MV
+Preferred-Delegated-Bandwidth-UL                            651  Unsigned32        MV
+Preferred-Delegated-Bandwidth-DL                            652  Unsigned32        MV
+Required-Delegated-Bandwidth-UL                             653  Unsigned32        MV
+Required-Delegated-Bandwidth-DL                             654  Unsigned32        MV
+Granted-Delegated-Bandwidth-UL                              655  Unsigned32        MV
+Granted-Delegated-Bandwidth-DL                              656  Unsigned32        MV
+Total-Bandwidth-UL                                          657  Unsigned32        MV
+Total-Bandwidth-DL                                          658  Unsigned32        MV
+
+
+@grouped
+Globally-Unique-Address ::= <AVP Header: 300>
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Address-Realm ]
+
+Initial-Gate-Setting-Description ::= <AVP Header: 303>
+         1*   { NAS-Filter-Rule }
+              [ Maximum-Allowed-Bandwidth-UL ]
+              [ Maximum-Allowed-Bandwidth-DL ]
+
+; QoS-Profile-Description ::= <AVP Header: 304>
+;           *   [ Application-Class-ID ]
+;           *   [ Media-Type ]
+;               [ Reservation-Priority ]
+;               [ Maximum-Allowed-Bandwidth-UL ]
+;               [ Maximum-Allowed-Bandwidth-DL ]
+;               [ Transport-Class ]
+
+Access-Network-Type ::= <AVP Header: 306>
+              { NAS-Port-Type }
+              [ Aggregation-Network-Type ]
+
+ETSI-Location-Information ::= <AVP Header: 350>
+              [ Line-Identifier ]
+              [ Civic-Location ]
+              [ Geospatial-Location ]
+              [ Operator-Specific-GI ]
+              [ PIDF-Location-Object ]
+          *   [ AVP ]
+
+; Global-Access-Id ::= <AVP Header: 357>
+;               [ Fixed-Access-ID ]
+;               [ 3GPP-User-Location-Info ]
+;           *   [ AVP ]
+
+Fixed-Access-ID ::= <AVP Header: 358>
+              { Relay-Agent }
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+          *   [ AVP ]
+
+; Privacy-Indicator ::= <AVP Header: 440>
+;           *   { Requested-Information }
+;           *   [ AF-Application-Identifier ]
+
+Binding-Information ::= <AVP Header: 450>
+              { Binding-Input-List }
+              [ Binding-Output-List ]
+
+Binding-Input-List ::= <AVP Header: 451>
+          *   [ V6-Transport-Address ]
+          *   [ V4-Transport-Address ]
+
+Binding-Output-List ::= <AVP Header: 452>
+          *   [ V6-Transport-Address ]
+          *   [ V4-Transport-Address ]
+
+V6-Transport-Address ::= <AVP Header: 453>
+              { Framed-IPv6-Prefix }
+              { Port-Number }
+
+V4-Transport-Address ::= <AVP Header: 454>
+              { Framed-IP-Address }
+              { Port-Number }
+
+; Policy-Rule-Install ::= <AVP Header: 550>
+;           *   [ Policy-Rule-Definition ]
+;           *   [ Policy-Rule-Name ]
+;           *   [ Policy-Rule-Base-Name ]
+;           *   [ AVP ]
+
+; Policy-Rule-Remove ::= <AVP Header: 551>
+;           *   [ Policy-Rule-Name ]
+;           *   [ Policy-Rule-Base-Name ]
+;           *   [ AVP ]
+
+; Policy-Rule-Definition ::= <AVP Header: 552>
+;               { Policy-Rule-Name }
+;               [ Service-Identifier ]
+;               [ Rating-Group ]
+;               [ User-Name ]
+;               [ Logical-Access-Id ]
+;               [ Framed-IP-Address ]
+;               [ Address-Realm ]
+;               [ Called-Station-ID ]
+;               [ Physical-Access-Id ]
+;               [ Flow-Description ]
+;               [ Flow-Status ]
+;               [ QoS-Information ]
+;               [ Reporting-Level ]
+;               [ Precedence ]
+;           *   [ Flows ]
+;           *   [ AVP ]
+
+; Policy-Rule-Report ::= <AVP Header: 555>
+;           *   [ Policy-Rule-Name ]
+;           *   [ Policy-Rule-Base-Name ]
+;               [ Policy-Rule-Status ]
+;               [ Rule-Failure-Code ]
+;           *   [ AVP ]
+
+; Traffic-Flow ::= <AVP Header: 557>
+;               [ Flow-Description ]
+;               [ Flow-Status ]
+;               [ QoS-Information ]
+;               [ User-Name ]
+;               [ Called-Station-ID ]
+;               [ Framed-IP-Address ]
+;               [ Framed-Ipv6-Prefix ]
+;               [ Address-Realm ]
+;               [ Logical-Access-Id ]
+;               [ Physical-Access-ID ]
+
+; Policy-Update-Request ::= <AVP Header: 558>
+;           *   [ Policy-Rule-Name ]
+;           *   [ Policy-Rule-Base-Name ]
+;               [ Policy-Rule-Status ]
+;               [ QoS-Information ]
+;           *   [ AVP ]
+
+CNGCF-Address ::= <AVP Header: 600>
+              [ TFTP-Server ]
+              [ ACS-Server ]
+
+@enum IP-Connectivity-Status
+IP_CONNECTIVITY_ON                                           0
+IP_CONNECTIVITY_LOST                                         1
+
+@enum Aggregation-Network-Type
+UNKNOWN                                                      0
+ATM                                                          1
+ETHERNET                                                     2
+
+@enum Requested-Information
+NASS_USER_ID                                                 0
+LOCATION_INFORMATION                                         1
+POLICY_CONTROL_CONTACT_POINT                                 2
+ACCESS_NETWORK_TYPE                                          3
+TERMINAL_TYPE                                                4
+LOGICAL_ACCESS_ID                                            5
+PHYSICAL_ACCESS_ID                                           6
+;; Reserved for future
+; ACCESS_NETWORK_TYPE                                        7
+; INITIAL_GATE_SETTING                                       8
+; QOS_PROFILE                                                9
+; IP_CONNECTIVITY_STATUS                                    10
+EMERGENCY_CALL_ROUTING_INFO                                 11
+
+@enum Event-Type
+USER_LOGON                                                   0
+LOCATION_INFORMATION_CHANGED                                 1
+POLICY_CONTROL_CONTACT_POINT_CHANGED                         2
+ACCESS_NETWORK_TYPE_CHANGED                                  3
+TERMINAL_TYPE_CHANGED                                        4
+LOGICAL_ACCESS_ID_CHANGED                                    5
+PHYSICAL_ACCESS_ID_CHANGED                                   6
+IP_ADDRESS_CHANGED                                           7
+INITIAL_GATE_SETTING_CHANGED                                 8
+QOS_PROFILE_CHANGED                                          9
+USER_LOGOFF                                                 10
+
+@enum Data-Operation-Indicator
+UPDATE                                                       0
+REMOVE                                                       1
+
+@enum Latching-Indication
+LATCH                                                        0
+RELATCH                                                      1
+
+@enum Reservation-Priority
+DEFAULT                                                      0 ; Lowest priority
+PRIORITY_ONE                                                 1
+PRIORITY_TWO                                                 2
+PRIORITY_THREE                                               3
+PRIORITY_FOUR                                                4
+PRIORITY_FIVE                                                5
+PRIORITY_SIX                                                 6
+PRIORITY_SEVEN                                               7
+PRIORITY_EIGHT                                               8
+PRIORITY_NINE                                                9
+PRIORITY_TEN                                                10
+PRIORITY_ELEVEN                                             11
+PRIORITY_TWELVE                                             12
+PRIORITY_THIRTEEN                                           13
+PRIORITY_FOURTEEN                                           14
+PRIORITY_FIFTEEN                                            15
+
+@enum Overbooking-Indicator
+NOT_REQUIRED                                                 0
+REQUIRED                                                     1
+
+; @enum Policy-Rule-Status
+; ACTIVE                                                       0
+; INACTIVE                                                     1
+; TEMPORARY_INACTIVE                                           2

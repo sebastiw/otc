@@ -1,0 +1,32 @@
+;; 3GPP TS 29.388 v17.0.0
+
+@name     dia_3gpp_ts_29388
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+V2X-PC5-Allowed-PLMN                                        4600 Grouped           MV
+V2X-Update-Flags                                            4601 Unsigned32        MV
+V2X-Notify-Flags                                            4602 Unsigned32        MV
+PLMN-Allowed-PC5-RATs                                       4603 Grouped           V 
+PC5-RAT-Type                                                4604 Enumerated        V 
+
+@grouped
+V2X-PC5-Allowed-PLMN ::= <AVP Header: 4600>
+          *   [ Visited-PLMN-Id ]
+          *   [ PLMN-Allowed-PC5-RATs ]
+          *   [ AVP ]
+
+PLMN-Allowed-PC5-RATs ::= <AVP Header: 4603>
+              { Visited-PLMN-Id }
+         1*   { PC5-RAT-Type }
+          *   [ AVP ]
+
+@enum PC5-RAT-Type
+LTE                                                          0
+NR                                                           1
+
+

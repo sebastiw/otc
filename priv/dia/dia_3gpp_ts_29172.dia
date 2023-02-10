@@ -1,0 +1,267 @@
+;; 3GPP TS 29.172 v17.0.0
+
+@name     dia_3gpp_ts_29172
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+SLg-Location-Type                                           2500 Enumerated        MV
+LCS-EPS-Client-Name                                         2501 Grouped           MV
+LCS-Requestor-Name                                          2502 Grouped           MV
+LCS-Priority                                                2503 Unsigned32        MV
+LCS-QoS                                                     2504 Grouped           MV
+Horizontal-Accuracy                                         2505 Unsigned32        MV
+Vertical-Accuracy                                           2506 Unsigned32        MV
+Vertical-Requested                                          2507 Enumerated        MV
+Velocity-Requested                                          2508 Enumerated        MV
+Response-Time                                               2509 Enumerated        MV
+Supported-GAD-Shapes                                        2510 Unsigned32        MV
+LCS-Codeword                                                2511 UTF8String        MV
+LCS-Privacy-Check                                           2512 Enumerated        MV
+Accuracy-Fulfilment-Indicator                               2513 Enumerated        MV
+Age-Of-Location-Estimate                                    2514 Unsigned32        MV
+Velocity-Estimate                                           2515 OctetString       MV
+EUTRAN-Positioning-Data                                     2516 OctetString       MV
+ECGI                                                        2517 OctetString       MV
+Location-Event                                              2518 Enumerated        MV
+Pseudonym-Indicator                                         2519 Enumerated        MV
+LCS-Service-Type-ID                                         2520 Unsigned32        MV
+LCS-Privacy-Check-Non-Session                               2521 Grouped           MV
+LCS-Privacy-Check-Session                                   2522 Grouped           MV
+LCS-QoS-Class                                               2523 Enumerated        MV
+GERAN-Positioning-Info                                      2524 Grouped           V 
+GERAN-Positioning-Data                                      2525 OctetString       V 
+GERAN-GANSS-Positioning-Data                                2526 OctetString       V 
+UTRAN-Positioning-Info                                      2527 Grouped           V 
+UTRAN-Positioning-Data                                      2528 OctetString       V 
+UTRAN-GANSS-Positioning-Data                                2529 OctetString       V 
+LRR-Flags                                                   2530 Unsigned32        V 
+LCS-Reference-Number                                        2531 OctetString       V 
+Deferred-Location-Type                                      2532 Unsigned32        V 
+Area-Event-Info                                             2533 Grouped           V 
+Area-Definition                                             2534 Grouped           V 
+Area                                                        2535 Grouped           V 
+Area-Type                                                   2536 Unsigned32        V 
+Area-Identification                                         2537 OctetString       V 
+Occurrence-Info                                             2538 Enumerated        V 
+Interval-Time                                               2539 Unsigned32        V 
+Periodic-LDR-Information                                    2540 Grouped           V 
+Reporting-Amount                                            2541 Unsigned32        V 
+Reporting-Interval                                          2542 Unsigned32        V 
+Reporting-PLMN-List                                         2543 Grouped           V 
+PLMN-ID-List                                                2544 Grouped           V 
+PLR-Flags                                                   2545 Unsigned32        V 
+PLA-Flags                                                   2546 Unsigned32        V 
+Deferred-MT-LR-Data                                         2547 Grouped           V 
+ELP-Termination-Cause                                       2548 Unsigned32        V 
+LRA-Flags                                                   2549 Unsigned32        V 
+Periodic-Location-Support-Indicator                         2550 Enumerated        V 
+Prioritized-List-Indicator                                  2551 Enumerated        V 
+ESMLC-Cell-Info                                             2552 Grouped           V 
+Cell-Portion-ID                                             2553 Unsigned32        V 
+RCID-1xRTT                                                  2554 OctetString       V 
+Delayed-Location-Reporting-Data                             2555 Grouped           V 
+Civic-Address                                               2556 UTF8String        V 
+Barometric-Pressure                                         2557 Unsigned32        V 
+UTRAN-Additional-Positioning-Data                           2558 OctetString       V 
+Motion-Event-Info                                           2559 Grouped           V 
+Linear-Distance                                             2560 Unsigned32        V 
+Maximum-Interval                                            2561 Unsigned32        V 
+Sampling-Interval                                           2562 Unsigned32        V 
+Reporting-Duration                                          2563 Unsigned32        V 
+Reporting-Location-Requirements                             2564 Unsigned32        V 
+Additional-Area                                             2565 Grouped           V 
+
+@grouped
+LCS-EPS-Client-Name ::= <AVP Header: 2501>
+              [ LCS-Name-String ]
+              [ LCS-Format-Indicator ]
+
+LCS-Requestor-Name ::= <AVP Header: 2502>
+              [ LCS-Requestor-Id-String ]
+              [ LCS-Format-Indicator ]
+
+LCS-QoS ::= <AVP Header: 2504>
+              [ LCS-QoS-Class ]
+              [ Horizontal-Accuracy ]
+              [ Vertical-Accuracy ]
+              [ Vertical-Requested ]
+              [ Response-Time ]
+
+LCS-Privacy-Check-Non-Session ::= <AVP Header: 2521>
+              { LCS-Privacy-Check }
+
+LCS-Privacy-Check-Session ::= <AVP Header: 2522>
+              { LCS-Privacy-Check }
+
+GERAN-Positioning-Info ::= <AVP Header: 2524>
+              [ GERAN-Positioning-Data ]
+              [ GERAN-GANSS-Positioning-Data ]
+          *   [ AVP ]
+
+UTRAN-Positioning-Info ::= <AVP Header: 2527>
+              [ UTRAN-Positioning-Data ]
+              [ UTRAN-GANSS-Positioning-Data ]
+              [ UTRAN-Additional-Positioning-Data ]
+          *   [ AVP ]
+
+Area-Event-Info ::= <AVP Header: 2533>
+              { Area-Definition }
+              [ Occurrence-Info ]
+              [ Interval-Time ]
+              [ Maximum-Interval ]
+              [ Sampling-Interval ]
+              [ Reporting-Duration ]
+              [ Reporting-Location-Requirements ]
+          *   [ AVP ]
+
+Area-Definition ::= <AVP Header: 2534>
+         1*10 { Area }
+          *240[ Additional-Area ]
+          *   [ AVP ]
+
+Area ::= <AVP Header: 2535>
+              { Area-Type }
+              { Area-Identification }
+          *   [ AVP ]
+
+Periodic-LDR-Information ::= <AVP Header: 2540>
+              { Reporting-Amount }
+              { Reporting-Interval }
+          *   [ AVP ]
+
+Reporting-PLMN-List ::= <AVP Header: 2543>
+         1*20 { PLMN-ID-List }
+              [ Prioritized-List-Indicator ]
+          *   [ AVP ]
+
+PLMN-ID-List ::= <AVP Header: 2544>
+              { Visited-PLMN-Id }
+              [ Periodic-Location-Support-Indicator ]
+          *   [ AVP ]
+
+Deferred-MT-LR-Data ::= <AVP Header: 2547>
+              { Deferred-Location-Type }
+              [ ELP-Termination-Cause ]
+              [ Serving-Node ]
+          *   [ AVP ]
+
+ESMLC-Cell-Info ::= <AVP Header: 2552>
+              [ ECGI ]
+              [ Cell-Portion-ID ]
+          *   [ AVP ]
+
+Delayed-Location-Reporting-Data ::= <AVP Header: 2555>
+              [ ELP-Termination-Cause ]
+              [ Serving-Node ]
+          *   [ AVP ]
+
+Motion-Event-Info ::= <AVP Header: 2559>
+              { Linear-Distance }
+              [ Occurrence-Info ]
+              [ Interval-Time ]
+              [ Maximum-Interval ]
+              [ Sampling-Interval ]
+              [ Reporting-Duration ]
+              [ Reporting-Location-Requirements ]
+          *   [ AVP ]
+
+Additional-Area ::= <AVP Header: 2565>
+              { Area-Type }
+              { Area-Identification }
+          *   [ AVP ]
+
+@enum SLg-Location-Type
+CURRENT_LOCATION                                             0
+CURRENT_OR_LAST_KNOWN_LOCATION                               1
+INITIAL_LOCATION                                             2
+ACTIVATE_DEFERRED_LOCATION                                   3
+CANCEL_DEFERRED_LOCATION                                     4
+NOTIFICATION_VERIFICATION_ONLY                               5
+
+@enum Vertical-Requested
+VERTICAL_COORDINATE_IS_NOT_REQUESTED                         0
+VERTICAL_COORDINATE_IS_REQUESTED                             1
+
+@enum Velocity-Requested
+VELOCITY_IS_NOT_REQUESTED                                    0
+VELOCITY_IS_REQUESTED                                        1
+
+@enum Response-Time
+LOW_DELAY                                                    0
+DELAY_TOLERANT                                               1
+
+@enum LCS-Privacy-Check
+ALLOWED_WITHOUT_NOTIFICATION                                 0
+ALLOWED_WITH_NOTIFICATION                                    1
+ALLOWED_IF_NO_RESPONSE                                       2
+RESTRICTED_IF_NO_RESPONSE                                    3
+NOT_ALLOWED                                                  4
+
+@enum Accuracy-Fulfilment-Indicator
+REQUESTED_ACCURACY_FULFILLED                                 0
+REQUESTED_ACCURACY_NOT_FULFILLED                             1
+
+@enum Location-Event
+EMERGENCY_CALL_ORIGINATION                                   0
+EMERGENCY_CALL_RELEASE                                       1
+MO_LR                                                        2
+EMERGENCY_CALL_HANDOVER                                      3
+DEFERRED_MT_LR_RESPONSE                                      4
+DEFERRED_MO_LR_TTTP_INITIATION                               5
+DELAYED_LOCATION_REPORTING                                   6
+
+@enum Pseudonym-Indicator
+PSEUDONYM_NOT_REQUESTED                                      0
+PSEUDONYM_REQUESTED                                          1
+
+@enum LCS-QoS-Class
+ASSURED                                                      0
+BEST_EFFORT                                                  1
+
+@enum Occurrence-Info
+ONE_TIME_EVENT                                               0
+MULTIPLE_TIME_EVENT                                          1
+
+@enum Periodic-Location-Support-Indicator
+NOT_SUPPORTED                                                0
+SUPPORTED                                                    1
+
+@enum Prioritized-List-Indicator
+NOT_PRIORITIZED                                              0
+PRIORITIZED                                                  1
+
+@define Area-Type
+COUNTRY_CODE                                                 0
+PLMN_ID                                                      1
+LOCATION_AREA_ID                                             2
+ROUTING_AREA_ID                                              3
+CELL_GLOBAL_ID                                               4
+UTRAN_CELL_ID                                                5
+TRACKING_AREA_ID                                             6
+EUTRAN_CELL_GLOBAL_ID                                        7
+
+@define ELP-Termination-Cause
+NORMAL                                                       0
+ERROR_UNDEFINED                                              1
+INTERNAL_TIMEOUT                                             2
+CONGESTION                                                   3
+MT_LR_RESTART                                                4
+PRIVACY_VIOLATION                                            5
+SHAPE_OF_LOCATION_ESTIMATE_NOT_SUPPORTED                     6
+SUBSCRIBER_TERMINATION                                       7
+UE_TERMINATION                                               8
+NETWORK_TERMINATION                                          9
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_NETWORK              5490
+DIAMETER_ERROR_UNREACHABLE_USER                             4221
+DIAMETER_ERROR_SUSPENDED_USER                               4222
+DIAMETER_ERROR_DETACHED_USER                                4223
+DIAMETER_ERROR_POSITIONING_DENIED                           4224
+DIAMETER_ERROR_POSITIONING_FAILED                           4225
+DIAMETER_ERROR_UNKNOWN_UNREACHABLE_LCS_CLIENT               4226

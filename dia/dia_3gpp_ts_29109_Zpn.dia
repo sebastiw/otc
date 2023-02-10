@@ -1,0 +1,53 @@
+;; 3GPP TS 29.109 v17.0.0 Zpn
+
+@id       16777268
+@name     dia_3gpp_ts_29109_Zpn
+@vendor   10415 3GPP
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@messages
+GBA-Push-Info-Request ::= <Diameter Header: 312, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }                                                    ; Address of NAF
+              { Origin-Realm }                                                   ; Realm of NAF
+              { Destination-Realm }                                              ; Realm of BSF
+              { UE-Id }                                                          ; User identity
+              { UE-Id-Type }                                                     ; Public or private identity
+              { UICC-App-Label }                                                 ; UICC application label
+              { NAF-SA-Identifier }                                              ; P-TID
+              { NAF-Id }                                                         ; NAF_ID
+              { UICC-ME }                                                        ; Use of GBA_ME or GBA_U
+              { Requested-Key-Lifetime }                                         ; Requested NAF-Key lifetime
+              { Private-Identity-Request }                                       ; Request private identity
+              [ Destination-Host ]                                               ; Address of the BSF
+          *   [ GAA-Service-Identifier ]                                         ; Service identifiers
+              [ GBA_U-Awareness-Indicator ]                                      ; GBA_U awareness of the NAF
+              [ Security-Feature-Request ]                                       ; Sec. feature request
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+GBA-Push-Info-Answer ::= <Diameter Header: 312, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }                                                    ; Address of BSF
+              { Origin-Realm }                                                   ; Realm of BSF
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ User-Name ]                                                      ; IMPI
+              [ ME-Key-Material ]                                                ; Required
+              [ UICC-Key-Material ]                                              ; Conditional
+              [ Key-ExpiryTime ]                                                 ; Time of expiry
+              [ BootstrapInfoCreationTime ]                                      ; Bootstrapinfo creation time
+              [ GBA-UserSecSettings ]                                            ; Selected USSs
+              [ GBA-Type ]                                                       ; GBA type used in bootstrapping
+              [ GBA-Push-Info ]                                                  ; GBA Push Info
+              [ Security-Feature-Response ]                                      ; Sec. feature response
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+

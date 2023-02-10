@@ -1,0 +1,259 @@
+;; 3GPP TS 29.214 v17.4.0 Rx
+
+@id       16777236
+@name     dia_3gpp_ts_29214_Rx
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_etsi
+Reservation-Priority
+
+@inherits dia_3gpp
+
+@messages
+AA-Request ::= <Diameter Header: 265, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ IP-Domain-Id ]
+              [ Auth-Session-State ]
+              [ AF-Application-Identifier ]
+          *   [ Media-Component-Description ]
+              [ Service-Info-Status ]
+              [ AF-Charging-Identifier ]
+              [ SIP-Forking-Indication ]
+          *   [ Specific-Action ]
+          *   [ Subscription-Id ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ Reservation-Priority ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Called-Station-Id ]
+              [ Service-URN ]
+              [ Sponsored-Connectivity-Data ]
+              [ MPS-Identifier ]
+              [ GCS-Identifier ]
+              [ MCPTT-Identifier ]
+              [ MCVideo-Identifier ]
+              [ IMS-Content-Identifier ]
+              [ IMS-Content-Type ]
+          *   [ Calling-Party-Address ]
+              [ Callee-Information ]
+              [ Rx-Request-Type ]
+          *   [ Required-Access-Info ]
+              [ AF-Requested-Data ]
+              [ Reference-Id ]
+              [ Pre-emption-Control-Info ]
+              [ MPS-Action ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+AA-Answer ::= <Diameter Header: 265, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Auth-Session-State ]
+          *   [ Access-Network-Charging-Identifier ]
+              [ Access-Network-Charging-Address ]
+              [ Acceptable-Service-Info ]
+         0*2  [ AN-GW-Address ]
+              [ AN-Trusted ]
+              [ Service-Authorization-Info ]
+              [ IP-CAN-Type ]
+              [ MA-Information ]
+              [ NetLoc-Access-Support ]
+              [ RAT-Type ]
+          *   [ Flows ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+          *   [ Subscription-Id ]
+              [ User-Equipment-Info ]
+              [ User-Equipment-Info-Extension ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ NID ]
+          *   [ Class ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Retry-Interval ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Load ]
+          *   [ AVP ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+          *   { Specific-Action }
+              [ DRMP ]
+              [ OC-Supported-Features ]
+          *   [ Access-Network-Charging-Identifier ]
+              [ Access-Network-Charging-Address ]
+         0*2  [ AN-GW-Address ]
+              [ AN-Trusted ]
+          *   [ Flows ]
+          *   [ Subscription-Id ]
+              [ Abort-Cause ]
+              [ IP-CAN-Type ]
+              [ MA-Information ]
+              [ NetLoc-Access-Support ]
+              [ RAT-Type ]
+              [ Sponsored-Connectivity-Data ]
+              [ 3GPP-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ 3GPP-MS-TimeZone ]
+          *   [ RAN-NAS-Release-Cause ]
+          *   [ 5GS-RAN-NAS-Release-Cause ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ NID ]
+              [ TWAN-Identifier ]
+              [ TCP-Source-Port ]
+              [ UDP-Source-Port ]
+              [ UE-Local-IP-Address ]
+              [ Wireline-User-Location-Info ]
+              [ Origin-State-Id ]
+          *   [ Class ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Media-Component-Description ]
+              [ Service-URN ]
+              [ Origin-State-Id ]
+          *   [ Class ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+ST-Request ::= <Diameter Header: 275, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Termination-Cause }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Required-Access-Info ]
+          *   [ Class ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ST-Answer ::= <Diameter Header: 275, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Failed-AVP ]
+              [ Sponsored-Connectivity-Data ]
+              [ Origin-State-Id ]
+              [ 3GPP-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ 3GPP-MS-TimeZone ]
+          *   [ RAN-NAS-Release-Cause ]
+          *   [ 5GS-RAN-NAS-Release-Cause ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ NID ]
+              [ TWAN-Identifier ]
+              [ TCP-Source-Port ]
+              [ UDP-Source-Port ]
+              [ UE-Local-IP-Address ]
+              [ NetLoc-Access-Support ]
+              [ Wireline-User-Location-Info ]
+          *   [ Class ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Load ]
+          *   [ AVP ]
+
+AS-Request ::= <Diameter Header: 274, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              { Abort-Cause }
+              [ DRMP ]
+              [ OC-Supported-Features ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+AS-Answer ::= <Diameter Header: 274, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+INVALID_SERVICE_INFORMATION                                 5061
+FILTER_RESTRICTIONS                                         5062
+REQUESTED_SERVICE_NOT_AUTHORIZED                            5063
+DUPLICATED_AF_SESSION                                       5064
+IP_CAN_SESSION_NOT_AVAILABLE                                5065
+UNAUTHORIZED_NON_EMERGENCY_SESSION                          5066
+UNAUTHORIZED_SPONSORED_DATA_CONNECTIVITY                    5067
+TEMPORARY_NETWORK_FAILURE                                   5068
+UNAUTHORIZED_NON_RLOS_SESSION                               5069
+REQUESTED_SERVICE_TEMPORARILY_NOT_AUTHORIZED                4261
+

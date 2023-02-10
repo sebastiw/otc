@@ -1,0 +1,199 @@
+;; 3GPP TS 29.212 v17.2.0 Sd
+
+@id       16777303
+@name     dia_3gpp_ts_29212_Sd
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_etsi
+Logical-Access-ID
+Physical-Access-ID
+
+@inherits dia_3gpp
+
+@inherits dia_3gpp2
+
+@messages
+TS-Request ::= <Diameter Header: 8388637, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+          *   [ Subscription-Id ]
+          *   [ Supported-Features ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ IP-CAN-Type ]
+              [ RAT-Type ]
+              [ AN-Trusted ]
+              [ User-Equipment-Info ]
+              [ User-Equipment-Info-Extension ]
+              [ QoS-Information ]
+         0*2  [ AN-GW-Address ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ 3GPP-GGSN-Address ]
+              [ 3GPP-GGSN-IPv6-Address ]
+              [ 3GPP-Selection-Mode ]
+              [ Dynamic-Address-Flag ]
+              [ Dynamic-Address-Flag-Extension ]
+              [ PDN-Connection-Charging-ID ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ Fixed-User-Location-Info ]
+              [ User-CSG-Information ]
+              [ TWAN-Identifier ]
+              [ 3GPP-MS-TimeZone ]
+              [ 3GPP-Charging-Characteristics ]
+              [ Called-Station-Id ]
+              [ Charging-Information ]
+              [ Online ]
+              [ Offline ]
+          *   [ ADC-Rule-Install ]
+              [ Revalidation-Time ]
+          *   [ Usage-Monitoring-Information ]
+          *   [ CSG-Information-Reporting ]
+          *   [ Event-Trigger ]
+              [ Presence-Reporting-Area-Information ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+              [ 3GPP2-BSID ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+TS-Answer ::= <Diameter Header: 8388637, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+          *   [ ADC-Rule-Report ]
+              [ Event-Report-Indication ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Load ]
+          *   [ AVP ]
+
+CC-Request ::= <Diameter Header: 272, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ OC-Supported-Features ]
+              [ Credit-Management-Status ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+          *   [ ADC-Rule-Report ]
+          *   [ Application-Detection-Information ]
+          *   [ Event-Trigger ]
+              [ Event-Report-Indication ]
+          *   [ Usage-Monitoring-Information ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+CC-Answer ::= <Diameter Header: 272, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Framed-IPv6-Prefix ]
+              [ QoS-Information ]
+          *   [ Event-Trigger ]
+          *   [ CSG-Information-Reporting ]
+              [ Event-Report-Indication ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ ADC-Rule-Remove ]
+          *   [ ADC-Rule-Install ]
+              [ Revalidation-Time ]
+          *   [ Usage-Monitoring-Information ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ Load ]
+          *   [ AVP ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Re-Auth-Request-Type }
+              [ DRMP ]
+              [ Session-Release-Cause ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ QoS-Information ]
+          *   [ Event-Trigger ]
+          *   [ CSG-Information-Reporting ]
+              [ Event-Report-Indication ]
+          *   [ ADC-Rule-Remove ]
+          *   [ ADC-Rule-Install ]
+              [ Revalidation-Time ]
+          *   [ Usage-Monitoring-Information ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ ADC-Rule-Report ]
+              [ Event-Report-Indication ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Load ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_ADC_RULE_EVENT                                     5148

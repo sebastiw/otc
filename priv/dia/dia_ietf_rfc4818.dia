@@ -1,0 +1,6 @@
+;; IETF RFC 4818
+
+@name     dia_ietf_rfc4818
+
+@avp_types
+Delegated-IPv6-Prefix                                       123  OctetString       M 

@@ -1,0 +1,127 @@
+;; 3GPP TS 29.212 v17.2.0 St
+
+@id       16777349
+@name     dia_3gpp_ts_29212_St
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+TS-Request ::= <Diameter Header: 8388637, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Request-Type }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ Event-Report-Indication ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Called-Station-Id ]
+          *   [ ADC-Rule-Install ]
+          *   [ ADC-Rule-Remove ]
+          *   [ Supported-Features ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+TS-Answer ::= <Diameter Header: 8388637, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ ADC-Rule-Report ]
+          *   [ Supported-Features ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Load ]
+          *   [ AVP ]
+
+ST-Request ::= <Diameter Header: 275, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Termination-Cause }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Class ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ST-Answer ::= <Diameter Header: 275, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+          *   [ Class ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Load ]
+          *   [ AVP ]
+
+TN-Request ::= <Diameter Header: 8388731, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              [ DRMP ]
+              [ Origin-State-Id ]
+          *   [ ADC-Rule-Report ]
+              [ OC-Supported-Features ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+TN-Answer ::= <Diameter Header: 8388731, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_ADC_RULE_EVENT                                     5148

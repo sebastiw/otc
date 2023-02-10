@@ -1,0 +1,19 @@
+;; ETSI TS 183 071 v3.1.1
+
+@name     dia_etsi_ts_183071
+@vendor   13019 etsi
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
+@avp_types
+Network-Resource-Id                                         650  OctetString       MV
+Preferred-Delegated-Bandwidth-UL                            651  Unsigned32        MV
+Preferred-Delegated-Bandwidth-DL                            652  Unsigned32        MV
+Required-Delegated-Bandwidth-UL                             653  Unsigned32        MV
+Required-Delegated-Bandwidth-DL                             654  Unsigned32        MV
+Granted-Delegated-Bandwidth-UL                              655  Unsigned32        MV
+Granted-Delegated-Bandwidth-DL                              656  Unsigned32        MV
+Total-Bandwidth-UL                                          657  Unsigned32        MV
+Total-Bandwidth-DL                                          658  Unsigned32        MV

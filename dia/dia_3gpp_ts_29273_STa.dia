@@ -1,0 +1,194 @@
+;; 3GPP TS 29.273 v17.5.0 STa
+
+@id       16777250
+@name     dia_3gpp_ts_29273_STa
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+Diameter-EAP-Request ::= <Diameter Header: 268, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Request-Type }
+              { EAP-Payload }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ User-Name ]
+              [ Calling-Station-Id ]
+              [ RAT-Type ]
+              [ ANID ]
+              [ Full-Network-Name ]
+              [ Short-Network-Name ]
+              [ QoS-Capability ]
+              [ MIP6-Feature-Vector ]
+              [ Visited-Network-Identifier ]
+              [ Service-Selection ]
+              [ Terminal-Information ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ AAA-Failure-Indication ]
+              [ WLAN-Identifier ]
+              [ DER-Flags ]
+              [ TWAN-Connection-Mode ]
+              [ TWAN-Connectivity-Parameters ]
+          *2  [ TWAG-CP-Address ]
+              [ ERP-RK-Request ]
+          *   [ AVP ]
+
+Diameter-EAP-Answer ::= <Diameter Header: 268, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              { Auth-Request-Type }
+              [ DRMP ]
+              [ Experimental-Result ]
+              [ EAP-Payload ]
+              [ User-Name ]
+              [ Session-Timeout ]
+              [ Acct-Interim-Interval ]
+              [ EAP-Master-Session-Key ]
+              [ Context-Identifier ]
+              [ APN-OI-Replacement ]
+          *   [ APN-Configuration ]
+              [ MIP6-Agent-Info ]
+              [ MIP6-Feature-Vector ]
+              [ Mobile-Node-Identifier ]
+              [ 3GPP-Charging-Characteristics ]
+              [ AMBR ]
+          *   [ Redirect-Host ]
+              [ AN-Trusted ]
+              [ Trace-Info ]
+              [ Subscription-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Supported-Features ]
+              [ MIP-FA-RK ]
+              [ MIP-FA-RK-SPI ]
+;              [ NSWO-Authorization ]          ; Not defined in spec
+              [ DEA-Flags ]
+              [ TWAN-Connection-Mode ]
+              [ TWAN-Connectivity-Parameters ]
+              [ WLCP-Key ]
+              [ Terminal-Information ]
+              [ UE-Usage-Type ]
+              [ Emergency-Services ]
+              [ Emergency-Info ]
+              [ Key ]
+              [ ERP-Realm ]
+          *   [ AVP ]
+
+Abort-Session-Request ::= <Diameter Header: 274, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              [ DRMP ]
+              [ User-Name ]
+              [ Auth-Session-State ]
+          *   [ AVP ]
+
+Abort-Session-Answer ::= <Diameter Header: 274, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+          *   [ AVP ]
+
+Session-Termination-Request ::= <Diameter Header: 275, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Termination-Cause }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ User-Name ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+
+Session-Termination-Answer ::= <Diameter Header: 275, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+
+Re-Auth-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              { Re-Auth-Request-Type }
+              [ DRMP ]
+              [ User-Name ]
+          *   [ AVP ]
+
+Re-Auth-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+          *   [ AVP ]
+
+AA-Request ::= <Diameter Header: 265, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Request-Type }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ User-Name ]
+              [ MIP6-Feature-Vector ]
+              [ Access-Network-Info ]
+              [ Local-Time-Zone ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+
+AA-Answer ::= <Diameter Header: 265, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Request-Type }
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Experimental-Result ]
+              [ Session-Timeout ]
+              [ Acct-Interim-Interval ]
+              [ Context-Identifier ]
+              [ APN-OI-Replacement ]
+          *   [ APN-Configuration ]
+              [ 3GPP-Charging-Characteristics ]
+              [ Trace-Info ]
+              [ Subscription-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ UE-Usage-Type ]
+              [ Emergency-Info ]
+          *   [ Load ]
+          *   [ AVP ]
+

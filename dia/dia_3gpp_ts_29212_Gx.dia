@@ -1,0 +1,238 @@
+;; 3GPP TS 29.212 v17.2.0 Gx
+
+@id       16777238
+@name     dia_3gpp_ts_29212_Gx
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_etsi
+Logical-Access-ID
+Physical-Access-ID
+
+@inherits dia_3gpp
+
+@messages
+CC-Request ::= <Diameter Header: 272, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Credit-Management-Status ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+          *   [ Subscription-Id ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ TDF-Information ]
+              [ Network-Request-Support ]
+          *   [ Packet-Filter-Information ]
+              [ Packet-Filter-Operation ]
+              [ Bearer-Identifier ]
+              [ Bearer-Operation ]
+              [ Dynamic-Address-Flag ]
+              [ Dynamic-Address-Flag-Extension ]
+              [ PDN-Connection-Charging-ID ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ IP-CAN-Type ]
+              [ 3GPP-RAT-Type ]
+              [ AN-Trusted ]
+              [ RAT-Type ]
+              [ Termination-Cause ]
+              [ User-Equipment-Info ]
+              [ User-Equipment-Info-Extension ]
+              [ QoS-Information ]
+              [ QoS-Negotiation ]
+              [ QoS-Upgrade ]
+              [ Default-EPS-Bearer-QoS ]
+              [ Default-QoS-Information ]
+         0*2  [ AN-GW-Address ]
+              [ AN-GW-Status ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ 3GPP-GGSN-Address ]
+              [ 3GPP-GGSN-IPv6-Address ]
+              [ 3GPP-Selection-Mode ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ Fixed-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ User-CSG-Information ]
+              [ TWAN-Identifier ]
+              [ 3GPP-MS-TimeZone ]
+          *   [ RAN-NAS-Release-Cause ]
+              [ 3GPP-Charging-Characteristics ]
+              [ Called-Station-Id ]
+              [ PDN-Connection-ID ]
+              [ Bearer-Usage ]
+              [ Online ]
+              [ Offline ]
+          *   [ TFT-Packet-Filter-Information ]
+          *   [ Charging-Rule-Report ]
+          *   [ Application-Detection-Information ]
+          *   [ Event-Trigger ]
+              [ Event-Report-Indication ]
+              [ Access-Network-Charging-Address ]
+          *   [ Access-Network-Charging-Identifier-Gx ]
+          *   [ CoA-Information ]
+          *   [ Usage-Monitoring-Information ]
+              [ NBIFOM-Support ]
+              [ NBIFOM-Mode ]
+              [ Default-Access ]
+              [ Origination-Time-Stamp ]
+              [ Maximum-Wait-Time ]
+              [ Access-Availability-Change-Reason ]
+              [ Routing-Rule-Install ]
+              [ Routing-Rule-Remove ]
+              [ HeNB-Local-IP-Address ]
+              [ UE-Local-IP-Address ]
+              [ UDP-Source-Port ]
+              [ TCP-Source-Port ]
+          *   [ Presence-Reporting-Area-Information ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ 3GPP-EPS-PS-Data-Off-Status ]
+          *   [ AVP ]
+
+CC-Answer ::= <Diameter Header: 272, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+              [ Bearer-Control-Mode ]
+          *   [ Event-Trigger ]
+              [ Event-Report-Indication ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Charging-Rule-Remove ]
+          *   [ Charging-Rule-Install ]
+              [ Charging-Information ]
+              [ Online ]
+              [ Offline ]
+          *   [ QoS-Information ]
+              [ Revalidation-Time ]
+              [ Default-EPS-Bearer-QoS ]
+              [ Default-QoS-Information ]
+              [ Bearer-Usage ]
+          *   [ Usage-Monitoring-Information ]
+          *   [ CSG-Information-Reporting ]
+              [ User-CSG-Information ]
+              [ PRA-Install ]
+              [ PRA-Remove ]
+              [ Presence-Reporting-Area-Information ]
+              [ Session-Release-Cause ]
+              [ NBIFOM-Support ]
+              [ NBIFOM-Mode ]
+              [ Default-Access ]
+              [ RAN-Rule-Support ]
+          *   [ Routing-Rule-Report ]
+         0*4  [ Conditional-Policy-Information ]
+              [ Removal-Of-Access ]
+              [ IP-CAN-Type ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Load ]
+          *   [ AVP ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Re-Auth-Request-Type }
+              [ DRMP ]
+              [ Session-Release-Cause ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+          *   [ Event-Trigger ]
+              [ Event-Report-Indication ]
+          *   [ Charging-Rule-Remove ]
+          *   [ Charging-Rule-Install ]
+              [ Default-EPS-Bearer-QoS ]
+          *   [ QoS-Information ]
+              [ Default-QoS-Information ]
+              [ Revalidation-Time ]
+          *   [ Usage-Monitoring-Information ]
+              [ PCSCF-Restoration-Indication ]
+         0*4  [ Conditional-Policy-Information ]
+              [ Removal-Of-Access ]
+              [ IP-CAN-Type ]
+              [ PRA-Install ]
+              [ PRA-Remove ]
+          *   [ CSG-Information-Reporting ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ IP-CAN-Type ]
+              [ RAT-Type ]
+              [ AN-Trusted ]
+         0*2  [ AN-GW-Address ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ NetLoc-Access-Support ]
+              [ User-CSG-Information ]
+              [ 3GPP-MS-TimeZone ]
+              [ Default-QoS-Information ]
+          *   [ Charging-Rule-Report ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_USER_UNKNOWN                                       5030
+DIAMETER_ERROR_LATE_OVERLAPPING_REQUEST                     5453
+DIAMETER_ERROR_TIMED_OUT_REQUEST                            5454
+DIAMETER_ERROR_INITIAL_PARAMETERS                           5140
+DIAMETER_ERROR_TRIGGER_EVENT                                5141
+DIAMETER_PCC_RULE_EVENT                                     5142
+DIAMETER_ERROR_BEARER_NOT_AUTHORIZED                        5143
+DIAMETER_ERROR_TRAFFIC_MAPPING_INFO_REJECTED                5144
+DIAMETER_ERROR_CONFLICTING_REQUEST                          5147
+DIAMETER_ADC_RULE_EVENT                                     5148
+DIAMETER_ERROR_NBIFOM_NOT_AUTHORIZED                        5149
+DIAMETER_PCC_BEARER_EVENT                                   4141
+DIAMETER_AN_GW_FAILED                                       4143
+DIAMETER_PENDING_TRANSACTION                                4144
+DIAMETER_UE_STATUS_SUSPEND                                  4145

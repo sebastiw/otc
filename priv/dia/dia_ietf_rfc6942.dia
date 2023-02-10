@@ -1,0 +1,15 @@
+;; IEFT RFC 6942
+
+@name     dia_ietf_rfc6942
+
+@inherits diameter_gen_base_rfc6733
+
+@avp_types
+ERP-RK-Request                                              618  Grouped           - 
+ERP-Realm                                                   619  DiameterIdentity  - 
+
+@grouped
+ERP-RK-Request ::= <AVP Header: 618>
+              { ERP-Realm }
+          *   [ AVP ]
+

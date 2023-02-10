@@ -1,0 +1,210 @@
+;; 3GPP TS 29.329 v17.0.0 Sh
+
+@id       16777217
+@name     dia_3gpp_ts_29329_Sh
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+User-Data-Request ::= <Diameter Header: 306, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identity }
+          *   { Data-Reference }
+              [ DRMP ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ Wildcarded-Public-Identity ]
+              [ Wildcarded-IMPU ]
+              [ Server-Name ]
+          *   [ Service-Indication ]
+          *   [ Identity-Set ]
+              [ Requested-Domain ]
+              [ Current-Location ]
+          *   [ DSAI-Tag ]
+              [ Session-Priority ]
+              [ User-Name ]
+              [ Requested-Nodes ]
+              [ Serving-Node-Indication ]
+              [ Pre-paging-Supported ]
+              [ Local-Time-Zone-Indication ]
+              [ UDR-Flags ]
+              [ Call-Reference-Info ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+User-Data-Answer ::= <Diameter Header: 306, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ Wildcarded-Public-Identity ]
+              [ Wildcarded-IMPU ]
+              [ Sh-User-Data ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Profile-Update-Request ::= <Diameter Header: 307, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identity }
+          *   { Data-Reference }
+              { Sh-User-Data }
+              [ DRMP ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ Wildcarded-Public-Identity ]
+              [ Wildcarded-IMPU ]
+              [ User-Name ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Profile-Update-Answer ::= <Diameter Header: 307, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Wildcarded-Public-Identity ]
+              [ Wildcarded-IMPU ]
+              [ Repository-Data-ID ]
+              [ Data-Reference ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Subscribe-Notifications-Request ::= <Diameter Header: 308, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identity }
+              { Subs-Req-Type }
+          *   { Data-Reference }
+              [ DRMP ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ Wildcarded-Public-Identity ]
+              [ Wildcarded-IMPU ]
+          *   [ Service-Indication ]
+              [ Send-Data-Indication ]
+              [ Server-Name ]
+          *   [ Identity-Set ]
+              [ Expiry-Time ]
+          *   [ DSAI-Tag ]
+              [ One-Time-Notification ]
+              [ User-Name ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Subscribe-Notifications-Answer ::= <Diameter Header: 308, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Wildcarded-Public-Identity ]
+              [ Wildcarded-IMPU ]
+          *   [ Supported-Features ]
+              [ Sh-User-Data ]
+              [ Expiry-Time ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Request ::= <Diameter Header: 309, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { User-Identity }
+              { Sh-User-Data }
+              [ DRMP ]
+          *   [ Supported-Features ]
+              [ Wildcarded-Public-Identity ]
+              [ Wildcarded-IMPU ]
+              [ User-Name ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Push-Notification-Answer ::= <Diameter Header: 309, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED                     5100
+DIAMETER_ERROR_OPERATION_NOT_ALLOWED                        5101
+DIAMETER_ERROR_USER_DATA_CANNOT_BE_READ                     5102
+DIAMETER_ERROR_USER_DATA_CANNOT_BE_MODIFIED                 5103
+DIAMETER_ERROR_USER_DATA_CANNOT_BE_NOTIFIED                 5104
+DIAMETER_ERROR_TOO_MUCH_DATA                                5008
+DIAMETER_ERROR_TRANSPARENT_DATA_OUT_OF_SYNC                 5105
+DIAMETER_ERROR_FEATURE_UNSUPPORTED                          5011
+DIAMETER_ERROR_SUBS_DATA_ABSENT                             5106
+DIAMETER_ERROR_NO_SUBSCRIPTION_TO_DATA                      5107
+DIAMETER_ERROR_DSAI_NOT_AVAILABLE                           5108
+DIAMETER_ERROR_IDENTITIES_DONT_MATCH                        5002
+DIAMETER_USER_DATA_NOT_AVAILABLE                            4100
+DIAMETER_PRIOR_UPDATE_IN_PROGRESS                           4101
+

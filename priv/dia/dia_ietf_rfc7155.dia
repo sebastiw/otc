@@ -1,0 +1,262 @@
+;; IETF RFC 7155
+
+@name     dia_ietf_rfc7155
+
+@avp_types
+User-Password                                               2    OctetString       M
+NAS-IP-Address                                              4    OctetString       M 
+NAS-Port                                                    5    Unsigned32        M 
+Service-Type                                                6    Enumerated        M 
+Framed-Protocol                                             7    Enumerated        M 
+Framed-IP-Address                                           8    OctetString       M 
+Framed-IP-Netmask                                           9    OctetString       M 
+Framed-Routing                                              10   Enumerated        M 
+Filter-Id                                                   11   UTF8String        M 
+Framed-MTU                                                  12   Unsigned32        M 
+Framed-Compression                                          13   Enumerated        M 
+Login-IP-Host                                               14   OctetString       M 
+Login-Service                                               15   Enumerated        M 
+Login-TCP-Port                                              16   Unsigned32        M 
+Reply-Message                                               18   UTF8String        M 
+Callback-Number                                             19   UTF8String        M 
+Callback-Id                                                 20   UTF8String        M 
+Framed-Route                                                22   UTF8String        M 
+Framed-IPX-Network                                          23   Unsigned32        M 
+Idle-Timeout                                                28   Unsigned32        M 
+Called-Station-Id                                           30   UTF8String        M 
+Calling-Station-Id                                          31   UTF8String        M 
+NAS-Identifier                                              32   UTF8String        M 
+Login-LAT-Service                                           34   OctetString       M 
+Login-LAT-Node                                              35   OctetString       M 
+Login-LAT-Group                                             36   OctetString       M 
+Framed-Appletalk-Link                                       37   Unsigned32        M 
+Framed-Appletalk-Network                                    38   Unsigned32        M 
+Framed-Appletalk-Zone                                       39   OctetString       M 
+Acct-Delay-Time                                             41   Unsigned32        M 
+Acct-Authentic                                              45   Enumerated        M 
+Acct-Session-Time                                           46   Unsigned32        M 
+Acct-Link-Count                                             51   Unsigned32        M 
+CHAP-Challenge                                              60   OctetString       M 
+NAS-Port-Type                                               61   Enumerated        M 
+Port-Limit                                                  62   Unsigned32        M 
+Login-LAT-Port                                              63   OctetString       M 
+Tunnel-Type                                                 64   Enumerated        M 
+Tunnel-Medium-Type                                          65   Enumerated        M 
+Tunnel-Client-Endpoint                                      66   UTF8String        M 
+Tunnel-Server-Endpoint                                      67   UTF8String        M 
+Acct-Tunnel-Connection                                      68   OctetString       M 
+Tunnel-Password                                             69   OctetString       M 
+ARAP-Password                                               70   OctetString       M 
+ARAP-Features                                               71   OctetString       M 
+ARAP-Zone-Access                                            72   Enumerated        M 
+ARAP-Security                                               73   Unsigned32        M 
+ARAP-Security-Data                                          74   OctetString       M 
+Password-Retry                                              75   Unsigned32        M 
+Prompt                                                      76   Enumerated        M 
+Connect-Info                                                77   UTF8String        M 
+Configuration-Token                                         78   OctetString       M 
+Tunnel-Private-Group-Id                                     81   OctetString       M 
+Tunnel-Assignment-Id                                        82   OctetString       M 
+Tunnel-Preference                                           83   Unsigned32        M 
+ARAP-Challenge-Response                                     84   OctetString       M 
+Acct-Tunnel-Packets-Lost                                    86   Unsigned32        M 
+NAS-Port-Id                                                 87   UTF8String        M 
+Framed-Pool                                                 88   OctetString       M 
+Tunnel-Client-Auth-Id                                       90   UTF8String        M 
+Tunnel-Server-Auth-Id                                       91   UTF8String        M 
+Originating-Line-Info                                       94   OctetString       M 
+NAS-IPv6-Address                                            95   OctetString       M 
+Framed-Interface-Id                                         96   Unsigned64        M 
+Framed-IPv6-Prefix                                          97   OctetString       M 
+Login-IPv6-Host                                             98   OctetString       M 
+Framed-IPv6-Route                                           99   UTF8String        M 
+Framed-IPv6-Pool                                            100  OctetString       M 
+Accounting-Input-Octets                                     363  Unsigned64        M 
+Accounting-Output-Octets                                    364  Unsigned64        M 
+Accounting-Input-Packets                                    365  Unsigned64        M 
+Accounting-Output-Packets                                   366  Unsigned64        M 
+NAS-Filter-Rule                                             400  IPFilterRule      M 
+Tunneling                                                   401  Grouped           M 
+CHAP-Auth                                                   402  Grouped           M 
+CHAP-Algorithm                                              403  Enumerated        M 
+CHAP-Ident                                                  404  OctetString       M 
+CHAP-Response                                               405  OctetString       M 
+Accounting-Auth-Method                                      406  Enumerated        M 
+QoS-Filter-Rule                                             407  QoSFilterRule     - 
+
+@grouped
+Tunneling ::= <AVP Header: 401>
+              { Tunnel-Type }
+              { Tunnel-Medium-Type }
+              { Tunnel-Client-Endpoint }
+              { Tunnel-Server-Endpoint }
+              [ Tunnel-Preference ]
+              [ Tunnel-Client-Auth-Id ]
+              [ Tunnel-Server-Auth-Id ]
+              [ Tunnel-Assignment-Id ]
+              [ Tunnel-Password ]
+              [ Tunnel-Private-Group-Id ]
+
+CHAP-Auth ::= <AVP Header: 402>
+              { CHAP-Algorithm }
+              { CHAP-Ident }
+              [ CHAP-Response ]
+          *   [ AVP ]
+
+@enum Service-Type
+LOGIN                                                        1
+FRAMED                                                       2
+CALLBACK_LOGIN                                               3
+CALLBACK_FRAMED                                              4
+
+@enum Framed-Protocol
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+PPP                                                          1
+SLIP                                                         2
+ARAP                                                         3
+GANDALF_SINGLE_MULTILINK                                     4
+XYLOGICS_IPX_SLIP                                            5
+X75_SYNCHRONOUS                                              6
+GPRS_PDP_CONTEXT                                             7
+
+@enum Framed-Routing
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+NONE                                                         0
+SEND_ROUTING_PACKETS                                         1
+LISTEN_FOR_ROUTING_PACKETS                                   2
+SEND_AND_LISTEN                                              3
+
+@enum Framed-Compression
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+NONE                                                         0
+VJ_TCPIP_HEADER_COMPRESSION                                  1
+IPX_HEADER_COMPRESSION                                       2
+STAC_LZS_COMPRESSION                                         3
+
+@enum Login-Service
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+TELNET                                                       0
+RLOGIN                                                       1
+TCP_CLEAR                                                    2
+PortMaster                                                   3
+LAT                                                          4
+X25_PAD                                                      5
+X25_T3POS                                                    6
+UNASSIGNED                                                   7
+TCP_CLEAR_QUIET                                              8
+
+@enum Acct-Authentic
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+RADIUS                                                       1
+LOCAL                                                        2
+REMOTE                                                       3
+DIAMETER                                                     4
+
+@enum NAS-Port-Type
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+ASYNC                                                        0
+SYNC                                                         1
+ISDN_SYNC                                                    2
+ISDN_ASYNC_V120                                              3
+ISDN_ASYNC_V110                                              4
+VIRTUAL                                                      5
+PIAFS                                                        6
+HDLC_CLEAR_CHANNEL                                           7
+X25                                                          8
+X75                                                          9
+G3_FAX                                                      10
+SDSL                                                        11
+ADSL_CAP                                                    12
+ADSL_DMT                                                    13
+IDSL                                                        14
+ETHERNET                                                    15
+xDSL                                                        16
+CABLE                                                       17
+WIRELESS_OTHER                                              18
+WIRELESS_IEEE80211                                          19
+TOKEN_RING                                                  20
+FDDI                                                        21
+WIRELESS_CDMA2000                                           22
+WIRELESS_UMTS                                               23
+WIRELESS_1X_EV                                              24
+IAPP                                                        25
+FTTP                                                        26
+WIRELESS_IEEE80216                                          27
+WIRELESS_IEEE80220                                          28
+WIRELESS_IEEE80222                                          29
+PPPoA                                                       30
+PPPoEoA                                                     31
+PPPoEoE                                                     32
+PPPoEoVLAN                                                  33
+PPPoEoQinQ                                                  34
+xPON                                                        35
+WIRELESS_XGP                                                36
+WiMAX_Pre_Release_8_IWK                                     37
+WIMAX_WIFI_IWK                                              38
+WIMAX_SFF                                                   39
+WIMAX_HA_LMA                                                40
+WIMAX_DHCP                                                  41
+WIMAX_LBS                                                   42
+WIMAX_WVS                                                   43
+
+@enum Prompt
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+NO_ECHO                                                      0
+ECHO                                                         1
+
+@enum Tunnel-Type
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+PPTP                                                         1
+L2F                                                          2
+L2TP                                                         3
+ATMP                                                         4
+VTP                                                          5
+AH                                                           6
+IP_IP                                                        7
+MIN_IP_IP                                                    8
+ESP                                                          9
+GRE                                                         10
+DVS                                                         11
+IP_IP_TUNNELING                                             12
+VLAN                                                        13
+
+@enum Tunnel-Medium-Type
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+IPv4                                                         1
+IPv6                                                         2
+NSAP                                                         3
+HDLC                                                         4
+BBN_1822                                                     5
+all_802                                                      6
+E163                                                         7
+E164                                                         8
+F69                                                          9
+X121                                                        10
+IPX                                                         11
+APPLETALK                                                   12
+DECNET_IV                                                   13
+BANYAN_VINES                                                14
+E164_WITH_NSAP_format_subaddress                            15
+
+@enum ARAP-Zone-Access
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+ONLY_ALLOW_ACCESS_TO_DEFAULT_ZONE                            1
+USE_ZONE_FILTER_INCLUSIVELY                                  2
+NOT_USED                                                     3
+USE_ZONE_FILTER_EXCLUSIVELY                                  4
+
+@enum Prompt
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+NO_ECHO                                                      0
+ECHO                                                         1
+
+@enum CHAP-Algorithm
+CHAP_WITH_MD5                                                5
+
+@enum Accounting-Auth-Method
+;; MS-Acct-Auth-Type in RFC2548
+PAP                                                          1
+CHAP                                                         2
+MS_CHAP_1                                                    3
+MS_CHAP_2                                                    4
+EAP                                                          5

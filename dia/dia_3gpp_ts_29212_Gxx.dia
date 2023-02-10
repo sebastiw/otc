@@ -1,0 +1,145 @@
+;; 3GPP TS 29.212 v17.2.0 Gxx
+
+@id       16777266
+@name     dia_3gpp_ts_29212_Gxx
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@inherits dia_3gpp2
+
+@messages
+CC-Request ::= <Diameter Header: 272, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+          *   [ Subscription-Id ]
+              [ Network-Request-Support ]
+          *   [ Packet-Filter-Information ]
+              [ Packet-Filter-Operation ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ IP-CAN-Type ]
+              [ RAT-Type ]
+              [ Termination-Cause ]
+              [ User-Equipment-Info ]
+              [ User-Equipment-Info-Extension ]
+              [ QoS-Information ]
+              [ Default-EPS-Bearer-QoS ]
+         0*2  [ AN-GW-Address ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ 3GPP-MS-TimeZone ]
+              [ 3GPP2-BSID ]
+              [ User-CSG-Information ]
+              [ HeNB-Local-IP-Address ]
+              [ UE-Local-IP-Address ]
+              [ UDP-Source-Port ]
+              [ Called-Station-Id ]
+              [ PDN-Connection-ID ]
+          *   [ QoS-Rule-Report ]
+          *   [ Event-Trigger ]
+              [ Session-Linking-Indicator ]
+              [ Trace-Data ]
+              [ Trace-Reference ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+CC-Answer ::= <Diameter Header: 272, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Supported-Features ]
+              [ Bearer-Control-Mode ]
+          *   [ Event-Trigger ]
+              [ Framed-IPv6-Prefix ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ QoS-Rule-Remove ]
+          *   [ QoS-Rule-Install ]
+              [ QoS-Information ]
+              [ Default-EPS-Bearer-QoS ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Load ]
+          *   [ AVP ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Re-Auth-Request-Type }
+              [ DRMP ]
+              [ Session-Release-Cause ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+          *   [ Event-Trigger ]
+          *   [ QoS-Rule-Remove ]
+          *   [ QoS-Rule-Install ]
+              [ QoS-Information ]
+              [ Default-EPS-Bearer-QoS ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ RAT-Type ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ NetLoc-Access-Support ]
+              [ User-CSG-Information ]
+              [ 3GPP-MS-TimeZone ]
+              [ 3GPP2-BSID ]
+          *   [ QoS-Rule-Report ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_QOS_RULE_EVENT                                     5145
+DIAMETER_BEARER_EVENT                                       4142

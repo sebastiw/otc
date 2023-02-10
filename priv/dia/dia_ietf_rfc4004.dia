@@ -1,0 +1,98 @@
+;; IETF RFC 4004
+
+@avp_types
+MIP-FA-to-HA-SPI                                            318  Unsigned32        M 
+MIP-FA-to-MN-SPI                                            319  Unsigned32        M 
+MIP-Reg-Request                                             320  OctetString       M 
+MIP-Reg-Reply                                               321  OctetString       M 
+MIP-MN-AAA-Auth                                             322  Grouped           M 
+MIP-HA-to-FA-SPI                                            323  Unsigned32        M 
+; MIP-MN-to-FA-MSA                                          325  Grouped           M
+MIP-FA-to-MN-MSA                                            326  Grouped           M 
+MIP-FA-to-HA-MSA                                            328  Grouped           M 
+MIP-HA-to-FA-MSA                                            329  Grouped           M 
+MIP-MN-to-HA-MSA                                            331  Grouped           M 
+; MIP-HA-to-MN-MSA                                          332  Grouped           M
+MIP-Mobile-Node-Address                                     333  Address           M 
+MIP-Home-Agent-Address                                      334  Address           M 
+MIP-Nonce                                                   335  OctetString       M 
+MIP-Candidate-Home-Agent-Host                               336  DiamIdent         M 
+MIP-Feature-Vector                                          337  Unsigned32        M 
+MIP-Auth-Input-Data-Length                                  338  Unsigned32        M 
+MIP-Authenticator-Length                                    339  Unsigned32        M 
+MIP-Authenticator-Offset                                    340  Unsigned32        M 
+MIP-MN-AAA-SPI                                              341  Unsigned32        M 
+MIP-Filter-Rule                                             342  IPFilterRule      M 
+MIP-Session-Key                                             343  OctetString       M 
+MIP-FA-Challenge                                            344  OctetString       M 
+MIP-Algorithm-Type                                          345  Enumerated        M 
+MIP-Replay-Mode                                             346  Enumerated        M 
+MIP-Originating-Foreign-AAA                                 347  Grouped           M 
+MIP-Home-Agent-Host                                         348  Grouped           M 
+MIP-MSA-Lifetime                                            367  Unsigned32        M 
+
+@grouped
+MIP-MN-AAA-Auth ::= <AVP Header: 322>
+              { MIP-MN-AAA-SPI }
+              { MIP-Auth-Input-Data-Length }
+              { MIP-Authenticator-Length }
+              { MIP-Authenticator-Offset }
+          *   [ AVP ]
+
+; MIP-MN-to-FA-MSA ::= < AVP Header: 325 >
+; Unceratin of Code and Type for MIP-MN-FA-SPI
+;                { MIP-MN-FA-SPI }
+;                { MIP-Algorithm-Type }
+;                { MIP-Nonce }
+;           *    [ AVP ]
+
+MIP-FA-to-MN-MSA ::= <AVP Header: 326>
+              { MIP-FA-to-MN-SPI }
+              { MIP-Algorithm-Type }
+              { MIP-Session-Key }
+          *   [ AVP ]
+
+MIP-FA-to-HA-MSA ::= <AVP Header: 328>
+              { MIP-FA-to-HA-SPI }
+              { MIP-Algorithm-Type }
+              { MIP-Session-Key }
+          *   [ AVP ]
+
+MIP-HA-to-FA-MSA ::= <AVP Header: 329>
+              { MIP-HA-to-FA-SPI }
+              { MIP-Algorithm-Type }
+              { MIP-Session-Key }
+          *   [ AVP ]
+
+MIP-MN-to-HA-MSA ::= <AVP Header: 331>
+              { MIP-MN-HA-SPI }
+              { MIP-Algorithm-Type }
+              { MIP-Replay-Mode }
+              { MIP-Nonce }
+          *   [ AVP ]
+
+; MIP-HA-to-MN-MSA ::= < AVP Header: 332 >
+; Unceratin of Code and Type for MIP-HA-to-MN-SPI
+;                { MIP-HA-to-MN-SPI }
+;                { MIP-Algorithm-Type }
+;                { MIP-Replay-Mode }
+;                { MIP-Session-Key }
+;           *    [ AVP ]
+
+MIP-Originating-Foreign-AAA ::= <AVP Header: 347>
+              { Origin-Realm }
+              { Origin-Host }
+          *   [ AVP ]
+
+MIP-Home-Agent-Host ::= <AVP Header: 348>
+              { Destination-Realm }
+              { Destination-Host }
+          *   [ AVP ]
+
+@enum MIP-Algorithm-Type
+HMAC_SHA1                                                    2
+
+@enum MIP-Replay-Mode
+NONE                                                         1
+TIMESTAMPS                                                   2
+NONCES                                                       3

@@ -1,0 +1,149 @@
+;; 3GPP TS 29.338 v17.1.0
+
+@name     dia_3gpp_ts_29338
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+SC-Address                                                  3300 OctetString       MV
+SM-RP-UI                                                    3301 OctetString       MV
+TFR-Flags                                                   3302 Unsigned32        MV
+SM-Delivery-Failure-Cause                                   3303 Grouped           MV
+SM-Enumerated-Delivery-Failure-Cause                        3304 Enumerated        MV
+SM-Diagnostic-Info                                          3305 OctetString       MV
+SM-Delivery-Timer                                           3306 Unsigned32        MV
+SM-Delivery-Start-Time                                      3307 Time              MV
+SM-RP-MTI                                                   3308 Enumerated        MV
+SM-RP-SMEA                                                  3309 OctetString       MV
+SRR-Flags                                                   3310 Unsigned32        MV
+SM-Delivery-Not-Intended                                    3311 Enumerated        MV
+MWD-Status                                                  3312 Unsigned32        MV
+MME-Absent-User-Diagnostic-SM                               3313 Unsigned32        MV
+MSC-Absent-User-Diagnostic-SM                               3314 Unsigned32        MV
+SGSN-Absent-User-Diagnostic-SM                              3315 Unsigned32        MV
+SM-Delivery-Outcome                                         3316 Grouped           MV
+MME-SM-Delivery-Outcome                                     3317 Grouped           MV
+MSC-SM-Delivery-Outcome                                     3318 Grouped           MV
+SGSN-SM-Delivery-Outcome                                    3319 Grouped           MV
+IP-SM-GW-SM-Delivery-Outcome                                3320 Grouped           MV
+SM-Delivery-Cause                                           3321 Enumerated        MV
+Absent-User-Diagnostic-SM                                   3322 Unsigned32        MV
+RDR-Flags                                                   3323 Unsigned32        V 
+SMSMI-Correlation-ID                                        3324 Grouped           V 
+HSS-ID                                                      3325 OctetString       V 
+Originating-SIP-URI                                         3326 UTF8String        V 
+Destination-SIP-URI                                         3327 UTF8String        V 
+OFR-Flags                                                   3328 Unsigned32        V 
+Maximum-UE-Availability-Time                                3329 Time              V 
+Maximum-Retransmission-Time                                 3330 Time              V 
+Requested-Retransmission-Time                               3331 Time              V 
+SMS-GMSC-Address                                            3332 OctetString       V 
+SMS-GMSC-Alert-Event                                        3333 Unsigned32        V 
+SMSF-3GPP-Absent-User-Diagnostic-SM                         3334 Unsigned32        V 
+SMSF-Non-3GPP-Absent-User-Diagnostic-SM                     3335 Unsigned32        V 
+SMSF-3GPP-SM-Delivery-Outcome                               3336 Grouped           V 
+SMSF-Non-3GPP-SM-Delivery-Outcome                           3337 Grouped           V 
+SMSF-3GPP-Number                                            3338 OctetString       V 
+SMSF-Non-3GPP-Number                                        3339 OctetString       V 
+SMSF-3GPP-Name                                              3340 DiameterIdentity  V 
+SMSF-Non-3GPP-Name                                          3341 DiameterIdentity  V 
+SMSF-3GPP-Realm                                             3342 DiameterIdentity  V 
+SMSF-Non-3GPP-Realm                                         3343 DiameterIdentity  V 
+SMSF-3GPP-Address                                           3344 Grouped           V 
+SMSF-Non-3GPP-Address                                       3345 Grouped           V 
+
+@grouped
+SM-Delivery-Failure-Cause ::= <AVP Header: 3303>
+              { SM-Enumerated-Delivery-Failure-Cause }
+              [ SM-Diagnostic-Info ]
+          *   [ AVP ]
+
+SM-Delivery-Outcome ::= <AVP Header: 3316>
+              [ MME-SM-Delivery-Outcome ]
+              [ MSC-SM-Delivery-Outcome ]
+              [ SGSN-SM-Delivery-Outcome ]
+              [ IP-SM-GW-SM-Delivery-Outcome ]
+              [ SMSF-3GPP-SM-Delivery-Outcome ]
+              [ SMSF-Non-3GPP-SM-Delivery-Outcome ]
+          *   [ AVP ]
+
+MME-SM-Delivery-Outcome ::= <AVP Header: 3317>
+              [ SM-Delivery-Cause ]
+              [ Absent-User-Diagnostic-SM ]
+
+MSC-SM-Delivery-Outcome ::= <AVP Header: 3318>
+              [ SM-Delivery-Cause ]
+              [ Absent-User-Diagnostic-SM ]
+
+SGSN-SM-Delivery-Outcome ::= <AVP Header: 3319>
+              [ SM-Delivery-Cause ]
+              [ Absent-User-Diagnostic-SM ]
+
+IP-SM-GW-SM-Delivery-Outcome ::= <AVP Header: 3320>
+              [ SM-Delivery-Cause ]
+              [ Absent-User-Diagnostic-SM ]
+
+SMSMI-Correlation-ID ::= <AVP Header: 3324>
+              [ HSS-ID ]
+              [ Originating-SIP-URI ]
+              [ Destination-SIP-URI ]
+          *   [ AVP ]
+
+SMSF-3GPP-SM-Delivery-Outcome ::= <AVP Header: 3336>
+              [ SM-Delivery-Cause ]
+              [ Absent-User-Diagnostic-SM ]
+
+SMSF-Non-3GPP-SM-Delivery-Outcome ::= <AVP Header: 3337>
+              [ SM-Delivery-Cause ]
+              [ Absent-User-Diagnostic-SM ]
+
+SMSF-3GPP-Address ::= <AVP Header: 3344>
+              [ SMSF-3GPP-Number ]
+              [ SMSF-3GPP-Name ]
+              [ SMSF-3GPP-Realm ]
+          *   [ AVP ]
+
+SMSF-Non-3GPP-Address ::= <AVP Header: 3345>
+              [ SMSF-Non-3GPP-Number ]
+              [ SMSF-Non-3GPP-Name ]
+              [ SMSF-Non-3GPP-Realm ]
+          *   [ AVP ]
+
+@enum SM-Enumerated-Delivery-Failure-Cause
+MEMORY_CAPACITY_EXCEEDED                                     0
+EQUIPMENT_PROTOCOL_ERROR                                     1
+EQUIPMENT_NOT_SM_EQUIPPED                                    2
+UNKNOWN_SERVICE_CENTRE                                       3
+SC_CONGESTION                                                4
+INVALID_SME_ADDRESS                                          5
+USER_NOT_SC_USER                                             6
+
+@enum SM-RP-MTI
+SM_DELIVER                                                   0
+SM_STATUS_REPORT                                             1
+
+@enum SM-Delivery-Not-Intended
+ONLY_IMSI_REQUESTED                                          0
+ONLY_MCC_MNC_REQUESTED                                       1
+
+@enum SM-Delivery-Cause
+UE_MEMORY_CAPACITY_EXCEEDED                                  0
+ABSENT_USER                                                  1
+SUCCESSFUL_TRANSFER                                          2
+
+
+@define Experimental-Result-Code
+   ;; 7.3 Permanent Failures
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_ABSENT_USER                                  5550
+DIAMETER_ERROR_USER_BUSY_FOR_MT_SMS                         5551
+DIAMETER_ERROR_FACILITY_NOT_SUPPORTED                       5552
+DIAMETER_ERROR_ILLEGAL_USER                                 5553
+DIAMETER_ERROR_ILLEGAL_EQUIPMENT                            5554
+DIAMETER_ERROR_SM_DELIVERY_FAILURE                          5555
+DIAMETER_ERROR_SERVICE_NOT_SUBSCRIBED                       5556
+DIAMETER_ERROR_SERVICE_BARRED                               5557
+DIAMETER_ERROR_MWD_LIST_FULL                                5558

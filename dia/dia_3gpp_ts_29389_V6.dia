@@ -1,0 +1,53 @@
+;; 3GPP TS 29.389 v17.0.0
+
+@id       16777356
+@name     dia_3gpp_ts_29389
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+ProSe-Authorization-Request ::= <Diameter Header: 8388668, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identifier }
+              { Visited-PLMN-Id }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Authorization-Answer ::= <Diameter Header: 8388668, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+              [ V2X-Authorization-Data ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNKNOWN_V2X_SUBSCRIPTION                     5690
+DIAMETER_ERROR_V2X_NOT_ALLOWED                              5691

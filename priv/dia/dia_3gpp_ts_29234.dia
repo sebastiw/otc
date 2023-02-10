@@ -1,0 +1,94 @@
+;; 3GPP TS 29.234 v11.2.0
+
+@name dia_3gpp_ts_29234
+@vendor 10415 3GPP
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+3GPP-WLAN-APN-Id                                            100  OctetString       MV
+3GPP-WLAN-QoS-Filter-Rule                                   101  QoSFilterRule     - 
+3GPP-WLAN-QoS-Filter-Support                                102  OctetString       - 
+
+Authentication-Method                                       300  Enumerated        MV
+Authentication-Information-SIM                              301  OctetString       MV
+Authorization-Information-SIM                               302  OctetString       MV
+WLAN-User-Data                                              303  Grouped           MV
+Charging-Data                                               304  Grouped           MV
+WLAN-Access                                                 305  Enumerated        MV
+WLAN-3GPP-IP-Access                                         306  Enumerated        MV
+APN-Authorized                                              307  Grouped           MV
+APN-Barring-Type                                            309  Enumerated        MV
+WLAN-Direct-IP-Access                                       310  Enumerated        MV
+Session-Request-Type                                        311  Enumerated        MV
+Routing-Policy                                              312  IPFilterRule      MV
+Max-Requested-Bandwidth                                     313  OctetString       MV
+Charging-Characteristics                                    314  Integer32         MV
+Charging-Nodes                                              315  Grouped           MV
+Primary-OCS-Charging-Function-Name                          316  DiameterIdentity  MV
+Secondary-OCS-Charging-Function-Name                        317  DiameterIdentity  MV
+; 3GPP-AAA-Server-Name                                      318  DiameterIdentity  MV ;;  originally defined in 3GPP TS 29.234, since Rel-12 defined in 3GPP TS 29.273
+Maximum-Number-Accesses                                     319  Unsigned32        MV
+
+@grouped
+WLAN-User-Data ::= <AVP Header: 303>
+              { WLAN-Access }
+              { WLAN-3GPP-IP-Access }
+              { WLAN-Direct-IP-Access }
+              [ Subscription-Id ]
+              [ Session-Timeout ]
+          *   [ APN-Authorized ]
+          *   [ Maximum-Number-Accesses ]
+              [ QoS-Resources ]
+          *   [ AVP ]
+
+Charging-Data ::= <AVP Header: 304>
+              { Charging-Characteristics }
+              { Charging-Nodes }
+          *   [ AVP ]
+
+APN-Authorized ::= <AVP Header: 307>
+              { 3GPP-WLAN-APN-Id }
+              { APN-Barring-Type }
+              [ Framed-IP-Address ]
+          *   [ Framed-IPv6-Prefix ]
+              [ Max-Requested-Bandwidth ]
+              [ QoS-Resources ]
+          *   [ AVP ]
+
+Charging-Nodes ::= <AVP Header: 315>
+              [ Primary-OCS-Charging-Function-Name ]
+              [ Secondary-OCS-Charging-Function-Name ]
+              [ Primary-Charging-Collection-Function-Name ]
+              [ Secondary-Charging-Collection-Function-Name ]
+          *   [ AVP ]
+
+@enum Authentication-Method
+WLAN_EAP_SIM                                                 0
+WLAN_EAP_AKA                                                 1
+
+@enum WLAN-Access
+WLAN_SUBSCRIPTION_ALLOWED                                    0
+WLAN_SUBSCRIPTION_BARRED                                     1
+
+@enum WLAN-3GPP-IP-Access
+WLAN_APNS_ENABLE                                             0
+WLAN_APNS_DISABLE                                            1
+
+@enum APN-Barring-Type
+WLAN_APN_NO_BARRING                                          0
+WLAN_APN_HOME_BARRED_WHEN_ROAMING                            1
+WLAN_APN_VISITED_BARRED                                      2
+WLAN_APN_HOME_BARRED                                         3
+WLAN_APN_INTERNET_ACCESS_BARRED                              4
+
+@enum WLAN-Direct-IP-Access
+WLAN_DIRECT_IP_ACCESS                                        0
+WLAN_NO_DIRECT_IP_ACCESS                                     1
+
+@enum Session-Request-Type
+AUTHORIZATION_REQUEST                                        0
+ROUTING_POLICY                                               1
+

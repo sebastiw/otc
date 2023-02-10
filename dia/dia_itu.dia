@@ -1,0 +1,108 @@
+;; ITU-T
+;; https://www.itu.int/ITU-T/avp/index.html
+
+@name     dia_itu
+@vendor   11502 itu
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_etsi
+Address-Realm
+Logical-Access-ID
+Physical-Access-ID
+
+@inherits dia_3gpp
+Flow-Description
+Flow-Status
+QoS-Information
+
+@avp_types
+;; Q.3301.1
+QoS-Downgradable                                            1001 Enumerated        V 
+Dynamic-Firewall-Working-Mode                               1002 Enumerated        V 
+Resource-Reservation-Mode                                   1003 Enumerated        V 
+Connection-Status-Timer                                     1004 Unsigned32        V 
+SDP-Direction                                               1005 Unsigned32        V 
+Operation-Indication                                        1006 Unsigned32        V 
+TLM-PE-Identifier                                           1007 DiameterIdentity  V 
+Restoration-Indication                                      1008 Enumerated        V 
+Downgraded-Indication                                       1009 Enumerated        V 
+
+;; Q.3303.3
+PI-Request-Type                                             1010 Enumerated        MV
+PI-Request-Number                                           1011 Unsigned32        MV
+Traffic-Descriptor-UL                                       1012 Grouped           V 
+Traffic-Descriptor-DL                                       1013 Grouped           V 
+Maximum-Burst-Size                                          1014 Unsigned32        V 
+Committed-Data-Rate                                         1015 Unsigned32        V 
+Committed-Burst-Size                                        1016 Unsigned32        V 
+Excess-Burst-Size                                           1017 Unsigned32        V 
+Removal-Cause                                               1018 Enumerated        MV
+Traffic-Information                                         1019 Grouped           MV
+Multicast-ACL                                               1020 Grouped           V 
+
+@grouped
+Traffic-Descriptor-UL ::= <AVP Header: 1012>
+              [ Maximum-Burst-Size ]
+              [ Committed-Data-Rate ]
+              [ Committed-Burst-Size ]
+              [ Excess-Burst-Size ]
+
+Traffic-Descriptor-DL ::= <AVP Header: 1013>
+              [ Maximum-Burst-Size ]
+              [ Committed-Data-Rate ]
+              [ Committed-Burst-Size ]
+              [ Excess-Burst-Size ]
+
+Traffic-Information ::= <AVP Header: 1019>
+          *   [ Flow-Description ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ User-Name ]
+              [ Called-Station-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Address-Realm ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+
+Multicast-ACL ::= <AVP Header: 1020>
+;; Not defined in spec
+
+@enum QoS-Downgradable
+NORMAL                                                       0
+MAY_DOWNGRADE                                                1
+
+@enum Dynamic-Firewall-Working-Mode
+STATIC_PACKET_FILTERING                                      0
+DYNAMIC_PACKET_FILTERING                                     1
+STATEFUL_INSPECTION                                          2
+DEEP_PACKET_INSPECTION                                       3
+
+@enum Resource-Reservation-Mode
+AUTHORIZATION_ONLY_PULL                                      0
+AUTHORIZATION_RESERVATION_PUSH                               1
+AUTHORIZATION_RESERVATION_COMMITMENT_PUSH                    2
+RESOURCE_RELEASE                                             3
+
+@enum Restoration-Indication
+RESTORATION_INFORMATION_REQUEST                              0
+NORMAL                                                       1
+MAY_RESTORE                                                  2
+
+@enum Downgraded-Indication
+DOWNGRADED_INFORMATION_REQUEST                               0
+NORMAL                                                       1
+DOWNGRADED                                                   2
+
+@enum PI-Request-Type
+INITIAL_REQUEST                                              1
+UPDATE_REQUEST                                               2
+TERMINATION_REQUEST                                          3
+
+@enum Removal-Cause
+SESSION_RELEASED                                             0
+INSUFFICIENT_SERVER_RESOURCES                                1
+INSUFFICIENT_BEARER_RESOURCES                                2

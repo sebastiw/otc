@@ -1,0 +1,95 @@
+;; 3GPP TS 29.337 v17.0.0 T4
+
+@id       16777311
+@name     dia_3gpp_ts_29337
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+Device-Trigger-Request ::= <Diameter Header: 8388643, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identifier }
+              { SM-RP-SMEA }
+              { Payload }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Serving-Node ]
+          *   [ Additional-Serving-Node ]
+              [ Reference-Number ]
+              [ Validity-Time ]
+              [ Priority-Indication ]
+              [ Application-Port-Identifier ]
+              [ Old-Reference-Number ]
+              [ Trigger-Action ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Device-Trigger-Answer ::= <Diameter Header: 8388643, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ MTC-Error-Diagnostic ]
+              [ Old-Reference-Number ]
+              [ Trigger-Action ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Delivery-Report-Request ::= <Diameter Header: 8388644, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { User-Identifier }
+              { SM-RP-SMEA }
+              { SM-Delivery-Outcome-T4 }
+              [ DRMP ]
+              [ Absent-Subscriber-Diagnostic-T4 ]
+              [ Reference-Number ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Delivery-Report-Answer ::= <Diameter Header: 8388644, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_INVALID_SME_ADDRESS                          5530
+DIAMETER_ERROR_SC_CONGESTION                                5531
+DIAMETER_ERROR_TRIGGER_REPLACE_FAILURE                      5533
+DIAMETER_ERROR_TRIGGER_RECALL_FAILURE                       5534
+DIAMETER_ERROR_ORIGINAL_MESSAGE_NOT_PENDING                 5535

@@ -1,7 +1,11 @@
-@id       16777291
-@name     dia_3gpp_SLh
+;; 3GPP TS 29.173 v17.0.0 SLh
 
-@inherits dia_3gpp_ietf
+@id       16777291
+@name     dia_3gpp_ts_29173_SLh
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
 @inherits dia_3gpp
 
 @messages
@@ -37,7 +41,13 @@ LCS-Routing-Info-Answer ::= <Diameter Header: 8388622, PXY>
           *   [ Additional-Serving-Node ]
               [ GMLC-Address ]
               [ PPR-Address ]
+              [ RIA-Flags ]
           *   [ AVP ]
-          *   [ Failed-AVP ]
+              [ Failed-AVP ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_NETWORK              5490
+DIAMETER_ERROR_ABSENT_USER                                  4201

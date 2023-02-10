@@ -1,0 +1,59 @@
+;; 3GPP TS 29.217 v17.0.0
+
+@name     dia_3gpp_ts_29217
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+Aggregated-Congestion-Info                                  4000 Grouped           VM
+Aggregated-RUCI-Report                                      4001 Grouped           VM
+Congestion-Level-Definition                                 4002 Grouped           V 
+Congestion-Level-Range                                      4003 Unsigned32        V 
+Congestion-Level-Set-Id                                     4004 Unsigned32        V 
+Congestion-Level-Value                                      4005 Unsigned32        VM
+Congestion-Location-Id                                      4006 Grouped           V 
+Conditional-Restriction                                     4007 Unsigned32        V 
+eNodeB-Id                                                   4008 OctetString       VM
+IMSI-List                                                   4009 OctetString       VM
+RCAF-Id                                                     4010 DiameterIdentity  VM
+Reporting-Restriction                                       4011 Unsigned32        V 
+RUCI-Action                                                 4012 Unsigned32        V 
+Extended-eNodeB-Id                                          4013 OctetString       V 
+
+@grouped
+Aggregated-Congestion-Info ::= <AVP Header: 4000>
+              [ Congestion-Location-Id ]
+              [ IMSI-List ]
+          *   [ AVP ]
+
+Aggregated-RUCI-Report ::= <AVP Header: 4001>
+         1*   { Aggregated-Congestion-Info }
+              [ Called-Station-Id ]
+              [ Congestion-Level-Value ]
+              [ Congestion-Level-Set-Id ]
+          *   [ AVP ]
+
+Congestion-Level-Definition ::= <AVP Header: 4002>
+              { Congestion-Level-Set-Id }
+              { Congestion-Level-Range }
+          *   [ AVP ]
+
+Congestion-Location-Id ::= <AVP Header: 4006>
+              [ 3GPP-User-Location-Info ]
+              [ eNodeB-Id ]
+              [ Extended-eNodeB-Id ]
+          *   [ AVP ]
+
+@define Reporting-Restriction
+NONE                                                         0
+CONDITIONAL                                                  1
+UNCONDITIONAL                                                2
+
+@define RUCI-Action
+DISABLE_REPORTING                                            0
+ENABLE_REPORTING                                             1
+RELEASE_CONTEXT                                              2
+

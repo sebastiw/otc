@@ -1,0 +1,79 @@
+;; oneM2M TS 0004 v4.13.0
+
+@name     dia_oneM2M_ts_0004
+@vendor   45687 onem2m
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+Rating-Group
+
+;; Needs to define inherit from 3GPP TS 32.299 to avoid circular inherit
+@avp_types
+Node-Id                                                     2064 UTF8String        VM
+
+@avp_types
+Access-Network-Identifier                                   1000 Unsigned32        M 
+Application-Entity-ID                                       1001 UTF8String        M 
+Control-Memory-Size                                         1002 Unsigned32        M 
+Current-Number-Members                                      1003 Unsigned32        M 
+Data-Memory-Size                                            1004 Unsigned32        M 
+External-ID                                                 1005 UTF8String        M 
+Group-Name                                                  1006 UTF8String        M 
+Hosting-CSE-ID                                              1007 UTF8String        M 
+Originator                                                  1008 UTF8String        M 
+Maximum-Number-Members                                      1009 Unsigned32        M 
+M2M-Event-Record-Timestamp                                  1010 Time              M 
+M2M-Information                                             1011 Grouped           M 
+Occupancy                                                   1012 Unsigned32        M 
+Protocol-Type                                               1013 Enumerated        M 
+Receiver                                                    1014 UTF8String        M 
+Request-Body-Size                                           1015 Unsigned32        M 
+Request-Headers-Size                                        1016 Unsigned32        M 
+Request-Operation                                           1017 Enumerated        M 
+Response-Body-Size                                          1018 Unsigned32        M 
+Response-Headers-Size                                       1019 Unsigned32        M 
+Response-Status-Code                                        1020 Enumerated        M 
+Subgroup-Name                                               1021 UTF8String        M 
+Target-ID                                                   1022 UTF8String        M 
+
+@grouped
+M2M-Information ::= <AVP Header: 1011>
+              [ Application-Entity-ID ]
+              [ External-ID ]
+              [ Receiver ]
+              [ Originator ]
+              [ Hosting-CSE-ID ]
+              [ Target-ID ]
+              [ Protocol-Type ]
+              [ Request-Operation ]
+              [ Request-Headers-Size ]
+              [ Request-Body-Size ]
+              [ Response-Headers-Size ]
+              [ Response-Body-Size ]
+              [ Response-Status-Code ]
+              [ Rating-Group ]
+              [ M2M-Event-Record-Timestamp ]
+              [ Control-Memory-Size ]
+              [ Data-Memory-Size ]
+              [ Access-Network-Identifier ]
+              [ Occupancy ]
+              [ Group-Name ]
+              [ Maximum-Number-Members ]
+              [ Current-Number-Members ]
+              [ Subgroup-Name ]
+              [ Node-Id ]
+          *   [ AVP ]
+
+@enum Protocol-Type
+HTTP                                                         0
+CoAP                                                         1
+MQTT                                                         2
+WebSocket                                                    3
+
+@enum Request-Operation
+CREATE                                                       1
+RETRIEVE                                                     2
+UPDATE                                                       3
+DELETE                                                       4
+NOTIFY                                                       5

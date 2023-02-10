@@ -1,0 +1,54 @@
+;; 3GPP TS 29.109 v17.0.0
+
+@name     dia_3gpp_ts_29109
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+GBA-UserSecSettings                                         400  OctetString       MV
+Transaction-Identifier                                      401  OctetString       MV
+NAF-Id                                                      402  OctetString       MV
+GAA-Service-Identifier                                      403  OctetString       MV
+Key-ExpiryTime                                              404  Time              MV
+ME-Key-Material                                             405  OctetString       MV
+UICC-Key-Material                                           406  OctetString       MV
+GBA_U-Awareness-Indicator                                   407  Enumerated        MV
+BootstrapInfoCreationTime                                   408  Time              MV
+GUSS-Timestamp                                              409  Time              V 
+GBA-Type                                                    410  Enumerated        MV
+UE-Id                                                       411  OctetString       MV
+UE-Id-Type                                                  412  Enumerated        MV
+UICC-App-Label                                              413  OctetString       MV
+UICC-ME                                                     414  Enumerated        MV
+Requested-Key-Lifetime                                      415  Time              MV
+Private-Identity-Request                                    416  Enumerated        MV
+GBA-Push-Info                                               417  OctetString       MV
+NAF-SA-Identifier                                           418  OctetString       MV
+Security-Feature-Request                                    419  OctetString       MV
+Security-Feature-Response                                   420  OctetString       MV
+
+@enum GBA_U-Awareness-Indicator
+NO                                                           0
+YES                                                          1
+
+@enum GBA-Type
+3G_GBA                                                       0
+2G_GBA                                                       1
+GBA_DIGEST                                                   2
+
+@enum UE-Id-Type
+PRIVATE_USER_IDENTITY                                        0
+PUBLIC_USER_IDENTITY                                         1
+
+@enum UICC-ME
+GBA_ME                                                       0
+GBA_U                                                        1
+
+@enum Private-Identity-Request
+PRIVATE_IDENTITY_REQUESTED                                   0
+PRIVATE_IDENTITY_NOT_REQUESTED                               1
+
+

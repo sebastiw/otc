@@ -1,15 +1,21 @@
-;; TS 29.219 v16.0.0
+;; 3GPP TS 29.219 v17.0.0 Sy
 
 @id       16777302
-@name     dia_3gpp_Sy
+@name     dia_3gpp_ts_29212_Sy
 @vendor   10415 3gpp
 
-@inherits dia_3gpp_ietf
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_etsi
+Logical-Access-ID
+Physical-Access-ID
+
 @inherits dia_3gpp
 
 @messages
-
-Spending-Limit-Request ::= <Diameter Header: 8388635, REQ, PXY>
+SL-Request ::= <Diameter Header: 8388635, REQ, PXY>
               < Session-Id >
               { Auth-Application-Id }
               { Origin-Host }
@@ -23,13 +29,13 @@ Spending-Limit-Request ::= <Diameter Header: 8388635, REQ, PXY>
           *   [ Supported-Features ]
           *   [ Subscription-Id ]
           *   [ Policy-Counter-Identifier ]
-                           ;   [ Logical-Access-ID ]              ; Only for Fixed Broadband Access
-                           ;   [ Physical-Access-ID ]             ; Only for Fixed Broadband Access
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
           *   [ AVP ]
 
-Spending-Limit-Answer ::= <Diameter Header: 8388635, PXY>
+SL-Answer ::= <Diameter Header: 8388635, PXY>
               < Session-Id >
               { Auth-Application-Id }
               { Origin-Host }
@@ -52,7 +58,7 @@ Spending-Limit-Answer ::= <Diameter Header: 8388635, PXY>
           *   [ Load ]
           *   [ AVP ]
 
-Spending-Status-Notification-Request ::= <Diameter Header: 8388636, REQ, PXY>
+SN-Request ::= <Diameter Header: 8388636, REQ, PXY>
               < Session-Id >
               { Origin-Host }
               { Origin-Realm }
@@ -68,7 +74,7 @@ Spending-Status-Notification-Request ::= <Diameter Header: 8388636, REQ, PXY>
           *   [ Route-Record ]
           *   [ AVP ]
 
-Spending-Status-Notification-Answer ::= <Diameter Header: 8388636, PXY>
+SN-Answer ::= <Diameter Header: 8388636, PXY>
               < Session-Id >
               { Origin-Host }
               { Origin-Realm }
@@ -87,7 +93,7 @@ Spending-Status-Notification-Answer ::= <Diameter Header: 8388636, PXY>
           *   [ Proxy-Info ]
           *   [ AVP ]
 
-Session-Termination-Request ::= <Diameter Header: 275, REQ, PXY>
+ST-Request ::= <Diameter Header: 275, REQ, PXY>
               < Session-Id >
               { Origin-Host }
               { Origin-Realm }
@@ -102,7 +108,7 @@ Session-Termination-Request ::= <Diameter Header: 275, REQ, PXY>
           *   [ Route-Record ]
           *   [ AVP ]
 
-Session-Termination-Answer ::= <Diameter Header: 275, PXY>
+ST-Answer ::= <Diameter Header: 275, PXY>
               < Session-Id >
               { Origin-Host }
               { Origin-Realm }
@@ -121,16 +127,7 @@ Session-Termination-Answer ::= <Diameter Header: 275, PXY>
           *   [ Load ]
           *   [ AVP ]
 
-@define Result-Code
-   ;; 5.5.2, 5.5.3
-
-   DIAMETER_AVP_UNSUPPORTED                    5001
-   DIAMETER_UNKNOWN_SESSION_ID                 5002
-
 @define Experimental-Result-Code
-   ;; Permanent Failures
-   DIAMETER_ERROR_UNKNOWN_POLICY_COUNTERS      5570
-   DIAMETER_USER_UNKNOWN                       5030
-
-   ;; Transient Failures
-   DIAMETER_ERROR_NO_AVAILABLE_POLICY_COUNTERS 4241
+DIAMETER_USER_UNKNOWN                                       5030
+DIAMETER_ERROR_UNKNOWN_POLICY_COUNTERS                      5570
+DIAMETER_ERROR_NO_AVAILABLE_POLICY_COUNTERS                 4241

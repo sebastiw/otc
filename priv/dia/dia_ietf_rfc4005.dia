@@ -1,0 +1,157 @@
+;; IETF RFC 4005
+
+@name     dia_ietf_rfc4005
+
+@avp_types
+User-Password                                               2    OctetString       M 
+NAS-Port                                                    5    Unsigned32        M 
+Service-Type                                                6    Enumerated        M 
+Framed-Protocol                                             7    Enumerated        M 
+Framed-IP-Address                                           8    OctetString       M 
+Framed-IP-Netmask                                           9    OctetString       M 
+Framed-Routing                                              10   Enumerated        M 
+Filter-Id                                                   11   UTF8String        M 
+Framed-MTU                                                  12   Unsigned32        M 
+Framed-Compression                                          13   Enumerated        M 
+Login-IP-Host                                               14   OctetString       M 
+Login-Service                                               15   Enumerated        M 
+Login-TCP-Port                                              16   Unsigned32        M 
+Reply-Message                                               18   UTF8String        M 
+Callback-Number                                             19   UTF8String        M 
+Callback-Id                                                 20   UTF8String        M 
+Framed-Route                                                22   UTF8String        M 
+Framed-IPX-Network                                          23   UTF8String        M 
+Idle-Timeout                                                28   Unsigned32        M 
+Called-Station-Id                                           30   UTF8String        M 
+Calling-Station-Id                                          31   UTF8String        M 
+Login-LAT-Service                                           34   OctetString       M 
+Login-LAT-Node                                              35   OctetString       M 
+Login-LAT-Group                                             36   OctetString       M 
+Framed-Appletalk-Link                                       37   Unsigned32        M 
+Framed-Appletalk-Network                                    38   Unsigned32        M 
+Framed-Appletalk-Zone                                       39   OctetString       M 
+CHAP-Challenge                                              60   OctetString       M 
+NAS-Port-Type                                               61   Enumerated        M 
+Port-Limit                                                  62   Unsigned32        M 
+Login-LAT-Port                                              63   OctetString       M 
+ARAP-Password                                               70   OctetString       M 
+ARAP-Features                                               71   OctetString       M 
+ARAP-Zone-Access                                            72   Enumerated        M 
+ARAP-Security                                               73   Unsigned32        M 
+ARAP-Security-Data                                          74   OctetString       M 
+Password-Retry                                              75   Unsigned32        M 
+Prompt                                                      76   Enumerated        M 
+Connect-Info                                                77   UTF8String        M 
+Configuration-Token                                         78   OctetString       M 
+ARAP-Challenge-Response                                     84   OctetString       M 
+NAS-Port-Id                                                 87   UTF8String        M 
+Framed-Pool                                                 88   OctetString       M 
+Originating-Line-Info                                       94   OctetString       - 
+Framed-Interface-Id                                         96   Unsigned64        M 
+Framed-IPv6-Prefix                                          97   OctetString       M 
+Login-IPv6-Host                                             98   OctetString       M 
+Framed-IPv6-Route                                           99   UTF8String        M 
+Framed-IPv6-Pool                                            100  OctetString       M 
+NAS-Filter-Rule                                             400  IPFilterRule      M 
+CHAP-Auth                                                   402  Grouped           M 
+CHAP-Algorithm                                              403  Enumerated        M 
+CHAP-Ident                                                  404  OctetString       M 
+CHAP-Response                                               405  OctetString       M 
+QoS-Filter-Rule                                             407  QoSFilterRule     - 
+
+
+@grouped
+CHAP-Auth ::= <AVP Header: 402>
+              { CHAP-Algorithm }
+              { CHAP-Ident }
+              [ CHAP-Response ]
+          *   [ AVP ]
+
+
+@enum NAS-Port-Type
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+Async                                                        0
+Sync                                                         1
+ISDN_Sync                                                    2
+ISDN_Async_V120                                              3
+ISDN_Async_V110                                              4
+Virtual                                                      5
+PIAFS                                                        6
+HDLC_Clear_Channel                                           7
+X25                                                          8
+X75                                                          9
+G3_Fax                                                      10
+SDSL                                                        11
+ADSL_CAP                                                    12
+ADSL_DMT                                                    13
+IDSL                                                        14
+Ethernet                                                    15
+xDSL                                                        16
+Cable                                                       17
+Wireless_Other                                              18
+Wireless_IEEE80211                                          19
+Token_Ring                                                  20
+FDDI                                                        21
+Wireless_CDMA2000                                           22
+Wireless_UMTS                                               23
+Wireless_1X_EV                                              24
+IAPP                                                        25
+FTTP                                                        26
+Wireless_IEEE80216                                          27
+Wireless_IEEE80220                                          28
+Wireless_IEEE80222                                          29
+PPPoA                                                       30
+PPPoEoA                                                     31
+PPPoEoE                                                     32
+PPPoEoVLAN                                                  33
+PPPoEoQinQ                                                  34
+xPON                                                        35
+Wireless_XGP                                                36
+WiMAX_Pre_Release_8_IWK                                     37
+WIMAX_WIFI_IWK                                              38
+WIMAX_SFF                                                   39
+WIMAX_HA_LMA                                                40
+WIMAX_DHCP                                                  41
+WIMAX_LBS                                                   42
+WIMAX_WVS                                                   43
+
+
+@enum Prompt
+;; http://www.iana.org/assignments/radius-types/radius-types.xhtml
+NO_ECHO                                                      0
+ECHO                                                         1
+
+@enum CHAP-Algorithm
+CHAP_with_MD5                                                5
+
+@define Originating-Line-Info
+Plain_Old_Telephone_Service                                 00
+Multiparty_Line                                             01
+ANI_Failure                                                 02
+ANI_Observed                                                03
+ONI_Observed                                                04
+ANI_Failure_Observed                                        05
+Station_Level_Rating                                        06
+Special_Operator_Handling_Required                          07
+InterLATA_Restricted                                        08
+Test_Call                                                   10
+Automatic_Identified_Outward_Dialing                        20
+Coin_or_Non_Coin                                            23
+Toll_Free_Service_Non_Pay_Origination                       24
+Toll_Free_Service_Pay_Origination                           25
+Toll_Free_Service_Coin_Control_Origination                  27
+Prison_Inmate_Service                                       29
+Intercept_Blank                                             30
+Intercept_Trouble                                           31
+Intercept_Regular                                           32
+Telco_Operator_Handled_Call                                 34
+Outward_Wide_Area_Telecommunications_Service                52
+Telecommunications_Relay_Service                            60
+Cellular_Wireless_PCS_Type_1                                61
+Cellular_Wireless_PCS_Type_2                                62
+Cellular_Wireless_PCS_Roaming                               63
+TRS_Hotel                                                   66
+TRS_Restricted                                              67
+Pay_Station_No_Coin_Control                                 70
+Access_for_Private_Virtual_Network_Service                  93
+

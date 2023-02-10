@@ -1,0 +1,33 @@
+;; 3GPP TS 29.219 v17.0.0
+
+@name     dia_3gpp_ts_29212
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+Policy-Counter-Identifier                                   2901 UTF8String        MV
+Policy-Counter-Status                                       2902 UTF8String        MV
+Policy-Counter-Status-Report                                2903 Grouped           MV
+SL-Request-Type                                             2904 Enumerated        MV
+Pending-Policy-Counter-Information                          2905 Grouped           MV
+Pending-Policy-Counter-Change-Time                          2906 Time              MV
+SN-Request-Type                                             2907 Unsigned32        V 
+
+@grouped
+Policy-Counter-Status-Report ::= <AVP Header: 2903>
+              { Policy-Counter-Identifier }
+              { Policy-Counter-Status }
+          *   [ Pending-Policy-Counter-Information ]
+          *   [ AVP ]
+
+Pending-Policy-Counter-Information ::= <AVP Header: 2905>
+              { Policy-Counter-Status }
+              { Pending-Policy-Counter-Change-Time }
+          *   [ AVP ]
+
+@enum SL-Request-Type
+INITIAL_REQUEST                                              0
+INTERMEDIATE_REQUEST                                         1

@@ -1,0 +1,210 @@
+;; 3GPP TS 29.128 v17.1.0 T6a/T6b
+
+@id       16777346
+@name     dia_3gpp_ts_29128
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+Configuration-Information-Request ::= <Diameter Header: 8388718, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+          *   [ Monitoring-Event-Configuration ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Configuration-Information-Answer ::= <Diameter Header: 8388718, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+          *   [ Monitoring-Event-Report ]
+          *   [ Monitoring-Event-Config-Status ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Reporting-Information-Request ::= <Diameter Header: 8388719, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ User-Identifier ]
+          *   [ Monitoring-Event-Report ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Reporting-Information-Answer ::= <Diameter Header: 8388719, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Supported-Features ]
+          *   [ Monitoring-Event-Report-Status ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Connection-Management-Request ::= <Diameter Header: 8388732, REQ, PXY>
+              < Session-Id >
+              < User-Identifier >
+              < Bearer-Identifier >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+              [ CMR-Flags ]
+              [ Maximum-UE-Availability-Time ]
+          *   [ Supported-Features ]
+              [ Connection-Action ]
+              [ Service-Selection ]
+              [ Serving-PLMN-Rate-Control ]
+              [ Extended-PCO ]
+              [ 3GPP-Charging-Characteristics ]
+              [ RAT-Type ]
+              [ Terminal-Information ]
+              [ Visited-PLMN-Id ]
+              [ APN-Rate-Control-Status ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+Connection-Management-Answer ::= <Diameter Header: 8388732, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Supported-Features ]
+              [ PDN-Connection-Charging-ID ]
+              [ Extended-PCO ]
+              [ APN-Rate-Control-Status ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+MO-Data-Request ::= <Diameter Header: 8388733, REQ, PXY>
+              < Session-Id >
+              < User-Identifier >
+              < Bearer-Identifier >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ Non-IP-Data ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ RRC-Cause-Counter ]
+          *   [ AVP ]
+
+MO-Data-Answer ::= <Diameter Header: 8388733, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ Supported-Features ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+MT-Data-Request ::= <Diameter Header: 8388734, REQ, PXY>
+              < Session-Id >
+              < User-Identifier >
+              < Bearer-Identifier >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ OC-Supported-Features ]
+          *   [ Supported-Features ]
+              [ Non-IP-Data ]
+              [ SCEF-Wait-Time ]
+              [ Maximum-Retransmission-Time ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+MT-Data-Answer ::= <Diameter Header: 8388734, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+              [ Requested-Retransmission-Time ]
+          *   [ Supported-Features ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ TDA-Flags ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_ENTITY               5510
+DIAMETER_ERROR_UNAUTHORIZED_SERVICE                         5511
+DIAMETER_ERROR_CONFIGURATION_EVENT_STORAGE_NOT_SUCCESSFUL   5513
+DIAMETER_ERROR_CONFIGURATION_EVENT_NON_EXISTANT             5514
+DIAMETER_ERROR_REQUESTED_LOCATION_NOT_SERVED                5650
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_OPERATION_NOT_ALLOWED                        5101
+DIAMETER_ERROR_INVALID_EPS_BEARER                           5651
+DIAMETER_ERROR_NIDD_CONFIGURATION_NOT_AVAILABLE             5652
+DIAMETER_ERROR_SCEF_REFERENCE_ID_UNKNOWN                    5515
+DIAMETER_ERROR_USER_TEMPORARILY_UNREACHABLE                 5653
+DIAMETER_ERROR_UNREACHABLE_USER                             4221
