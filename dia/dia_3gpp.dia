@@ -74,7 +74,7 @@ Reservation-Priority
 
 @inherits dia_3gpp2
 
-@inherits dia_oma_dda_charging_data
+@inherits dia_oma_dds_charging_data
 
 @inherits dia_oneM2M_ts_0004
 M2M-Information
