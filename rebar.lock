@@ -1,8 +1,0 @@
-{"1.2.0",
-[{<<"redbug">>,{pkg,<<"redbug">>,<<"2.0.8">>},0}]}.
-[
-{pkg_hash,[
- {<<"redbug">>, <<"B25F8534D751CEC40BA3699986DCDB5953AB580BB5CAD8B152BDA905239DA406">>}]},
-{pkg_hash_ext,[
- {<<"redbug">>, <<"8C8176473CE9C8609DEE085639AB9A657E4A663EBBB84DDD09F71454464D2957">>}]}
-].
