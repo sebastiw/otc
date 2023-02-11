@@ -1,8 +1,8 @@
 * Erlang/OTC - Open Telecom Codec
 
   This library tries to implement encoding and decoding for different
-  telco protocols. The aim is to support the newest release of each
-  spec, if not stated otherwise.
+  (3GPP) telecom protocols. The aim is to support the newest release
+  of each spec, if not stated otherwise.
 
   Encoded format is a binary, and decoded format is a map.
 
@@ -77,16 +77,16 @@
 
 * Codecs
 
-| Name    | Spec                          | Encode | Decode | Production Tested | Notes                                            |
-|---------+-------------------------------+--------+--------+-------------------+--------------------------------------------------|
-| M3UA    | IETF RFC 4666 September 2006  | X      | X      |                   |                                                  |
-| M2PA    | IETF RFC 4165 September 2005  | X      | X      |                   |                                                  |
-| MTP3    | ITU-T Q.704 (07/96) July 1996 | X      | X      |                   |                                                  |
-| SCCP    | ITU-T Q.713 (03/2001)         | X      | X      |                   |                                                  |
-| L3      | 3GPP TS 24.007 v16.5.0        | X      | X      |                   |                                                  |
-| NAS EPS | 3GPP TS 24.301 v16.8.0        | /      | /      |                   | Messages are de-/encoded, but missing parameters |
-| NAS 5GS | 3GPP TS 24.501 v16.10.0       | /      | /      |                   | Messages are de-/encoded, but missing parameters |
-| SGSAP   | 3GPP TS 29.118 v16.0.0        |        |        |                   |                                                  |
+| Name    | Spec                          | Encode | Decode | Production Tested (Decode/Encode) | Notes                                            |
+|---------+-------------------------------+--------+--------+-----------------------------------+--------------------------------------------------|
+| M3UA    | IETF RFC 4666 September 2006  | X      | X      | D                                 |                                                  |
+| M2PA    | IETF RFC 4165 September 2005  | X      | X      | D                                 |                                                  |
+| MTP3    | ITU-T Q.704 (07/96) July 1996 | X      | X      | D                                 |                                                  |
+| SCCP    | ITU-T Q.713 (03/2001)         | X      | X      |                                   |                                                  |
+| L3      | 3GPP TS 24.007 v16.5.0        | X      | X      |                                   |                                                  |
+| NAS EPS | 3GPP TS 24.301 v16.8.0        | /      | /      |                                   | Messages are de-/encoded, but missing parameters |
+| NAS 5GS | 3GPP TS 24.501 v16.10.0       | /      | /      |                                   | Messages are de-/encoded, but missing parameters |
+| SGSAP   | 3GPP TS 29.118 v16.0.0        |        |        |                                   |                                                  |
 
 * Diameter interfaces
 

@@ -1,9 +1,11 @@
 {application, otc,
- [{description, "Erlang codec for Universal Mobile Telecommunications System specifations"},
+ [{description, "Erlang codec for 3GPP Telecommunication specifications"},
   {vsn, "1.0.0"},
   {registered, []},
   {applications,
    [kernel,
     stdlib
-   ]}
+   ]},
+  {licenses, ["Apache-2.0"]},
+  {links, [{"GitHub", "https://github.com/sebastiw/otc"}]}
  ]}.
