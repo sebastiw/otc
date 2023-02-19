@@ -1260,8 +1260,8 @@ encode_msg(supported_extension_headers_notification, #{extension_header_type_lis
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(create_pdp_context_request, #{tunnel_endpoint_identifier_data_i := TunnelEndpointIdentifierDataI,
-    nsapi := Nsapi,
-    quality_of_service_profile := QualityOfServiceProfile} = Msg) ->
+                                         nsapi := Nsapi,
+                                         quality_of_service_profile := QualityOfServiceProfile} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
@@ -1312,8 +1312,8 @@ encode_msg(create_pdp_context_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(update_pdp_context_request_sgsn, #{tunnel_endpoint_identifier_data_i := TunnelEndpointIdentifierDataI,
-    nsapi := Nsapi,
-    quality_of_service_profile := QualityOfServiceProfile} = Msg) ->
+                                              nsapi := Nsapi,
+                                              quality_of_service_profile := QualityOfServiceProfile} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
@@ -1412,7 +1412,7 @@ encode_msg(delete_pdp_context_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(error_indication, #{tunnel_endpoint_identifier_data_i := TunnelEndpointIdentifierDataI,
-    gtp_u_peer_address := GtpUPeerAddress} = Msg) ->
+                               gtp_u_peer_address := GtpUPeerAddress} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_GTP_U_PEER_ADDRESS, GtpUPeerAddress, <<>>),
     Opts = [{recovery_time_stamp, aa, tlv, {8, n}},
@@ -1420,10 +1420,10 @@ encode_msg(error_indication, #{tunnel_endpoint_identifier_data_i := TunnelEndpoi
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(pdu_notification_request, #{imsi := Imsi,
-    tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
-    end_user_address := EndUserAddress,
-    access_point_name := AccessPointName,
-    gsn_address := GsnAddress} = Msg) ->
+                                       tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
+                                       end_user_address := EndUserAddress,
+                                       access_point_name := AccessPointName,
+                                       gsn_address := GsnAddress} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
@@ -1439,9 +1439,9 @@ encode_msg(pdu_notification_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(pdu_notification_reject_request, #{cause := Cause,
-    tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
-    end_user_address := EndUserAddress,
-    access_point_name := AccessPointName} = Msg) ->
+                                              tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
+                                              end_user_address := EndUserAddress,
+                                              access_point_name := AccessPointName} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
@@ -1456,8 +1456,8 @@ encode_msg(pdu_notification_reject_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(initiate_pdp_context_activation_request, #{nsapi := Nsapi,
-    quality_of_service_profile := QualityOfServiceProfile,
-    correlation_id := CorrelationId} = Msg) ->
+                                                      quality_of_service_profile := QualityOfServiceProfile,
+                                                      correlation_id := CorrelationId} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_CORRELATION_ID, CorrelationId, <<>>),
@@ -1477,7 +1477,7 @@ encode_msg(send_routeing_information_for_gprs_request, #{imsi := Imsi} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(send_routeing_information_for_gprs_response, #{cause := Cause,
-    imsi := Imsi} = Msg) ->
+                                                          imsi := Imsi} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
     Opts = [{map_cause, 11, tv, 1},
@@ -1498,7 +1498,7 @@ encode_msg(failure_report_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(note_ms_gprs_present_request, #{imsi := Imsi,
-    gsn_address := GsnAddress} = Msg) ->
+                                           gsn_address := GsnAddress} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
@@ -1510,7 +1510,7 @@ encode_msg(note_ms_gprs_present_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(identification_request, #{rai := Rai,
-    p_tmsi := PTmsi} = Msg) ->
+                                     p_tmsi := PTmsi} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_P_TMSI, PTmsi, 4, <<>>),
     Opts = [{gsn_address, 133, tlv, {4, n}},
@@ -1525,8 +1525,8 @@ encode_msg(identification_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(sgsn_context_request, #{rai := Rai,
-    tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
-    gsn_address := GsnAddress} = Msg) ->
+                                   tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
+                                   gsn_address := GsnAddress} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
@@ -1576,11 +1576,11 @@ encode_msg(sgsn_context_acknowledge, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(forward_relocation_request, #{tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
-    ranap_cause := RanapCause,
-    mm_context := MmContext,
-    gsn_address := GsnAddress,
-    target_identification := TargetIdentification,
-    utran_transparent_container := UtranTransparentContainer} = Msg) ->
+                                         ranap_cause := RanapCause,
+                                         mm_context := MmContext,
+                                         gsn_address := GsnAddress,
+                                         target_identification := TargetIdentification,
+                                         utran_transparent_container := UtranTransparentContainer} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_RANAP_CAUSE, RanapCause, 1, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_MM_CONTEXT, MmContext, <<>>),
@@ -1684,18 +1684,18 @@ encode_msg(ue_registration_query_request, #{imsi := Imsi} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(ue_registration_query_response, #{cause := Cause,
-    imsi := Imsi} = Msg) ->
+                                             imsi := Imsi} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(mbms_notification_request, #{imsi := Imsi,
-    tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
-    nsapi := Nsapi,
-    end_user_address := EndUserAddress,
-    access_point_name := AccessPointName,
-    gsn_address := GsnAddress} = Msg) ->
+                                        tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
+                                        nsapi := Nsapi,
+                                        end_user_address := EndUserAddress,
+                                        access_point_name := AccessPointName,
+                                        gsn_address := GsnAddress} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
     Bin3 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
@@ -1712,10 +1712,10 @@ encode_msg(mbms_notification_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_notification_reject_request, #{cause := Cause,
-    tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
-    nsapi := Nsapi,
-    end_user_address := EndUserAddress,
-    access_point_name := AccessPointName} = Msg) ->
+                                               tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
+                                               nsapi := Nsapi,
+                                               end_user_address := EndUserAddress,
+                                               access_point_name := AccessPointName} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
     Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
     Bin3 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
@@ -1731,10 +1731,10 @@ encode_msg(mbms_notification_reject_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(create_mbms_context_request, #{rai := Rai,
-    end_user_address := EndUserAddress,
-    access_point_name := AccessPointName,
-    gsn_address := GsnAddress,
-    enhanced_nsapi := EnhancedNsapi} = Msg) ->
+                                          end_user_address := EndUserAddress,
+                                          access_point_name := AccessPointName,
+                                          gsn_address := GsnAddress,
+                                          enhanced_nsapi := EnhancedNsapi} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
@@ -1765,8 +1765,8 @@ encode_msg(create_mbms_context_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(update_mbms_context_request, #{rai := Rai,
-    gsn_address := GsnAddress,
-    enhanced_nsapi := EnhancedNsapi} = Msg) ->
+                                          gsn_address := GsnAddress,
+                                          enhanced_nsapi := EnhancedNsapi} = Msg) ->
     Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_ENHANCED_NSAPI, EnhancedNsapi, <<>>),
@@ -1803,7 +1803,7 @@ encode_msg(delete_mbms_context_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_registration_request, #{end_user_address := EndUserAddress,
-    access_point_name := AccessPointName} = Msg) ->
+                                        access_point_name := AccessPointName} = Msg) ->
     Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{gsn_address, 133, tlv, {4, n}},
@@ -1816,7 +1816,7 @@ encode_msg(mbms_registration_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_deregistration_request, #{end_user_address := EndUserAddress,
-    access_point_name := AccessPointName} = Msg) ->
+                                          access_point_name := AccessPointName} = Msg) ->
     Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
@@ -1828,14 +1828,14 @@ encode_msg(mbms_deregistration_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_session_start_request, #{end_user_address := EndUserAddress,
-    access_point_name := AccessPointName,
-    quality_of_service_profile := QualityOfServiceProfile,
-    common_flags := CommonFlags,
-    tmgi := Tmgi,
-    mbms_service_area := MbmsServiceArea,
-    mbms_2g3g_indicator := Mbms2g3gIndicator,
-    mbms_session_duration := MbmsSessionDuration,
-    mbms_time_to_data_transfer := MbmsTimeToDataTransfer} = Msg) ->
+                                         access_point_name := AccessPointName,
+                                         quality_of_service_profile := QualityOfServiceProfile,
+                                         common_flags := CommonFlags,
+                                         tmgi := Tmgi,
+                                         mbms_service_area := MbmsServiceArea,
+                                         mbms_2g3g_indicator := Mbms2g3gIndicator,
+                                         mbms_session_duration := MbmsSessionDuration,
+                                         mbms_time_to_data_transfer := MbmsTimeToDataTransfer} = Msg) ->
     Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
@@ -1863,7 +1863,7 @@ encode_msg(mbms_session_start_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_session_stop_request, #{end_user_address := EndUserAddress,
-    access_point_name := AccessPointName} = Msg) ->
+                                        access_point_name := AccessPointName} = Msg) ->
     Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{mbms_flow_identifier, 185, tlv, {4, n}},
@@ -1876,10 +1876,10 @@ encode_msg(mbms_session_stop_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_session_update_request, #{end_user_address := EndUserAddress,
-    access_point_name := AccessPointName,
-    tmgi := Tmgi,
-    mbms_session_duration := MbmsSessionDuration,
-    mbms_service_area := MbmsServiceArea} = Msg) ->
+                                          access_point_name := AccessPointName,
+                                          tmgi := Tmgi,
+                                          mbms_session_duration := MbmsSessionDuration,
+                                          mbms_service_area := MbmsServiceArea} = Msg) ->
     Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
     Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_TMGI, Tmgi, <<>>),
