@@ -87,6 +87,7 @@
 | NAS EPS | 3GPP TS 24.301 v16.8.0        | /      | /      |                                   | Messages are de-/encoded, but missing parameters |
 | NAS 5GS | 3GPP TS 24.501 v16.10.0       | /      | /      |                                   | Messages are de-/encoded, but missing parameters |
 | SGSAP   | 3GPP TS 29.118 v16.0.0        |        |        |                                   |                                                  |
+| GTP     | 3GPP TS 29.060 v17.3.0        | X      | X      |                                   | Messages are de-/encoded, but missing parameters |
 
 * Diameter interfaces
 
