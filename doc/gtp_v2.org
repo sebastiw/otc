@@ -1,0 +1,1556 @@
+* Overview
+
+  3GPP TS 29.274 v17.7.0
+  Tunnelling Protocol for Control plane (GTPv2-C)
+
+* Chapter 5 GTP GTP Header for Control Plane
+
+#+BEGIN_COMMENT
+| Octets |           8 | 7 | 6 | 5 | 4 |  3  |  2  |  1  |
+|--------+-------------+---+---+---+---+-----+-----+-----|
+|      1 | Version             | P | T |  MP | (*) | (*) |
+|      2 | Message Type                                  |
+|      3 | Message Length (1 st Octet)                   |
+|      4 | Message Length (2 nd Octet)                   |
+|      5 | Tunnel Endpoint Identifier (1 st Octet) 1)    |
+|      6 | Tunnel Endpoint Identifier (2 nd Octet) 1)    |
+|      7 | Tunnel Endpoint Identifier (3 rd Octet) 1)    |
+|      8 | Tunnel Endpoint Identifier (4 th Octet) 1)    |
+|      9 | Sequence Number (1 st Octet)                  |
+|     10 | Sequence Number (2 nd Octet)                  |
+|     11 | Sequence Number (2 nd Octet)                  |
+|     12 | EPC Message Priority 2) | Spare               |
+NOTE 0: (*) This bit is a spare bit. It shall be sent as "0". The receiver shall not evaluate this bit.
+NOTE 1: 1) This field shall only be evaluated when indicated by the T flag set to 1.
+NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set to 1.
+#+END_COMMENT
+
+#+BEGIN_COMMENT
+| Octets  |                                     |
+|---------+-------------------------------------|
+|   1 - m | GTP-C header                        |
+| m+1 - n | Zero or more Information Element(s) |
+#+END_COMMENT
+
+* 8 GTP-C Information Elements
+
+| IE Type value | Information elements                                           | Reference | Length Type             | Number of Fixed Octets  |
+|---------------+----------------------------------------------------------------+-----------+-------------------------+-------------------------|
+|             0 | Reserved                                                       |           |                         |                         |
+|             1 | IMSI                                                           |       8.3 | Variable                | 1-n                     |
+|             2 | Cause                                                          |       8.4 | Variable                | 2-10                    |
+|             3 | Recovery (Restart Counter)                                     |       8.5 | Variable                | 1-n                     |
+|          4-34 | Reserved for S101 interface                                    |           | See 3GPP TS 29.276 [14] | See 3GPP TS 29.276 [14] |
+|         35-50 | Reserved for S121 interface                                    |           | See 3GPP TS 29.276 [14] | See 3GPP TS 29.276 [14] |
+|            51 | STN-SR                                                         |           | See 3GPP TS 29.280 [15] | See 3GPP TS 29.280 [15] |
+|            56 | SRVCC Cause                                                    |           | See 3GPP TS 29.280 [15] | See 3GPP TS 29.280 [15] |
+|         52-70 | Reserved for Sv interface                                      |           | See 3GPP TS 29.280 [15] | See 3GPP TS 29.280 [15] |
+|            71 | Access Point Name (APN)                                        |       8.6 | Variable                | 1-n                     |
+|            72 | Aggregate Maximum Bit Rate (AMBR)                              |       8.7 | Fixed                   | 8                       |
+|            73 | EPS Bearer ID (EBI)                                            |       8.8 | Extendable              | 1                       |
+|            74 | IP Address                                                     |       8.9 | Variable                | 4-n                     |
+|            75 | Mobile Equipment Identity (MEI)                                |      8.10 | Variable                | 1-n                     |
+|            76 | MSISDN                                                         |      8.11 | Variable                | 1-n                     |
+|            77 | Indication                                                     |      8.12 | Extendable              | 11                      |
+|            78 | Protocol Configuration Options (PCO)                           |      8.13 | Variable                | 1-n                     |
+|            79 | PDN Address Allocation (PAA)                                   |      8.14 | Variable                | 2-n                     |
+|            80 | Bearer Level Quality of Service (Bearer QoS)                   |      8.15 | Extendable              | 22                      |
+|            81 | Flow Quality of Service (Flow QoS)                             |      8.16 | Extendable              | 21                      |
+|            82 | RAT Type                                                       |      8.17 | Extendable              | 1                       |
+|            83 | Serving Network                                                |      8.18 | Extendable              | 3                       |
+|            84 | Bearer TFT                                                     |      8.19 | Variable                | 1-n                     |
+|            85 | Traffic Aggregation Description (TAD)                          |      8.20 | Variable                | 1-n                     |
+|            86 | User Location Information (ULI)                                |      8.21 | Extendable              | 1-n                     |
+|            87 | F-TEID                                                         |      8.22 | Extendable              | 9-n                     |
+|            88 | TMSI                                                           |      8.23 | Variable                | 1-n                     |
+|            89 | Global CN-Id                                                   |      8.24 | Variable                | 3-n                     |
+|            90 | S103 PDN Data Forwarding Info (S103PDF)                        |      8.25 | Variable                | 2-n                     |
+|            91 | S1-U Data Forwarding Info (S1UDF)                              |      8.26 | Variable                | 3-n                     |
+|            92 | Delay Value                                                    |      8.27 | Extendable              | 1                       |
+|            93 | Bearer Context                                                 |      8.28 | Extendable              | 1-n                     |
+|            94 | Charging ID                                                    |      8.29 | Extendable              | 4                       |
+|            95 | Charging Characteristics                                       |      8.30 | Extendable              | 2                       |
+|            96 | Trace Information                                              |      8.31 | Variable                | 31-n                    |
+|            97 | Bearer Flags                                                   |      8.32 | Extendable              | 1                       |
+|            98 | Reserved                                                       |           |                         |                         |
+|            99 | PDN Type                                                       |      8.34 | Extendable              | 1                       |
+|           100 | Procedure Transaction ID                                       |      8.35 | Extendable              | 1                       |
+|           101 | Reserved                                                       |           |                         |                         |
+|           102 | Reserved                                                       |           |                         |                         |
+|           103 | MM Context (GSM Key and Triplets)                              |      8.38 | Extendable              | 16-n                    |
+|           104 | MM Context (UMTS Key, Cipher and Quintuplets)                  |      8.38 | Extendable              | 40-n                    |
+|           105 | MM Context (GSM Key, Cipher and Quintuplets)                   |      8.38 | Extendable              | 16-n                    |
+|           106 | MM Context (UMTS Key and Quintuplets)                          |      8.38 | Extendable              | 40-n                    |
+|           107 | MM Context (EPS Security Context, Quadruplets and Quintuplets) |      8.38 | Extendable              | 46-n                    |
+|           108 | MM Context (UMTS Key, Quadruplets and Quintuplets)             |      8.38 | Extendable              | 40-n                    |
+|           109 | PDN Connection                                                 |      8.39 | Extendable              | 1-n                     |
+|           110 | PDU Numbers                                                    |      8.40 | Extendable              | 9                       |
+|           111 | P-TMSI                                                         |      8.41 | Variable                | 1-n                     |
+|           112 | P-TMSI Signature                                               |      8.42 | Variable                | 1-n                     |
+|           113 | Hop Counter                                                    |      8.43 | Extendable              | 1                       |
+|           114 | UE Time Zone                                                   |      8.44 | Extendable              | 2                       |
+|           115 | Trace Reference                                                |      8.45 | Fixed                   | 6                       |
+|           116 | Complete Request Message                                       |      8.46 | Variable                | 2-n                     |
+|           117 | GUTI                                                           |      8.47 | Variable                | 7-n                     |
+|           118 | F-Container                                                    |      8.48 | Variable                | 2-n                     |
+|           119 | F-Cause                                                        |      8.49 | Variable                | 2-n                     |
+|           120 | PLMN ID                                                        |      8.50 | Variable                | 1-n                     |
+|           121 | Target Identification                                          |      8.51 | Variable                | 2-n                     |
+|           122 | Reserved                                                       |           |                         |                         |
+|           123 | Packet Flow ID                                                 |      8.53 | Variable                | 1-n                     |
+|           124 | RAB Context                                                    |      8.54 | Fixed                   | 9                       |
+|           125 | Source RNC PDCP Context Info                                   |      8.55 | Variable                | 1-n                     |
+|           126 | Port Number                                                    |      8.56 | Extendable              | 2                       |
+|           127 | APN Restriction                                                |      8.57 | Extendable              | 1                       |
+|           128 | Selection Mode                                                 |      8.58 | Extendable              | 1                       |
+|           129 | Source Identification                                          |      8.59 | Variable                | 10-n                    |
+|           130 | Reserved                                                       |           |                         |                         |
+|           131 | Change Reporting Action                                        |      8.61 | Variable                | 1-n                     |
+|           132 | FQ-CSID                                                        |      8.62 | Extendable              | 2-n                     |
+|           133 | Channel needed                                                 |      8.63 | Variable                | 1-n                     |
+|           134 | eMLPP Priority                                                 |      8.64 | Variable                | 1-n                     |
+|           135 | Node Type                                                      |      8.65 | Extendable              | 1                       |
+|           136 | FQDN                                                           |      8.66 | Variable                | 1-n                     |
+|           137 | Transaction Identifier (TI)                                    |      8.68 | Variable                | 1-n                     |
+|           138 | MBMS Session Duration                                          |      8.69 | Extendable              | 3                       |
+|           139 | MBMS Service Area                                              |      8.70 | Variable                | 1-n                     |
+|           140 | MBMS Session Identifier                                        |      8.71 | Extendable              | 1                       |
+|           141 | MBMS Flow Identifier                                           |      8.72 | Extendable              | 2                       |
+|           142 | MBMS IP Multicast Distribution                                 |      8.73 | Extendable              | 6-n                     |
+|           143 | MBMS Distribution Acknowledge                                  |      8.74 | Extendable              | 1                       |
+|           144 | RFSP Index                                                     |      8.77 | Fixed                   | 2                       |
+|           145 | User CSG Information (UCI)                                     |      8.75 | Extendable              | 8                       |
+|           146 | CSG Information Reporting Action                               |      8.76 | Extendable              | 1                       |
+|           147 | CSG ID                                                         |      8.78 | Extendable              | 4                       |
+|           148 | CSG Membership Indication (CMI)                                |      8.79 | Extendable              | 1                       |
+|           149 | Service indicator                                              |      8.80 | Fixed                   | 1                       |
+|           150 | Detach Type                                                    |      8.81 | Fixed                   | 1                       |
+|           151 | Local Distiguished Name (LDN)                                  |      8.82 | Variable                | 1-n                     |
+|           152 | Node Features                                                  |      8.83 | Extendable              | 1                       |
+|           153 | MBMS Time to Data Transfer                                     |      8.84 | Extendable              | 1                       |
+|           154 | Throttling                                                     |      8.85 | Extendable              | 2                       |
+|           155 | Allocation/Retention Priority (ARP)                            |      8.86 | Extendable              | 1                       |
+|           156 | EPC Timer                                                      |      8.87 | Extendable              | 1                       |
+|           157 | Signalling Priority Indication                                 |      8.88 | Extendable              | 1                       |
+|           158 | Temporary Mobile Group Identity (TMGI)                         |      8.89 | Extendable              | 6                       |
+|           159 | Additional MM context for SRVCC                                |      8.90 | Extendable              | 2-n                     |
+|           160 | Additional flags for SRVCC                                     |      8.91 | Extendable              | 1                       |
+|           161 | Reserved                                                       |           |                         |                         |
+|           162 | MDT Configuration                                              |      8.93 | Extendable              | 15-n                    |
+|           163 | Additional Protocol Configuration Options (APCO)               |      8.94 | Extendable              | 1-n                     |
+|           164 | Absolute Time of MBMS Data Transfer                            |      8.95 | Extendable              | 8                       |
+|           165 | H(e)NB Information Reporting                                   |      8.96 | Extendable              | 1                       |
+|           166 | IPv4 Configuration Parameters (IP4CP)                          |      8.97 | Extendable              | 5                       |
+|           167 | Change to Report Flags                                         |      8.98 | Extendable              | 1                       |
+|           168 | Action Indication                                              |      8.99 | Extendable              | 1                       |
+|           169 | TWAN Identifier                                                |     8.100 | Extendable              | 3-n                     |
+|           170 | ULI Timestamp                                                  |     8.101 | Extendable              | 4                       |
+|           171 | MBMS Flags                                                     |     8.102 | Extendable              | 1                       |
+|           172 | RAN/NAS Cause                                                  |     8.103 | Extendable              | 2-n                     |
+|           173 | CN Operator Selection Entity                                   |     8.104 | Extendable              | 1                       |
+|           174 | Trusted WLAN Mode Indication                                   |     8.105 | Extendable              | 1                       |
+|           175 | Node Number                                                    |     8.106 | Extendable              | 2-n                     |
+|           176 | Node Identifier                                                |     8.107 | Extendable              | 2-n                     |
+|           177 | Presence Reporting Area Action                                 |     8.108 | Extendable              | 11-n                    |
+|           178 | Presence Reporting Area Information                            |     8.109 | Extendable              | 4-n                     |
+|           179 | TWAN Identifier Timestamp                                      |     8.110 | Extendable              | 4                       |
+|           180 | Overload Control Information                                   |     8.111 | Extendable              | 1-n                     |
+|           181 | Load Control Information                                       |     8.112 | Extendable              | 1-n                     |
+|           182 | Metric                                                         |     8.113 | Fixed                   | 1                       |
+|           183 | Sequence Number                                                |     8.114 | Fixed                   | 4                       |
+|           184 | APN and Relative Capacity                                      |     8.115 | Extendable              | 3-n                     |
+|           185 | WLAN Offloadability Indication                                 |     8.116 | Extendable              | 1                       |
+|           186 | Paging and Service Information                                 |     8.117 | Extendable              | 2-n                     |
+|           187 | Integer Number                                                 |     8.118 | Variable                | 1-n                     |
+|           188 | Millisecond Time Stamp                                         |     8.119 | Extendable              | 6                       |
+|           189 | Monitoring Event Information                                   |     8.120 | Extendable              | 6-n                     |
+|           190 | ECGI List                                                      |     8.121 | Extendable              | 1-n                     |
+|           191 | Remote UE Context                                              |     8.122 | Extendable              | 1-n                     |
+|           192 | Remote User ID                                                 |     8.123 | Extendable              | 3-n                     |
+|           193 | Remote UE IP information                                       |     8.124 | Variable                | 1-n                     |
+|           194 | CIoT Optimizations Support Indication                          |     8.125 | Extendable              | 1                       |
+|           195 | SCEF PDN Connection                                            |     8.126 | Extendable              | 1-n                     |
+|           196 | Header Compression Configuration                               |     8.127 | Extendable              | 4                       |
+|           197 | Extended Protocol Configuration Options (ePCO)                 |     8.128 | Variable                | 1-n                     |
+|           198 | Serving PLMN Rate Control                                      |     8.129 | Extendable              | 4                       |
+|           199 | Counter                                                        |     8.130 | Extendable              | 5                       |
+|           200 | Mapped UE Usage Type                                           |     8.131 | Extendable              | 2                       |
+|           201 | Secondary RAT Usage Data Report                                |     8.132 | Extendable              | 27-n                    |
+|           202 | UP Function Selection Indication Flags                         |     8.133 | Extendable              | 1                       |
+|           203 | Maximum Packet Loss Rate                                       |     8.134 | Extendable              | 1-n                     |
+|           204 | APN Rate Control Status                                        |     8.135 | Extendable              | 20                      |
+|           205 | Extended Trace Information                                     |     8.136 | Extendable              | 8-n                     |
+|           206 | Monitoring Event Extension Information                         |     8.137 | Extendable              | 7-n                     |
+|           207 | Additional RRM Policy Index                                    |     8.138 | Fixed                   | 4                       |
+|           208 | V2X Context                                                    |     8.139 | Extendable              | 1-n                     |
+|           209 | PC5 QoS Parameters                                             |     8.140 | Extendable              | 1-n                     |
+|           210 | Services Authorized                                            |     8.141 | Extendable              | 2                       |
+|           211 | Bit Rate                                                       |     8.142 | Extendable              | 4                       |
+|           212 | PC5 QoS Flow                                                   |     8.143 | Extendable              | 11                      |
+|           213 | SGi PtP Tunnel Address                                         |     8.144 | Extendable              | 1-n                     |
+|           214 | PGW Change Info                                                |     8.145 | Extendable              | 1-n                     |
+|           215 | PGW FQDN                                                       |     8.146 | Extendable              | 1-n                     |
+|           216 | Group Id                                                       |     8.147 | Variable                | 1-n                     |
+|           217 | PSCell ID                                                      |     8.148 | Fixed                   | 8                       |
+|           218 | UP Security Policy                                             |     8.149 | Extendable              | 1                       |
+|           219 | Alternative IMSI                                               |     8.150 | Variable                | 2-n                     |
+|       220-253 | Spare. For future use.                                         |           |                         |                         |
+|           254 | Special IE type for IE Type Extension                          |           | Variable                | 3-n                     |
+|           255 | Private Extension                                              |      8.67 | Variable                | 3-n                     |
+|     256-65535 | Spare. For future use.                                         |           |                         |                         |
+
+* 6 GTP-C Message Types and Message Formats
+
+| Message Type value | Message                                                            |      Reference | Initial | Triggered |
+|--------------------+--------------------------------------------------------------------+----------------+---------+-----------|
+|                  0 | Reserved                                                           |                |         |           |
+|                  1 | Echo Request                                                       |          7.1.1 | X       |           |
+|                  2 | Echo Response                                                      |          7.1.2 |         | X         |
+|                  3 | Version Not Supported Indication                                   |          7.1.3 |         | X         |
+|               4-16 | Reserved for S101 interface                                        | TS 29.276 [14] |         |           |
+|              17-24 | Reserved for S121 interface                                        | TS 29.276 [14] |         |           |
+|              25-31 | Reserved for Sv interface                                          | TS 29.280 [15] |         |           |
+|                 32 | Create Session Request                                             |          7.2.1 | X       |           |
+|                 33 | Create Session Response                                            |          7.2.2 |         | X         |
+|                 36 | Delete Session Request                                             |        7.2.9.1 | X       |           |
+|                 37 | Delete Session Response                                            |       7.2.10.1 |         | X         |
+|                 34 | Modify Bearer Request                                              |          7.2.7 | X       |           |
+|                 35 | Modify Bearer Response                                             |          7.2.8 |         | X         |
+|                 40 | Remote UE Report Notification                                      |         7.2.26 | X       |           |
+|                 41 | Remote UE Report Acknowledge                                       |         7.2.27 |         | X         |
+|                 38 | Change Notification Request                                        |         7.3.14 | X       |           |
+|                 39 | Change Notification Response                                       |         7.3.15 |         | X         |
+|              42-63 | For future use                                                     |                |         |           |
+|                164 | Resume Notification                                                |          7.4.3 | X       |           |
+|                165 | Resume Acknowledge                                                 |          7.4.4 |         | X         |
+|                 64 | Modify Bearer Command                                              |       7.2.14.1 | X       |           |
+|                 65 | Modify Bearer Failure Indication                                   |       7.2.14.2 |         | X         |
+|                 66 | Delete Bearer Command                                              |       7.2.17.1 | X       |           |
+|                 67 | Delete Bearer Failure Indication                                   |       7.2.17.2 |         | X         |
+|                 68 | Bearer Resource Command                                            |          7.2.5 | X       |           |
+|                 69 | Bearer Resource Failure Indication                                 |          7.2.6 |         | X         |
+|                 70 | Downlink Data Notification Failure Indication                      |       7.2.11.3 | X       |           |
+|                 71 | Trace Session Activation                                           |         7.12.1 | X       |           |
+|                 72 | Trace Session Deactivation                                         |         7.12.2 | X       |           |
+|                 73 | Stop Paging Indication                                             |         7.2.23 | X       |           |
+|              74-94 | For future use                                                     |                |         |           |
+|                 95 | Create Bearer Request                                              |          7.2.3 | X       | X         |
+|                 96 | Create Bearer Response                                             |          7.2.4 |         | X         |
+|                 97 | Update Bearer Request                                              |         7.2.15 | X       | X         |
+|                 98 | Update Bearer Response                                             |         7.2.16 |         | X         |
+|                 99 | Delete Bearer Request                                              |        7.2.9.2 | X       | X         |
+|                100 | Delete Bearer Response                                             |       7.2.10.2 |         | X         |
+|                101 | Delete PDN Connection Set Request                                  |          7.9.1 | X       |           |
+|                102 | Delete PDN Connection Set Response                                 |          7.9.2 |         | X         |
+|                103 | PGW Downlink Triggering Notification                               |          7.9.7 | X       |           |
+|                104 | PGW Downlink Triggering Acknowledge                                |          7.9.8 |         | X         |
+|            105-127 | For future use                                                     |                |         |           |
+|                128 | Identification Request                                             |          7.3.8 | X       |           |
+|                129 | Identification Response                                            |          7.3.9 |         | X         |
+|                130 | Context Request                                                    |          7.3.5 | X       |           |
+|                131 | Context Response                                                   |          7.3.6 |         | X         |
+|                132 | Context Acknowledge                                                |          7.3.7 |         | X         |
+|                133 | Forward Relocation Request                                         |          7.3.1 | X       |           |
+|                134 | Forward Relocation Response                                        |          7.3.2 |         | X         |
+|                135 | Forward Relocation Complete Notification                           |          7.3.3 | X       |           |
+|                136 | Forward Relocation Complete Acknowledge                            |          7.3.4 |         | X         |
+|                137 | Forward Access Context Notification                                |         7.3.10 | X       |           |
+|                138 | Forward Access Context Acknowledge                                 |         7.3.11 |         | X         |
+|                139 | Relocation Cancel Request                                          |         7.3.16 | X       |           |
+|                140 | Relocation Cancel Response                                         |         7.3.17 |         | X         |
+|                141 | Configuration Transfer Tunnel                                      |         7.3.18 | X       |           |
+|            142-148 | For future use                                                     |                |         |           |
+|                152 | RAN Information Relay                                              |         7.3.19 | X       |           |
+|                149 | Detach Notification                                                |         7.3.12 | X       |           |
+|                150 | Detach Acknowledge                                                 |         7.3.13 |         | X         |
+|                151 | CS Paging Indication                                               |          7.4.5 | X       |           |
+|                153 | Alert MME Notification                                             |          7.4.6 | X       |           |
+|                154 | Alert MME Acknowledge                                              |          7.4.7 |         | X         |
+|                155 | UE Activity Notification                                           |          7.4.8 | X       |           |
+|                156 | UE Activity Acknowledge                                            |          7.4.9 |         | X         |
+|                157 | ISR Status Indication                                              |         7.3.20 | X       |           |
+|                158 | UE Registration Query Request                                      |         7.3.21 | X       |           |
+|                159 | UE Registration Query Response                                     |         7.3.22 |         | X         |
+|                162 | Suspend Notification                                               |          7.4.1 | X       |           |
+|                163 | Suspend Acknowledge                                                |          7.4.2 |         | X         |
+|                160 | Create Forwarding Tunnel Request                                   |          7.5.1 | X       |           |
+|                161 | Create Forwarding Tunnel Response                                  |          7.5.2 |         | X         |
+|                166 | Create Indirect Data Forwarding Tunnel Request                     |         7.2.18 | X       |           |
+|                167 | Create Indirect Data Forwarding Tunnel Response                    |         7.2.19 |         | X         |
+|                168 | Delete Indirect Data Forwarding Tunnel Request                     |         7.2.12 | X       |           |
+|                169 | Delete Indirect Data Forwarding Tunnel Response                    |         7.2.13 |         | X         |
+|                170 | Release Access Bearers Request                                     |         7.2.21 | X       |           |
+|                171 | Release Access Bearers Response                                    |         7.2.22 |         | X         |
+|            172-175 | For future use                                                     |                |         |           |
+|                176 | Downlink Data Notification                                         |       7.2.11.1 | X       |           |
+|                177 | Downlink Data Notification Acknowledge                             |       7.2.11.2 |         | X         |
+|                179 | PGW Restart Notification                                           |          7.9.5 | X       |           |
+|                180 | PGW Restart Notification Acknowledge                               |          7.9.6 |         | X         |
+|                178 | Reserved. Allocated in earlier version of the specification.       |                |         |           |
+|            181-199 | For future use                                                     |                |         |           |
+|                200 | Update PDN Connection Set Request                                  |          7.9.3 | X       |           |
+|                201 | Update PDN Connection Set Response                                 |          7.9.4 |         | X         |
+|            202-210 | For future use                                                     |                |         |           |
+|                211 | Modify Access Bearers Request                                      |         7.2.24 | X       |           |
+|                212 | Modify Access Bearers Response                                     |         7.2.25 |         | X         |
+|            213-230 | For future use                                                     |                |         |           |
+|                231 | MBMS Session Start Request                                         |         7.13.1 | X       |           |
+|                232 | MBMS Session Start Response                                        |         7.13.2 |         | X         |
+|                233 | MBMS Session Update Request                                        |         7.13.3 | X       |           |
+|                234 | MBMS Session Update Response                                       |         7.13.4 |         | X         |
+|                235 | MBMS Session Stop Request                                          |         7.13.5 | X       |           |
+|                236 | MBMS Session Stop Response                                         |         7.13.6 |         | X         |
+|            237-239 | For future use                                                     |                |         |           |
+|            240-247 | Reserved for Sv interface (see also types 25 to 31) TS 29.280 [15] |                |         |           |
+|            248-255 | For future use                                                     |                |         |           |
+
+* 7 GTP-C messages
+
+** 7.1 Path Management Messages
+
+*** 7.1.1 Echo Request
+
+| Information element   | P | IE Type           | Ins. |
+|-----------------------+---+-------------------+------|
+| Recovery              | M | Recovery          | 0    |
+| Sending Node Features | C | Node Features     | 0    |
+| Private Extension     | O | Private Extension | VS   |
+
+*** 7.1.2 Echo Response
+
+| Information element   | P | IE Type           | Ins. |
+|-----------------------+---+-------------------+------|
+| Recovery              | M | Recovery          | 0    |
+| Sending Node Features | C | Node Features     | 0    |
+| Private Extension     | O | Private Extension | VS   |
+
+*** 7.1.3 Version Not Supported
+
+| Information element   | P | IE Type           | Ins. |
+|-----------------------+---+-------------------+------|
+
+** 7.2 Tunnel Management Messages
+
+*** 7.2.1 Create Session Request
+
+| Information element                              | P | IE Type                                          | Ins. |
+|--------------------------------------------------+---+--------------------------------------------------+------|
+| IMSI                                             | C | IMSI                                             |    0 |
+| MSISDN                                           | C | MSISDN                                           |    0 |
+| ME Identity                                      | C | MEI                                              |    0 |
+| User Location Information (ULI)                  | C | ULI                                              |    0 |
+| Serving Network                                  | C | Serving Network                                  |    0 |
+| RAT Type                                         | M | RAT Type                                         |    0 |
+| Indication Flags                                 | C | Indication                                       |    0 |
+| Sender F-TEID for Control Plane                  | M | F-TEID                                           |    0 |
+| PGW S5/S8 Address for Control Plane or PMIP      | C | F-TEID                                           |    1 |
+| Access Point Name (APN)                          | M | APN                                              |    0 |
+| Selection Mode                                   | C | Selection Mode                                   |    0 |
+| PDN Type                                         | C | PDN Type                                         |    0 |
+| PDN Address Allocation (PAA)                     | C | PAA                                              |    0 |
+| Maximum APN Restriction                          | C | APN Restriction                                  |    0 |
+| Aggregate Maximum Bit Rate (APN-AMBR)            | C | AMBR                                             |    0 |
+| Linked EPS Bearer ID                             | C | EBI                                              |    0 |
+| Trusted WLAN Mode Indication                     | C | TWMI                                             |    0 |
+| Protocol Configuration Options (PCO)             | C | PCO                                              |    0 |
+| Bearer Contexts to be created                    | M | Bearer Context                                   |    0 |
+| Bearer Contexts to be removed                    | C | Bearer Context                                   |    1 |
+| Trace Information                                | C | Trace Information                                |    0 |
+| Recovery                                         | C | Recovery                                         |    0 |
+| MME-FQ-CSID                                      | C | FQ-CSID                                          |    0 |
+| SGW-FQ-CSID                                      | C | FQ-CSID                                          |    1 |
+| ePDG-FQ-CSID                                     | C | FQ-CSID                                          |    2 |
+| TWAN-FQ-CSID                                     | C | FQ-CSID                                          |    3 |
+| UE Time Zone                                     | C | UE Time Zone                                     |    0 |
+| User CSG Information (UCI)                       | C | UCI                                              |    0 |
+| Charging Characteristics                         | C | Charging Characteristics                         |    0 |
+| MME/S4-SGSN LDN                                  | O | Local Distinguished Name (LDN)                   |    0 |
+| SGW LDN                                          | O | Local Distinguished Name (LDN)                   |    1 |
+| ePDG LDN                                         | O | Local Distinguished Name (LDN)                   |    2 |
+| TWAN LDN                                         | O | Local Distinguished Name (LDN)                   |    3 |
+| Signalling Priority Indication                   | C | Signalling Priority Indication                   |    0 |
+| UE Local IP Address                              | C | IP Address                                       |    0 |
+| UE UDP Port                                      | C | Port Number                                      |    0 |
+| Additional Protocol Configuration Options (APCO) | C | Additional Protocol Configuration Options (APCO) |    0 |
+| H(e)NB Local IP Address                          | C | IP Address                                       |    1 |
+| H(e)NB UDP Port                                  | C | Port Number                                      |    1 |
+| MME/S4-SGSN Identifier                           | C | IP Address                                       |    2 |
+| TWAN Identifier                                  | C | TWAN Identifier                                  |    0 |
+| ePDG IP Address                                  | O | IP Address                                       |    3 |
+| CN Operator Selection Entity                     | C | CN Operator Selection Entity                     |    0 |
+| Presence Reporting Area Information              | C | Presence Reporting Area Information              |    0 |
+| MME/S4-SGSN's Overload Control Information       | C | Overload Control Information                     |    0 |
+| SGW's Overload Control Information               | O | Overload Control Information                     |    1 |
+| TWAN/ePDG's Overload Control Information         | O | Overload Control Information                     |    2 |
+| Origination Time Stamp                           | C | Millisecond Time Stamp                           |    0 |
+| Maximum Wait Time                                | C | Integer Number                                   |    0 |
+| WLAN Location Information                        | C | TWAN Identifier                                  |    1 |
+| WLAN Location Timestamp                          | C | TWAN Identifier Timestamp                        |    0 |
+| NBIFOM Container                                 | C | F-Container                                      |    0 |
+| Remote UE Context Connected                      | C | Remote UE Context                                |    0 |
+| 3GPP AAA Server Identifier                       | O | Node Identifier                                  |    0 |
+| Extended Protocol Configuration Options (ePCO)   | C | ePCO                                             |    0 |
+| Serving PLMN Rate Control                        | C | Serving PLMN Rate Control                        |    0 |
+| MO Exception Data Counter                        | C | Counter                                          |    0 |
+| UE TCP Port                                      | C | Port Number                                      |    2 |
+| Mapped UE Usage Type                             | C | Mapped UE Usage Type                             |    0 |
+| User Location Information for SGW                | C | ULI                                              |    1 |
+| SGW-U node name                                  | C | FQDN                                             |    0 |
+| Secondary RAT Usage Data Report                  | C | Secondary RAT Usage Data Report                  |    0 |
+| UP Function Selection Indication Flags           | C | UP Function Selection Indication Flags           |    0 |
+| APN RATE Control Status                          | C | APN RATE Control Status                          |    0 |
+| APN RATE Control Status                          | C | APN RATE Control Status                          |    0 |
+| Private Extension                                | O | Private Extension                                |   VS |
+
+*** 7.2.2 Create Session Response
+
+| Information element                                                                         | P | IE Type                                          | Ins. |
+|---------------------------------------------------------------------------------------------+---+--------------------------------------------------+------|
+| Cause                                                                                       | M | Cause                                            |    0 |
+| Change Reporting Action                                                                     | C | Change Reporting Action                          |    0 |
+| CSG Information Reporting Action                                                            | C | CSG Information Reporting Action                 |    0 |
+| H(e)NB Information Reporting                                                                | C | H(e)NB Information Reporting                     |    0 |
+| Sender F-TEID for Control Plane                                                             | C | F-TEID                                           |    0 |
+| PGW S5/S8/ S2a/S2b F-TEID for PMIP based interface or for GTP based Control Plane interface | C | F-TEID                                           |    1 |
+| PDN Address Allocation (PAA)                                                                | C | PAA                                              |    0 |
+| APN Restriction                                                                             | C | APN Restriction                                  |    0 |
+| Aggregate Maximum Bit Rate (APN-AMBR)                                                       | C | AMBR                                             |    0 |
+| Linked EPS Bearer ID                                                                        | C | EBI                                              |    0 |
+| Protocol Configuration Options (PCO)                                                        | C | PCO                                              |    0 |
+| Bearer Contexts created                                                                     | M | Bearer Context                                   |    0 |
+| Bearer Contexts marked for removal                                                          | C | Bearer Context                                   |    1 |
+| Recovery                                                                                    | C | Recovery                                         |    0 |
+| Charging Gateway Name                                                                       | C | FQDN                                             |    0 |
+| Charging Gateway Address                                                                    | C | IP Address                                       |    0 |
+| PGW-FQ-CSID                                                                                 | C | FQ-CSID                                          |    0 |
+| SGW-FQ-CSID                                                                                 | C | FQ-CSID                                          |    1 |
+| SGW LDN                                                                                     | O | Local Distinguished Name (LDN)                   |    0 |
+| PGW LDN                                                                                     | O | Local Distinguished Name (LDN)                   |    1 |
+| PGW Back-Off Time                                                                           | O | EPC Timer                                        |    0 |
+| Additional Protocol Configuration Options (APCO)                                            | C | Additional Protocol Configuration Options (APCO) |    0 |
+| Trusted WLAN IPv4 Parameters                                                                | C | IPv4 Configuration Parameters (IP4CP)            |    0 |
+| Indication Flags                                                                            | C | Indication                                       |    0 |
+| Presence Reporting Area Action                                                              | C | Presence Reporting Area Action                   |    0 |
+| PGW's node level Load Control Information                                                   | C | Load Control Information                         |    0 |
+| PGW's APN level Load Control Information                                                    | C | Load Control Information                         |    1 |
+| SGW's node level Load Control Information                                                   | O | Load Control Information                         |    2 |
+| PGW's Overload Control Information                                                          | C | Overload Control Information                     |    0 |
+| SGW's Overload Control Information                                                          | O | Overload Control Information                     |    1 |
+| NBIFOM Container                                                                            | C | F-Container                                      |    0 |
+| PDN Connection Charging ID                                                                  | C | Charging ID                                      |    0 |
+| Extended Protocol Configuration Options (ePCO)                                              | C | ePCO                                             |    0 |
+| PGW node name                                                                               | C | FQDN                                             |    1 |
+| SGi PtP Tunnel Address                                                                      | C | SGi PtP Tunnel Address                           |    0 |
+| PGW Change Info                                                                             | C | PGW Change Info                                  |    0 |
+| Alternative PGW-C/SMF FQDN                                                                  | O | FQDN                                             |    3 |
+| Alternative PGW-C/SMF IP Address                                                            | O | IP Address                                       |    1 |
+| UP Security Policy                                                                          | C | UP Security Policy                               |    0 |
+| Private Extension                                                                           | O | Private Extension                                |   VS |
+
+*** 7.2.3 Create Bearer Request
+
+| Information element                       | P  | IE Type                          | Ins. |
+|-------------------------------------------+----+----------------------------------+------|
+| Procedure Transaction Id (PTI)            | C  | PTI                              |    0 |
+| Linked EPS Bearer ID (LBI)                | M  | EBI                              |    0 |
+| Protocol Configuration Options (PCO)      | O  | PCO                              |    0 |
+| Bearer Contexts                           | M  | Bearer Context                   |    0 |
+| PGW-FQ-CSID                               | C  | FQ-CSID                          |    0 |
+| SGW-FQ-CSID                               | C  | FQ-CSID                          |    1 |
+| Change Reporting Action                   | C  | Change Reporting Action          |    0 |
+| CSG Information Reporting Action          | CO | CSG Information Reporting Action |    0 |
+| H(e)NB Information Reporting              | CO | H(e)NB Information Reporting     |    0 |
+| Presence Reporting Area Action            | CO | Presence Reporting Area Action   |    0 |
+| Indication Flags                          | CO | Indication                       |    0 |
+| PGW's node level Load Control Information | CO | Load Control Information         |    0 |
+| PGW's APN level Load Control Information  | CO | Load Control Information         |    1 |
+| SGW's node level Load Control Information | O  | Load Control Information         |    2 |
+| PGW's Overload Control Information        | CO | Overload Control Information     |    0 |
+| SGW's Overload Control Information        | O  | Overload Control Information     |    1 |
+| NBIFOM Container                          | CO | F-Container                      |    0 |
+| PGW Change Info                           | CO | PGW Change Info                  |    0 |
+| Private Extension                         | O  | Private Extension                |   VS |
+
+*** 7.2.4 Create Bearer Response
+
+| Information element                        | P  | IE Type                             | Ins. |
+|--------------------------------------------+----+-------------------------------------+------|
+| Cause                                      | M  | Cause                               |    0 |
+| Bearer Contexts                            | M  | Bearer Context                      |    0 |
+| Recovery                                   | C  | Recovery                            |    0 |
+| MME-FQ-CSID                                | C  | FQ-CSID                             |    0 |
+| SGW-FQ-CSID                                | C  | FQ-CSID                             |    1 |
+| ePDG-FQ-CSID                               | C  | FQ-CSID                             |    2 |
+| TWAN-FQ-CSID                               | C  | FQ-CSID                             |    3 |
+| Protocol Configuration Options (PCO)       | C  | PCO                                 |    0 |
+| UE Time Zone                               | CO | UE Time Zone                        |    0 |
+| User Location Information (ULI)            | CO | ULI                                 |    0 |
+| TWAN Identifier                            | CO | TWAN Identifier                     |    0 |
+| MME/S4-SGSN's Overload Control Information | CO | Information                         |    0 |
+| SGW's Overload Control Information         | O  | Overload Control Information        |    1 |
+| Presence Reporting Area Information        | CO | Presence Reporting Area Information |    0 |
+| MME/S4-SGSN Identifier                     | CO | IP Address                          |    0 |
+| TWAN/ePDG's Overload Control Information   | O  | Overload Control Information        |    2 |
+| WLAN Location Information                  | CO | TWAN Identifier                     |    1 |
+| WLAN Location Timestamp                    | CO | TWAN Identifier Timestamp           |    1 |
+| UE Local IP Address                        | CO | IP Address                          |    0 |
+| UE UDP Port                                | CO | Port Number                         |    0 |
+| NBIFOM Container                           | CO | F-Container                         |    0 |
+| UE TCP Port                                | CO | Port Number                         |    1 |
+| PSCell ID                                  | CO | PSCell ID                           |    0 |
+| Private Extension                          | O  | Private Extension                   |   VS |
+
+*** 7.2.5 Bearer Resource Command
+
+| Information element                            | P  | IE Type                        | Ins. |
+|------------------------------------------------+----+--------------------------------+------|
+| Linked EPS Bearer ID (LBI)                     | M  | EBI                            |    0 |
+| Procedure Transaction Id (PTI)                 | M  | PTI                            |    0 |
+| Flow Quality of Service (Flow QoS)             | C  | Flow QoS                       |    0 |
+| Traffic Aggregate Description (TAD)            | C  | TAD                            |    0 |
+| RAT Type                                       | C  | RAT Type                       |    0 |
+| Serving Network                                | O  | Serving Network                |    0 |
+| User Location Information (ULI)                | O  | ULI                            |    0 |
+| EPS Bearer ID                                  | C  | EBI                            |    1 |
+| Indication Flags                               | CO | Indication                     |    0 |
+| S4-U SGSN F-TEID                               | C  | F-TEID                         |    0 |
+| S12 RNC F-TEID                                 | C  | F-TEID                         |    1 |
+| Protocol Configuration Options (PCO)           | O  | PCO                            |    0 |
+| Signalling Priority Indication                 | CO | Signalling Priority Indication |    0 |
+| MME/S4-SGSN's Overload Control Information     | CO | Overload Control Information   |    0 |
+| SGW's Overload Control Information             | O  | Overload Control Information   |    1 |
+| NBIFOM Container                               | CO | F-Container                    |    0 |
+| Extended Protocol Configuration Options (ePCO) | O  | ePCO                           |    0 |
+| Sender F-TEID for Control Plane                | CO | F-TEID                         |    2 |
+| PSCell ID                                      | CO | PSCell ID                      |    0 |
+| Private Extension                              | O  | Private Extension              |   VS |
+
+*** 7.2.6 Bearer Resource Failure Indication
+
+| Information element                | P  | IE Type                      | Ins. |
+|------------------------------------+----+------------------------------+------|
+| Cause                              | M  | Cause                        |    0 |
+| Linked EPS Bearer ID               | M  | EBI                          |    0 |
+| Procedure Transaction ID (PTI)     | M  | PTI                          |    0 |
+| Indication Flags                   | CO | Indication                   |    0 |
+| PGW's Overload Control Information | CO | Overload Control Information |    0 |
+| SGW's Overload Control Information | O  | Overload Control Information |    1 |
+| Recovery                           | O  | Recovery                     |    0 |
+| NBIFOM Container                   | CO | F-Container                  |    0 |
+| Private Extension                  | O  | Private Extension            |   VS |
+
+*** 7.2.7 Modify Bearer Request
+
+| Information element                        | P  | IE Type                             | Ins. |
+|--------------------------------------------+----+-------------------------------------+------|
+| ME Identity (MEI)                          | C  | MEI                                 |    0 |
+| User Location Information (ULI)            | C  | ULI                                 |    0 |
+| Serving Network                            | CO | Serving Network                     |    0 |
+| RAT Type                                   | C  | RAT Type                            |    0 |
+| Indication Flags                           | C  | Indication                          |    0 |
+| Sender F-TEID for Control Plane            | C  | F-TEID                              |    0 |
+| Aggregate Maximum Bit Rate (APN-AMBR)      | C  | AMBR                                |    0 |
+| Delay Downlink Packet Notification Request | C  | Delay Value                         |    0 |
+| Bearer Contexts to be modified             | C  | Bearer Context                      |    0 |
+| Bearer Contexts to be removed              | C  | Bearer Context                      |    1 |
+| Recovery                                   | C  | Recovery                            |    0 |
+| UE Time Zone                               | CO | UE Time Zone                        |    0 |
+| MME-FQ-CSID                                | C  | FQ-CSID                             |    0 |
+| SGW-FQ-CSID                                | C  | FQ-CSID                             |    1 |
+| User CSG Information (UCI)                 | CO | UCI                                 |    0 |
+| UE Local IP Address                        | CO | IP Address                          |    1 |
+| UE UDP Port                                | CO | Port Number                         |    1 |
+| MME/S4-SGSN LDN                            | O  | Local Distinguished Name (LDN)      |    0 |
+| SGW LDN                                    | O  | Local Distinguished Name (LDN)      |    1 |
+| H(e)NB Local IP Address                    | CO | IP Address                          |    0 |
+| H(e)NB UDP Port                            | CO | Port Number                         |    0 |
+| MME/S4-SGSN Identifier                     | CO | IP Address                          |    2 |
+| CN Operator Selection Entity               | CO | CN Operator Selection Entity        |    0 |
+| Presence Reporting Area Information        | CO | Presence Reporting Area Information |    0 |
+| MME/S4-SGSN's Overload Control Information | CO | Overload Control Information        |    0 |
+| SGW's Overload Control Information         | O  | Overload Control Information        |    1 |
+| ePDG's Overload Control Information        | O  | Overload Control Information        |    2 |
+| Serving PLMN Rate Control                  | CO | Serving PLMN Rate Control           |    0 |
+| MO Exception Data Counter                  | CO | Counter                             |    0 |
+| IMSI                                       | O  | IMSI                                |    0 |
+| User Location Information for SGW          | CO | ULI                                 |    1 |
+| WLAN Location Information                  | CO | TWAN Identifier                     |    0 |
+| WLAN Location Timestamp                    | CO | TWAN Identifier Timestamp           |    0 |
+| Secondary RAT Usage Data Report            | CO | Secondary RAT Usage Data Report     |    0 |
+| PSCell ID                                  | CO | PSCell ID                           |    0 |
+| Private Extension                          | O  | Private Extension                   |   VS |
+
+*** 7.2.8 Modify Bearer Response
+
+| Information element                       | P  | IE Type                          | Ins. |
+|-------------------------------------------+----+----------------------------------+------|
+| Cause                                     | M  | Cause                            |    0 |
+| MSISDN                                    | C  | MSISDN                           |    0 |
+| Linked EPS Bearer ID                      | C  | EBI                              |    0 |
+| APN Restriction                           | C  | APN Restriction                  |    0 |
+| Protocol Configuration Options (PCO)      | C  | PCO                              |    0 |
+| Bearer Contexts modified                  | C  | Bearer Context                   |    0 |
+| Bearer Contexts marked for removal        | C  | Bearer Context                   |    1 |
+| Change Reporting Action                   | C  | Change Reporting Action          |    0 |
+| CSG Information Reporting Action          | CO | CSG Information Reporting Action |    0 |
+| H(e)NB Information Reporting              | CO | H(e)NB Information Reporting     |    0 |
+| Charging Gateway Name                     | C  | FQDN                             |    0 |
+| Charging Gateway Address                  | C  | IP Address                       |    0 |
+| PGW-FQ-CSID                               | C  | FQ-CSID                          |    0 |
+| SGW-FQ-CSID                               | C  | FQ-CSID                          |    1 |
+| Recovery                                  | C  | Recovery                         |    0 |
+| SGW LDN                                   | O  | Local Distinguished Name (LDN)   |    0 |
+| PGW LDN                                   | O  | Local Distinguished Name (LDN)   |    1 |
+| Indication Flags                          | CO | Indication                       |    0 |
+| Presence Reporting Area Action            | CO | Presence Reporting Area Action   |    0 |
+| PGW's node level Load Control Information | CO | Load Control Information         |    0 |
+| PGW's APN level Load Control Information  | CO | Load Control Information         |    1 |
+| SGW's node level Load Control Information | O  | Load Control Information         |    2 |
+| PGW's Overload Control Information        | CO | Overload Control Information     |    0 |
+| SGW's Overload Control Information        | O  | Overload Control Information     |    1 |
+| PDN Connection Charging ID                | CO | Charging ID                      |    0 |
+| PGW Change Info                           | CO | PGW Change Info                  |    0 |
+| Private Extension                         | O  | Private Extension                |   VS |
+
+*** 7.2.9.1 Delete Session Request
+
+| Information element                            | P  | IE Type                         | Ins. |
+|------------------------------------------------+----+---------------------------------+------|
+| Cause                                          | C  | Cause                           |    0 |
+| Linked EPS Bearer ID (LBI)                     | C  | EBI                             |    0 |
+| User Location Information (ULI)                | C  | ULI                             |    0 |
+| Indication Flags                               | C  | Indication                      |    0 |
+| Protocol Configuration Options (PCO)           | C  | PCO                             |    0 |
+| Originating Node                               | C  | Node Type                       |    0 |
+| Sender F-TEID for Control Plane                | CO | F-TEID                          |    0 |
+| UE Time Zone                                   | CO | UE Time Zone                    |    0 |
+| ULI Timestamp                                  | CO | ULI Timestamp                   |    0 |
+| RAN/NAS Release Cause                          | CO | RAN/NAS Cause                   |    0 |
+| TWAN Identifier                                | CO | TWAN Identifier                 |    0 |
+| TWAN Identifier Timestamp                      | CO | TWAN Identifier Timestamp       |    0 |
+| MME/S4-SGSN's Overload Control Information     | CO | Overload Control Information    |    0 |
+| SGW's Overload Control Information             | O  | Overload Control Information    |    1 |
+| TWAN/ePDG's Overload Control Information       | O  | Overload Control Information    |    2 |
+| WLAN Location Information                      | CO | TWAN Identifier                 |    1 |
+| WLAN Location Timestamp                        | CO | TWAN Identifier Timestamp       |    1 |
+| UE Local IP Address                            | CO | IP Address                      |    0 |
+| UE UDP Port                                    | CO | Port Number                     |    0 |
+| Extended Protocol Configuration Options (ePCO) | CO | ePCO                            |    0 |
+| UE TCP Port                                    | CO | Port Number                     |    1 |
+| Secondary RAT Usage Data Report                | CO | Secondary RAT Usage Data Report |    0 |
+| PSCell ID                                      | CO | PSCell ID                       |    0 |
+| Private Extension                              | O  | Private Extension               |   VS |
+
+*** 7.2.9.2 Delete Bearer Request
+
+| Information element                            | P  | IE Type                      | Ins. |
+|------------------------------------------------+----+------------------------------+------|
+| Linked EPS Bearer ID (LBI)                     | C  | EBI                          |    0 |
+| EPS Bearer IDs                                 | C  | EBI                          |    1 |
+| Failed Bearer Contexts                         | O  | Bearer Context               |    0 |
+| Procedure Transaction Id (PTI)                 | C  | PTI                          |    0 |
+| Protocol Configuration Options (PCO)           | C  | PCO                          |    0 |
+| PGW-FQ-CSID                                    | C  | FQ-CSID                      |    0 |
+| SGW-FQ-CSID                                    | C  | FQ-CSID                      |    1 |
+| Cause                                          | C  | Cause                        |    0 |
+| Indication Flags                               | CO | Indication                   |    0 |
+| PGW's node level Load Control Information      | CO | Load Control Information     |    0 |
+| PGW's APN level Load Control Information       | CO | Load Control Information     |    1 |
+| SGW's node level Load Control Information      | O  | Load Control Information     |    2 |
+| PGW's Overload Control Information             | CO | Overload Control Information |    0 |
+| SGW's Overload Control Information             | O  | Overload Control Information |    1 |
+| NBIFOM Container                               | CO | F-Container                  |    0 |
+| APN RATE Control Status                        | CO | APN RATE Control Status      |    0 |
+| Extended Protocol Configuration Options (ePCO) | CO | ePCO                         |    0 |
+| PGW Change Info                                | CO | PGW Change Info              |    0 |
+| Private Extension                              | O  | Private Extension            |   VS |
+
+*** 7.2.10.1 Delete Session Response
+
+| Information element                            | P  | IE Type                      | Ins. |
+|------------------------------------------------+----+------------------------------+------|
+| Cause                                          | M  | Cause                        |    0 |
+| Recovery                                       | C  | Recovery                     |    0 |
+| Protocol Configuration Options (PCO)           | C  | PCO                          |    0 |
+| Indication Flags                               | CO | Indication                   |    0 |
+| PGW's node level Load Control Information      | CO | Load Control Information     |    0 |
+| PGW's APN level Load Control Information       | CO | Load Control Information     |    1 |
+| SGW's node level Load Control Information      | O  | Load Control Information     |    2 |
+| PGW's Overload Control Information             | CO | Overload Control Information |    0 |
+| SGW's Overload Control Information             | O  | Overload Control Information |    1 |
+| Extended Protocol Configuration Options (ePCO) | CO | ePCO                         |    0 |
+| APN RATE Control Status                        | CO | APN RATE Control Status      |    0 |
+| Private Extension                              | O  | Private Extension            |   VS |
+
+*** 7.2.10.2 Delete Bearer Response
+
+| Information element                        | P  | IE Type                         | Ins. |
+|--------------------------------------------+----+---------------------------------+------|
+| Cause                                      | M  | Cause                           |    0 |
+| Linked EPS Bearer ID (LBI)                 | C  | EBI                             |    0 |
+| Bearer Contexts                            | C  | Bearer Context                  |    0 |
+| Recovery                                   | C  | Recovery                        |    0 |
+| MME-FQ-CSID                                | C  | FQ-CSID                         |    0 |
+| SGW-FQ-CSID                                | C  | FQ-CSID                         |    1 |
+| ePDG-FQ-CSID                               | C  | FQ-CSID                         |    2 |
+| TWAN-FQ-CSID                               | C  | FQ-CSID                         |    3 |
+| Protocol Configuration Options (PCO)       | CO | PCO                             |    0 |
+| UE Time Zone                               | CO | UE Time Zone                    |    0 |
+| User Location Information (ULI)            | CO | ULI                             |    0 |
+| ULI Timestamp                              | CO | ULI Timestamp                   |    0 |
+| TWAN Identifier                            | CO | TWAN Identifier                 |    0 |
+| TWAN Identifier Timestamp                  | CO | TWAN Identifier Timestamp       |    0 |
+| MME/S4-SGSN's Overload Control Information | CO | Overload Control Information    |    0 |
+| SGW's Overload Control Information         | O  | Overload Control Information    |    1 |
+| MME/S4-SGSN Identifier                     | CO | IP Address                      |    0 |
+| TWAN/ePDG's Overload Control Information   | O  | Overload Control Information    |    2 |
+| WLAN Location Information                  | CO | TWAN Identifier                 |    1 |
+| WLAN Location Timestamp                    | CO | TWAN Identifier Timestamp       |    1 |
+| UE Local IP Address                        | CO | IP Address                      |    0 |
+| UE UDP Port                                | CO | Port Number                     |    0 |
+| NBIFOM Container                           | CO | F-Container                     |    0 |
+| UE TCP Port                                | CO | Port Number                     |    1 |
+| Secondary RAT Usage Data Report            | CO | Secondary RAT Usage Data Report |    0 |
+| PSCell ID                                  | CO | PSCell ID                       |    0 |
+| Private Extension                          | O  | Private Extension               |   VS |
+
+*** 7.2.11.1 Downlink Data Notification
+
+| Information element                       | P  | IE Type                        | Ins. |
+|-------------------------------------------+----+--------------------------------+------|
+| Cause                                     | CO | Cause                          |    0 |
+| EPS Bearer ID                             | CO | EBI                            |    0 |
+| Allocation/Retention Priority             | CO | ARP                            |    0 |
+| IMSI                                      | CO | IMSI                           |    0 |
+| Sender F-TEID for Control Plane           | O  | F-TEID                         |    0 |
+| Indication Flags                          | CO | Indication                     |    0 |
+| SGW's node level Load Control Information | O  | Load Control Information       |    0 |
+| SGW's Overload Control Information        | O  | Overload Control Information   |    0 |
+| Paging and Service Information            | CO | Paging and Service Information |    0 |
+| DL Data Packets Size                      | CO | Integer Number                 |    0 |
+| Private Extension                         | O  | Private Extension              |   VS |
+
+*** 7.2.11.2 Downlink Data Notification Acknowledge
+
+| Information element                 | P  | IE Type           | Ins. |
+|-------------------------------------+----+-------------------+------|
+| Cause                               | M  | Cause             |    0 |
+| Data Notification Delay             | C  | Delay Value       |    0 |
+| Recovery                            | C  | Recovery          |    0 |
+| DL low priority traffic Throttling  | O  | Throttling        |    0 |
+| IMSI                                | CO | IMSI              |    0 |
+| DL Buffering Duration               | CO | EPC Timer         |    0 |
+| DL Buffering Suggested Packet Count | O  | Integer Number    |    0 |
+| Private Extension                   | O  | Private Extension |   VS |
+
+*** 7.2.11.3 Downlink Data Notification Failure Indication
+
+| Information element | P  | IE Type           | Ins. |
+|---------------------+----+-------------------+------|
+| Cause               | M  | Cause             |    0 |
+| Originating Node    | CO | Node Type         |    0 |
+| IMSI                | CO | IMSI              |    0 |
+| Private Extension   | O  | Private Extension |   VS |
+
+*** 7.2.12 Delete Indirect Data Forwarding Tunnel Request
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.2.13 Delete Indirect Data Forwarding Tunnel Response
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             |    0 |
+| Recovery            | C | Recovery          |    0 |
+| Private Extension   | O | Private Extension |   VS |
+
+*** 7.2.14.1 Modify Bearer Command
+
+| Information element                        | P  | IE Type                      | Ins. |
+|--------------------------------------------+----+------------------------------+------|
+| APN-Aggregate Maximum Bit Rate (APN-AMBR)  | M  | AMBR                         |    0 |
+| Bearer Context                             | M  | Bearer Context               |    0 |
+| MME/S4-SGSN's Overload Control Information | CO | Overload Control Information |    0 |
+| SGW's Overload Control Information         | O  | Overload Control Information |    1 |
+| TWAN/ePDG's Overload Control Information   | O  | Overload Control Information |    2 |
+| Sender F-TEID for Control Plane            | CO | F-TEID                       |    0 |
+| Private Extension                          | O  | Private Extension            |   VS |
+
+*** 7.2.14.2 Modify Bearer Failure Indication
+
+| Information element                | P  | IE Type                      | Ins. |
+|------------------------------------+----+------------------------------+------|
+| Cause                              | M  | Cause                        |    0 |
+| Recovery                           | C  | Recovery                     |    0 |
+| Indication Flags                   | CO | Indication                   |    0 |
+| PGW's Overload Control Information | CO | Overload Control Information |    0 |
+| SGW's Overload Control Information | O  | Overload Control Information |    1 |
+| Private Extension                  | O  | Private Extension            |   VS |
+
+*** 7.2.15 Update Bearer Request
+
+| Information element                       | P  | IE Type                          | Ins. |
+|-------------------------------------------+----+----------------------------------+------|
+| Bearer Contexts                           | M  | Bearer Context                   |    0 |
+| Procedure Transaction Id (PTI)            | C  | PTI                              |    0 |
+| Protocol Configuration Options (PCO)      | C  | PCO                              |    0 |
+| Aggregate Maximum Bit Rate (APN-AMBR)     | M  | APN-AMBR AMBR                    |    0 |
+| Change Reporting Action                   | C  | Change Reporting Action          |    0 |
+| CSG Information Reporting Action          | CO | CSG Information Reporting Action |    0 |
+| H(e)NB Information Reporting              | CO | H(e)NB Information Reporting     |    0 |
+| Indication flags                          | CO | Indication                       |    0 |
+| PGW-FQ-CSID                               | C  | FQ-CSID                          |    0 |
+| SGW-FQ-CSID                               | C  | FQ-CSID                          |    1 |
+| Presence Reporting Area Action            | CO | Presence Reporting Area Action   |    0 |
+| PGW's node level Load Control Information | CO | Load Control Information         |    0 |
+| PGW's APN level Load Control Information  | CO | Load Control Information         |    1 |
+| SGW's node level Load Control Information | O  | Load Control Information         |    2 |
+| PGW's Overload Control Information        | CO | Overload Control Information     |    0 |
+| SGW's Overload Control Information        | O  | Overload Control Information     |    1 |
+| NBIFOM Container                          | CO | F-Container                      |    0 |
+| PGW Change Info                           | CO | PGW Change Info                  |    0 |
+| Private Extension                         | O  | Private Extension                |   VS |
+
+*** 7.2.16 Update Bearer Response
+
+| Information element                        | P  | IE Type                             | Ins. |
+|--------------------------------------------+----+-------------------------------------+------|
+| Cause                                      | M  | Cause                               |    0 |
+| Bearer Contexts                            | M  | Bearer Context                      |    0 |
+| Protocol Configuration Options (PCO)       | CO | PCO                                 |    0 |
+| Recovery                                   | C  | Recovery                            |    0 |
+| MME-FQ-CSID                                | C  | FQ-CSID                             |    0 |
+| SGW-FQ-CSID                                | C  | FQ-CSID                             |    1 |
+| ePDG-FQ-CSID                               | C  | FQ-CSID                             |    2 |
+| TWAN-FQ-CSID                               | C  | FQ-CSID                             |    3 |
+| Indication Flags                           | CO | Indication                          |    0 |
+| UE Time Zone                               | CO | UE Time Zone                        |    0 |
+| User Location Information (ULI)            | CO | ULI                                 |    0 |
+| TWAN Identifier                            | CO | TWAN Identifier                     |    0 |
+| MME/S4-SGSN's Overload Control Information | CO | Overload Control Information        |    0 |
+| SGW's Overload Control Information         | O  | Overload Control Information        |    1 |
+| Presence Reporting Area Information        | CO | Presence Reporting Area Information |    0 |
+| MME/S4-SGSN Identifier                     | CO | IP Address                          |    0 |
+| TWAN/ePDG's Overload Control Information   | O  | Overload Control Information        |    2 |
+| WLAN Location Information                  | CO | TWAN Identifier                     |    1 |
+| WLAN Location Timestamp                    | CO | TWAN Identifier Timestamp           |    1 |
+| UE Local IP Address                        | CO | IP Address                          |    0 |
+| UE UDP Port                                | CO | Port Number                         |    0 |
+| NBIFOM Container                           | CO | F-Container                         |    0 |
+| UE TCP Port                                | CO | Port Number                         |    1 |
+| PSCell ID                                  | CO | PSCell ID                           |    0 |
+| Private Extension                          | O  | Private Extension                   |   VS |
+
+*** 7.2.17.1 Delete Bearer Command
+
+| Information element                | P  | IE Type                         | Ins. |
+|------------------------------------+----+---------------------------------+------|
+| Bearer Contexts                    | M  | Bearer Context                  |    0 |
+| User Location Information (ULI)    | CO | ULI                             |    0 |
+| ULI Timestamp                      | CO | ULI Timestamp                   |    0 |
+| UE Time Zone                       | CO | UE Time Zone                    |    0 |
+| Overload Control Information       | CO | Overload Control Information    |    0 |
+| SGW's Overload Control Information | O  | Overload Control Information    |    1 |
+| Sender F-TEID for Control Plane    | CO | F-TEID                          |    0 |
+| Secondary RAT Usage Data Report    | CO | Secondary RAT Usage Data Report |    0 |
+| PSCell ID                          | CO | PSCell ID                       |    0 |
+| Private Extension                  | O  | Private Extension               |   VS |
+
+*** 7.2.17.2 Delete Bearer Failure Indication
+
+| Information element                | P  | IE Type                      | Ins. |
+|------------------------------------+----+------------------------------+------|
+| Cause                              | M  | Cause                        |    0 |
+| Bearer Context                     | M  | Bearer Context               |    0 |
+| Recovery                           | C  | Recovery                     |    0 |
+| Indication Flags                   | CO | Indication                   |    0 |
+| PGW's Overload Control Information | CO | Overload Control Information |    0 |
+| SGW's Overload Control Information | O  | Overload Control Information |    1 |
+| Private Extension                  | O  | Private Extension            |   VS |
+
+*** 7.2.18 Create Indirect Data Forwarding Tunnel Request
+
+| Information element             | P  | IE Type           | Ins. |
+|---------------------------------+----+-------------------+------|
+| IMSI                            | C  | IMSI              |    0 |
+| ME Identity (MEI)               | C  | MEI               |    0 |
+| Indication Flags                | CO | Indication        |    0 |
+| Sender F-TEID for Control Plane | C  | F-TEID            |    0 |
+| Bearer Contexts                 | M  | Bearer Context    |    0 |
+| Recovery                        | CO | Recovery          |    0 |
+| Private Extension               | O  | Private Extension |   VS |
+
+*** 7.2.19 Create Indirect Data Forwarding Tunnel Response
+
+| Information element             | P  | IE Type           | Ins. |
+|---------------------------------+----+-------------------+------|
+| Cause                           | M  | Cause             |    0 |
+| Sender F-TEID for Control Plane | C  | F-TEID            |    0 |
+| Bearer Contexts                 | M  | Bearer Context    |    0 |
+| Recovery                        | CO | Recovery          |    0 |
+| Private Extension               | O  | Private Extension |   VS |
+
+*** 7.2.21 Release Access Bearers Request
+
+| Information element             | P  | IE Type                         | Ins. |
+|---------------------------------+----+---------------------------------+------|
+| List of RABs                    | C  | EBI                             |    0 |
+| Originating Node                | CO | Node Type                       |    0 |
+| Indication Flags                | CO | Indication                      |    0 |
+| Secondary RAT Usage Data Report | CO | Secondary RAT Usage Data Report |    0 |
+| PSCell ID                       | CO | PSCell ID                       |    0 |
+| Private Extension               | O  | Private Extension               |   VS |
+
+*** 7.2.22 Release Access Bearers Response
+
+| Information element                       | P  | IE Type                      | Ins. |
+|-------------------------------------------+----+------------------------------+------|
+| Cause                                     | M  | Cause                        |    0 |
+| Recovery                                  | O  | Recovery                     |    0 |
+| Indication Flags                          | CO | Indication                   |    0 |
+| SGW's node level Load Control Information | O  | Load Control Information     |    0 |
+| SGW's Overload Control Information        | O  | Overload Control Information |    0 |
+| Private Extension                         | O  | Private Extension            |   VS |
+
+*** 7.2.23 Stop Paging Indication
+
+| Information element | P  | IE Type           | Ins. |
+|---------------------+----+-------------------+------|
+| IMSI                | CO | IMSI              | 0    |
+| Private Extension   | O  | Private Extension | VS   |
+
+*** 7.2.24 Modify Access Bearers Request
+
+| Information element                        | P  | IE Type                         | Ins. |
+|--------------------------------------------+----+---------------------------------+------|
+| Indication Flags                           | C  | Indication                      |    0 |
+| Sender F-TEID for Control Plane            | C  | F-TEID                          |    0 |
+| Delay Downlink Packet Notification Request | C  | Delay Value                     |    0 |
+| Bearer Contexts to be modified             | C  | Bearer Context                  |    0 |
+| Bearer Contexts to be removed              | C  | Bearer Context                  |    1 |
+| Recovery                                   | C  | Recovery                        |    0 |
+| Secondary RAT Usage Data Report            | CO | Secondary RAT Usage Data Report |    0 |
+| PSCell ID                                  | CO | PSCell ID                       |    0 |
+| Private Extension                          | O  | Private Extension               |   VS |
+
+*** 7.2.25 Modify Access Bearers Response
+
+| Information element                       | P  | IE Type                      | Ins. |
+|-------------------------------------------+----+------------------------------+------|
+| Cause                                     | M  | Cause                        |    0 |
+| Bearer Contexts modified                  | C  | Bearer Context               |    0 |
+| Bearer Contexts marked for removal        | C  | Bearer Context               |    1 |
+| Recovery                                  | C  | Recovery                     |    0 |
+| Indication Flags                          | CO | Indication                   |    0 |
+| SGW's node level Load Control Information | O  | Load Control Information     |    0 |
+| SGW's Overload Control Information        | O  | Overload Control Information |    0 |
+| Private Extension                         | O  | Private Extension            |   VS |
+
+*** 7.2.26 Remote UE Report Notification
+
+| Information element            | P | IE Type           | Ins. |
+|--------------------------------+---+-------------------+------|
+| Remote UE Context Connected    | C | Remote UE Context |    0 |
+| Remote UE Context Disconnected | C | Remote UE Context |    1 |
+| Private Extension              | O | Private Extension |   VS |
+
+*** 7.2.27 Remote UE Report Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+** 7.3 Mobility Management Messages
+
+*** 7.3.1 Forward Relocation Request
+
+| Information element                              | P  | IE Type                                | Ins. |
+|--------------------------------------------------+----+----------------------------------------+------|
+| IMSI                                             | C  | IMSI                                   |    0 |
+| Sender's F-TEID for Control Plane                | M  | F-TEID                                 |    0 |
+| MME/SGSN/AMF UE EPS PDN Connections              | C  | PDN Connection                         |    0 |
+| SGW S11/S4 IP Address and TEID for Control Plane | C  | F-TEID                                 |    1 |
+| SGW node name                                    | C  | FQDN                                   |    0 |
+| MME/SGSN/AMF UE MM Context                       | M  | MM Context                             |    0 |
+| Indication Flags                                 | C  | Indication                             |    0 |
+| E-UTRAN Transparent Container                    | C  | F-Container                            |    0 |
+| UTRAN Transparent Container                      | C  | F-Container                            |    1 |
+| BSS Container                                    | C  | F-Container                            |    2 |
+| Target Identification                            | C  | Target Identification                  |    0 |
+| HRPD access node S101 IP address                 | C  | IP-Address                             |    0 |
+| 1xIWS S102 IP address                            | C  | IP-Address                             |    1 |
+| S1-AP Cause                                      | C  | F-Cause                                |    0 |
+| RANAP Cause                                      | C  | F-Cause                                |    1 |
+| BSSGP Cause                                      | C  | F-Cause                                |    2 |
+| Source Identification                            | C  | Source Identification                  |    0 |
+| Selected PLMN ID                                 | C  | PLMN ID                                |    0 |
+| Recovery                                         | C  | Recovery                               |    0 |
+| Trace Information                                | C  | Trace Information                      |    0 |
+| Subscribed RFSP Index                            | CO | RFSP Index                             |    0 |
+| RFSP Index in Use                                | CO | RFSP Index                             |    1 |
+| CSG ID                                           | CO | CSG ID                                 |    0 |
+| CSG Membership Indication                        | CO | CMI                                    |    0 |
+| UE Time Zone                                     | CO | UE Time Zone                           |    0 |
+| Serving Network                                  | CO | Serving Network                        |    0 |
+| MME/S4-SGSN LDN                                  | O  | Local Distinguished Name (LDN)         |    0 |
+| Additional MM context for SRVCC                  | CO | Additional MM context for SRVCC        |    0 |
+| Additional flags for SRVCC                       | CO | Additional flags for SRVCC             |    0 |
+| STN-SR                                           | CO | STN-SR                                 |    0 |
+| C-MSISDN                                         | CO | MSISDN                                 |    0 |
+| MDT Configuration                                | CO | MDT Configuration                      |    0 |
+| SGSN node name                                   | CO | FQDN                                   |    1 |
+| MME node name                                    | CO | FQDN                                   |    2 |
+| User CSG Information (UCI)                       | CO | UCI                                    |    0 |
+| Monitoring Event Information                     | CO | Monitoring Event Information           |    0 |
+| Monitoring Event Extension Information           | CO | Monitoring Event Extension Information |    0 |
+| UE Usage Type                                    | CO | Integer Number                         |    0 |
+| MME/SGSN UE SCEF PDN Connections                 | CO | SCEF PDN Connection                    |    0 |
+| MSISDN                                           | CO | MSISDN                                 |    1 |
+| Source UDP Port Number                           | CO | Port Number                            |    0 |
+| Serving PLMN Rate Control                        | CO | Serving PLMN Rate Control              |    0 |
+| Extended Trace Information                       | C  | Extended Trace Information             |    0 |
+| Subscribed Additional RRM Policy Index           | CO | Additional RRM Policy Index            |    0 |
+| Additional RRM Policy Index in Use               | CO | Additional RRM Policy Index            |    1 |
+| Subscribed V2X Information                       | CO | V2X Context                            |    0 |
+| IWK SCEF ID for Monitoring Event                 | CO | Node Identifier                        |    0 |
+| Alternative IMSI                                 | CO | Alternative IMSI                       |    0 |
+| Private Extension                                | O  | Private Extension                      |   VS |
+
+*** 7.3.2 Forward Relocation Response
+
+| Information element                             | P  | IE Type                        | Ins. |
+|-------------------------------------------------+----+--------------------------------+------|
+| Cause                                           | M  | Cause                          |    0 |
+| Sender's F-TEID for Control Plane               | C  | F-TEID                         |    0 |
+| Indication Flags                                | C  | Indication                     |    0 |
+| List of Set-up Bearers                          | C  | Bearer Context                 |    0 |
+| List of Set-up RABs                             | C  | Bearer Context                 |    1 |
+| List of Set-up PFCs                             | O  | Bearer Context                 |    2 |
+| S1-AP Cause                                     | C  | F-Cause                        |    0 |
+| RANAP Cause                                     | C  | F-Cause                        |    1 |
+| BSSGP Cause                                     | C  | F-Cause                        |    2 |
+| E-UTRAN Transparent Container                   | C  | F-Container                    |    0 |
+| UTRAN Transparent Container                     | C  | F-Container                    |    1 |
+| BSS Container                                   | C  | F-Container                    |    2 |
+| MME/S4-SGSN LDN                                 | O  | Local Distinguished Name (LDN) |    0 |
+| SGSN node name                                  | CO | FQDN                           |    0 |
+| MME node name                                   | CO | FQDN                           |    1 |
+| SGSN Number                                     | CO | Node Number                    |    0 |
+| SGSN Identifier                                 | O  | Node Identifier                |    0 |
+| MME Identifier                                  | O  | Node Identifier                |    1 |
+| MME number for MT SMS                           | CO | Node Number                    |    1 |
+| SGSN Identifier for MT-SMS                      | CO | Node Identifier                |    2 |
+| MME Identifier for MT SMS                       | CO | Node Identifier                |    3 |
+| List of Set-up Bearers for SCEF PDN Connections | CO | Bearer Context                 |    3 |
+| (v)SRVCC rejected Cause                         | CO | SRVCC Cause                    |    0 |
+| MSC Number                                      | O  | Node Number                    |    2 |
+| Private Extension                               | O  | Private Extension              |   VS |
+
+*** 7.3.3 Forward Relocation Complete Notification
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Indication Flags    | C | Indication        | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.3.4 Forward Relocation Complete Acknowledge
+
+| Information element                         | P  | IE Type                         | Ins. |
+|---------------------------------------------+----+---------------------------------+------|
+| Cause                                       | M  | Cause                           |    0 |
+| Recovery                                    | O  | Recovery                        |    0 |
+| Secondary RAT Usage Data Report             | CO | Secondary RAT Usage Data Report |    0 |
+| Secondary RAT Usage Data Report from NG-RAN | CO | Secondary RAT Usage Data Report |    1 |
+| Private Extension                           | O  | Private Extension               |   VS |
+
+*** 7.3.5 Context Request
+
+| Information element                               | P  | IE Type                               | Ins. |
+|---------------------------------------------------+----+---------------------------------------+------|
+| IMSI                                              | C  | IMSI                                  |    0 |
+| GUTI                                              | C  | GUTI                                  |    0 |
+| Routeing Area Identity (RAI)                      | C  | ULI                                   |    0 |
+| Packet TMSI (P-TMSI)                              | C  | P-TMSI                                |    0 |
+| P-TMSI Signature                                  | C  | P-TMSI Signature                      |    0 |
+| Complete TAU request message                      | C  | Complete Request Message              |    0 |
+| S3/S16/S10/N26 Address and TEID for Control Plane | C  | F-TEID                                |    0 |
+| UDP Source Port Number                            | C  | Port Number                           |    0 |
+| RAT Type                                          | C  | RAT Type                              |    0 |
+| Indication                                        | CO | Indication                            |    0 |
+| Hop Counter                                       | O  | Hop Counter                           |    0 |
+| Target PLMN ID                                    | CO | Serving Network                       |    0 |
+| MME/S4-SGSN LDN                                   | O  | Local Distinguished Name (LDN)        |    0 |
+| SGSN node name                                    | CO | FQDN                                  |    0 |
+| MME node name                                     | CO | FQDN                                  |    1 |
+| SGSN Number                                       | O  | Node Number                           |    0 |
+| SGSN Identifier                                   | O  | Node Identifier                       |    0 |
+| MME Identifier                                    | O  | Node Identifier                       |    1 |
+| CIoT Optimizations Support Indication             | CO | CIoT Optimizations Support Indication |    0 |
+| Private Extension                                 | O  | Private Extension                     |   VS |
+
+*** 7.3.6 Context Response
+
+| Information element                              | P  | IE Type                                | Ins. |
+|--------------------------------------------------+----+----------------------------------------+------|
+| Cause                                            | M  | Cause                                  |    0 |
+| IMSI                                             | C  | IMSI                                   |    0 |
+| MME/SGSN/AMF UE MM Context                       | C  | MM Context                             |    0 |
+| MME/SGSN/AMF UE EPS PDN Connections              | C  | PDN Connection                         |    0 |
+| Sender F-TEID for Control Plane                  | C  | F-TEID                                 |    0 |
+| SGW S11/S4 IP Address and TEID for Control Plane | C  | F-TEID                                 |    1 |
+| SGW node name                                    | C  | FQDN                                   |    0 |
+| Indication Flags                                 | C  | Indication                             |    0 |
+| Trace Information                                | C  | Trace Information                      |    0 |
+| HRPD access node S101 IP address                 | C  | IP-Address                             |    0 |
+| 1xIWS S102 IP address                            | C  | IP-Address                             |    1 |
+| Subscribed RFSP Index                            | CO | RFSP Index                             |    0 |
+| RFSP Index in Use                                | CO | RFSP Index                             |    1 |
+| UE Time Zone                                     | CO | UE Time Zone                           |    0 |
+| MME/S4-SGSN LDN                                  | O  | Local Distinguished Name (LDN)         |    0 |
+| MDT Configuration                                | CO | MDT Configuration                      |    0 |
+| SGSN node name                                   | CO | FQDN                                   |    1 |
+| MME node name                                    | CO | FQDN                                   |    2 |
+| User CSG Information (UCI)                       | CO | UCI                                    |    0 |
+| Monitoring Event Information                     | CO | Monitoring Event Information           |    0 |
+| Monitoring Event Extension Information           | CO | Monitoring Event Extension Information |    0 |
+| UE Usage Type                                    | CO | Integer Number                         |    0 |
+| MME/SGSN UE SCEF PDN Connections                 | C  | SCEF PDN Connection                    |    0 |
+| RAT Type                                         | CO | RAT Type                               |    0 |
+| Serving PLMN Rate Control                        | CO | Serving PLMN Rate Control              |    0 |
+| MO Exception Data Counter                        | CO | Counter                                |    0 |
+| Remaining Running Service Gap Timer              | CO | Integer Number                         |    1 |
+| Extended Trace Information                       | C  | Extended Trace Information             |    0 |
+| Subscribed Additional RRM Policy Index           | CO | Additional RRM Policy Index            |    0 |
+| Additional RRM Policy Index in Use               | CO | Additional RRM Policy Index            |    1 |
+| IWK SCEF ID for Monitoring Event                 | CO | Node Identifier                        |    0 |
+| Alternative IMSI                                 | CO | Alternative IMSI                       |    0 |
+| Private Extension                                | O  | Private Extension                      |   VS |
+
+*** 7.3.7 Context Acknowledge
+
+| Information element        | P  | IE Type           | Ins. |
+|----------------------------+----+-------------------+------|
+| Cause                      | M  | Cause             |    0 |
+| Indication flags           | C  | Indication        |    0 |
+| Forwarding F-TEID          | CO | F-TEID            |    0 |
+| Bearer Contexts            | CO | Bearer Context    |    0 |
+| SGSN Number                | CO | Node Number       |    0 |
+| MME number for MT SMS      | CO | Node Number       |    1 |
+| SGSN Identifier for MT SMS | CO | Node Identifier   |    0 |
+| MME Identifier for MT SMS  | CO | Node Identifier   |    1 |
+| Private Extension          | O  | Private Extension |   VS |
+
+*** 7.3.8 Identification Request
+
+| Information element             | P  | IE Type                  | Ins. |
+|---------------------------------+----+--------------------------+------|
+| GUTI                            | C  | GUTI                     |    0 |
+| Routeing Area Identity(RAI)     | C  | ULI                      |    0 |
+| Packet TMSI(P-TMSI)             | C  | P-TMSI                   |    0 |
+| P-TMSI Signature                | C  | P-TMSI Signature         |    0 |
+| Complete Attach Request Message | C  | Complete Request Message |    0 |
+| Address for Control Plane       | O  | IP Address               |    0 |
+| UDP Source Port Number          | C  | Port Number              |    0 |
+| Hop Counter                     | O  | Hop Counter              |    0 |
+| Target PLMN ID                  | CO | Serving Network          |    0 |
+| Private Extension               | O  | Private Extension        |   VS |
+
+*** 7.3.9 Identification Response
+
+| Information element                    | P  | IE Type                                | Ins. |
+|----------------------------------------+----+----------------------------------------+------|
+| Cause                                  | M  | Cause                                  |    0 |
+| IMSI                                   | C  | IMSI                                   |    0 |
+| MME/SGSN UE MM Context                 | C  | MM Context                             |    0 |
+| Trace Information                      | CO | Trace Information                      |    0 |
+| UE Usage Type                          | CO | Integer Number                         |    0 |
+| Monitoring Event Information           | CO | Monitoring Event Information           |    0 |
+| Monitoring Event Extension Information | CO | Monitoring Event Extension Information |    0 |
+| Extended Trace Information             | C  | Extended Trace Information             |    0 |
+| Private Extension                      | O  | Private Extension                      |   VS |
+
+*** 7.3.10 Forward Access Context Notification
+
+| Information element           | P | IE Type                      | Ins. |
+|-------------------------------+---+------------------------------+------|
+| RAB Contexts                  | C | RAB Context                  |    0 |
+| Source RNC PDCP context Info  | C | Source RNC PDCP context Info |    0 |
+| PDU Numbers                   | C | PDU Numbers                  |    0 |
+| E-UTRAN Transparent Container | C | F-Container                  |    0 |
+| E-UTRAN Transparent Container | C | F-Container                  |    1 |
+| Private Extension             | O | Private Extension            |   VS |
+
+*** 7.3.11 Forward Access Context Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.3.12 Detach Notification
+
+| Information element | P  | IE Type           | Ins. |
+|---------------------+----+-------------------+------|
+| Cause               | M  | Cause             |    0 |
+| Detach Type         | CO | Detach Type       |    0 |
+| Private Extension   | O  | Private Extension |   VS |
+
+*** 7.3.13 Detach Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             |    0 |
+| Recovery            | O | Recovery          |    0 |
+| Private Extension   | O | Private Extension |   VS |
+
+*** 7.3.14 Change Notification Request
+
+| Information element                 | P  | IE Type                             | Ins. |
+|-------------------------------------+----+-------------------------------------+------|
+| IMSI                                | C  | IMSI                                |    0 |
+| ME Identity (MEI)                   | C  | MEI                                 |    0 |
+| Indication Flags                    | CO | Indication                          |    0 |
+| RAT Type                            | M  | RAT Type                            |    0 |
+| User Location Information (ULI)     | C  | ULI                                 |    0 |
+| User CSG Information (UCI)          | CO | UCI                                 |    0 |
+| PGW S5/S8 GTP-C IP Address          | C  | IP Address                          |    0 |
+| LBI                                 | CO | EBI                                 |    0 |
+| Presence Reporting Area Information | CO | Presence Reporting Area Information |    0 |
+| MO Exception Data Counter           | CO | Counter                             |    0 |
+| Secondary RAT Usage Data Report     | CO | Secondary RAT Usage Data Report     |    0 |
+| PSCell ID                           | CO | PSCell ID                           |    0 |
+| Private Extension                   | O  | Private Extension                   |   VS |
+
+*** 7.3.15 Change Notification Response
+
+| Information element              | P  | IE Type                          | Ins. |
+|----------------------------------+----+----------------------------------+------|
+| IMSI                             | C  | IMSI                             |    0 |
+| ME Identity (MEI)                | C  | MEI                              |    0 |
+| Cause                            | M  | Cause                            |    0 |
+| Change Reporting Action          | C  | Change Reporting Action          |    0 |
+| CSG Information Reporting Action | CO | CSG Information Reporting Action |    0 |
+| Presence Reporting Area Action   | CO | Presence Reporting Area Action   |    0 |
+| Private Extension                | O  | Private Extension                |   VS |
+
+*** 7.3.16 Relocation Cancel Request
+
+| Information element | P  | IE Type           | Ins. |
+|---------------------+----+-------------------+------|
+| IMSI                | C  | IMSI              |    0 |
+| ME Identity (MEI)   | C  | MEI               |    0 |
+| Indication Flags    | CO | Indication        |    0 |
+| RANAP Cause         | C  | F-Cause           |    0 |
+| Private Extension   | O  | Private Extension |   VS |
+
+*** 7.3.17 Relocation Cancel Response
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.3.18 Configuration Transfer Tunnel
+
+| Information element                                                          | P  | IE Type               | Ins. |
+|------------------------------------------------------------------------------+----+-----------------------+------|
+| E-UTRAN Transparent Container / EN-DC Container / Inter-system SON Container | M  | F-Container           |    0 |
+| Target eNodeB ID / en-gNB ID / gnB ID                                        | M  | Target Identification |    0 |
+| Connected Target eNodeB ID                                                   | CO | Target Identification |    1 |
+
+*** 7.3.19 RAN Information Relay
+
+| Information element | P | IE Type               | Ins. |
+|---------------------+---+-----------------------+------|
+| BSS Container       | M | F-Container           |    0 |
+| RIM Routing Address | C | Target Identification |    0 |
+| Private Extension   | O | Private Extension     |   VS |
+
+*** 7.3.20 ISR Status Indication
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Action Indication   | M | Action Indication | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.3.21 UE Registration Query Request
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| IMSI                | M | IMSI              | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.3.22 UE Registration Query Response
+
+| Information element                       | P | IE Type           | Ins. |
+|-------------------------------------------+---+-------------------+------|
+| Cause                                     | M | Cause             |    0 |
+| IMSI                                      | M | IMSI              |    0 |
+| Selected Core Network Operator Identifier | M | PLMN ID           |    0 |
+| Private Extension                         | O | Private Extension |   VS |
+
+** 7.4 CS Fallback and SRVCC related messages
+
+*** 7.4.1 Suspend Notification
+
+| Information element             | P  | IE Type           | Ins. |
+|---------------------------------+----+-------------------+------|
+| IMSI                            | C  | IMSI              |    0 |
+| Routeing Area Identity(RAI)     | C  | ULI               |    0 |
+| Linked EPS Bearer ID (LBI)      | CO | EBI               |    0 |
+| Packet TMSI(P-TMSI)             | C  | P-TMSI            |    0 |
+| Originating Node                | CO | Node Type         |    0 |
+| Address for Control Plane       | CO | IP Address        |    0 |
+| UDP Source Port Number          | CO | Port Number       |    0 |
+| Hop Counter                     | O  | Hop Counter       |    0 |
+| Sender F-TEID for Control Plane | CO | F-TEID            |    0 |
+| Private Extension               | O  | Private Extension |   VS |
+
+*** 7.4.2 Suspend Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.4.3 Resume Notification
+
+| Information element             | P  | IE Type           | Ins. |
+|---------------------------------+----+-------------------+------|
+| IMSI                            | M  | IMSI              |    0 |
+| Linked EPS Bearer ID (LBI)      | CO | EBI               |    0 |
+| Originating Node                | CO | Node Type         |    0 |
+| Sender F-TEID for Control Plane | CO | F-TEID            |    0 |
+| Private Extension               | O  | Private Extension |   VS |
+
+*** 7.4.4 Resume Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.4.5 CS Paging Indication
+
+| Information element      | P  | IE Type           | Ins. |
+|--------------------------+----+-------------------+------|
+| IMSI                     | M  | IMSI              |    0 |
+| VLR Name                 | M  | FQDN              |    0 |
+| TMSI                     | O  | TMSI              |    0 |
+| Location area identifier | O  | ULI               |    0 |
+| Global CN-Id             | O  | Global CN-Id      |    0 |
+| Channel needed           | O  | Channel needed    |    0 |
+| eMLPP Priority           | O  | eMLPP Priority    |    0 |
+| Service Indicator        | CO | Service Indicator |    0 |
+| Private Extension        | O  | Private Extension |   VS |
+
+*** 7.4.6 Alert MME Notification
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.4.7 Alert MME Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.4.8 UE Activity Notification
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.4.9 UE Activity Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+** 7.5 Non-3GPP access related messages
+
+*** 7.5.1 Create Forwarding Tunnel Request
+
+| Information element           | P | IE Type           | Ins. |
+|-------------------------------+---+-------------------+------|
+| S103 PDN Data Forwarding Info | M | S103PDF           | 0    |
+| Private Extension             | O | Private Extension | VS   |
+
+*** 7.5.2 Create Forwarding Tunnel Response
+
+| Information element       | P | IE Type           | Ins. |
+|---------------------------+---+-------------------+------|
+| Cause                     | M | Cause             |    0 |
+| S1-U Data Forwarding Info | C | S1UDF             |    0 |
+| Private Extension         | O | Private Extension |   VS |
+
+** 7.9 Restoration and Recovery
+
+*** 7.9.1 Delete PDN Connection Set Request
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| MME-FQ-CSID         | C | FQ-CSID           |    0 |
+| SGW-FQ-CSID         | C | FQ-CSID           |    1 |
+| PGW-FQ-CSID         | C | FQ-CSID           |    2 |
+| ePDG-FQ-CSID        | C | FQ-CSID           |    3 |
+| TWAN-FQ-CSID        | C | FQ-CSID           |    4 |
+| Private Extension   | O | Private Extension |   VS |
+
+*** 7.9.2 Delete PDN Connection Set Response
+
+| Information element | P  | IE Type           | Ins. |
+|---------------------+----+-------------------+------|
+| Cause               | M  | Cause             |    0 |
+| Recovery            | CO | Recovery          |    0 |
+| Private Extension   | O  | Private Extension |   VS |
+
+*** 7.9.3 Update PDN Connection Set Request
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| MME-FQ-CSID         | C | FQ-CSID           |    0 |
+| SGW-FQ-CSID         | C | FQ-CSID           |    1 |
+| Private Extension   | O | Private Extension |   VS |
+
+*** 7.9.4 Update PDN Connection Set Response
+
+| Information element | P  | IE Type           | Ins. |
+|---------------------+----+-------------------+------|
+| Cause               | M  | Cause             |    0 |
+| PGW-FQ-CSID         | C  | FQ-CSID           |    0 |
+| Recovery            | CO | Recovery          |    0 |
+| Private Extension   | O  | Private Extension |   VS |
+
+*** 7.9.5 PGW Restart Notification
+
+| Information element                            | P  | IE Type           | Ins. |
+|------------------------------------------------+----+-------------------+------|
+| PGW S5/S8 IP Address for Control Plane or PMIP | M  | IP Address        |    0 |
+| SGW S11/S4 IP Address for Control Plane        | M  | IP Address        |    1 |
+| Cause                                          | CO | Cause             |    0 |
+| Private Extension                              | O  | Private Extension |   VS |
+
+*** 7.9.6 PGW Restart Notification Acknowledge
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| Cause               | M | Cause             | 0    |
+| Private Extension   | O | Private Extension | VS   |
+
+*** 7.9.7 PGW Downlink Triggering Notification
+
+| Information element                         | P  | IE Type           | Ins. |
+|---------------------------------------------+----+-------------------+------|
+| IMSI                                        | M  | IMSI              |    0 |
+| MME/S4-SGSN identifier                      | C  | IP Address        |    0 |
+| PGW S5 F-TEID for GTP or PMIP Control Plane | CO | F-TEID            |    0 |
+| Private Extension                           | O  | Private Extension |   VS |
+
+*** 7.9.8 PGW Downlink Triggering Acknowledge
+
+| Information element    | P | IE Type           | Ins. |
+|------------------------+---+-------------------+------|
+| Cause                  | M | Cause             |    0 |
+| IMSI                   | C | IMSI              |    0 |
+| MME/S4-SGSN identifier | C | IP Address        |    0 |
+| Private Extension      | O | Private Extension |   VS |
+
+** 7.12 Trace Management Messages
+
+*** 7.12.1 Trace Session Activation
+
+| Information element | P | IE Type           | Ins. |
+|---------------------+---+-------------------+------|
+| IMSI                | C | IMSI              |    0 |
+| Trace Information   | M | Trace Information |    0 |
+| ME Identity (MEI)   | C | MEI               |    0 |
+
+*** 7.12.2 Trace Session Deactivation
+
+| Information element | P | IE Type         | Ins. |
+|---------------------+---+-----------------+------|
+| Trace Reference     | M | Trace Reference |    0 |
+
+** 7.13 MBMS Messages
+
+*** 7.13.1 MBMS Session Start Request
+
+| Information element                        | P  | IE Type                             | Ins. |
+|--------------------------------------------+----+-------------------------------------+------|
+| Sender F-TEID for Control Plane            | M  | F-TEID                              |    0 |
+| Temporary Mobile Group Identity (TMGI)     | M  | TMGI                                |    0 |
+| MBMS Session Duration                      | M  | MBMS Session Duration               |    0 |
+| MBMS Service Area                          | M  | MBMS Service Area                   |    0 |
+| MBMS Session Identifier                    | C  | MBMS Session Identifier             |    0 |
+| MBMS Flow Identifier                       | C  | MBMS Flow Identifier                |    0 |
+| QoS profile                                | M  | Bearer QoS                          |    0 |
+| MBMS IP Multicast Distribution             | M  | MBMS IP Multicast Distribution      |    0 |
+| Recovery                                   | C  | Recovery                            |    0 |
+| MBMS Time to Data Transfer                 | CO | MBMS Time to Data Transfer          |    0 |
+| MBMS Data Transfer Start                   | CO | Absolute Time of MBMS Data Transfer |    0 |
+| MBMS Flags                                 | CO | MBMS Flags                          |    0 |
+| MBMS Alternative IP Multicast Distribution | CO | MBMS IP Multicast Distribution      |    1 |
+| MBMS Cell List                             | CO | ECGI-List                           |    0 |
+| Private Extension                          | O  | Private Extension                   |   VS |
+
+*** 7.13.2 MBMS Session Start Response
+
+| Information element             | P | IE Type                       | Ins. |
+|---------------------------------+---+-------------------------------+------|
+| Cause                           | M | Cause                         |    0 |
+| Sender F-TEID for Control Plane | M | F-TEID                        |    0 |
+| MBMS Distribution Acknowledge   | C | MBMS Distribution Acknowledge |    0 |
+| Sn-U SGSN F-TEID                | C | F-TEID                        |    1 |
+| Recovery                        | C | Recovery                      |    0 |
+| Private Extension               | O | Private Extension             |   VS |
+
+*** 7.13.3 MBMS Session Update Request
+
+| Information element                      | P  | IE Type                             | Ins. |
+|------------------------------------------+----+-------------------------------------+------|
+| MBMS Service Area                        | C  | MBMS Service Area                   |    0 |
+| Temporary Mobile Group Identity (TMGI)   | M  | TMGI                                |    0 |
+| Sender F-TEID for Control Plane          | O  | F-TEID                              |    0 |
+| MBMS Session Duration                    | M  | MBMS Session Duration               |    0 |
+| QoS profile                              | M  | Bearer QoS                          |    0 |
+| MBMS Session Identifier                  | C  | MBMS Session Identifier             |    0 |
+| MBMS Flow Identifier                     | C  | MBMS Flow Identifier                |    0 |
+| MBMS Time to Data Transfer               | CO | MBMS Time to Data Transfer          |    0 |
+| MBMS Data Transfer Start / Update / Stop | CO | Absolute Time of MBMS Data Transfer |    0 |
+| MBMS Cell List                           | CO | ECGI List                           |    0 |
+| Private Extension                        | O  | Private Extension                   |   VS |
+
+*** 7.13.4 MBMS Session Update Response
+
+| Information element           | P | IE Type                       | Ins. |
+|-------------------------------+---+-------------------------------+------|
+| Cause                         | M | Cause                         |    0 |
+| MBMS Distribution Acknowledge | C | MBMS Distribution Acknowledge |    0 |
+| Sn-U SGSN F-TEID              | C | F-TEID                        |    0 |
+| Recovery                      | C | Recovery                      |    0 |
+| Private Extension             | O | Private Extension             |   VS |
+
+*** 7.13.5 MBMS Session Stop Request
+
+| Information element     | P  | IE Type                             | Ins. |
+|-------------------------+----+-------------------------------------+------|
+| MBMS Flow Identifier    | C  | MBMS Flow Identifier                |    0 |
+| MBMS Data Transfer Stop | CO | Absolute Time of MBMS Data Transfer |    0 |
+| MBMS Flags              | CO | MBMS Flags                          |    0 |
+| Private Extension       | O  | Private Extension                   |   VS |
+
+*** 7.13.6 MBMS Session Stop Response
+
+| Information element | P  | IE Type           | Ins. |
+|---------------------+----+-------------------+------|
+| Cause               | M  | Cause             |    0 |
+| Recovery            | CO | Recovery          |    0 |
+| Private Extension   | O  | Private Extension |   VS |
+

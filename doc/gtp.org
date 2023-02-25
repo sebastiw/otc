@@ -339,7 +339,6 @@ NOTE: The value of this field is 0 if no other Extension header follows.
 |           133 | TLV    | GTP-U Peer Address                                                        |       8.4 | Fixed       |             4-16 |
 |            aa | TLV    | Recovery Time Stamp                                                       |       8.7 | Variable    |              8-n |
 
-
 ** 7.2 Path Management Messages
 
 *** 7.2.1 Echo Request
