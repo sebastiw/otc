@@ -40,7 +40,7 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
     %% |     unused    |                      FSN                      |
     %% +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     <<_:8, BSN:24/big, _:8, FSN:24/big, Rest/binary>> = Bin,
-    Base = #{message_class => m2pa,
+    Base = #{protocol => m2pa,
              message_type => MT,
              backward_sequence_number => BSN,
              forward_sequence_number => FSN
@@ -52,7 +52,7 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
             maps:merge(Msg, Base)
     end.
 
-encode(#{message_class := m2pa, message_type := MessageType} = Msg) ->
+encode(#{protocol := m2pa, message_type := MessageType} = Msg) ->
     MT = compose_message_type(MessageType),
     Bin = encode_msg(MessageType, Msg),
     BSN = maps:get(backward_sequence_number, Msg, 0),
