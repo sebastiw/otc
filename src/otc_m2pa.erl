@@ -16,7 +16,9 @@ spec() ->
 codec(Bin) when is_binary(Bin) ->
     decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
+    encode(Map);
+codec(Tuple) when is_tuple(Tuple) ->
+    encode(Tuple).
 
 next(#{message_type := user_data}) -> {ok, mtp3};
 next(_) -> '$stop'.
@@ -52,13 +54,15 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
             maps:merge(Msg, Base)
     end.
 
-encode(#{protocol := m2pa, message_type := MessageType} = Msg) ->
+encode({#{protocol := m2pa, message_type := MessageType} = Msg, Payload}) ->
     MT = compose_message_type(MessageType),
-    Bin = encode_msg(MessageType, Msg),
+    Bin = encode_msg(MessageType, Msg, Payload),
     BSN = maps:get(backward_sequence_number, Msg, 0),
     FSN = maps:get(forward_sequence_number, Msg, 0),
-    Len = byte_size(Bin) + 8 + 8,
-    <<1:8, 0:8, ?M2PA_MSG_CLASS_MSGS:8, MT:8, Len:32/big, 0:8, BSN:24/big, 0:8, FSN:24/big, Bin/binary>>.
+    Len = byte_size(Bin) + 8 + 8 + 1,
+    <<1:8, 0:8, ?M2PA_MSG_CLASS_MSGS:8, MT:8, Len:32/big, 0:8, BSN:24/big, 0:8, FSN:24/big, 0:8, Bin/binary>>;
+encode(Msg) ->
+    encode({Msg, <<>>}).
 
 parse_message_type(?M2PA_MSG_TYPE_USER_DATA) -> user_data;
 parse_message_type(?M2PA_MSG_TYPE_LINK_STATUS) -> link_status.
@@ -84,14 +88,14 @@ decode_msg(link_status, <<State:32/big, Filler/binary>>) ->
     #{link_status => proving_normal,
       link_status_filler => Filler}.
 
-encode_msg(user_data, Msg) ->
+encode_msg(user_data, Msg, Payload) ->
     case Msg of
         #{priority := PRI} ->
-            <<PRI:2, 0:6>>;
+            <<PRI:2, 0:6, Payload/binary>>;
         _ ->
-            <<>>
+            Payload
     end;
-encode_msg(link_status, Msg) ->
+encode_msg(link_status, Msg, _) ->
     LinkStatus = maps:get(link_status, Msg),
     LS = compose_link_status(LinkStatus),
     case LinkStatus of
