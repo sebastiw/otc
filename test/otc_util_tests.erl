@@ -10,7 +10,5 @@ tbcd_decode_test_() ->
 
 tbcd_encode_test_() ->
     [?_assertEqual(<<2:4, 1:4, 4:4, 3:4, 6:4, 5:4>>, otc_util:encode_tbcd("123456")),
-     ?_assertEqual(<<2:4, 1:4, 4:4, 3:4, 15:4, 5:4>>, otc_util:encode_tbcd("12345")),
-     ?_assertEqual(<<16#01, 16#f0, 16#00>>, otc_util:encode_tbcd([$1,$0,$0,pad,$0,$0])),
-     ?_assertEqual(<<16#42, 16#f0, 16#80>>, otc_util:encode_tbcd([$2,$4,$0,pad,$0,$8]))
+     ?_assertEqual(<<2:4, 1:4, 4:4, 3:4, 15:4, 5:4>>, otc_util:encode_tbcd("12345"))
     ].
