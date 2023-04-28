@@ -47,7 +47,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 |         52-70 | Reserved for Sv interface                                      |            | See 3GPP TS 29.280 [15] | See 3GPP TS 29.280 [15] |
 |            71 | APN                                                            |        8.6 | Variable                | 1-n                     |
 |            72 | AMBR                                                           |        8.7 | Fixed                   | 8                       |
-|            73 | EBI                                                            |        8.8 | Extendable              | 1                       |
+|            73 | EPS Bearer ID                                                  |        8.8 | Extendable              | 1                       |
 |            74 | IP Address                                                     |        8.9 | Variable                | 4-n                     |
 |            75 | MEI                                                            |       8.10 | Variable                | 1-n                     |
 |            76 | MSISDN                                                         |       8.11 | Variable                | 1-n                     |
@@ -77,12 +77,13 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 |           100 | Procedure Transaction ID                                       |       8.35 | Extendable              | 1                       |
 |           101 | Reserved                                                       |            |                         |                         |
 |           102 | Reserved                                                       |            |                         |                         |
-|           103 | MM Context (GSM Key and Triplets)                              |       8.38 | Extendable              | 16-n                    |
-|           104 | MM Context (UMTS Key, Cipher and Quintuplets)                  |       8.38 | Extendable              | 40-n                    |
-|           105 | MM Context (GSM Key, Cipher and Quintuplets)                   |       8.38 | Extendable              | 16-n                    |
-|           106 | MM Context (UMTS Key and Quintuplets)                          |       8.38 | Extendable              | 40-n                    |
-|           107 | MM Context (EPS Security Context, Quadruplets and Quintuplets) |       8.38 | Extendable              | 46-n                    |
-|           108 | MM Context (UMTS Key, Quadruplets and Quintuplets)             |       8.38 | Extendable              | 40-n                    |
+|       103-108 | MM Context                                                     |       8.38 | Extendable              | 16-n                    |
+|           103 | MM Context (GSM Key and Triplets)                              |     8.38-1 | Extendable              | 16-n                    |
+|           104 | MM Context (UMTS Key, Cipher and Quintuplets)                  |     8.38-2 | Extendable              | 40-n                    |
+|           105 | MM Context (GSM Key, Cipher and Quintuplets)                   |     8.38-3 | Extendable              | 16-n                    |
+|           106 | MM Context (UMTS Key and Quintuplets)                          |     8.38-4 | Extendable              | 40-n                    |
+|           107 | MM Context (EPS Security Context, Quadruplets and Quintuplets) |     8.38-5 | Extendable              | 46-n                    |
+|           108 | MM Context (UMTS Key, Quadruplets and Quintuplets)             |     8.38-6 | Extendable              | 40-n                    |
 |           109 | PDN Connection                                                 |       8.39 | Extendable              | 1-n                     |
 |           110 | PDU Numbers                                                    |       8.40 | Extendable              | 9                       |
 |           111 | P-TMSI                                                         |       8.41 | Variable                | 1-n                     |
@@ -433,127 +434,126 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.2.1 Create Session Request
 
-| Information element                              | Presence requirement | IE Type | Ins. |
-|--------------------------------------------------+----------------------+---------+------|
-| IMSI                                             | Conditional          |     8.3 |    0 |
-| MSISDN                                           | Conditional          |    8.11 |    0 |
-| ME Identity (MEI)                                | Conditional          |    8.10 |    0 |
-| User Location Information (ULI)                  | Conditional          |    8.21 |    0 |
-| Serving Network                                  | Conditional          |    8.18 |    0 |
-| RAT Type                                         | Mandatory            |    8.17 |    0 |
-| Indication Flags                                 | Conditional          |    8.12 |    0 |
-| Sender F-TEID for Control Plane                  | Mandatory            |    8.22 |    0 |
-| PGW S5/S8 Address for Control Plane or PMIP      | Conditional          |    8.22 |    1 |
-| Access Point Name (APN)                          | Mandatory            |     8.6 |    0 |
-| Selection Mode                                   | Conditional          |    8.58 |    0 |
-| PDN Type                                         | Conditional          |    8.34 |    0 |
-| PDN Address Allocation (PAA)                     | Conditional          |    8.14 |    0 |
-| Maximum APN Restriction                          | Conditional          |    8.57 |    0 |
-| Aggregate Maximum Bit Rate (APN-AMBR)            | Conditional          |     8.7 |    0 |
-| Linked EPS Bearer ID                             | Conditional          |     8.8 |    0 |
-| Trusted WLAN Mode Indication                     | Conditional          |   8.105 |    0 |
-| Protocol Configuration Options (PCO)             | Conditional          |    8.13 |    0 |
-| Bearer Contexts to be created                    | Mandatory            |    8.28 |    0 |
-| Bearer Contexts to be removed                    | Conditional          |    8.28 |    1 |
-| Trace Information                                | Conditional          |    8.31 |    0 |
-| Recovery                                         | Conditional          |     8.5 |    0 |
-| MME-FQ-CSID                                      | Conditional          |    8.62 |    0 |
-| SGW-FQ-CSID                                      | Conditional          |    8.62 |    1 |
-| ePDG-FQ-CSID                                     | Conditional          |    8.62 |    2 |
-| TWAN-FQ-CSID                                     | Conditional          |    8.62 |    3 |
-| UE Time Zone                                     | Conditional          |    8.44 |    0 |
-| User CSG Information (UCI)                       | Conditional          |    8.75 |    0 |
-| Charging Characteristics                         | Conditional          |    8.30 |    0 |
-| MME/S4-SGSN LDN                                  | Optional             |    8.82 |    0 |
-| SGW LDN                                          | Optional             |    8.82 |    1 |
-| ePDG LDN                                         | Optional             |    8.82 |    2 |
-| TWAN LDN                                         | Optional             |    8.82 |    3 |
-| Signalling Priority Indication                   | Conditional          |    8.88 |    0 |
-| UE Local IP Address                              | Conditional          |     8.9 |    0 |
-| UE UDP Port                                      | Conditional          |    8.56 |    0 |
-| Additional Protocol Configuration Options (APCO) | Conditional          |    8.94 |    0 |
-| H(e)NB Local IP Address                          | Conditional          |     8.9 |    1 |
-| H(e)NB UDP Port                                  | Conditional          |    8.56 |    1 |
-| MME/S4-SGSN Identifier                           | Conditional          |     8.9 |    2 |
-| TWAN Identifier                                  | Conditional          |   8.100 |    0 |
-| ePDG IP Address                                  | Optional             |     8.9 |    3 |
-| CN Operator Selection Entity                     | Conditional          |   8.104 |    0 |
-| Presence Reporting Area Information              | Conditional          |   8.109 |    0 |
-| MME/S4-SGSN's Overload Control Information       | Conditional          |   8.111 |    0 |
-| SGW's Overload Control Information               | Optional             |   8.111 |    1 |
-| TWAN/ePDG's Overload Control Information         | Optional             |   8.111 |    2 |
-| Origination Time Stamp                           | Conditional          |   8.119 |    0 |
-| Maximum Wait Time                                | Conditional          |   8.118 |    0 |
-| WLAN Location Information                        | Conditional          |   8.100 |    1 |
-| WLAN Location Timestamp                          | Conditional          |   8.110 |    0 |
-| NBIFOM Container                                 | Conditional          |    8.48 |    0 |
-| Remote UE Context Connected                      | Conditional          |   8.122 |    0 |
-| 3GPP AAA Server Identifier                       | Optional             |   8.107 |    0 |
-| Extended Protocol Configuration Options (ePCO)   | Conditional          |   8.128 |    0 |
-| Serving PLMN Rate Control                        | Conditional          |   8.129 |    0 |
-| MO Exception Data Counter                        | Conditional          |   8.130 |    0 |
-| UE TCP Port                                      | Conditional          |    8.56 |    2 |
-| Mapped UE Usage Type                             | Conditional          |   8.131 |    0 |
-| User Location Information for SGW                | Conditional          |    8.21 |    1 |
-| SGW-U node name                                  | Conditional          |    8.66 |    0 |
-| Secondary RAT Usage Data Report                  | Conditional          |   8.132 |    0 |
-| UP Function Selection Indication Flags           | Conditional          |   8.133 |    0 |
-| APN RATE Control Status                          | Conditional          |   8.135 |    0 |
-| APN RATE Control Status                          | Conditional          |   8.135 |    0 |
-| Private Extension                                | Optional             |    8.67 |   VS |
+| Information element                        | Presence requirement | IE Type | Ins. |
+|--------------------------------------------+----------------------+---------+------|
+| IMSI                                       | Conditional          |     8.3 |    0 |
+| MSISDN                                     | Conditional          |    8.11 |    0 |
+| MEI                                        | Conditional          |    8.10 |    0 |
+| ULI                                        | Conditional          |    8.21 |    0 |
+| Serving Network                            | Conditional          |    8.18 |    0 |
+| RAT Type                                   | Mandatory            |    8.17 |    0 |
+| Indication Flags                           | Conditional          |    8.12 |    0 |
+| Sender F-TEID                              | Mandatory            |    8.22 |    0 |
+| PGW S5/S8 Address                          | Conditional          |    8.22 |    1 |
+| APN                                        | Mandatory            |     8.6 |    0 |
+| Selection Mode                             | Conditional          |    8.58 |    0 |
+| PDN Type                                   | Conditional          |    8.34 |    0 |
+| PDN Address Allocation                     | Conditional          |    8.14 |    0 |
+| Maximum APN Restriction                    | Conditional          |    8.57 |    0 |
+| APN-AMBR                                   | Conditional          |     8.7 |    0 |
+| Linked EPS Bearer ID                       | Conditional          |     8.8 |    0 |
+| Trusted WLAN Mode Indication               | Conditional          |   8.105 |    0 |
+| Protocol Config Opts                       | Conditional          |    8.13 |    0 |
+| Bearer Contexts to be created              | Mandatory            |    8.28 |    0 |
+| Bearer Contexts to be removed              | Conditional          |    8.28 |    1 |
+| Trace Information                          | Conditional          |    8.31 |    0 |
+| Recovery                                   | Conditional          |     8.5 |    0 |
+| MME-FQ-CSID                                | Conditional          |    8.62 |    0 |
+| SGW-FQ-CSID                                | Conditional          |    8.62 |    1 |
+| ePDG-FQ-CSID                               | Conditional          |    8.62 |    2 |
+| TWAN-FQ-CSID                               | Conditional          |    8.62 |    3 |
+| UE Time Zone                               | Conditional          |    8.44 |    0 |
+| User CSG Information                       | Conditional          |    8.75 |    0 |
+| Charging Characteristics                   | Conditional          |    8.30 |    0 |
+| MME/S4-SGSN LDN                            | Optional             |    8.82 |    0 |
+| SGW LDN                                    | Optional             |    8.82 |    1 |
+| ePDG LDN                                   | Optional             |    8.82 |    2 |
+| TWAN LDN                                   | Optional             |    8.82 |    3 |
+| Signalling Priority Indication             | Conditional          |    8.88 |    0 |
+| UE Local IP Address                        | Conditional          |     8.9 |    0 |
+| UE UDP Port                                | Conditional          |    8.56 |    0 |
+| Additional Protocol Config Opts            | Conditional          |    8.94 |    0 |
+| H(e)NB Local IP Address                    | Conditional          |     8.9 |    1 |
+| H(e)NB UDP Port                            | Conditional          |    8.56 |    1 |
+| MME/S4-SGSN Identifier                     | Conditional          |     8.9 |    2 |
+| TWAN Identifier                            | Conditional          |   8.100 |    0 |
+| ePDG IP Address                            | Optional             |     8.9 |    3 |
+| CN Operator Selection Entity               | Conditional          |   8.104 |    0 |
+| Presence Reporting Area Information        | Conditional          |   8.109 |    0 |
+| MME/S4-SGSN's Overload Control Information | Conditional          |   8.111 |    0 |
+| SGW's Overload Control Information         | Optional             |   8.111 |    1 |
+| TWAN/ePDG's Overload Control Information   | Optional             |   8.111 |    2 |
+| Origination Time Stamp                     | Conditional          |   8.119 |    0 |
+| Maximum Wait Time                          | Conditional          |   8.118 |    0 |
+| WLAN Location Information                  | Conditional          |   8.100 |    1 |
+| WLAN Location Timestamp                    | Conditional          |   8.110 |    0 |
+| NBIFOM Container                           | Conditional          |    8.48 |    0 |
+| Remote UE Context Connected                | Conditional          |   8.122 |    0 |
+| 3GPP AAA Server Identifier                 | Optional             |   8.107 |    0 |
+| Extended Protocol Config Opts              | Conditional          |   8.128 |    0 |
+| Serving PLMN Rate Control                  | Conditional          |   8.129 |    0 |
+| MO Exception Data Counter                  | Conditional          |   8.130 |    0 |
+| UE TCP Port                                | Conditional          |    8.56 |    2 |
+| Mapped UE Usage Type                       | Conditional          |   8.131 |    0 |
+| ULI for SGW                                | Conditional          |    8.21 |    1 |
+| SGW-U node name                            | Conditional          |    8.66 |    0 |
+| Secondary RAT Usage Data Report            | Conditional          |   8.132 |    0 |
+| UP Function Selection Indication Flags     | Conditional          |   8.133 |    0 |
+| APN RATE Control Status                    | Conditional          |   8.135 |    0 |
+| Private Extension                          | Optional             |    8.67 |   VS |
 
 *** 7.2.2 Create Session Response
 
-| Information element                                                                         | Presence requirement | IE Type | Ins. |
-|---------------------------------------------------------------------------------------------+----------------------+---------+------|
-| Cause                                                                                       | Mandatory            |     8.4 |    0 |
-| Change Reporting Action                                                                     | Conditional          |    8.61 |    0 |
-| CSG Information Reporting Action                                                            | Conditional          |    8.76 |    0 |
-| H(e)NB Information Reporting                                                                | Conditional          |    8.96 |    0 |
-| Sender F-TEID for Control Plane                                                             | Conditional          |    8.22 |    0 |
-| PGW S5/S8/ S2a/S2b F-TEID for PMIP based interface or for GTP based Control Plane interface | Conditional          |    8.22 |    1 |
-| PDN Address Allocation (PAA)                                                                | Conditional          |    8.14 |    0 |
-| APN Restriction                                                                             | Conditional          |    8.57 |    0 |
-| Aggregate Maximum Bit Rate (APN-AMBR)                                                       | Conditional          |     8.7 |    0 |
-| Linked EPS Bearer ID                                                                        | Conditional          |     8.8 |    0 |
-| Protocol Configuration Options (PCO)                                                        | Conditional          |    8.13 |    0 |
-| Bearer Contexts created                                                                     | Mandatory            |    8.28 |    0 |
-| Bearer Contexts marked for removal                                                          | Conditional          |    8.28 |    1 |
-| Recovery                                                                                    | Conditional          |     8.5 |    0 |
-| Charging Gateway Name                                                                       | Conditional          |    8.66 |    0 |
-| Charging Gateway Address                                                                    | Conditional          |     8.9 |    0 |
-| PGW-FQ-CSID                                                                                 | Conditional          |    8.62 |    0 |
-| SGW-FQ-CSID                                                                                 | Conditional          |    8.62 |    1 |
-| SGW LDN                                                                                     | Optional             |    8.82 |    0 |
-| PGW LDN                                                                                     | Optional             |    8.82 |    1 |
-| PGW Back-Off Time                                                                           | Optional             |    8.87 |    0 |
-| Additional Protocol Configuration Options (APCO)                                            | Conditional          |    8.94 |    0 |
-| Trusted WLAN IPv4 Parameters                                                                | Conditional          |    8.97 |    0 |
-| Indication Flags                                                                            | Conditional          |    8.12 |    0 |
-| Presence Reporting Area Action                                                              | Conditional          |   8.108 |    0 |
-| PGW's node level Load Control Information                                                   | Conditional          |   8.112 |    0 |
-| PGW's APN level Load Control Information                                                    | Conditional          |   8.112 |    1 |
-| SGW's node level Load Control Information                                                   | Optional             |   8.112 |    2 |
-| PGW's Overload Control Information                                                          | Conditional          |   8.111 |    0 |
-| SGW's Overload Control Information                                                          | Optional             |   8.111 |    1 |
-| NBIFOM Container                                                                            | Conditional          |    8.48 |    0 |
-| PDN Connection Charging ID                                                                  | Conditional          |    8.29 |    0 |
-| Extended Protocol Configuration Options (ePCO)                                              | Conditional          |   8.128 |    0 |
-| PGW node name                                                                               | Conditional          |    8.66 |    1 |
-| SGi PtP Tunnel Address                                                                      | Conditional          |   8.144 |    0 |
-| PGW Change Info                                                                             | Conditional          |   8.145 |    0 |
-| Alternative PGW-C/SMF FQDN                                                                  | Optional             |    8.66 |    3 |
-| Alternative PGW-C/SMF IP Address                                                            | Optional             |     8.9 |    1 |
-| UP Security Policy                                                                          | Conditional          |   8.149 |    0 |
-| Private Extension                                                                           | Optional             |    8.67 |   VS |
+| Information element                       | Presence requirement | IE Type | Ins. |
+|-------------------------------------------+----------------------+---------+------|
+| Cause                                     | Mandatory            |     8.4 |    0 |
+| Change Reporting Action                   | Conditional          |    8.61 |    0 |
+| CSG Information Reporting Action          | Conditional          |    8.76 |    0 |
+| H(e)NB Information Reporting              | Conditional          |    8.96 |    0 |
+| Sender F-TEID                             | Conditional          |    8.22 |    0 |
+| PGW S5/S8/S2a/S2b F-TEID                  | Conditional          |    8.22 |    1 |
+| PDN Address Allocation                    | Conditional          |    8.14 |    0 |
+| APN Restriction                           | Conditional          |    8.57 |    0 |
+| APN-AMBR                                  | Conditional          |     8.7 |    0 |
+| Linked EPS Bearer ID                      | Conditional          |     8.8 |    0 |
+| Protocol Config Opts                      | Conditional          |    8.13 |    0 |
+| Bearer Contexts created                   | Mandatory            |    8.28 |    0 |
+| Bearer Contexts marked for removal        | Conditional          |    8.28 |    1 |
+| Recovery                                  | Conditional          |     8.5 |    0 |
+| Charging Gateway Name                     | Conditional          |    8.66 |    0 |
+| Charging Gateway Address                  | Conditional          |     8.9 |    0 |
+| PGW-FQ-CSID                               | Conditional          |    8.62 |    0 |
+| SGW-FQ-CSID                               | Conditional          |    8.62 |    1 |
+| SGW LDN                                   | Optional             |    8.82 |    0 |
+| PGW LDN                                   | Optional             |    8.82 |    1 |
+| PGW Back-Off Time                         | Optional             |    8.87 |    0 |
+| Additional Protocol Config Opts           | Conditional          |    8.94 |    0 |
+| Trusted WLAN IPv4 Parameters              | Conditional          |    8.97 |    0 |
+| Indication Flags                          | Conditional          |    8.12 |    0 |
+| Presence Reporting Area Action            | Conditional          |   8.108 |    0 |
+| PGW's node level Load Control Information | Conditional          |   8.112 |    0 |
+| PGW's APN level Load Control Information  | Conditional          |   8.112 |    1 |
+| SGW's node level Load Control Information | Optional             |   8.112 |    2 |
+| PGW's Overload Control Information        | Conditional          |   8.111 |    0 |
+| SGW's Overload Control Information        | Optional             |   8.111 |    1 |
+| NBIFOM Container                          | Conditional          |    8.48 |    0 |
+| PDN Connection Charging ID                | Conditional          |    8.29 |    0 |
+| Extended Protocol Config Opts             | Conditional          |   8.128 |    0 |
+| PGW node name                             | Conditional          |    8.66 |    1 |
+| SGi PtP Tunnel Address                    | Conditional          |   8.144 |    0 |
+| PGW Change Info                           | Conditional          |   8.145 |    0 |
+| Alternative PGW-C/SMF FQDN                | Optional             |    8.66 |    3 |
+| Alternative PGW-C/SMF IP Address          | Optional             |     8.9 |    1 |
+| UP Security Policy                        | Conditional          |   8.149 |    0 |
+| Private Extension                         | Optional             |    8.67 |   VS |
 
 *** 7.2.3 Create Bearer Request
 
 | Information element                       | Presence requirement | IE Type | Ins. |
 |-------------------------------------------+----------------------+---------+------|
-| Procedure Transaction Id (PTI)            | Conditional          |    8.35 |    0 |
-| Linked EPS Bearer ID (LBI)                | Mandatory            |     8.8 |    0 |
-| Protocol Configuration Options (PCO)      | Optional             |    8.13 |    0 |
+| Procedure Transaction ID                  | Conditional          |    8.35 |    0 |
+| Linked EPS Bearer ID                      | Mandatory            |     8.8 |    0 |
+| Protocol Config Opts                      | Optional             |    8.13 |    0 |
 | Bearer Contexts                           | Mandatory            |    8.28 |    0 |
 | PGW-FQ-CSID                               | Conditional          |    8.62 |    0 |
 | SGW-FQ-CSID                               | Conditional          |    8.62 |    1 |
@@ -582,9 +582,9 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | SGW-FQ-CSID                                | Conditional          |    8.62 |    1 |
 | ePDG-FQ-CSID                               | Conditional          |    8.62 |    2 |
 | TWAN-FQ-CSID                               | Conditional          |    8.62 |    3 |
-| Protocol Configuration Options (PCO)       | Conditional          |    8.13 |    0 |
+| Protocol Config Opts                       | Conditional          |    8.13 |    0 |
 | UE Time Zone                               | Conditional-Optional |    8.44 |    0 |
-| User Location Information (ULI)            | Conditional-Optional |    8.21 |    0 |
+| ULI                                        | Conditional-Optional |    8.21 |    0 |
 | TWAN Identifier                            | Conditional-Optional |   8.100 |    0 |
 | MME/S4-SGSN's Overload Control Information | Conditional-Optional |   8.111 |    0 |
 | SGW's Overload Control Information         | Optional             |   8.111 |    1 |
@@ -602,28 +602,28 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.2.5 Bearer Resource Command
 
-| Information element                            | Presence requirement | IE Type | Ins. |
-|------------------------------------------------+----------------------+---------+------|
-| Linked EPS Bearer ID (LBI)                     | Mandatory            |     8.8 |    0 |
-| Procedure Transaction Id (PTI)                 | Mandatory            |    8.35 |    0 |
-| Flow Quality of Service (Flow QoS)             | Conditional          |    8.16 |    0 |
-| Traffic Aggregate Description (TAD)            | Conditional          |    8.20 |    0 |
-| RAT Type                                       | Conditional          |    8.17 |    0 |
-| Serving Network                                | Optional             |    8.18 |    0 |
-| User Location Information (ULI)                | Optional             |    8.21 |    0 |
-| EPS Bearer ID                                  | Conditional          |     8.8 |    1 |
-| Indication Flags                               | Conditional-Optional |    8.12 |    0 |
-| S4-U SGSN F-TEID                               | Conditional          |    8.22 |    0 |
-| S12 RNC F-TEID                                 | Conditional          |    8.22 |    1 |
-| Protocol Configuration Options (PCO)           | Optional             |    8.13 |    0 |
-| Signalling Priority Indication                 | Conditional-Optional |    8.88 |    0 |
-| MME/S4-SGSN's Overload Control Information     | Conditional-Optional |   8.111 |    0 |
-| SGW's Overload Control Information             | Optional             |   8.111 |    1 |
-| NBIFOM Container                               | Conditional-Optional |    8.48 |    0 |
-| Extended Protocol Configuration Options (ePCO) | Optional             |   8.128 |    0 |
-| Sender F-TEID for Control Plane                | Conditional-Optional |    8.22 |    2 |
-| PSCell ID                                      | Conditional-Optional |   8.148 |    0 |
-| Private Extension                              | Optional             |    8.67 |   VS |
+| Information element                        | Presence requirement | IE Type | Ins. |
+|--------------------------------------------+----------------------+---------+------|
+| Linked EPS Bearer ID                       | Mandatory            |     8.8 |    0 |
+| Procedure Transaction ID                   | Mandatory            |    8.35 |    0 |
+| Flow QoS                                   | Conditional          |    8.16 |    0 |
+| Traffic Aggregate Description              | Conditional          |    8.20 |    0 |
+| RAT Type                                   | Conditional          |    8.17 |    0 |
+| Serving Network                            | Optional             |    8.18 |    0 |
+| ULI                                        | Optional             |    8.21 |    0 |
+| EPS Bearer ID                              | Conditional          |     8.8 |    1 |
+| Indication Flags                           | Conditional-Optional |    8.12 |    0 |
+| S4-U SGSN F-TEID                           | Conditional          |    8.22 |    0 |
+| S12 RNC F-TEID                             | Conditional          |    8.22 |    1 |
+| Protocol Config Opts                       | Optional             |    8.13 |    0 |
+| Signalling Priority Indication             | Conditional-Optional |    8.88 |    0 |
+| MME/S4-SGSN's Overload Control Information | Conditional-Optional |   8.111 |    0 |
+| SGW's Overload Control Information         | Optional             |   8.111 |    1 |
+| NBIFOM Container                           | Conditional-Optional |    8.48 |    0 |
+| Extended Protocol Config Opts              | Optional             |   8.128 |    0 |
+| Sender F-TEID                              | Conditional-Optional |    8.22 |    2 |
+| PSCell ID                                  | Conditional-Optional |   8.148 |    0 |
+| Private Extension                          | Optional             |    8.67 |   VS |
 
 *** 7.2.6 Bearer Resource Failure Indication
 
@@ -631,7 +631,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 |------------------------------------+----------------------+---------+------|
 | Cause                              | Mandatory            |     8.4 |    0 |
 | Linked EPS Bearer ID               | Mandatory            |     8.8 |    0 |
-| Procedure Transaction ID (PTI)     | Mandatory            |    8.35 |    0 |
+| Procedure Transaction ID           | Mandatory            |    8.35 |    0 |
 | Indication Flags                   | Conditional-Optional |    8.12 |    0 |
 | PGW's Overload Control Information | Conditional-Optional |   8.111 |    0 |
 | SGW's Overload Control Information | Optional             |   8.111 |    1 |
@@ -643,13 +643,13 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 | Information element                        | Presence requirement | IE Type | Ins. |
 |--------------------------------------------+----------------------+---------+------|
-| ME Identity (MEI)                          | Conditional          |    8.10 |    0 |
-| User Location Information (ULI)            | Conditional          |    8.21 |    0 |
+| MEI                                        | Conditional          |    8.10 |    0 |
+| ULI                                        | Conditional          |    8.21 |    0 |
 | Serving Network                            | Conditional-Optional |    8.18 |    0 |
 | RAT Type                                   | Conditional          |    8.17 |    0 |
 | Indication Flags                           | Conditional          |    8.12 |    0 |
-| Sender F-TEID for Control Plane            | Conditional          |    8.22 |    0 |
-| Aggregate Maximum Bit Rate (APN-AMBR)      | Conditional          |     8.7 |    0 |
+| Sender F-TEID                              | Conditional          |    8.22 |    0 |
+| APN-AMBR                                   | Conditional          |     8.7 |    0 |
 | Delay Downlink Packet Notification Request | Conditional          |    8.27 |    0 |
 | Bearer Contexts to be modified             | Conditional          |    8.28 |    0 |
 | Bearer Contexts to be removed              | Conditional          |    8.28 |    1 |
@@ -657,7 +657,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | UE Time Zone                               | Conditional-Optional |    8.44 |    0 |
 | MME-FQ-CSID                                | Conditional          |    8.62 |    0 |
 | SGW-FQ-CSID                                | Conditional          |    8.62 |    1 |
-| User CSG Information (UCI)                 | Conditional-Optional |    8.75 |    0 |
+| User CSG Information                       | Conditional-Optional |    8.75 |    0 |
 | UE Local IP Address                        | Conditional-Optional |     8.9 |    1 |
 | UE UDP Port                                | Conditional-Optional |    8.56 |    1 |
 | MME/S4-SGSN LDN                            | Optional             |    8.82 |    0 |
@@ -673,7 +673,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Serving PLMN Rate Control                  | Conditional-Optional |   8.129 |    0 |
 | MO Exception Data Counter                  | Conditional-Optional |   8.130 |    0 |
 | IMSI                                       | Optional             |     8.3 |    0 |
-| User Location Information for SGW          | Conditional-Optional |    8.21 |    1 |
+| ULI for SGW                                | Conditional-Optional |    8.21 |    1 |
 | WLAN Location Information                  | Conditional-Optional |   8.100 |    0 |
 | WLAN Location Timestamp                    | Conditional-Optional |   8.110 |    0 |
 | Secondary RAT Usage Data Report            | Conditional-Optional |   8.132 |    0 |
@@ -688,7 +688,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | MSISDN                                    | Conditional          |    8.11 |    0 |
 | Linked EPS Bearer ID                      | Conditional          |     8.8 |    0 |
 | APN Restriction                           | Conditional          |    8.57 |    0 |
-| Protocol Configuration Options (PCO)      | Conditional          |    8.13 |    0 |
+| Protocol Config Opts                      | Conditional          |    8.13 |    0 |
 | Bearer Contexts modified                  | Conditional          |    8.28 |    0 |
 | Bearer Contexts marked for removal        | Conditional          |    8.28 |    1 |
 | Change Reporting Action                   | Conditional          |    8.61 |    0 |
@@ -714,89 +714,89 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.2.9.1 Delete Session Request
 
-| Information element                            | Presence requirement | IE Type | Ins. |
-|------------------------------------------------+----------------------+---------+------|
-| Cause                                          | Conditional          |     8.4 |    0 |
-| Linked EPS Bearer ID (LBI)                     | Conditional          |     8.8 |    0 |
-| User Location Information (ULI)                | Conditional          |    8.21 |    0 |
-| Indication Flags                               | Conditional          |    8.12 |    0 |
-| Protocol Configuration Options (PCO)           | Conditional          |    8.13 |    0 |
-| Originating Node                               | Conditional          |    8.65 |    0 |
-| Sender F-TEID for Control Plane                | Conditional-Optional |    8.22 |    0 |
-| UE Time Zone                                   | Conditional-Optional |    8.44 |    0 |
-| ULI Timestamp                                  | Conditional-Optional |   8.101 |    0 |
-| RAN/NAS Release Cause                          | Conditional-Optional |   8.103 |    0 |
-| TWAN Identifier                                | Conditional-Optional |   8.100 |    0 |
-| TWAN Identifier Timestamp                      | Conditional-Optional |   8.110 |    0 |
-| MME/S4-SGSN's Overload Control Information     | Conditional-Optional |   8.111 |    0 |
-| SGW's Overload Control Information             | Optional             |   8.111 |    1 |
-| TWAN/ePDG's Overload Control Information       | Optional             |   8.111 |    2 |
-| WLAN Location Information                      | Conditional-Optional |   8.100 |    1 |
-| WLAN Location Timestamp                        | Conditional-Optional |   8.110 |    1 |
-| UE Local IP Address                            | Conditional-Optional |     8.9 |    0 |
-| UE UDP Port                                    | Conditional-Optional |    8.56 |    0 |
-| Extended Protocol Configuration Options (ePCO) | Conditional-Optional |   8.128 |    0 |
-| UE TCP Port                                    | Conditional-Optional |    8.56 |    1 |
-| Secondary RAT Usage Data Report                | Conditional-Optional |   8.132 |    0 |
-| PSCell ID                                      | Conditional-Optional |   8.148 |    0 |
-| Private Extension                              | Optional             |    8.67 |   VS |
+| Information element                        | Presence requirement | IE Type | Ins. |
+|--------------------------------------------+----------------------+---------+------|
+| Cause                                      | Conditional          |     8.4 |    0 |
+| Linked EPS Bearer ID                       | Conditional          |     8.8 |    0 |
+| ULI                                        | Conditional          |    8.21 |    0 |
+| Indication Flags                           | Conditional          |    8.12 |    0 |
+| Protocol Config Opts                       | Conditional          |    8.13 |    0 |
+| Originating Node                           | Conditional          |    8.65 |    0 |
+| Sender F-TEID                              | Conditional-Optional |    8.22 |    0 |
+| UE Time Zone                               | Conditional-Optional |    8.44 |    0 |
+| ULI Timestamp                              | Conditional-Optional |   8.101 |    0 |
+| RAN/NAS Release Cause                      | Conditional-Optional |   8.103 |    0 |
+| TWAN Identifier                            | Conditional-Optional |   8.100 |    0 |
+| TWAN Identifier Timestamp                  | Conditional-Optional |   8.110 |    0 |
+| MME/S4-SGSN's Overload Control Information | Conditional-Optional |   8.111 |    0 |
+| SGW's Overload Control Information         | Optional             |   8.111 |    1 |
+| TWAN/ePDG's Overload Control Information   | Optional             |   8.111 |    2 |
+| WLAN Location Information                  | Conditional-Optional |   8.100 |    1 |
+| WLAN Location Timestamp                    | Conditional-Optional |   8.110 |    1 |
+| UE Local IP Address                        | Conditional-Optional |     8.9 |    0 |
+| UE UDP Port                                | Conditional-Optional |    8.56 |    0 |
+| Extended Protocol Config Opts              | Conditional-Optional |   8.128 |    0 |
+| UE TCP Port                                | Conditional-Optional |    8.56 |    1 |
+| Secondary RAT Usage Data Report            | Conditional-Optional |   8.132 |    0 |
+| PSCell ID                                  | Conditional-Optional |   8.148 |    0 |
+| Private Extension                          | Optional             |    8.67 |   VS |
 
 *** 7.2.9.2 Delete Bearer Request
 
-| Information element                            | Presence requirement | IE Type | Ins. |
-|------------------------------------------------+----------------------+---------+------|
-| Linked EPS Bearer ID (LBI)                     | Conditional          |     8.8 |    0 |
-| EPS Bearer IDs                                 | Conditional          |     8.8 |    1 |
-| Failed Bearer Contexts                         | Optional             |    8.28 |    0 |
-| Procedure Transaction Id (PTI)                 | Conditional          |    8.35 |    0 |
-| Protocol Configuration Options (PCO)           | Conditional          |    8.13 |    0 |
-| PGW-FQ-CSID                                    | Conditional          |    8.62 |    0 |
-| SGW-FQ-CSID                                    | Conditional          |    8.62 |    1 |
-| Cause                                          | Conditional          |     8.4 |    0 |
-| Indication Flags                               | Conditional-Optional |    8.12 |    0 |
-| PGW's node level Load Control Information      | Conditional-Optional |   8.112 |    0 |
-| PGW's APN level Load Control Information       | Conditional-Optional |   8.112 |    1 |
-| SGW's node level Load Control Information      | Optional             |   8.112 |    2 |
-| PGW's Overload Control Information             | Conditional-Optional |   8.111 |    0 |
-| SGW's Overload Control Information             | Optional             |   8.111 |    1 |
-| NBIFOM Container                               | Conditional-Optional |    8.48 |    0 |
-| APN RATE Control Status                        | Conditional-Optional |   8.135 |    0 |
-| Extended Protocol Configuration Options (ePCO) | Conditional-Optional |   8.128 |    0 |
-| PGW Change Info                                | Conditional-Optional |   8.145 |    0 |
-| Private Extension                              | Optional             |    8.67 |   VS |
+| Information element                       | Presence requirement | IE Type | Ins. |
+|-------------------------------------------+----------------------+---------+------|
+| Linked EPS Bearer ID                      | Conditional          |     8.8 |    0 |
+| EPS Bearer IDs                            | Conditional          |     8.8 |    1 |
+| Failed Bearer Contexts                    | Optional             |    8.28 |    0 |
+| Procedure Transaction ID                  | Conditional          |    8.35 |    0 |
+| Protocol Config Opts                      | Conditional          |    8.13 |    0 |
+| PGW-FQ-CSID                               | Conditional          |    8.62 |    0 |
+| SGW-FQ-CSID                               | Conditional          |    8.62 |    1 |
+| Cause                                     | Conditional          |     8.4 |    0 |
+| Indication Flags                          | Conditional-Optional |    8.12 |    0 |
+| PGW's node level Load Control Information | Conditional-Optional |   8.112 |    0 |
+| PGW's APN level Load Control Information  | Conditional-Optional |   8.112 |    1 |
+| SGW's node level Load Control Information | Optional             |   8.112 |    2 |
+| PGW's Overload Control Information        | Conditional-Optional |   8.111 |    0 |
+| SGW's Overload Control Information        | Optional             |   8.111 |    1 |
+| NBIFOM Container                          | Conditional-Optional |    8.48 |    0 |
+| APN RATE Control Status                   | Conditional-Optional |   8.135 |    0 |
+| Extended Protocol Config Opts             | Conditional-Optional |   8.128 |    0 |
+| PGW Change Info                           | Conditional-Optional |   8.145 |    0 |
+| Private Extension                         | Optional             |    8.67 |   VS |
 
 *** 7.2.10.1 Delete Session Response
 
-| Information element                            | Presence requirement | IE Type | Ins. |
-|------------------------------------------------+----------------------+---------+------|
-| Cause                                          | Mandatory            |     8.4 |    0 |
-| Recovery                                       | Conditional          |     8.5 |    0 |
-| Protocol Configuration Options (PCO)           | Conditional          |    8.13 |    0 |
-| Indication Flags                               | Conditional-Optional |    8.12 |    0 |
-| PGW's node level Load Control Information      | Conditional-Optional |   8.112 |    0 |
-| PGW's APN level Load Control Information       | Conditional-Optional |   8.112 |    1 |
-| SGW's node level Load Control Information      | Optional             |   8.112 |    2 |
-| PGW's Overload Control Information             | Conditional-Optional |   8.111 |    0 |
-| SGW's Overload Control Information             | Optional             |   8.111 |    1 |
-| Extended Protocol Configuration Options (ePCO) | Conditional-Optional |   8.128 |    0 |
-| APN RATE Control Status                        | Conditional-Optional |   8.135 |    0 |
-| Private Extension                              | Optional             |    8.67 |   VS |
+| Information element                       | Presence requirement | IE Type | Ins. |
+|-------------------------------------------+----------------------+---------+------|
+| Cause                                     | Mandatory            |     8.4 |    0 |
+| Recovery                                  | Conditional          |     8.5 |    0 |
+| Protocol Config Opts                      | Conditional          |    8.13 |    0 |
+| Indication Flags                          | Conditional-Optional |    8.12 |    0 |
+| PGW's node level Load Control Information | Conditional-Optional |   8.112 |    0 |
+| PGW's APN level Load Control Information  | Conditional-Optional |   8.112 |    1 |
+| SGW's node level Load Control Information | Optional             |   8.112 |    2 |
+| PGW's Overload Control Information        | Conditional-Optional |   8.111 |    0 |
+| SGW's Overload Control Information        | Optional             |   8.111 |    1 |
+| Extended Protocol Config Opts             | Conditional-Optional |   8.128 |    0 |
+| APN RATE Control Status                   | Conditional-Optional |   8.135 |    0 |
+| Private Extension                         | Optional             |    8.67 |   VS |
 
 *** 7.2.10.2 Delete Bearer Response
 
 | Information element                        | Presence requirement | IE Type | Ins. |
 |--------------------------------------------+----------------------+---------+------|
 | Cause                                      | Mandatory            |     8.4 |    0 |
-| Linked EPS Bearer ID (LBI)                 | Conditional          |     8.8 |    0 |
+| Linked EPS Bearer ID                       | Conditional          |     8.8 |    0 |
 | Bearer Contexts                            | Conditional          |    8.28 |    0 |
 | Recovery                                   | Conditional          |     8.5 |    0 |
 | MME-FQ-CSID                                | Conditional          |    8.62 |    0 |
 | SGW-FQ-CSID                                | Conditional          |    8.62 |    1 |
 | ePDG-FQ-CSID                               | Conditional          |    8.62 |    2 |
 | TWAN-FQ-CSID                               | Conditional          |    8.62 |    3 |
-| Protocol Configuration Options (PCO)       | Conditional-Optional |    8.13 |    0 |
+| Protocol Config Opts                       | Conditional-Optional |    8.13 |    0 |
 | UE Time Zone                               | Conditional-Optional |    8.44 |    0 |
-| User Location Information (ULI)            | Conditional-Optional |    8.21 |    0 |
+| ULI                                        | Conditional-Optional |    8.21 |    0 |
 | ULI Timestamp                              | Conditional-Optional |   8.101 |    0 |
 | TWAN Identifier                            | Conditional-Optional |   8.100 |    0 |
 | TWAN Identifier Timestamp                  | Conditional-Optional |   8.110 |    0 |
@@ -822,7 +822,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | EPS Bearer ID                             | Conditional-Optional |     8.8 |    0 |
 | Allocation/Retention Priority             | Conditional-Optional |    8.86 |    0 |
 | IMSI                                      | Conditional-Optional |     8.3 |    0 |
-| Sender F-TEID for Control Plane           | Optional             |    8.22 |    0 |
+| Sender F-TEID                             | Optional             |    8.22 |    0 |
 | Indication Flags                          | Conditional-Optional |    8.12 |    0 |
 | SGW's node level Load Control Information | Optional             |   8.112 |    0 |
 | SGW's Overload Control Information        | Optional             |   8.111 |    0 |
@@ -870,12 +870,12 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 | Information element                        | Presence requirement | IE Type | Ins. |
 |--------------------------------------------+----------------------+---------+------|
-| APN-Aggregate Maximum Bit Rate (APN-AMBR)  | Mandatory            |     8.7 |    0 |
+| APN-AMBR                                   | Mandatory            |     8.7 |    0 |
 | Bearer Context                             | Mandatory            |    8.28 |    0 |
 | MME/S4-SGSN's Overload Control Information | Conditional-Optional |   8.111 |    0 |
 | SGW's Overload Control Information         | Optional             |   8.111 |    1 |
 | TWAN/ePDG's Overload Control Information   | Optional             |   8.111 |    2 |
-| Sender F-TEID for Control Plane            | Conditional-Optional |    8.22 |    0 |
+| Sender F-TEID                              | Conditional-Optional |    8.22 |    0 |
 | Private Extension                          | Optional             |    8.67 |   VS |
 
 *** 7.2.14.2 Modify Bearer Failure Indication
@@ -894,9 +894,9 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Information element                       | Presence requirement | IE Type | Ins. |
 |-------------------------------------------+----------------------+---------+------|
 | Bearer Contexts                           | Mandatory            |    8.28 |    0 |
-| Procedure Transaction Id (PTI)            | Conditional          |    8.35 |    0 |
-| Protocol Configuration Options (PCO)      | Conditional          |    8.13 |    0 |
-| Aggregate Maximum Bit Rate (APN-AMBR)     | Mandatory            |     8.7 |    0 |
+| Procedure Transaction ID                  | Conditional          |    8.35 |    0 |
+| Protocol Config Opts                      | Conditional          |    8.13 |    0 |
+| APN-AMBR                                  | Mandatory            |     8.7 |    0 |
 | Change Reporting Action                   | Conditional          |    8.61 |    0 |
 | CSG Information Reporting Action          | Conditional-Optional |    8.76 |    0 |
 | H(e)NB Information Reporting              | Conditional-Optional |    8.96 |    0 |
@@ -919,7 +919,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 |--------------------------------------------+----------------------+---------+------|
 | Cause                                      | Mandatory            |     8.4 |    0 |
 | Bearer Contexts                            | Mandatory            |    8.28 |    0 |
-| Protocol Configuration Options (PCO)       | Conditional-Optional |    8.13 |    0 |
+| Protocol Config Opts                       | Conditional-Optional |    8.13 |    0 |
 | Recovery                                   | Conditional          |     8.5 |    0 |
 | MME-FQ-CSID                                | Conditional          |    8.62 |    0 |
 | SGW-FQ-CSID                                | Conditional          |    8.62 |    1 |
@@ -927,7 +927,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | TWAN-FQ-CSID                               | Conditional          |    8.62 |    3 |
 | Indication Flags                           | Conditional-Optional |    8.12 |    0 |
 | UE Time Zone                               | Conditional-Optional |    8.44 |    0 |
-| User Location Information (ULI)            | Conditional-Optional |    8.21 |    0 |
+| ULI                                        | Conditional-Optional |    8.21 |    0 |
 | TWAN Identifier                            | Conditional-Optional |   8.100 |    0 |
 | MME/S4-SGSN's Overload Control Information | Conditional-Optional |   8.111 |    0 |
 | SGW's Overload Control Information         | Optional             |   8.111 |    1 |
@@ -948,12 +948,12 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Information element                | Presence requirement | IE Type | Ins. |
 |------------------------------------+----------------------+---------+------|
 | Bearer Contexts                    | Mandatory            |    8.28 |    0 |
-| User Location Information (ULI)    | Conditional-Optional |    8.21 |    0 |
+| ULI                                | Conditional-Optional |    8.21 |    0 |
 | ULI Timestamp                      | Conditional-Optional |   8.101 |    0 |
 | UE Time Zone                       | Conditional-Optional |    8.44 |    0 |
 | Overload Control Information       | Conditional-Optional |   8.111 |    0 |
 | SGW's Overload Control Information | Optional             |   8.111 |    1 |
-| Sender F-TEID for Control Plane    | Conditional-Optional |    8.22 |    0 |
+| Sender F-TEID                      | Conditional-Optional |    8.22 |    0 |
 | Secondary RAT Usage Data Report    | Conditional-Optional |   8.132 |    0 |
 | PSCell ID                          | Conditional-Optional |   8.148 |    0 |
 | Private Extension                  | Optional             |    8.67 |   VS |
@@ -972,25 +972,25 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.2.18 Create Indirect Data Forwarding Tunnel Request
 
-| Information element             | Presence requirement | IE Type | Ins. |
-|---------------------------------+----------------------+---------+------|
-| IMSI                            | Conditional          |     8.3 |    0 |
-| ME Identity (MEI)               | Conditional          |    8.10 |    0 |
-| Indication Flags                | Conditional-Optional |    8.12 |    0 |
-| Sender F-TEID for Control Plane | Conditional          |    8.22 |    0 |
-| Bearer Contexts                 | Mandatory            |    8.28 |    0 |
-| Recovery                        | Conditional-Optional |     8.5 |    0 |
-| Private Extension               | Optional             |    8.67 |   VS |
+| Information element | Presence requirement | IE Type | Ins. |
+|---------------------+----------------------+---------+------|
+| IMSI                | Conditional          |     8.3 |    0 |
+| MEI                 | Conditional          |    8.10 |    0 |
+| Indication Flags    | Conditional-Optional |    8.12 |    0 |
+| Sender F-TEID       | Conditional          |    8.22 |    0 |
+| Bearer Contexts     | Mandatory            |    8.28 |    0 |
+| Recovery            | Conditional-Optional |     8.5 |    0 |
+| Private Extension   | Optional             |    8.67 |   VS |
 
 *** 7.2.19 Create Indirect Data Forwarding Tunnel Response
 
-| Information element             | Presence requirement | IE Type | Ins. |
-|---------------------------------+----------------------+---------+------|
-| Cause                           | Mandatory            |     8.4 |    0 |
-| Sender F-TEID for Control Plane | Conditional          |    8.22 |    0 |
-| Bearer Contexts                 | Mandatory            |    8.28 |    0 |
-| Recovery                        | Conditional-Optional |     8.5 |    0 |
-| Private Extension               | Optional             |    8.67 |   VS |
+| Information element | Presence requirement | IE Type | Ins. |
+|---------------------+----------------------+---------+------|
+| Cause               | Mandatory            |     8.4 |    0 |
+| Sender F-TEID       | Conditional          |    8.22 |    0 |
+| Bearer Contexts     | Mandatory            |    8.28 |    0 |
+| Recovery            | Conditional-Optional |     8.5 |    0 |
+| Private Extension   | Optional             |    8.67 |   VS |
 
 *** 7.2.21 Release Access Bearers Request
 
@@ -1026,7 +1026,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Information element                        | Presence requirement | IE Type | Ins. |
 |--------------------------------------------+----------------------+---------+------|
 | Indication Flags                           | Conditional          |    8.12 |    0 |
-| Sender F-TEID for Control Plane            | Conditional          |    8.22 |    0 |
+| Sender F-TEID                              | Conditional          |    8.22 |    0 |
 | Delay Downlink Packet Notification Request | Conditional          |    8.27 |    0 |
 | Bearer Contexts to be modified             | Conditional          |    8.28 |    0 |
 | Bearer Contexts to be removed              | Conditional          |    8.28 |    1 |
@@ -1067,64 +1067,64 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.3.1 Forward Relocation Request
 
-| Information element                              | Presence requirement |    IE Type | Ins. |
-|--------------------------------------------------+----------------------+------------+------|
-| IMSI                                             | Conditional          |        8.3 |    0 |
-| Sender's F-TEID for Control Plane                | Mandatory            |       8.22 |    0 |
-| MME/SGSN/AMF UE EPS PDN Connections              | Conditional          |       8.39 |    0 |
-| SGW S11/S4 IP Address and TEID for Control Plane | Conditional          |       8.22 |    1 |
-| SGW node name                                    | Conditional          |       8.66 |    0 |
-| MME/SGSN/AMF UE MM Context                       | Mandatory            |       8.38 |    0 |
-| Indication Flags                                 | Conditional          |       8.12 |    0 |
-| E-UTRAN Transparent Container                    | Conditional          |       8.48 |    0 |
-| UTRAN Transparent Container                      | Conditional          |       8.48 |    1 |
-| BSS Container                                    | Conditional          |       8.48 |    2 |
-| Target Identification                            | Conditional          |       8.51 |    0 |
-| HRPD access node S101 IP address                 | Conditional          |        8.9 |    0 |
-| 1xIWS S102 IP address                            | Conditional          |        8.9 |    1 |
-| S1-AP Cause                                      | Conditional          |       8.49 |    0 |
-| RANAP Cause                                      | Conditional          |       8.49 |    1 |
-| BSSGP Cause                                      | Conditional          |       8.49 |    2 |
-| Source Identification                            | Conditional          |       8.59 |    0 |
-| Selected PLMN ID                                 | Conditional          |       8.50 |    0 |
-| Recovery                                         | Conditional          |        8.5 |    0 |
-| Trace Information                                | Conditional          |       8.31 |    0 |
-| Subscribed RFSP Index                            | Conditional-Optional |       8.77 |    0 |
-| RFSP Index in Use                                | Conditional-Optional |       8.77 |    1 |
-| CSG ID                                           | Conditional-Optional |       8.78 |    0 |
-| CSG Membership Indication                        | Conditional-Optional |        CMI |    0 |
-| UE Time Zone                                     | Conditional-Optional |       8.44 |    0 |
-| Serving Network                                  | Conditional-Optional |       8.18 |    0 |
-| MME/S4-SGSN LDN                                  | Optional             |       8.82 |    0 |
-| Additional MM context for SRVCC                  | Conditional-Optional |       8.90 |    0 |
-| Additional flags for SRVCC                       | Conditional-Optional |       8.91 |    0 |
-| STN-SR                                           | Conditional-Optional | 29.280_6.2 |    0 |
-| C-MSISDN                                         | Conditional-Optional |       8.11 |    0 |
-| MDT Configuration                                | Conditional-Optional |       8.93 |    0 |
-| SGSN node name                                   | Conditional-Optional |       8.66 |    1 |
-| MME node name                                    | Conditional-Optional |       8.66 |    2 |
-| User CSG Information (UCI)                       | Conditional-Optional |       8.75 |    0 |
-| Monitoring Event Information                     | Conditional-Optional |      8.120 |    0 |
-| Monitoring Event Extension Information           | Conditional-Optional |      8.137 |    0 |
-| UE Usage Type                                    | Conditional-Optional |      8.118 |    0 |
-| MME/SGSN UE SCEF PDN Connections                 | Conditional-Optional |      8.126 |    0 |
-| MSISDN                                           | Conditional-Optional |       8.11 |    1 |
-| Source UDP Port Number                           | Conditional-Optional |       8.56 |    0 |
-| Serving PLMN Rate Control                        | Conditional-Optional |      8.129 |    0 |
-| Extended Trace Information                       | Conditional          |      8.136 |    0 |
-| Subscribed Additional RRM Policy Index           | Conditional-Optional |      8.138 |    0 |
-| Additional RRM Policy Index in Use               | Conditional-Optional |      8.138 |    1 |
-| Subscribed V2X Information                       | Conditional-Optional |      8.139 |    0 |
-| IWK SCEF ID for Monitoring Event                 | Conditional-Optional |      8.107 |    0 |
-| Alternative IMSI                                 | Conditional-Optional |      8.150 |    0 |
-| Private Extension                                | Optional             |       8.67 |   VS |
+| Information element                    | Presence requirement |    IE Type | Ins. |
+|----------------------------------------+----------------------+------------+------|
+| IMSI                                   | Conditional          |        8.3 |    0 |
+| Sender F-TEID                          | Mandatory            |       8.22 |    0 |
+| MME/SGSN/AMF UE EPS PDN Connections    | Conditional          |       8.39 |    0 |
+| SGW S11/S4 F-TEID                      | Conditional          |       8.22 |    1 |
+| SGW node name                          | Conditional          |       8.66 |    0 |
+| MME/SGSN/AMF UE MM Context             | Mandatory            |       8.38 |    0 |
+| Indication Flags                       | Conditional          |       8.12 |    0 |
+| E-UTRAN Transparent Container          | Conditional          |       8.48 |    0 |
+| UTRAN Transparent Container            | Conditional          |       8.48 |    1 |
+| BSS Container                          | Conditional          |       8.48 |    2 |
+| Target Identification                  | Conditional          |       8.51 |    0 |
+| HRPD access node S101 IP address       | Conditional          |        8.9 |    0 |
+| 1xIWS S102 IP address                  | Conditional          |        8.9 |    1 |
+| S1-AP Cause                            | Conditional          |       8.49 |    0 |
+| RANAP Cause                            | Conditional          |       8.49 |    1 |
+| BSSGP Cause                            | Conditional          |       8.49 |    2 |
+| Source Identification                  | Conditional          |       8.59 |    0 |
+| Selected PLMN ID                       | Conditional          |       8.50 |    0 |
+| Recovery                               | Conditional          |        8.5 |    0 |
+| Trace Information                      | Conditional          |       8.31 |    0 |
+| Subscribed RFSP Index                  | Conditional-Optional |       8.77 |    0 |
+| RFSP Index in Use                      | Conditional-Optional |       8.77 |    1 |
+| CSG ID                                 | Conditional-Optional |       8.78 |    0 |
+| CSG Membership Indication              | Conditional-Optional |       8.79 |    0 |
+| UE Time Zone                           | Conditional-Optional |       8.44 |    0 |
+| Serving Network                        | Conditional-Optional |       8.18 |    0 |
+| MME/S4-SGSN LDN                        | Optional             |       8.82 |    0 |
+| Additional MM context for SRVCC        | Conditional-Optional |       8.90 |    0 |
+| Additional flags for SRVCC             | Conditional-Optional |       8.91 |    0 |
+| STN-SR                                 | Conditional-Optional | 29.280_6.2 |    0 |
+| C-MSISDN                               | Conditional-Optional |       8.11 |    0 |
+| MDT Configuration                      | Conditional-Optional |       8.93 |    0 |
+| SGSN node name                         | Conditional-Optional |       8.66 |    1 |
+| MME node name                          | Conditional-Optional |       8.66 |    2 |
+| User CSG Information                   | Conditional-Optional |       8.75 |    0 |
+| Monitoring Event Information           | Conditional-Optional |      8.120 |    0 |
+| Monitoring Event Extension Information | Conditional-Optional |      8.137 |    0 |
+| UE Usage Type                          | Conditional-Optional |      8.118 |    0 |
+| MME/SGSN UE SCEF PDN Connections       | Conditional-Optional |      8.126 |    0 |
+| MSISDN                                 | Conditional-Optional |       8.11 |    1 |
+| Source UDP Port Number                 | Conditional-Optional |       8.56 |    0 |
+| Serving PLMN Rate Control              | Conditional-Optional |      8.129 |    0 |
+| Extended Trace Information             | Conditional          |      8.136 |    0 |
+| Subscribed Additional RRM Policy Index | Conditional-Optional |      8.138 |    0 |
+| Additional RRM Policy Index in Use     | Conditional-Optional |      8.138 |    1 |
+| Subscribed V2X Information             | Conditional-Optional |      8.139 |    0 |
+| IWK SCEF ID for Monitoring Event       | Conditional-Optional |      8.107 |    0 |
+| Alternative IMSI                       | Conditional-Optional |      8.150 |    0 |
+| Private Extension                      | Optional             |       8.67 |   VS |
 
 *** 7.3.2 Forward Relocation Response
 
 | Information element                             | Presence requirement |    IE Type | Ins. |
 |-------------------------------------------------+----------------------+------------+------|
 | Cause                                           | Mandatory            |        8.4 |    0 |
-| Sender's F-TEID for Control Plane               | Conditional          |       8.22 |    0 |
+| Sender F-TEID                                   | Conditional          |       8.22 |    0 |
 | Indication Flags                                | Conditional          |       8.12 |    0 |
 | List of Set-up Bearers                          | Conditional          |       8.28 |    0 |
 | List of Set-up RABs                             | Conditional          |       8.28 |    1 |
@@ -1168,66 +1168,66 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.3.5 Context Request
 
-| Information element                               | Presence requirement | IE Type | Ins. |
-|---------------------------------------------------+----------------------+---------+------|
-| IMSI                                              | Conditional          |     8.3 |    0 |
-| GUTI                                              | Conditional          |    8.47 |    0 |
-| Routeing Area Identity (RAI)                      | Conditional          |    8.21 |    0 |
-| Packet TMSI (P-TMSI)                              | Conditional          |    8.41 |    0 |
-| P-TMSI Signature                                  | Conditional          |    8.42 |    0 |
-| Complete TAU request message                      | Conditional          |    8.46 |    0 |
-| S3/S16/S10/N26 Address and TEID for Control Plane | Conditional          |    8.22 |    0 |
-| UDP Source Port Number                            | Conditional          |    8.56 |    0 |
-| RAT Type                                          | Conditional          |    8.17 |    0 |
-| Indication                                        | Conditional-Optional |    8.12 |    0 |
-| Hop Counter                                       | Optional             |    8.43 |    0 |
-| Target PLMN ID                                    | Conditional-Optional |    8.18 |    0 |
-| MME/S4-SGSN LDN                                   | Optional             |    8.82 |    0 |
-| SGSN node name                                    | Conditional-Optional |    8.66 |    0 |
-| MME node name                                     | Conditional-Optional |    8.66 |    1 |
-| SGSN Number                                       | Optional             |   8.106 |    0 |
-| SGSN Identifier                                   | Optional             |   8.107 |    0 |
-| MME Identifier                                    | Optional             |   8.107 |    1 |
-| CIoT Optimizations Support Indication             | Conditional-Optional |   8.125 |    0 |
-| Private Extension                                 | Optional             |    8.67 |   VS |
+| Information element                   | Presence requirement | IE Type | Ins. |
+|---------------------------------------+----------------------+---------+------|
+| IMSI                                  | Conditional          |     8.3 |    0 |
+| GUTI                                  | Conditional          |    8.47 |    0 |
+| RAI                                   | Conditional          |    8.21 |    0 |
+| P-TMSI                                | Conditional          |    8.41 |    0 |
+| P-TMSI Signature                      | Conditional          |    8.42 |    0 |
+| Complete TAU request message          | Conditional          |    8.46 |    0 |
+| S3/S16/S10/N26 F-TEID                 | Conditional          |    8.22 |    0 |
+| UDP Source Port Number                | Conditional          |    8.56 |    0 |
+| RAT Type                              | Conditional          |    8.17 |    0 |
+| Indication                            | Conditional-Optional |    8.12 |    0 |
+| Hop Counter                           | Optional             |    8.43 |    0 |
+| Target PLMN ID                        | Conditional-Optional |    8.18 |    0 |
+| MME/S4-SGSN LDN                       | Optional             |    8.82 |    0 |
+| SGSN node name                        | Conditional-Optional |    8.66 |    0 |
+| MME node name                         | Conditional-Optional |    8.66 |    1 |
+| SGSN Number                           | Optional             |   8.106 |    0 |
+| SGSN Identifier                       | Optional             |   8.107 |    0 |
+| MME Identifier                        | Optional             |   8.107 |    1 |
+| CIoT Optimizations Support Indication | Conditional-Optional |   8.125 |    0 |
+| Private Extension                     | Optional             |    8.67 |   VS |
 
 *** 7.3.6 Context Response
 
-| Information element                              | Presence requirement | IE Type | Ins. |
-|--------------------------------------------------+----------------------+---------+------|
-| Cause                                            | Mandatory            |     8.4 |    0 |
-| IMSI                                             | Conditional          |     8.3 |    0 |
-| MME/SGSN/AMF UE MM Context                       | Conditional          |    8.38 |    0 |
-| MME/SGSN/AMF UE EPS PDN Connections              | Conditional          |    8.39 |    0 |
-| Sender F-TEID for Control Plane                  | Conditional          |    8.22 |    0 |
-| SGW S11/S4 IP Address and TEID for Control Plane | Conditional          |    8.22 |    1 |
-| SGW node name                                    | Conditional          |    8.66 |    0 |
-| Indication Flags                                 | Conditional          |    8.12 |    0 |
-| Trace Information                                | Conditional          |    8.31 |    0 |
-| HRPD access node S101 IP address                 | Conditional          |     8.9 |    0 |
-| 1xIWS S102 IP address                            | Conditional          |     8.9 |    1 |
-| Subscribed RFSP Index                            | Conditional-Optional |    8.77 |    0 |
-| RFSP Index in Use                                | Conditional-Optional |    8.77 |    1 |
-| UE Time Zone                                     | Conditional-Optional |    8.44 |    0 |
-| MME/S4-SGSN LDN                                  | Optional             |    8.82 |    0 |
-| MDT Configuration                                | Conditional-Optional |    8.93 |    0 |
-| SGSN node name                                   | Conditional-Optional |    8.66 |    1 |
-| MME node name                                    | Conditional-Optional |    8.66 |    2 |
-| User CSG Information (UCI)                       | Conditional-Optional |    8.75 |    0 |
-| Monitoring Event Information                     | Conditional-Optional |   8.120 |    0 |
-| Monitoring Event Extension Information           | Conditional-Optional |   8.137 |    0 |
-| UE Usage Type                                    | Conditional-Optional |   8.118 |    0 |
-| MME/SGSN UE SCEF PDN Connections                 | Conditional          |   8.126 |    0 |
-| RAT Type                                         | Conditional-Optional |    8.17 |    0 |
-| Serving PLMN Rate Control                        | Conditional-Optional |   8.129 |    0 |
-| MO Exception Data Counter                        | Conditional-Optional |   8.130 |    0 |
-| Remaining Running Service Gap Timer              | Conditional-Optional |   8.118 |    1 |
-| Extended Trace Information                       | Conditional          |   8.136 |    0 |
-| Subscribed Additional RRM Policy Index           | Conditional-Optional |   8.138 |    0 |
-| Additional RRM Policy Index in Use               | Conditional-Optional |   8.138 |    1 |
-| IWK SCEF ID for Monitoring Event                 | Conditional-Optional |   8.107 |    0 |
-| Alternative IMSI                                 | Conditional-Optional |   8.150 |    0 |
-| Private Extension                                | Optional             |    8.67 |   VS |
+| Information element                    | Presence requirement | IE Type | Ins. |
+|----------------------------------------+----------------------+---------+------|
+| Cause                                  | Mandatory            |     8.4 |    0 |
+| IMSI                                   | Conditional          |     8.3 |    0 |
+| MME/SGSN/AMF UE MM Context             | Conditional          |    8.38 |    0 |
+| MME/SGSN/AMF UE EPS PDN Connections    | Conditional          |    8.39 |    0 |
+| Sender F-TEID                          | Conditional          |    8.22 |    0 |
+| SGW S11/S4 F-TEID                      | Conditional          |    8.22 |    1 |
+| SGW node name                          | Conditional          |    8.66 |    0 |
+| Indication Flags                       | Conditional          |    8.12 |    0 |
+| Trace Information                      | Conditional          |    8.31 |    0 |
+| HRPD access node S101 IP address       | Conditional          |     8.9 |    0 |
+| 1xIWS S102 IP address                  | Conditional          |     8.9 |    1 |
+| Subscribed RFSP Index                  | Conditional-Optional |    8.77 |    0 |
+| RFSP Index in Use                      | Conditional-Optional |    8.77 |    1 |
+| UE Time Zone                           | Conditional-Optional |    8.44 |    0 |
+| MME/S4-SGSN LDN                        | Optional             |    8.82 |    0 |
+| MDT Configuration                      | Conditional-Optional |    8.93 |    0 |
+| SGSN node name                         | Conditional-Optional |    8.66 |    1 |
+| MME node name                          | Conditional-Optional |    8.66 |    2 |
+| User CSG Information                   | Conditional-Optional |    8.75 |    0 |
+| Monitoring Event Information           | Conditional-Optional |   8.120 |    0 |
+| Monitoring Event Extension Information | Conditional-Optional |   8.137 |    0 |
+| UE Usage Type                          | Conditional-Optional |   8.118 |    0 |
+| MME/SGSN UE SCEF PDN Connections       | Conditional          |   8.126 |    0 |
+| RAT Type                               | Conditional-Optional |    8.17 |    0 |
+| Serving PLMN Rate Control              | Conditional-Optional |   8.129 |    0 |
+| MO Exception Data Counter              | Conditional-Optional |   8.130 |    0 |
+| Remaining Running Service Gap Timer    | Conditional-Optional |   8.118 |    1 |
+| Extended Trace Information             | Conditional          |   8.136 |    0 |
+| Subscribed Additional RRM Policy Index | Conditional-Optional |   8.138 |    0 |
+| Additional RRM Policy Index in Use     | Conditional-Optional |   8.138 |    1 |
+| IWK SCEF ID for Monitoring Event       | Conditional-Optional |   8.107 |    0 |
+| Alternative IMSI                       | Conditional-Optional |   8.150 |    0 |
+| Private Extension                      | Optional             |    8.67 |   VS |
 
 *** 7.3.7 Context Acknowledge
 
@@ -1248,11 +1248,11 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Information element             | Presence requirement | IE Type | Ins. |
 |---------------------------------+----------------------+---------+------|
 | GUTI                            | Conditional          |    8.47 |    0 |
-| Routeing Area Identity(RAI)     | Conditional          |    8.21 |    0 |
-| Packet TMSI(P-TMSI)             | Conditional          |    8.41 |    0 |
+| RAI                             | Conditional          |    8.21 |    0 |
+| P-TMSI                          | Conditional          |    8.41 |    0 |
 | P-TMSI Signature                | Conditional          |    8.42 |    0 |
 | Complete Attach Request Message | Conditional          |    8.46 |    0 |
-| Address for Control Plane       | Optional             |     8.9 |    0 |
+| Address                         | Optional             |     8.9 |    0 |
 | UDP Source Port Number          | Conditional          |    8.56 |    0 |
 | Hop Counter                     | Optional             |    8.43 |    0 |
 | Target PLMN ID                  | Conditional-Optional |    8.18 |    0 |
@@ -1311,11 +1311,11 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Information element                 | Presence requirement | IE Type | Ins. |
 |-------------------------------------+----------------------+---------+------|
 | IMSI                                | Conditional          |     8.3 |    0 |
-| ME Identity (MEI)                   | Conditional          |    8.10 |    0 |
+| MEI                                 | Conditional          |    8.10 |    0 |
 | Indication Flags                    | Conditional-Optional |    8.12 |    0 |
 | RAT Type                            | Mandatory            |    8.17 |    0 |
-| User Location Information (ULI)     | Conditional          |    8.21 |    0 |
-| User CSG Information (UCI)          | Conditional-Optional |    8.75 |    0 |
+| ULI                                 | Conditional          |    8.21 |    0 |
+| User CSG Information                | Conditional-Optional |    8.75 |    0 |
 | PGW S5/S8 GTP-C IP Address          | Conditional          |     8.9 |    0 |
 | LBI                                 | Conditional-Optional |     8.8 |    0 |
 | Presence Reporting Area Information | Conditional-Optional |   8.109 |    0 |
@@ -1329,7 +1329,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Information element              | Presence requirement | IE Type | Ins. |
 |----------------------------------+----------------------+---------+------|
 | IMSI                             | Conditional          |     8.3 |    0 |
-| ME Identity (MEI)                | Conditional          |    8.10 |    0 |
+| MEI                              | Conditional          |    8.10 |    0 |
 | Cause                            | Mandatory            |     8.4 |    0 |
 | Change Reporting Action          | Conditional          |    8.61 |    0 |
 | CSG Information Reporting Action | Conditional-Optional |    8.76 |    0 |
@@ -1341,7 +1341,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Information element | Presence requirement | IE Type | Ins. |
 |---------------------+----------------------+---------+------|
 | IMSI                | Conditional          |     8.3 |    0 |
-| ME Identity (MEI)   | Conditional          |    8.10 |    0 |
+| MEI                 | Conditional          |    8.10 |    0 |
 | Indication Flags    | Conditional-Optional |    8.12 |    0 |
 | RANAP Cause         | Conditional          |    8.49 |    0 |
 | Private Extension   | Optional             |    8.67 |   VS |
@@ -1355,11 +1355,11 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.3.18 Configuration Transfer Tunnel
 
-| Information element                                                          | Presence requirement | IE Type | Ins. |
-|------------------------------------------------------------------------------+----------------------+---------+------|
-| E-UTRAN Transparent Container / EN-DC Container / Inter-system SON Container | Mandatory            |    8.48 |    0 |
-| Target eNodeB ID / en-gNB ID / gnB ID                                        | Mandatory            |    8.51 |    0 |
-| Connected Target eNodeB ID                                                   | Conditional-Optional |    8.51 |    1 |
+| Information element        | Presence requirement | IE Type | Ins. |
+|----------------------------+----------------------+---------+------|
+| SON Container              | Mandatory            |    8.48 |    0 |
+| Target node ID             | Mandatory            |    8.51 |    0 |
+| Connected Target eNodeB ID | Conditional-Optional |    8.51 |    1 |
 
 *** 7.3.19 RAN Information Relay
 
@@ -1371,10 +1371,10 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.3.20 ISR Status Indication
 
-| Information element | Presence requirement | IE Type           | Ins. |
-|---------------------+----------------------+-------------------+------|
-| Action Indication   | Mandatory            | Action Indication | 0    |
-| Private Extension   | Optional             | 8.67              | VS   |
+| Information element | Presence requirement | IE Type | Ins. |
+|---------------------+----------------------+---------+------|
+| Action Indication   | Mandatory            |    8.99 | 0    |
+| Private Extension   | Optional             |    8.67 | VS   |
 
 *** 7.3.21 UE Registration Query Request
 
@@ -1396,18 +1396,18 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.4.1 Suspend Notification
 
-| Information element             | Presence requirement | IE Type | Ins. |
-|---------------------------------+----------------------+---------+------|
-| IMSI                            | Conditional          |     8.3 |    0 |
-| Routeing Area Identity(RAI)     | Conditional          |    8.21 |    0 |
-| Linked EPS Bearer ID (LBI)      | Conditional-Optional |     8.8 |    0 |
-| Packet TMSI(P-TMSI)             | Conditional          |    8.41 |    0 |
-| Originating Node                | Conditional-Optional |    8.65 |    0 |
-| Address for Control Plane       | Conditional-Optional |     8.9 |    0 |
-| UDP Source Port Number          | Conditional-Optional |    8.56 |    0 |
-| Hop Counter                     | Optional             |    8.43 |    0 |
-| Sender F-TEID for Control Plane | Conditional-Optional |    8.22 |    0 |
-| Private Extension               | Optional             |    8.67 |   VS |
+| Information element    | Presence requirement | IE Type | Ins. |
+|------------------------+----------------------+---------+------|
+| IMSI                   | Conditional          |     8.3 |    0 |
+| RAI                    | Conditional          |    8.21 |    0 |
+| Linked EPS Bearer ID   | Conditional-Optional |     8.8 |    0 |
+| P-TMSI                 | Conditional          |    8.41 |    0 |
+| Originating Node       | Conditional-Optional |    8.65 |    0 |
+| Address                | Conditional-Optional |     8.9 |    0 |
+| UDP Source Port Number | Conditional-Optional |    8.56 |    0 |
+| Hop Counter            | Optional             |    8.43 |    0 |
+| Sender F-TEID          | Conditional-Optional |    8.22 |    0 |
+| Private Extension      | Optional             |    8.67 |   VS |
 
 *** 7.4.2 Suspend Acknowledge
 
@@ -1418,13 +1418,13 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.4.3 Resume Notification
 
-| Information element             | Presence requirement | IE Type | Ins. |
-|---------------------------------+----------------------+---------+------|
-| IMSI                            | Mandatory            |     8.3 |    0 |
-| Linked EPS Bearer ID (LBI)      | Conditional-Optional |     8.8 |    0 |
-| Originating Node                | Conditional-Optional |    8.65 |    0 |
-| Sender F-TEID for Control Plane | Conditional-Optional |    8.22 |    0 |
-| Private Extension               | Optional             |    8.67 |   VS |
+| Information element  | Presence requirement | IE Type | Ins. |
+|----------------------+----------------------+---------+------|
+| IMSI                 | Mandatory            |     8.3 |    0 |
+| Linked EPS Bearer ID | Conditional-Optional |     8.8 |    0 |
+| Originating Node     | Conditional-Optional |    8.65 |    0 |
+| Sender F-TEID        | Conditional-Optional |    8.22 |    0 |
+| Private Extension    | Optional             |    8.67 |   VS |
 
 *** 7.4.4 Resume Acknowledge
 
@@ -1530,12 +1530,12 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.9.5 PGW Restart Notification
 
-| Information element                            | Presence requirement | IE Type | Ins. |
-|------------------------------------------------+----------------------+---------+------|
-| PGW S5/S8 IP Address for Control Plane or PMIP | Mandatory            |     8.9 |    0 |
-| SGW S11/S4 IP Address for Control Plane        | Mandatory            |     8.9 |    1 |
-| Cause                                          | Conditional-Optional |     8.4 |    0 |
-| Private Extension                              | Optional             |    8.67 |   VS |
+| Information element   | Presence requirement | IE Type | Ins. |
+|-----------------------+----------------------+---------+------|
+| PGW S5/S8 IP Address  | Mandatory            |     8.9 |    0 |
+| SGW S11/S4 IP Address | Mandatory            |     8.9 |    1 |
+| Cause                 | Conditional-Optional |     8.4 |    0 |
+| Private Extension     | Optional             |    8.67 |   VS |
 
 *** 7.9.6 PGW Restart Notification Acknowledge
 
@@ -1546,12 +1546,12 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.9.7 PGW Downlink Triggering Notification
 
-| Information element                         | Presence requirement | IE Type | Ins. |
-|---------------------------------------------+----------------------+---------+------|
-| IMSI                                        | Mandatory            |     8.3 |    0 |
-| MME/S4-SGSN identifier                      | Conditional          |     8.9 |    0 |
-| PGW S5 F-TEID for GTP or PMIP Control Plane | Conditional-Optional |    8.22 |    0 |
-| Private Extension                           | Optional             |    8.67 |   VS |
+| Information element    | Presence requirement | IE Type | Ins. |
+|------------------------+----------------------+---------+------|
+| IMSI                   | Mandatory            |     8.3 |    0 |
+| MME/S4-SGSN identifier | Conditional          |     8.9 |    0 |
+| PGW S5 F-TEID          | Conditional-Optional |    8.22 |    0 |
+| Private Extension      | Optional             |    8.67 |   VS |
 
 *** 7.9.8 PGW Downlink Triggering Acknowledge
 
@@ -1570,7 +1570,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 |---------------------+----------------------+---------+------|
 | IMSI                | Conditional          |     8.3 |    0 |
 | Trace Information   | Mandatory            |    8.31 |    0 |
-| ME Identity (MEI)   | Conditional          |    8.10 |    0 |
+| MEI                 | Conditional          |    8.10 |    0 |
 
 *** 7.12.2 Trace Session Deactivation
 
@@ -1584,8 +1584,8 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 | Information element                        | Presence requirement | IE Type | Ins. |
 |--------------------------------------------+----------------------+---------+------|
-| Sender F-TEID for Control Plane            | Mandatory            |    8.22 |    0 |
-| Temporary Mobile Group Identity (TMGI)     | Mandatory            |    8.89 |    0 |
+| Sender F-TEID                              | Mandatory            |    8.22 |    0 |
+| TMGI                                       | Mandatory            |    8.89 |    0 |
 | MBMS Session Duration                      | Mandatory            |    8.69 |    0 |
 | MBMS Service Area                          | Mandatory            |    8.70 |    0 |
 | MBMS Session Identifier                    | Conditional          |    8.71 |    0 |
@@ -1594,7 +1594,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | MBMS IP Multicast Distribution             | Mandatory            |    8.73 |    0 |
 | Recovery                                   | Conditional          |     8.5 |    0 |
 | MBMS Time to Data Transfer                 | Conditional-Optional |    8.84 |    0 |
-| MBMS Data Transfer Start                   | Conditional-Optional |    8.95 |    0 |
+| MBMS Data Transfer                         | Conditional-Optional |    8.95 |    0 |
 | MBMS Flags                                 | Conditional-Optional |   8.102 |    0 |
 | MBMS Alternative IP Multicast Distribution | Conditional-Optional |    8.73 |    1 |
 | MBMS Cell List                             | Conditional-Optional |   8.121 |    0 |
@@ -1602,30 +1602,30 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.13.2 MBMS Session Start Response
 
-| Information element             | Presence requirement | IE Type | Ins. |
-|---------------------------------+----------------------+---------+------|
-| Cause                           | Mandatory            |     8.4 |    0 |
-| Sender F-TEID for Control Plane | Mandatory            |    8.22 |    0 |
-| MBMS Distribution Acknowledge   | Conditional          |    8.74 |    0 |
-| Sn-U SGSN F-TEID                | Conditional          |    8.22 |    1 |
-| Recovery                        | Conditional          |     8.5 |    0 |
-| Private Extension               | Optional             |    8.67 |   VS |
+| Information element           | Presence requirement | IE Type | Ins. |
+|-------------------------------+----------------------+---------+------|
+| Cause                         | Mandatory            |     8.4 |    0 |
+| Sender F-TEID                 | Mandatory            |    8.22 |    0 |
+| MBMS Distribution Acknowledge | Conditional          |    8.74 |    0 |
+| Sn-U SGSN F-TEID              | Conditional          |    8.22 |    1 |
+| Recovery                      | Conditional          |     8.5 |    0 |
+| Private Extension             | Optional             |    8.67 |   VS |
 
 *** 7.13.3 MBMS Session Update Request
 
-| Information element                      | Presence requirement | IE Type | Ins. |
-|------------------------------------------+----------------------+---------+------|
-| MBMS Service Area                        | Conditional          |    8.70 |    0 |
-| Temporary Mobile Group Identity (TMGI)   | Mandatory            |    8.89 |    0 |
-| Sender F-TEID for Control Plane          | Optional             |    8.22 |    0 |
-| MBMS Session Duration                    | Mandatory            |    8.69 |    0 |
-| QoS profile                              | Mandatory            |    8.15 |    0 |
-| MBMS Session Identifier                  | Conditional          |    8.71 |    0 |
-| MBMS Flow Identifier                     | Conditional          |    8.72 |    0 |
-| MBMS Time to Data Transfer               | Conditional-Optional |    8.84 |    0 |
-| MBMS Data Transfer Start / Update / Stop | Conditional-Optional |    8.95 |    0 |
-| MBMS Cell List                           | Conditional-Optional |   8.121 |    0 |
-| Private Extension                        | Optional             |    8.67 |   VS |
+| Information element        | Presence requirement | IE Type | Ins. |
+|----------------------------+----------------------+---------+------|
+| MBMS Service Area          | Conditional          |    8.70 |    0 |
+| TMGI                       | Mandatory            |    8.89 |    0 |
+| Sender F-TEID              | Optional             |    8.22 |    0 |
+| MBMS Session Duration      | Mandatory            |    8.69 |    0 |
+| QoS profile                | Mandatory            |    8.15 |    0 |
+| MBMS Session Identifier    | Conditional          |    8.71 |    0 |
+| MBMS Flow Identifier       | Conditional          |    8.72 |    0 |
+| MBMS Time to Data Transfer | Conditional-Optional |    8.84 |    0 |
+| MBMS Data Transfer         | Conditional-Optional |    8.95 |    0 |
+| MBMS Cell List             | Conditional-Optional |   8.121 |    0 |
+| Private Extension          | Optional             |    8.67 |   VS |
 
 *** 7.13.4 MBMS Session Update Response
 
@@ -1639,12 +1639,12 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 
 *** 7.13.5 MBMS Session Stop Request
 
-| Information element     | Presence requirement | IE Type | Ins. |
-|-------------------------+----------------------+---------+------|
-| MBMS Flow Identifier    | Conditional          |    8.72 |    0 |
-| MBMS Data Transfer Stop | Conditional-Optional |    8.95 |    0 |
-| MBMS Flags              | Conditional-Optional |   8.102 |    0 |
-| Private Extension       | Optional             |    8.67 |   VS |
+| Information element  | Presence requirement | IE Type | Ins. |
+|----------------------+----------------------+---------+------|
+| MBMS Flow Identifier | Conditional          |    8.72 |    0 |
+| MBMS Data Transfer   | Conditional-Optional |    8.95 |    0 |
+| MBMS Flags           | Conditional-Optional |   8.102 |    0 |
+| Private Extension    | Optional             |    8.67 |   VS |
 
 *** 7.13.6 MBMS Session Stop Response
 

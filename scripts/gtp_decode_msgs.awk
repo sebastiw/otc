@@ -164,7 +164,8 @@ $3 ~ /(Optional|Extendable)/ && inside_messages {
     iei_code=iei_codes[iei_ref]
     iei_type=tag(iei_types[iei_ref])
     iei_length=iei_lengths[iei_ref]
-    optional=sprintf("\n            {%s, %s, %s, %s},", iei_name, iei_code, iei_type, iei_length)
+    iei_instance=tolower(trim($5))
+    optional=sprintf("\n            {%s, {%s, %s}, %s},", iei_name, iei_code, iei_instance, iei_length)
     optionals=optionals optional
 }
 

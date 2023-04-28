@@ -28,7 +28,8 @@ decode(<<2:3, P:1, T:1, MP:1, _:2, MT:8, Len:16, Rest0/binary>>) ->
     {MsgFields, GTP1} = decode_msg_fields(P, T, MP, GTP0),
     Msg0 = decode_msg(MessageType, GTP1),
     Msg1 = maps:merge(Msg0, MsgFields),
-    Msg2 = Msg1#{message_type => MessageType},
+    Msg2 = Msg1#{message_type => MessageType,
+                 version => 2},
     {Msg2, Rest1}.
 
 encode(Map) ->
@@ -377,7 +378,7 @@ compose_message_type(mbms_session_stop_request) ->
 compose_message_type(mbms_session_stop_response) ->
     ?GTPv2_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE.
 
-decode_msg_fields(P, T, MP, GTP0) ->
+decode_msg_fields(P, T, M, GTP0) ->
     PB = case P of
              1 -> true;
              0 -> false
@@ -385,20 +386,20 @@ decode_msg_fields(P, T, MP, GTP0) ->
     Fs0 = [{piggy_backed, PB}],
     {Fs1, Rest1} = case T of
                        1 ->
-                           <<TEID:32, SN:24, Rest0/binary>> = GTP0,
-                           {[{teid, TEID}, {sequence_number, SN}], Rest0};
+                           <<TEID:32, SeqNo:24, Rest0/binary>> = GTP0,
+                           {[{teid, TEID}, {sequence_number, SeqNo}], Rest0};
                        0 ->
                            <<SeqNo:24, Rest0/binary>> = GTP0,
                            {[{sequence_number, SeqNo}], Rest0}
                    end,
 
-    {Fs2, Rest3} = case MP of
+    {Fs2, Rest3} = case M of
                        1 ->
                            <<MP:4, _:4, Rest2/binary>> = Rest1,
                            {[{message_priority, MP}], Rest2};
                        0 ->
                            <<_:8, Rest2/binary>> = Rest1,
-                           {[], Rest2}
+                           {[{message_priority, false}], Rest2}
                    end,
     {maps:from_list(Fs0 ++ Fs1 ++ Fs2), Rest3}.
 
@@ -418,21 +419,6 @@ encode_msg_fields(Map) ->
                   <<TEID:32, SN:24, MP:4, 0:4>>
           end,
     {Indicators, Bin}.
-
-decode_parameters(_, [], Acc) ->
-    Acc;
-decode_parameters(<<>>, _, Acc) ->
-    Acc;
-decode_parameters(<<IEI:8, Len:16, _:4, Instance:4, Bin0/binary>>, Os, Acc) ->
-    <<V:Len/binary, Rest/binary>> = Bin0,
-    Param = parse_iei(IEI),
-    case lists:keytake(Param, 1, Os) of
-        {value, {Name, _, _}, NOs} ->
-            Par = decode_parameter(Name, V),
-            decode_parameters(Rest, NOs, Acc#{Name => Par});
-        false ->
-            decode_parameters(Rest, Os, Acc)
-    end.
 
 parse_iei(?GTPv2_IEI_IMSI) ->
     imsi;
@@ -472,8 +458,8 @@ parse_iei(?GTPv2_IEI_SERVING_NETWORK) ->
     serving_network;
 parse_iei(?GTPv2_IEI_BEARER_TFT) ->
     bearer_tft;
-parse_iei(?GTPv2_IEI_TRAFFIC_AGGREGATION_DESCRIPTION) ->
-    traffic_aggregation_description;
+parse_iei(?GTPv2_IEI_TRAFFIC_AGGREGATE_DESCRIPTION) ->
+    traffic_aggregate_description;
 parse_iei(?GTPv2_IEI_USER_LOCATION_INFORMATION) ->
     user_location_information;
 parse_iei(?GTPv2_IEI_F_TEID) ->
@@ -602,8 +588,8 @@ parse_iei(?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER) ->
     mbms_time_to_data_transfer;
 parse_iei(?GTPv2_IEI_THROTTLING) ->
     throttling;
-parse_iei(?GTPv2_IEI_ALLOCATIONRETENTION_PRIORITY) ->
-    allocationretention_priority;
+parse_iei(?GTPv2_IEI_ALLOCATION_RETENTION_PRIORITY) ->
+    allocation_retention_priority;
 parse_iei(?GTPv2_IEI_EPC_TIMER) ->
     epc_timer;
 parse_iei(?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION) ->
@@ -634,8 +620,8 @@ parse_iei(?GTPv2_IEI_ULI_TIMESTAMP) ->
     uli_timestamp;
 parse_iei(?GTPv2_IEI_MBMS_FLAGS) ->
     mbms_flags;
-parse_iei(?GTPv2_IEI_RANNAS_CAUSE) ->
-    rannas_cause;
+parse_iei(?GTPv2_IEI_RAN_NAS_CAUSE) ->
+    ran_nas_cause;
 parse_iei(?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY) ->
     cn_operator_selection_entity;
 parse_iei(?GTPv2_IEI_TRUSTED_WLAN_MODE_INDICATION) ->
@@ -773,8 +759,8 @@ compose_iei(serving_network) ->
     ?GTPv2_IEI_SERVING_NETWORK;
 compose_iei(bearer_tft) ->
     ?GTPv2_IEI_BEARER_TFT;
-compose_iei(traffic_aggregation_description) ->
-    ?GTPv2_IEI_TRAFFIC_AGGREGATION_DESCRIPTION;
+compose_iei(traffic_aggregate_description) ->
+    ?GTPv2_IEI_TRAFFIC_AGGREGATE_DESCRIPTION;
 compose_iei(user_location_information) ->
     ?GTPv2_IEI_USER_LOCATION_INFORMATION;
 compose_iei(f_teid) ->
@@ -903,8 +889,8 @@ compose_iei(mbms_time_to_data_transfer) ->
     ?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER;
 compose_iei(throttling) ->
     ?GTPv2_IEI_THROTTLING;
-compose_iei(allocationretention_priority) ->
-    ?GTPv2_IEI_ALLOCATIONRETENTION_PRIORITY;
+compose_iei(allocation_retention_priority) ->
+    ?GTPv2_IEI_ALLOCATION_RETENTION_PRIORITY;
 compose_iei(epc_timer) ->
     ?GTPv2_IEI_EPC_TIMER;
 compose_iei(signalling_priority_indication) ->
@@ -935,8 +921,8 @@ compose_iei(uli_timestamp) ->
     ?GTPv2_IEI_ULI_TIMESTAMP;
 compose_iei(mbms_flags) ->
     ?GTPv2_IEI_MBMS_FLAGS;
-compose_iei(rannas_cause) ->
-    ?GTPv2_IEI_RANNAS_CAUSE;
+compose_iei(ran_nas_cause) ->
+    ?GTPv2_IEI_RAN_NAS_CAUSE;
 compose_iei(cn_operator_selection_entity) ->
     ?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY;
 compose_iei(trusted_wlan_mode_indication) ->
@@ -1036,11 +1022,9 @@ compose_iei(special_ie_type_for_ie_type_extension) ->
 compose_iei(private_extension) ->
     ?GTPv2_IEI_PRIVATE_EXTENSION.
 
-
-
 decode_parameter(imsi, V) ->
     %% ITU-T Rec E.212 TBCD digits
-    V;
+    tcbd_decode(V);
 decode_parameter(cause, V) ->
     <<C:8, _S:5, PCE:1, BCE:1, CS:1, Rest0/binary>> = V,
     Is = case C >= 16 andalso C =< 63 of
@@ -1065,24 +1049,19 @@ decode_parameter(cause, V) ->
                   offending_ie_instance => Inst}
     end;
 decode_parameter(recovery_restart_counter, V) ->
-    V;
+    <<RestartCounter:8>> = V,
+    RestartCounter;
 decode_parameter(apn, V) ->
-    %% The encoding the APN field follows 3GPP TS 23.003 [2] clause
-    %% 9.1. The content of the APN field shall be the full APN with
-    %% both the APN Network Identifier and APN Operator Identifier
-    %% being present as specified in 3GPP TS 23.003 [2] clauses 9.1.1
-    %% and 9.1.2, 3GPP TS 23.060 [35] Annex A and 3GPP TS 23.401 [3]
-    %% clauses 4.3.8.1.
-    V;
+    decode_apn(V);
 decode_parameter(ambr, V) ->
     <<Uplink:32, Downlink:32>> = V,
     #{uplink => Uplink,
       downlink => Downlink};
-decode_parameter(ebi, V) ->
+decode_parameter(eps_bearer_id, V) ->
     <<_:4, EBI:4, _/binary>> = V,
     EBI;
 decode_parameter(ip_address, V) ->
-    inet:parse_address(V);
+    bin_to_ip_addr(V);
 decode_parameter(mei, V) ->
     %% The ME Identity field contains either the IMEI or the IMEISV as
     %% defined in clause 6.2 of 3GPP TS 23.003 [2]. It is encoded as
@@ -1092,9 +1071,1998 @@ decode_parameter(mei, V) ->
     %% 15 BCD digits and IMEISV is 16 BCD digits. For IMEI, bits 5 to
     %% 8 of the last octet shall be filled with an end mark coded as
     %% '1111'.
+    IMEISV = tcbd_decode(V),
+    case length(IMEISV) of
+        15 ->
+            #{imei => IMEISV};
+        16 ->
+            {IMEI, SV} = lists:split(15, IMEISV),
+            #{imei => IMEI, sv => SV}
+    end;
+decode_parameter(msisdn, V) ->
+    tcbd_decode(V);
+decode_parameter(indication, V) ->
+    <<DAF:1, DTF:1, HI:1, DFI:1, OI:1, ISRSI:1, ISRAI:1, SGWCI:1,
+      SQCI:1, UIMSI:1, CFSI:1, CRSI:1, P:1, PT:1, SI:1, MSV:1,
+      RetLoc:1, PBIC:1, SRNI:1, S6AF:1, S4AF:1, MBMDT:1, ISRAU:1, CCRSI:1,
+      CPRAI:1, AARL:1, PPOF:1, PPONPPEI:1, PPSI:1, CSFBI:1, CLII:1, CPSR:1,
+      NSI:1, UASI:1, DTCI:1, BDWI:1, PSCI:1, PCRI:1, AOSI:1, AOPI:1,
+      ROAAI:1, EPCOSI:1, CPOPCI:1, PMTSMI:1, S11TF:1, PNSI:1, UNACCSI:1, WPMSI:1,
+      FGSNN26:1, REPREFI:1, FGSIWK:1, EEVRSI:1, LTEMUI:1, LTEMPI:1, ENBCRSI:1, TSPCMI:1,
+      CSRMFI:1, MTEDTN:1, MTEDTA:1, N5GNMI:1, FGCNRS:1, FGCNRI:1, FSRHOI:1, ETHPDN:1,
+      NSPUSI:1, PGWRNSI:1, RPPCSI:1, PGWCHI:1, SISSME:1, NSENBI:1, IDFUPF:1, EMCI:1,
+      _Spare:5, LTEMSAI:1, SRTPI:1,  UPIPSI:1,
+      _/binary>> = V,
+
+    #{dual_address_bearer_flag => DAF,
+      direct_tunnel_flag => DTF,
+      handover_indication => HI,
+      direct_forwarding_indication => DFI,
+      operation_indication => OI,
+      idle_mode_signalling_reduction_supported_indication => ISRSI,
+      idle_mode_signalling_reduction_activation_indication => ISRAI,
+      sgw_change_indication => SGWCI,
+      subscribed_qos_change_indication => SQCI,
+      unauthenticated_imsi => UIMSI,
+      change_f_teid_support_indication => CFSI,
+      change_reporting_support_indication => CRSI,
+      piggybacking_supported => P,
+      s5s8_protocol_type => PT,
+      scope_indication => SI,
+      ms_validated => MSV,
+      retrieve_location_indication_flag => RetLoc,
+      propagate_bbai_information_change => PBIC,
+      sgw_restoration_needed_indication => SRNI,
+      static_ipv6_address_flag => S6AF,
+      static_ipv4_address_flag => S4AF,
+      management_based_mdt_allowed_flag => MBMDT,
+      isr_is_activated_for_the_ue => ISRAU,
+      csg_change_reporting_support_indication => CCRSI,
+      change_of_presence_reporting_area_information_indication => CPRAI,
+      abnormal_release_of_radio_link => AARL,
+      pdn_pause_off_indication => PPOF,
+      pdn_pause_on_enabled_indication => PPONPPEI,
+      pdn_pause_support_indication => PPSI,
+      csfb_indication => CSFBI,
+      change_of_location_information_indication => CLII,
+      cs_to_ps_srvcc_indication => CPSR,
+      nbifom_support_indication => NSI,
+      ue_available_for_signaling_indication => UASI,
+      delay_tolerant_connection_indication => DTCI,
+      buffered_dl_data_waiting_indication => BDWI,
+      pending_subscription_change_indication => PSCI,
+      p_cscf_restoration_indication => PCRI,
+      associate_oci_with_sgw_nodes_identity => AOSI,
+      associate_oci_with_pgw_nodes_identity => AOPI,
+      release_over_any_access_indication => ROAAI,
+      extended_pco_support_indication => EPCOSI,
+      control_plane_only_pdn_connection_indication => CPOPCI,
+      pending_mt_short_message_indication => PMTSMI,
+      s11_u_tunnel_flag => S11TF,
+      pending_network_initiated_pdn_connection_signalling_indication => PNSI,
+      ue_not_authorised_cause_code_support_indication => UNACCSI,
+      wlcp_pdn_connection_modification_support_indication => WPMSI,
+      '5gs_interworking_without_n26_indication' => FGSNN26,
+      return_preferred_indication => REPREFI,
+      '5gs_interworking_indication' => FGSIWK,
+      extended_ebi_value_range_support_indication => EEVRSI,
+      lte_m_ue_indication => LTEMUI,
+      lte_m_rat_type_reporting_to_pgw_indication => LTEMPI,
+      enb_change_reporting_support_indication => ENBCRSI,
+      triggering_sgsn_initiated_pdp_context_creation_modification_indication => TSPCMI,
+      create_session_request_message_forwarded_indication => CSRMFI,
+      mt_edt_not_applicable => MTEDTN,
+      mt_edt_applicable => MTEDTA,
+      no_5gs_n26_mobility_indication => N5GNMI,
+      '5gc_not_restricted_support' => FGCNRS,
+      '5gc_not_restricted_indication' => FGCNRI,
+      '5g_srvcc_ho_indication' => FSRHOI,
+      ethernet_pdn_support_indication => ETHPDN,
+      notify_start_pause_of_charging_via_user_plane_support_indication => NSPUSI,
+      pgw_redirection_due_to_mismatch_with_network_slice_subscribed_by_ue_support_indication => PGWRNSI,
+      restoration_of_pdn_connections_after_an_pgw_c_smf_change_support_indication => RPPCSI,
+      pgw_change_indication => PGWCHI,
+      same_iwk_scef_selected_for_monitoring_event_indication => SISSME,
+      notify_source_enodeb_indication => NSENBI,
+      indirect_data_forwarding_with_upf_indication => IDFUPF,
+      emergency_pdu_session_indication => EMCI,
+      lte_m_satellite_access_indication => LTEMSAI,
+      satellite_rat_type_reporting_to_pgw_indication => SRTPI,
+      user_plane_integrity_protection_support_indication => UPIPSI};
+decode_parameter(protocol_configuration_options, V) ->
+    %% Specified as per clause 10.5.6.3 of 3GPP TS 24.008
+    <<_Ext:1, 0:4, CP:3, R0/binary>> = V,
+    0 = CP,
+    decode_pco(R0);
+decode_parameter(pdn_address_allocation, V) ->
+    <<PDN:1/binary, R0/binary>> = V,
+    case pdn_type(PDN) of
+        ipv4 ->
+            <<IPv4:4/binary, _/binary>> = R0,
+            #{ipv4 => bin_to_ip_addr(IPv4)};
+        ipv6 ->
+            <<IPv6:16/binary, _/binary>> = R0,
+            #{ipv6 => bin_to_ip_addr(IPv6)};
+        ipv4v6 ->
+            <<IPv4:4/binary, IPv6:16/binary, _/binary>> = R0,
+            #{ipv4 => bin_to_ip_addr(IPv4),
+              ipv6 => bin_to_ip_addr(IPv6)};
+        T ->
+            T
+    end;
+decode_parameter(bearer_qos, V) ->
+    <<_:1, PCI:1, PL:4, _:1, PVI:1,
+      QCI:1/binary,
+      MBRU:5/binary,
+      MBRD:5/binary,
+      GBRU:5/binary,
+      GBRD:5/binary>> = V,
+    #{pre_emption_capability => PCI,
+      priority_level => PL,
+      pre_emption_vulnerability => PVI,
+      qci => QCI,
+      maximum_bitrate_uplink => MBRU,
+      maximum_bitrate_downlink => MBRD,
+      guaranteed_bitrate_uplink => GBRU,
+      guaranteed_bitrate_downlink => GBRD};
+decode_parameter(flow_qos, V) ->
+    <<QCI:1/binary,
+      MBRU:5/binary,
+      MBRD:5/binary,
+      GBRU:5/binary,
+      GBRD:5/binary>> = V,
+    #{qci => QCI,
+      maximum_bitrate_uplink => MBRU,
+      maximum_bitrate_downlink => MBRD,
+      guaranteed_bitrate_uplink => GBRU,
+      guaranteed_bitrate_downlink => GBRD};
+decode_parameter(rat_type, V) ->
+    <<RATType:8>> = V,
+    case RATType of
+        ?GTPv2_RAT_TYPE_UTRAN -> utran;
+        ?GTPv2_RAT_TYPE_GERAN -> geran;
+        ?GTPv2_RAT_TYPE_WLAN -> wlan;
+        ?GTPv2_RAT_TYPE_GAN -> gan;
+        ?GTPv2_RAT_TYPE_HSPA_EVOLUTION -> hspa_evolution;
+        ?GTPv2_RAT_TYPE_EUTRAN_WB_EUTRAN -> eutran_wb_eutran;
+        ?GTPv2_RAT_TYPE_VIRTUAL -> virtual;
+        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT -> eutran_nb_iot;
+        ?GTPv2_RAT_TYPE_LTE_M -> lte_m;
+        ?GTPv2_RAT_TYPE_NR -> nr;
+        ?GTPv2_RAT_TYPE_WB_EUTRAN_LEO -> wb_eutran_leo;
+        ?GTPv2_RAT_TYPE_WB_EUTRAN_MEO -> wb_eutran_meo;
+        ?GTPv2_RAT_TYPE_WB_EUTRAN_GEO -> wb_eutran_geo;
+        ?GTPv2_RAT_TYPE_WB_EUTRAN_OTHERSAT -> wb_eutran_othersat;
+        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_LEO -> eutran_nb_iot_leo;
+        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_MEO -> eutran_nb_iot_meo;
+        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_GEO -> eutran_nb_iot_geo;
+        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_OTHERSAT -> eutran_nb_iot_othersat;
+        ?GTPv2_RAT_TYPE_LTE_M_LEO -> lte_m_leo;
+        ?GTPv2_RAT_TYPE_LTE_M_MEO -> lte_m_meo;
+        ?GTPv2_RAT_TYPE_LTE_M_GEO -> lte_m_geo;
+        ?GTPv2_RAT_TYPE_LTE_M_OTHERSAT -> lte_m_othersat
+    end;
+decode_parameter(serving_network, V) ->
+    decode_mcc_mnc(V);
+decode_parameter(bearer_tft, V) ->
+    %% Specified in 3GPP TS 24.008
     V;
+decode_parameter(traffic_aggregate_description, V) ->
+    %% Specified in 3GPP TS 24.008
+    V;
+decode_parameter(user_location_information, V) ->
+    <<EMIDI:1, MIDI:1, LAII:1, ECGII:1, TAII:1, RAII:1, SAII:1, CGII:1, Rest/binary>> = V,
+    Fields = [{cgi, CGII},
+              {sai, SAII},
+              {rai, RAII},
+              {tai, TAII},
+              {ecgi, ECGII},
+              {lai, LAII},
+              {macro_enodeb_id, MIDI},
+              {extended_macro_enodeb_id, EMIDI}],
+    lists:foldl(fun ({_Name, 0}, {Acc, Bin}) ->
+                        {Acc, Bin};
+                    ({cgi, 1}, {Acc, Bin}) ->
+                        <<CGIBin:7/binary, R/binary>> = Bin,
+                        CGI = decode_cgi(CGIBin),
+                        {Acc#{cgi => CGI}, R};
+                    ({sai, 1}, {Acc, Bin}) ->
+                        <<SAIBin:7/binary, R/binary>> = Bin,
+                        SAI = decode_sai(SAIBin),
+                        {Acc#{sai => SAI}, R};
+                    ({rai, 1}, {Acc, Bin}) ->
+                        <<RAIBin:7/binary, R/binary>> = Bin,
+                        RAI = decode_rai(RAIBin),
+                        {Acc#{rai => RAI}, R};
+                    ({tai, 1}, {Acc, Bin}) ->
+                        <<TAIBin:5/binary, R/binary>> = Bin,
+                        TAI = decode_tai(TAIBin),
+                        {Acc#{tai => TAI}, R};
+                    ({ecgi, 1}, {Acc, Bin}) ->
+                        <<ECGIBin:7/binary, R/binary>> = Bin,
+                        ECGI = decode_ecgi(ECGIBin),
+                        {Acc#{ecgi => ECGI}, R};
+                    ({lai, 1}, {Acc, Bin}) ->
+                        <<LAIBin:7/binary, R/binary>> = Bin,
+                        LAI = decode_lai(LAIBin),
+                        {Acc#{lai => LAI}, R};
+                    ({macro_enodeb_id, 1}, {Acc, Bin}) ->
+                        <<MIDBin:6/binary, R/binary>> = Bin,
+                        MID = decode_macro_enodeb_id(MIDBin),
+                        {Acc#{macro_enodeb_id => MID}, R};
+                    ({extended_macro_enodeb_id, 1}, {Acc, Bin}) ->
+                        <<EMIDBin:6/binary, R/binary>> = Bin,
+                        EMID = decode_extended_macro_enodeb_id(EMIDBin),
+                        {Acc#{extended_macro_enodeb_id => EMID}, R}
+                end,
+                {#{}, Rest},
+                Fields);
+decode_parameter(f_teid, V) ->
+    <<V4:1, V6:1, IT:6, TEIDGRE:32, IP/binary>> = V,
+    InterfaceType = case IT of
+                        0 -> s1u_enodeb_gtpu;
+                        1 -> s1u_sgw_gtpu;
+                        2 -> s12_rnc_gtpu;
+                        3 -> s12_sgw_gtpu;
+                        4 -> s5s8_sgw_gtpu;
+                        5 -> s5s8_pgw_gtpu;
+                        6 -> s5s8_sgw_gtpc;
+                        7 -> s5s8_pgw_gtpc;
+                        8 -> s5s8_sgw_pmipv6;
+                        9 -> s5s8_pgw_pmipv6;
+                        10 -> s11_mme_gtpc;
+                        11 -> s11s4_sgw_gtpc;
+                        12 -> s10n26_mme_gtpc;
+                        13 -> s3_mme_gtpc;
+                        14 -> s3_sgsn_gtpc;
+                        15 -> s4_sgsn_gtpu;
+                        16 -> s4_sgw_gtpu;
+                        17 -> s4_sgsn_gtpc;
+                        18 -> s16_sgsn_gtpc;
+                        19 -> enodeb_gnodeb_gtpu_dl_data_forwarding;
+                        20 -> enodeb_gtpu_ul_data_forwarding;
+                        21 -> rnc_gtpu_data_forwarding;
+                        22 -> sgsn_gtpu_data_forwarding;
+                        23 -> sgw_upf_gtpu_dl_data_forwarding;
+                        24 -> sm_mbms_gw_gtpc;
+                        25 -> sn_mbms_gw_gtpc;
+                        26 -> sm_mme_gtpc;
+                        27 -> sn_sgsn_gtpc;
+                        28 -> sgw_gtpu_ul_data_forwarding;
+                        29 -> sn_sgsn_gtpu;
+                        30 -> s2b_epdg_gtpc;
+                        31 -> s2bu_epdg_gtpu;
+                        32 -> s2b_pgw_gtpc;
+                        33 -> s2bu_pgw_gtpu;
+                        34 -> s2a_twan_gtpu;
+                        35 -> s2a_twan_gtpc;
+                        36 -> s2a_pgw_gtpc;
+                        37 -> s2a_pgw_gtpu;
+                        38 -> s11_mme_gtpu;
+                        39 -> s11_sgw_gtpu;
+                        40 -> n26_amf_gtpc;
+                        41 -> n19mb_upf_gtpu
+                    end,
+    case {V4, V6} of
+        {1, 0} ->
+            <<IPv4:4/binary>> = IP,
+            #{interface_type => InterfaceType,
+              teid_gre_key => TEIDGRE,
+              ipv4 => bin_to_ip_addr(IPv4)};
+        {0, 1} ->
+            <<IPv6:16/binary>> = IP,
+            #{interface_type => InterfaceType,
+              teid_gre_key => TEIDGRE,
+              ipv6 => bin_to_ip_addr(IPv6)};
+        {1, 1} ->
+            <<IPv4:4/binary, IPv6:16/binary>> = IP,
+            #{interface_type => InterfaceType,
+              teid_gre_key => TEIDGRE,
+              ipv4 => bin_to_ip_addr(IPv4),
+              ipv6 => bin_to_ip_addr(IPv6)}
+    end;
+decode_parameter(tmsi, V) ->
+    %% Defined in 3GPP TS 23.003
+    V;
+decode_parameter(global_cn_id, V) ->
+    <<MCCMNCBin:3/binary, CNID:4/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{cn_id => CNID};
+decode_parameter(s103_pdn_data_forwarding_info, V) ->
+    <<Len:8, Rest/binary>> = V,
+    <<HSGWAddr:Len/binary, GREKey:4/binary, EPSNum:8, EPSBearers/binary>> = Rest,
+    {EPSBearerIDs, _} = lists:foldl(
+                          fun(_, {Acc, Bin}) ->
+                                  <<_:4, ID:4, More/binary>> = Bin,
+                                  {Acc ++ [ID], More}
+                          end,
+                          {[], EPSBearers},
+                          lists:seq(1, EPSNum)),
+    #{hsgw_address => HSGWAddr,
+      gre_key => GREKey,
+      eps_bearer_ids => EPSBearerIDs};
+decode_parameter(s1_u_data_forwarding_info, V) ->
+    <<_:4, EPSBearerId:4, Len:8, Rest>> = V,
+    <<SGWAddr:Len/binary, Teid:4/binary>> = Rest,
+    #{eps_bearer_id => EPSBearerId,
+      sgw_address => SGWAddr,
+      sgw_s1u_teid => Teid};
+decode_parameter(delay_value, V) ->
+    <<Multiples:8/binary>> = V,
+    50*Multiples;
+decode_parameter(bearer_context, V) ->
+    %% Per message?
+    V;
+decode_parameter(charging_id, V) ->
+    %% Defined in 3GPP TS 32.251
+    <<ChargingId:4/binary>> = V,
+    ChargingId;
+decode_parameter(charging_characteristics, V) ->
+    %% Defined in 3GPP TS 32.251
+    <<ChargingCharacteristics:2/binary>> = V,
+    ChargingCharacteristics;
+decode_parameter(trace_information, V) ->
+    <<MCCMNCBin:3/binary,
+      TraceId:8,
+      TriggeringEvents:8,
+      NETypes:2/binary,
+      SessionTraceDepth:1/binary,
+      ListOfInterfaces:2/binary,
+      IPAddr:4/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{%% Defined in clause 5.6 of 3GPP TS 32.422
+            trace_id => TraceId,
+            %% Encoded as the first 9 octets in clause 5.1 of 3GPP TS 32.422
+            triggering_events => TriggeringEvents,
+            %% Specified in 3GPP TS 32.422
+            ne_types => NETypes,
+            %% Specified in 3GPP TS 32.422
+            session_trace_depth => SessionTraceDepth,
+            %% Encoded as the first 12 octets in clause 5.5 of 3GPP TS 32.422
+            list_of_interfaces => ListOfInterfaces,
+            %% Specified in 3GPP TS 32.422
+            ip_address => bin_to_ip_addr(IPAddr)};
+decode_parameter(bearer_flags, V) ->
+    <<_:4, ASI:1, Vind:1, VB:1, PPC:1>> = V,
+    #{prohibit_payload_compression => PPC,
+      voice_bearer => VB,
+      vsrvcc_indicator => Vind,
+      activity_status_indicator => ASI};
+decode_parameter(pdn_type, V) ->
+    pdn_type(V);
+decode_parameter(procedure_transaction_id, V) ->
+    <<PTI:8>> = V,
+    PTI;
+decode_parameter(mm_context_gsm_key_and_triplets, V) ->
+    <<SecurityMode:3, _:1, DRXI:1, CKSN:3,
+      NumTriplets:3, _:3, UAMBRI:1, SAMBRI:1,
+      _:5, UsedCipher:3,
+      Kc:8/binary,
+      R0/binary>> = V,
+    {Triplets, R1} = triplets(NumTriplets, R0),
+    <<DRXParam:2/binary,
+      UplinkSubscribedUEAMBR:4/binary,
+      DownlinkSubscribedUEAMBR:4/binary,
+      UplinkUsedUEAMBR:4/binary,
+      DownlinkUsedUEAMBR:4/binary,
+      UENetworkCapabilityLen:8, R2/binary>> = R1,
+    <<UENetworkCapability:UENetworkCapabilityLen/binary,
+      MSNetworkCapabilityLen:8, R3/binary>> = R2,
+    <<MSNetworkCapability:MSNetworkCapabilityLen/binary,
+      R4/binary>> = R3,
+    <<MEILen:8, R5/binary>> = R4,
+    <<MEI:MEILen/binary,
+      R6/binary>> = R5,
+    <<ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1,
+      VoiceDomainPreferenceLen:8, R7/binary>> = R6,
+    <<VoiceDomainPreference:VoiceDomainPreferenceLen/binary>> = R7,
+    #{security_mode => SecurityMode,
+      drxi => DRXI,
+      cksn => CKSN,
+      uambri => UAMBRI,
+      sambri => SAMBRI,
+      used_cipher => UsedCipher,
+      kc => Kc,
+      triplets => Triplets,
+      drx_param => DRXParam,
+      uplink_subscribed_ue_ambr => UplinkSubscribedUEAMBR,
+      downlink_subscribed_ue_ambr => DownlinkSubscribedUEAMBR,
+      uplink_used_ue_ambr => UplinkUsedUEAMBR,
+      downlink_used_ue_ambr => DownlinkUsedUEAMBR,
+      ue_network_capability => UENetworkCapability,
+      ms_network_capability => MSNetworkCapability,
+      mei => MEI,
+      ecna => ECNA,
+      nbna => NBNA,
+      hnna => HNNA,
+      ena => ENA,
+      ina => INA,
+      gana => GANA,
+      gena => GENA,
+      una => UNA,
+      voice_domain_preference => VoiceDomainPreference};
+decode_parameter(mm_context_umts_key_cipher_and_quintuplets, V) ->
+    <<SecurityMode:3, _:1, DRXI:1, CKSN:3,
+      NumQuintuplets:3, IOVI:1, GUPII:1, UGIPAI:1, UAMBRI:1, SAMBRI:1,
+      _:2, UsedGPRSIntegrityProtectionAlgorithm:3, UsedCipher:3,
+      CK:16/binary,
+      IK:16/binary,
+      R0/binary>> = V,
+    {Quintuplets, R1} = quintuplets(NumQuintuplets, R0),
+    <<DRXParam:2/binary,
+      UplinkSubscribedUEAMBR:4/binary,
+      DownlinkSubscribedUEAMBR:4/binary,
+      UplinkUsedUEAMBR:4/binary,
+      DownlinkUsedUEAMBR:4/binary,
+      UENetworkCapabilityLen:8, R2/binary>> = R1,
+    <<UENetworkCapability:UENetworkCapabilityLen/binary,
+      MSNetworkCapabilityLen:8,
+      R3/binary>> = R2,
+    <<MSNetworkCapability:MSNetworkCapabilityLen/binary,
+      MEILen:8, R4/binary>> = R3,
+    <<MEI:MEILen/binary,
+      ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1,
+      VoiceDomainPreferenceLen:8, R5/binary>> = R4,
+    <<VoiceDomainPreference:VoiceDomainPreferenceLen/binary,
+      HigherBitratesThan16MbpsFlagLen:8, R6/binary>> = R5,
+    <<HigherBitratesThan16MbpsFlag:HigherBitratesThan16MbpsFlagLen/binary,
+      IOVUpdatesCounter:8>> = R6,
+    #{security_mode => SecurityMode,
+      drxi => DRXI,
+      cksn => CKSN,
+      iovi => IOVI,
+      gupii => GUPII,
+      ugipai => UGIPAI,
+      uambri => UAMBRI,
+      sambri => SAMBRI,
+      used_gprs_integrity_protection_algorithm => UsedGPRSIntegrityProtectionAlgorithm,
+      used_cipher => UsedCipher,
+      ck => CK,
+      ik => IK,
+      quintuplets => Quintuplets,
+      drx_param => DRXParam,
+      uplink_subscribed_ue_ambr => UplinkSubscribedUEAMBR,
+      downlink_subscribed_ue_ambr => DownlinkSubscribedUEAMBR,
+      uplink_used_ue_ambr => UplinkUsedUEAMBR,
+      downlink_used_ue_ambr => DownlinkUsedUEAMBR,
+      ue_network_capability => UENetworkCapability,
+      ms_network_capability => MSNetworkCapability,
+      mei => MEI,
+      ecna => ECNA,
+      nbna => NBNA,
+      hnna => HNNA,
+      ena => ENA,
+      ina => INA,
+      gana => GANA,
+      gena => GENA,
+      una => UNA,
+      voice_domain_preference => VoiceDomainPreference,
+      higher_bitrates_than_16_mbps_flag => HigherBitratesThan16MbpsFlag,
+      iov_updates_counter => IOVUpdatesCounter};
+decode_parameter(mm_context_gsm_key_cipher_and_quintuplets, V) ->
+    <<SecurityMode:3, _:1, DRXI:1, CKSN:3,
+      NumQuintuplets:3, _:3, UAMBRI:1, SAMBRI:1,
+      _:5, UsedCipher:3,
+      Kc:8/binary,
+      R0/binary>> = V,
+    {Quintuplets, R1} = quintuplets(NumQuintuplets, R0),
+    <<DRXParam:2/binary,
+      UplinkSubscribedUEAMBR:4/binary,
+      DownlinkSubscribedUEAMBR:4/binary,
+      UplinkUsedUEAMBR:4/binary,
+      DownlinkUsedUEAMBR:4/binary,
+      UENetworkCapabilityLen:8, R1/binary>> = R0,
+    <<UENetworkCapability:UENetworkCapabilityLen/binary,
+      MSNetworkCapabilityLen:8,
+      R2/binary>> = R1,
+    <<MSNetworkCapability:MSNetworkCapabilityLen/binary,
+      MEILen:8, R3/binary>> = R2,
+    <<MEI:MEILen/binary,
+      ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1,
+      VoiceDomainPreferenceLen:8, R4/binary>> = R3,
+    <<VoiceDomainPreference:VoiceDomainPreferenceLen/binary,
+      HigherBitratesThan16MbpsFlagLen:8, R5/binary>> = R4,
+    <<HigherBitratesThan16MbpsFlag:HigherBitratesThan16MbpsFlagLen/binary>> = R5,
+    #{security_mode => SecurityMode,
+      drxi => DRXI,
+      cksn => CKSN,
+      uambri => UAMBRI,
+      sambri => SAMBRI,
+      used_cipher => UsedCipher,
+      kc => Kc,
+      quintuplets => Quintuplets,
+      drx_param => DRXParam,
+      uplink_subscribed_ue_ambr => UplinkSubscribedUEAMBR,
+      downlink_subscribed_ue_ambr => DownlinkSubscribedUEAMBR,
+      uplink_used_ue_ambr => UplinkUsedUEAMBR,
+      downlink_used_ue_ambr => DownlinkUsedUEAMBR,
+      ue_network_capability => UENetworkCapability,
+      ms_network_capability => MSNetworkCapability,
+      mei => MEI,
+      ecna => ECNA,
+      nbna => NBNA,
+      hnna => HNNA,
+      ena => ENA,
+      ina => INA,
+      gana => GANA,
+      gena => GENA,
+      una => UNA,
+      voice_domain_preference => VoiceDomainPreference,
+      higher_bitrates_than_16_mbps_flag => HigherBitratesThan16MbpsFlag};
+decode_parameter(mm_context_umts_key_and_quintuplets, V) ->
+    <<SecurityMode:3, _:1, DRXI:1, KSI:3,
+      NumQuintuplets:3, IOVI:1, GUPII:1, UGIPAI:1, UAMBRI:1, SAMBRI:1,
+      _:5, UsedGPRSIntegrityProtectionAlgorithm:3,
+      CK:16/binary,
+      IK:16/binary,
+      R0/binary>> = V,
+    {Quintuplets, R1} = quintuplets(NumQuintuplets, R0),
+    <<DRXParam:2/binary,
+      UplinkSubscribedUEAMBR:4/binary,
+      DownlinkSubscribedUEAMBR:4/binary,
+      UplinkUsedUEAMBR:4/binary,
+      DownlinkUsedUEAMBR:4/binary,
+      UENetworkCapabilityLen:8, R1/binary>> = R0,
+    <<UENetworkCapability:UENetworkCapabilityLen/binary,
+      MSNetworkCapabilityLen:8,
+      R2/binary>> = R1,
+    <<MSNetworkCapability:MSNetworkCapabilityLen/binary,
+      MEILen:8, R3/binary>> = R2,
+    <<MEI:MEILen/binary,
+      ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1,
+      VoiceDomainPreferenceLen:8, R4/binary>> = R3,
+    <<VoiceDomainPreference:VoiceDomainPreferenceLen/binary,
+      HigherBitratesThan16MbpsFlagLen:8, R5/binary>> = R4,
+    <<HigherBitratesThan16MbpsFlag:HigherBitratesThan16MbpsFlagLen/binary,
+      IOVUpdatesCounter:8,
+      ExtendedAccessRestrictionDataLen:8, R6/binary>> = R5,
+    <<ExtendedAccessRestrictionData:ExtendedAccessRestrictionDataLen/binary>> = R6,
+    #{security_mode => SecurityMode,
+      drxi => DRXI,
+      ksi => KSI,
+      iovi => IOVI,
+      gupii => GUPII,
+      ugipai => UGIPAI,
+      uambri => UAMBRI,
+      sambri => SAMBRI,
+      used_gprs_integrity_protection_algorithm => UsedGPRSIntegrityProtectionAlgorithm,
+      ck => CK,
+      ik => IK,
+      quintuplets => Quintuplets,
+      drx_param => DRXParam,
+      uplink_subscribed_ue_ambr => UplinkSubscribedUEAMBR,
+      downlink_subscribed_ue_ambr => DownlinkSubscribedUEAMBR,
+      uplink_used_ue_ambr => UplinkUsedUEAMBR,
+      downlink_used_ue_ambr => DownlinkUsedUEAMBR,
+      ue_network_capability => UENetworkCapability,
+      ms_network_capability => MSNetworkCapability,
+      mei => MEI,
+      ecna => ECNA,
+      nbna => NBNA,
+      hnna => HNNA,
+      ena => ENA,
+      ina => INA,
+      gana => GANA,
+      gena => GENA,
+      una => UNA,
+      voice_domain_preference => VoiceDomainPreference,
+      higher_bitrates_than_16_mbps_flag => HigherBitratesThan16MbpsFlag,
+      iov_updates_counter => IOVUpdatesCounter,
+      extended_access_restriction_data => ExtendedAccessRestrictionData};
+decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V) ->
+    <<SecurityMode:3, NHI:1, DRXI:1, KSI:3,
+      NumQuintuplets:3, NumQuadruplets:3, UAMBRI:1, OSCI:1,
+      SAMBRI:1, UsedNASIntegrityProtectionAlgorithm:3, UsedNASCipher:4,
+      NASDownlinkCount:24,
+      NASUplinkCount:24,
+      KASME:32/binary, R0/binary>> = V,
+    {Quadruplets, R1} = quadruplets(NumQuadruplets, R0),
+    {Quintuplets, R2} = quintuplets(NumQuintuplets, R1),
+    <<DRXParam:2/binary,
+      NH:32/binary,
+      _:5, NCC:3,
+      UplinkSubscribedUEAMBR:4/binary,
+      DownlinkSubscribedUEAMBR:4/binary,
+      UplinkUsedUEAMBR:4/binary,
+      DownlinkUsedUEAMBR:4/binary,
+      UENetworkCapabilityLen:8, R3/binary>> = R2,
+    <<UENetworkCapability:UENetworkCapabilityLen/binary,
+      MSNetworkCapabilityLen:8, R4/binary>> = R3,
+    <<MSNetworkCapability:MSNetworkCapabilityLen/binary,
+      MEILen:8, R5/binary>> = R4,
+    <<MEI:MEILen/binary,
+      ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1,
+      NHI_old:1, RLOS:1, KSI_old:3, NCC_old:3,
+      KASME_old:32/binary, NH_old:32/binary,
+      VoiceDomainPreferenceAndUEsUsageSettingLen:8, R6/binary>> = R5,
+    <<VoiceDomainPreferenceAndUEsUsageSetting:VoiceDomainPreferenceAndUEsUsageSettingLen/binary,
+      UERadioCapabilityForPagingInformationLen:8, R7/binary>> = R6,
+    <<UERadioCapabilityForPagingInformation:UERadioCapabilityForPagingInformationLen/binary,
+      ExtendedAccessRestrictionDataLen:8, R8/binary>> = R7,
+    <<ExtendedAccessRestrictionData:ExtendedAccessRestrictionDataLen/binary,
+      Spare:3, NRUNA:1, NRUSRNA:1, NRNA:1, USSRNA:1, NRSRNA:1,
+      UEAdditionalSecurityCapabilityLen:8, R9/binary>> = R8,
+    <<UEAdditionalSecurityCapability:UEAdditionalSecurityCapabilityLen/binary,
+      UENRSecurityCapabilityLen:8, R10/binary>> = R9,
+    <<UENRSecurityCapability:UENRSecurityCapabilityLen/binary,
+      APNRateControlStatusesLen:8, R11/binary>> = R10,
+    <<APNRateControlStatusesBin:APNRateControlStatusesLen/binary,
+      CoreNetworkRestrictionsLen:8, R12/binary>> = R11,
+    APNRateControlStatuses = apn_rate_control_statuses(APNRateControlStatusesBin),
+    <<CoreNetworkRestrictions:CoreNetworkRestrictionsLen/binary,
+      UERadioCapabilityIDLen:8, R13/binary>> = R12,
+    <<UERadioCapabilityID:UERadioCapabilityIDLen/binary,
+      _:6, ENSCT:2>> = R13,
+    #{security_mode => SecurityMode,
+      nhi => NHI,
+      drxi => DRXI,
+      ksi => KSI,
+      uambri => UAMBRI,
+      osci => OSCI,
+      sambri => SAMBRI,
+      used_nas_integrity_protection_algorithm => UsedNASIntegrityProtectionAlgorithm,
+      used_nas_cipher => UsedNASCipher,
+      nas_downlink_count => NASDownlinkCount,
+      nas_uplink_count => NASUplinkCount,
+      kasme => KASME,
+      quadruplets => Quadruplets,
+      quintuplets => Quintuplets,
+      drx_param => DRXParam,
+      nh => NH,
+      ncc => NCC,
+      uplink_subscribed_ue_ambr => UplinkSubscribedUEAMBR,
+      downlink_subscribed_ue_ambr => DownlinkSubscribedUEAMBR,
+      uplink_used_ue_ambr => UplinkUsedUEAMBR,
+      downlink_used_ue_ambr => DownlinkUsedUEAMBR,
+      ue_network_capability => UENetworkCapability,
+      ms_network_capability => MSNetworkCapability,
+      mei => MEI,
+      ecna => ECNA,
+      nbna => NBNA,
+      hnna => HNNA,
+      ena => ENA,
+      ina => INA,
+      gana => GANA,
+      gena => GENA,
+      una => UNA,
+      nhi_old => NHI_old,
+      rlos => RLOS,
+      ksi_old => KSI_old,
+      ncc_old => NCC_old,
+      kasme_old => KASME_old,
+      nh_old => NH_old,
+      voice_domain_preference_and_ues_usage_setting => VoiceDomainPreferenceAndUEsUsageSetting,
+      ue_radio_capability_for_paging_information => UERadioCapabilityForPagingInformation,
+      extended_access_restriction_data => ExtendedAccessRestrictionData,
+      spare => Spare,
+      nruna => NRUNA,
+      nrusrna => NRUSRNA,
+      nrna => NRNA,
+      ussrna => USSRNA,
+      nrsrna => NRSRNA,
+      ue_additional_security_capability => UEAdditionalSecurityCapability,
+      ue_nr_security_capability => UENRSecurityCapability,
+      apn_rate_control_statuses => APNRateControlStatuses,
+      core_network_restrictions => CoreNetworkRestrictions,
+      ue_radio_capability_id => UERadioCapabilityID,
+      ensct => ENSCT};
+decode_parameter(mm_context_umts_key_quadruplets_and_quintuplets, V) ->
+    <<SecurityMode:3, _:1, DRXI:1, KSI:3,
+      NumQuintuplets:3, NumQuadruplets:3, UAMBRI:1, SAMBRI:1,
+      _:8, CK:16/binary, IK:16/binary,
+      R0/binary>> = V,
+    {Quadruplets, R1} = quadruplets(NumQuadruplets, R0),
+    {Quintuplets, R2} = quintuplets(NumQuintuplets, R1),
+    <<DRXParam:2/binary, R3/binary>> = R2,
+    <<UplinkSubscribedUEAMBR:32/binary,
+      DownlinkSubscribedUEAMBR:32/binary,
+      UplinkUsedUEAMBR:32/binary,
+      DownlinkUsedUEAMBR:32/binary,
+      UENetworkCapabilityLen:8, R4/binary>> = R3,
+    <<UENetworkCapability:UENetworkCapabilityLen/binary,
+      MSNetworkCapabilityLen:8, R5/binary>> = R4,
+    <<MSNetworkCapability:MSNetworkCapabilityLen/binary,
+      MEILen:8, R6/binary>> = R5,
+    <<MEI:MEILen/binary,
+      ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1,
+      VoiceDomainPreferenceAndUEsUsageSettingLen:8, R7/binary>> = R6,
+    <<VoiceDomainPreferenceAndUEsUsageSetting:VoiceDomainPreferenceAndUEsUsageSettingLen/binary,
+      APNRateControlStatusesLen:16, R8/binary>> = R7,
+    <<APNRateControlStatusesBin:APNRateControlStatusesLen/binary>> = R8,
+    APNRateControlStatuses = apn_rate_control_statuses(APNRateControlStatusesBin),
+    #{security_mode => SecurityMode,
+      drxi => DRXI,
+      ksi => KSI,
+      uambri => UAMBRI,
+      sambri => SAMBRI,
+      ck => CK,
+      ik => IK,
+      quadruplets => Quadruplets,
+      quintuplets => Quintuplets,
+      drx_param => DRXParam,
+      uplink_subscribed_ue_ambr => UplinkSubscribedUEAMBR,
+      downlink_subscribed_ue_ambr => DownlinkSubscribedUEAMBR,
+      uplink_used_ue_ambr => UplinkUsedUEAMBR,
+      downlink_used_ue_ambr => DownlinkUsedUEAMBR,
+      ue_network_capability => UENetworkCapability,
+      ms_network_capability => MSNetworkCapability,
+      mei => MEI,
+      ecna => ECNA,
+      nbna => NBNA,
+      hnna => HNNA,
+      ena => ENA,
+      ina => INA,
+      gana => GANA,
+      gena => GENA,
+      una => UNA,
+      voice_domain_preference_and_ues_usage_setting => VoiceDomainPreferenceAndUEsUsageSetting,
+      apn_rate_control_statuses => APNRateControlStatuses};
+decode_parameter(pdn_connection, V) ->
+    %% Per message?
+    V;
+decode_parameter(pdn_numbers, V) ->
+    <<0:4, NSAPI:4,
+      DLGTPUSequenceNumber:16,
+      ULGTPUSequenceNumber:16,
+      SendNPDUNumber:16,
+      ReceiveNPDUNumber:16/binary>> = V,
+    #{nsapi => NSAPI,
+      dl_gtpu_sequence_number => DLGTPUSequenceNumber,
+      ul_gtpu_sequence_number => ULGTPUSequenceNumber,
+      send_npdu_number => SendNPDUNumber,
+      receive_npdu_number => ReceiveNPDUNumber};
+decode_parameter(p_tmsi, V) ->
+    %% Defined in 3GPP TS 23.003
+    V;
+decode_parameter(p_tmsi_signature, V) ->
+    %% Defined in 3GPP TS 24.008
+    V;
+decode_parameter(hop_counter, V) ->
+    <<HopCounter:8/binary>> = V,
+    HopCounter;
+decode_parameter(ue_time_zone, V) ->
+    <<TimeZone:8,
+      _:6, DaylightSavingTime:2>> = V,
+    DST = case DaylightSavingTime of
+              0 -> no_adjustment;
+              1 -> plus_one_hour;
+              2 -> plus_two_hours
+          end,
+    #{time_zone => TimeZone,
+      daylight_saving_time => DST};
+decode_parameter(trace_reference, V) ->
+    %% TraceId defined in 3GPP TS 32.422
+    <<MCCMNCBin:3/binary, TraceId:3/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{trace_id => TraceId};
+decode_parameter(complete_request_message, V) ->
+    <<CRMType:8, CompleteRequestMessage/binary>> = V,
+    case CRMType of
+        0 ->
+            #{complete_attach_request_message => CompleteRequestMessage};
+        1 ->
+            #{complete_tau_request_message => CompleteRequestMessage}
+    end;
+decode_parameter(guti, V) ->
+    %% Specified in 3GPP TS 23.003
+    <<MCCMNCBin:3/binary, MMEGroupID:16, MMECode:8, M_TMSI/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{mme_group_id => MMEGroupID,
+            mme_code => MMECode,
+            m_tmsi => M_TMSI};
+decode_parameter(f_container, V) ->
+    <<_:4, ContainerType:4, Container/binary>> = V,
+    case ContainerType of
+        1 -> #{utran_transparent_container => Container};
+        2 -> #{bss_container => Container};
+        3 -> #{eutran_transparent_container => Container};
+        4 -> #{nbifom_container => Container};
+        5 -> #{endc_container => Container};
+        6 -> #{inter_system_son_container => Container}
+    end;
+decode_parameter(f_cause, V) ->
+    <<_:4, CauseType:4, CauseValue/binary>> = V,
+    case CauseType of
+        1 -> #{radio_network_layer_cause => CauseValue};
+        2 -> #{transport_layer_cause => CauseValue};
+        3 -> #{nas_cause => CauseValue};
+        4 -> #{protocol_cause => CauseValue};
+        5 -> #{miscellaneous_cause => CauseValue}
+    end;
+decode_parameter(plmn_id, V) ->
+    %% Different MCC/MNC encoding than rest of the protocol
+    <<MCC2:4/big, MCC1:4/big,
+      MNC3:4/big, MCC3:4/big,
+      MNC2:4/big, MNC1:4/big>> = V,
+    MCC = [MCC3, MCC2, MCC1],
+    MNC = case MNC3 of
+              2#1111 ->
+                  [MCC2, MCC1];
+              _ ->
+                  [MNC1, MNC2, MNC3]
+          end,
+    #{mcc => MCC, mnc => MNC};
+decode_parameter(target_identification, V) ->
+    <<TargetType:8, TargetID/binary>> = V,
+    case TargetType of
+        0 ->
+            %% RNC-ID
+            <<RAIBin:7/binary, RNCID:2, ERNCID/binary>> = TargetID,
+            RAI = decode_rai(RAIBin),
+            RAI#{rnc_id => RNCID,
+                 extended_rnc_id => ERNCID};
+        1 ->
+            %% Macro eNB-ID
+            <<MENBBin:6/binary, TAC:2/binary>> = TargetID,
+            MENB = decode_macro_enodeb_id(MENBBin),
+            MENB#{tracking_area_code => TAC};
+        2 ->
+            %% Cell Identifier
+            #{cell_id => TargetID};
+        3 ->
+            %% Home eNB-ID
+            <<MCCMNCBin:3/binary, _:4, HID:20, TAC:2/binary>> = TargetID,
+            MCCMNC = decode_mcc_mnc(MCCMNCBin),
+            MCCMNC#{home_enodeb_id => HID,
+                    tracking_area_code => TAC};
+        4 ->
+            %% Extended Macro eNB-ID
+            <<EENBBin:6/binary, TAC:2/binary, _:8>> = TargetID,
+            EENB = decode_extended_macro_enodeb_id(EENBBin),
+            #{extended_macro_enodeb_id => EENB,
+              tracking_area_code => TAC};
+        5 ->
+            %% gNB-ID
+            <<MCCMNCBin:3/binary, _:2, GnodeBLen:6, GnodeB:4/binary, TAC:3/binary>> = TargetID,
+            MCCMNC = decode_mcc_mnc(MCCMNCBin),
+            Spares = 32-GnodeBLen,
+            <<_:Spares, GnodeB:GnodeBLen>> = GnodeB,
+            MCCMNC#{gnodeb_id => GnodeB,
+                    tracking_area_code => TAC};
+        6 ->
+            %% Macro ng-eNB-ID
+            <<MCCMNCBin:3/binary, _:4, MacroNg:20, TAC:3/binary>> = TargetID,
+            MCCMNC = decode_mcc_mnc(MCCMNCBin),
+            MCCMNC#{macro_ng_enodeb_id => MacroNg,
+                    '5gs_tracking_area_code' => TAC};
+        7 ->
+            %% Extended ng-eNB-ID
+            <<MCCMNCBin:3/binary, SMENB:1, _:2, ID:21, TAC:3/binary>> = TargetID,
+            MCCMNC = decode_mcc_mnc(MCCMNCBin),
+            EMID = case SMENB of
+                       0 ->
+                           #{long_macro_enodeb_id => ID};
+                       1 ->
+                           <<_:3, SID>> = ID,
+                           #{short_macro_enodeb_id => SID}
+                   end,
+            MCCMNC#{extended_ng_enodeb_id => EMID,
+                    '5gs_tracking_area_code' => TAC};
+        8 ->
+            %% en-gNB-ID
+            <<MCCMNCBin:3/binary, TAC5I:1, TACI:1, ENGNBLen:6, ID:4/binary, R/binary>> = TargetID,
+            MCCMNC = decode_mcc_mnc(MCCMNCBin),
+            Spares = 32-ENGNBLen,
+            <<_:Spares, ENGNBID:ENGNBLen>> = ID,
+            {TAC5, R2} = case TAC5I of
+                             0 ->
+                                 {undefined, R};
+                             1 ->
+                                 <<T0:3/binary, R1/binary>> = R,
+                                 {T0, R1}
+                         end,
+            TAC = case TACI of
+                      0 ->
+                          undefined;
+                      1 ->
+                          <<T1:3/binary>> = R2,
+                          T1
+                  end,
+            MCCMNC#{engnb_id => ENGNBID,
+                    tac5gs => TAC5,
+                    tac => TAC}
+    end;
+decode_parameter(packet_flow_id, V) ->
+    <<_:4, EBI:4, PacketFlowId/binary>> = V,
+    #{ebi => EBI, packet_flow_id => PacketFlowId};
+decode_parameter(rab_context, V) ->
+    <<ULPSI:1, DLPSI:1, ULGSI:1, DLGSI:1, NSAPI:4,
+      DLGTPUSeq:16/big, ULGTPUSeq:16/big,
+      DLPDCPSeq:16/big, ULPDCPSeq:16/big>> = V,
+    #{dl_gtpu_sequence_number => case DLPSI of 0 -> 0; 1 -> DLGTPUSeq end,
+      ul_gtpu_sequence_number => case ULPSI of 0 -> 0; 1 -> ULGTPUSeq end,
+      dl_pdcp_sequence_number => case DLPSI of 0 -> 0; 1 -> DLPDCPSeq end,
+      ul_pdcp_sequence_number => case ULPSI of 0 -> 0; 1 -> ULPDCPSeq end};
+decode_parameter(source_rnc_pdcp_context_info, V) ->
+    V;
+decode_parameter(port_number, V) ->
+    <<Port:16/big>> = V,
+    Port;
+decode_parameter(apn_restriction, V) ->
+    <<RestrictionType:8>> = V,
+    RestrictionType;
+decode_parameter(selection_mode, V) ->
+    <<_:6, SelectionMode:2>> = V,
+    case SelectionMode of
+        0 ->
+            #{provided_by => ms_or_network,
+              verified => true};
+        1 ->
+            #{provided_by => ms,
+              verified => false};
+        2 ->
+            #{provided_by => network,
+              verified => false};
+        3 ->
+            #{provided_by => network,
+              verified => false}
+    end;
+decode_parameter(source_identification, V) ->
+    %% Target Cell ID defined in 3GPP TS 48.018
+    <<TargetCellID:8/binary, SourceType:8, SourceID/binary>> = V,
+    ST = case SourceType of
+             0 ->
+                 cell_id;
+             1 ->
+                 rnc_id
+         end,
+    #{target_cell_id => TargetCellID,
+      source_id => #{ST => SourceID}};
+decode_parameter(change_reporting_action, V) ->
+    S = 8*byte_size(V),
+    <<Action:S/big>> = V,
+    case Action of
+        0 ->
+            stop_reporting;
+        1 ->
+            {start_reporting, [cgi, sai]};
+        2 ->
+            {start_reporting, [rai]};
+        3 ->
+            {start_reporting, [tai]};
+        4 ->
+            {start_reporting, [ecgi]};
+        5 ->
+            {start_reporting, [cgi, sai, rai]};
+        6 ->
+            {start_reporting, [tai, ecgi]};
+        7 ->
+            {start_reporting, [macro_enodeb_id, extended_macro_enodeb_id]};
+        8 ->
+            {start_reporting, [tai, macro_enodeb_id, extended_macro_enodeb_id]}
+    end;
+decode_parameter(fq_csid, V) ->
+    <<NodeIDType:4, NumberOfCSIDs:4, R0/binary>> = V,
+    {NodeId, R2} = case NodeIDType of
+                       0 ->
+                           <<NID:4/binary, R1/binary>> = R0,
+                           {#{ipv4 => bin_to_ip_addr(NID)}, R1};
+                       1 ->
+                           <<NID:16/binary, R1/binary>> = R0,
+                           {#{ipv6 => bin_to_ip_addr(NID)}, R1};
+                       2 ->
+                           <<MCCMNC:20, NID:12, R1/binary>> = R0,
+                           {MCC, MNC} = lists:split(3, integer_to_list(MCCMNC)),
+                           {#{mcc => list_to_integer(MCC),
+                              mnc => list_to_integer(MNC),
+                              node_id => NID}, R1}
+                   end,
+    CSIDs = [CSID || <<CSID:2/binary>> <= R2],
+    #{node_id => NodeId,
+      csids => NumberOfCSIDs =:= length(CSIDs) andalso CSIDs};
+decode_parameter(channel_needed, V) ->
+    V;
+decode_parameter(emlpp_priority, V) ->
+    V;
+decode_parameter(node_type, V) ->
+    <<NodeType:8>> = V,
+    case NodeType of
+        0 ->
+            mme;
+        1 ->
+            sgsn
+    end;
+decode_parameter(fqdn, V) ->
+    V;
+decode_parameter(private_extension, V) ->
+    <<EnterpriseID:16, ProprietaryValue/binary>> = V,
+    #{enterprise_id => EnterpriseID,
+      proprietary_value => ProprietaryValue};
+decode_parameter(transaction_identifier, V) ->
+    %% Specified in 3GPP TS 24.007
+    V;
+decode_parameter(mbms_session_duration, V) ->
+    <<Duration:3/binary>> = V,
+    Duration;
+decode_parameter(mbms_service_area, V) ->
+    %% Defined in 3GPP TS 23.246
+    V;
+decode_parameter(mbms_session_identifier, V) ->
+    %% Defined in 3GPP TS 29.061
+    <<MBMSSessionIdentifier:1/binary>> = V,
+    MBMSSessionIdentifier;
+decode_parameter(mbms_flow_identifier, V) ->
+    %% Defined in 3GPP TS 23.246
+    <<MBMSFlowIdentifier:2/binary>> = V,
+    MBMSFlowIdentifier;
+decode_parameter(mbms_ip_multicast_distribution, V) ->
+    <<CTEID:32,
+      DAType:2, DALen:6, R0/binary>> = V,
+    {IPMulticastDistributionAddress, R2} = case {DAType, DALen} of
+                                               {0, 4} ->
+                                                   %% ipv4
+                                                   <<IPMD:4/binary, R1/binary>> = R0,
+                                                   {#{ipv4 => bin_to_ip_addr(IPMD)}, R1};
+                                               {1, 16} ->
+                                                   %% ipv6
+                                                   <<IPMD:16/binary, R1/binary>> = R0,
+                                                   {#{ipv6 => bin_to_ip_addr(IPMD)}, R1}
+                                           end,
+    <<SAType:2, SALen:6, R3/binary>> = R2,
+    {IPMulticastSourceAddress, R5} = case {SAType, SALen} of
+                                         {0, 4} ->
+                                             %% ipv4
+                                             <<IPMS:4/binary, R4/binary>> = R3,
+                                             {#{ipv4 => bin_to_ip_addr(IPMS)}, R4};
+                                         {1, 16} ->
+                                             %% ipv6
+                                             <<IPMS:16/binary, R4/binary>> = R3,
+                                             {#{ipv6 => bin_to_ip_addr(IPMS)}, R4}
+                                     end,
+    <<MBMSHCIndicator:1/binary>> = R5,
+    #{cteid => CTEID,
+      ip_multicast_distribution_address => IPMulticastDistributionAddress,
+      ip_multicast_source_address => IPMulticastSourceAddress,
+      mbms_hc_indicator => MBMSHCIndicator};
+decode_parameter(mbms_distribution_acknowledge, V) ->
+    <<_:6, MBMSDistributionAcknowledge:2>> = V,
+    case MBMSDistributionAcknowledge of
+        0 ->
+            no_rnc_accepted;
+        1 ->
+            all_rnc_accepted;
+        2 ->
+            some_rnc_accepted
+    end;
+decode_parameter(user_csg_information, V) ->
+    <<MCCMNCBin:3/binary,
+      CSGIDBin:4/binary,
+      AccessMode:2, _:4, LCSG:1, CMI:1>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    CSGID = decode_csg_id(CSGIDBin),
+    Base = maps_merge_all([MCCMNC, CSGID]),
+    Base#{access_mode => case AccessMode of 0 -> closed; 1 -> hybrid end,
+          leave_csg_flag => case LCSG of 0 -> false; 1 -> true end,
+          csg_membership_indication => case CMI of 0 -> false; 1 -> true end};
+decode_parameter(csg_information_reporting_action, V) ->
+    <<_:5, UCIUHC:1, UCISHC:1, UCICSG:1>> = V,
+    case UCIUHC + UCISHC + UCICSG of
+        0 ->
+            stop_reporting;
+        _ ->
+            #{unsubscribed_hybrid_cell => case UCIUHC of 0 -> false; 1 -> true end,
+              subscribed_hybrid_cell => case UCISHC of 0 -> false; 1 -> true end,
+              csg_cell => case UCICSG of 0 -> false; 1 -> true end}
+    end;
+decode_parameter(rfsp_index, V) ->
+    %% Specified in 3GPP TS 36.413
+    <<RFSPIndex:16>> = V,
+    RFSPIndex;
+decode_parameter(csg_id, V) ->
+    <<CSGIDBin:4/binary>> = V,
+    decode_csg_id(CSGIDBin);
+decode_parameter(csg_membership_indication, V) ->
+    <<_:7, CMI:1>> = V,
+    case CMI of 0 -> true; 1 -> false end;
+decode_parameter(service_indicator, V) ->
+    <<SI:8>> = V,
+    case SI of 1 -> cs_call; 2 -> sms end;
+decode_parameter(detach_type, V) ->
+    <<DT:8>> = V,
+    case DT of 1 -> ps; 2 -> combined_ps_cs end;
+decode_parameter(local_distinguished_name, V) ->
+    V;
+decode_parameter(node_features, V) ->
+    <<_:1, MTEDT:1, ETH:1, S1UN:1, CIOT:1, NTSR:1, MABR:1, PRN:1>> = V,
+    SupportedFeatures = [{pgw_restart_notification, PRN},
+                         {modify_access_bearers_request, MABR},
+                         {network_triggered_service_restoration_procedure, NTSR},
+                         {cellular_internet_of_things, CIOT},
+                         {s1u_path_failure_notification_feature, S1UN},
+                         {ethernet_pdn_type, ETH},
+                         {support_of_mt_edt, MTEDT}],
+    [N || {N, 1} <- SupportedFeatures];
+decode_parameter(mbms_time_to_data_transfer, V) ->
+    <<MBMSTimeToDataTransfer:8>> = V,
+    MBMSTimeToDataTransfer;
+decode_parameter(throttling, V) ->
+    <<DelayUnit:3, DelayValue:5, Factor:8>> = V,
+    DUMs = case DelayUnit of
+               2#000 ->
+                   %% 2 seconds
+                   timer:seconds(2);
+               2#001 ->
+                   %% 1 minute
+                   timer:minutes(1);
+               2#010 ->
+                   %% 10 minutes
+                   timer:minutes(10);
+               2#011 ->
+                   %% 1 hour
+                   timer:hours(1);
+               2#100 ->
+                   %% 10 hours
+                   timer:hours(10);
+               2#111 ->
+                   %% deactivated
+                   0;
+               _ ->
+                   %% 1 minute
+                   timer:minutes(1)
+           end,
+    F = case Factor of
+            _ when 0 < Factor; Factor =< 100 ->
+                Factor;
+            _ ->
+                0
+        end,
+    #{value => DelayValue,
+      unit_ms => DUMs,
+      factor => F};
+decode_parameter(allocation_retention_priority, V) ->
+    <<_:1, PCI:1, PL:4, _:1, PVI:1>> = V,
+    #{priority_level => PL,
+      pre_emption_capability => case PCI of
+                                    0 -> false;
+                                    1 -> true
+                                end,
+      pre_emption_vulnerability => case PVI of
+                                       0 -> false;
+                                       1 -> true
+                                   end};
+decode_parameter(epc_timer, V) ->
+    <<TimerUnit:3, TimerValue:5>> = V,
+    TUMs = case TimerUnit of
+               2#000 ->
+                   %% 2 seconds
+                   timer:seconds(2);
+               2#001 ->
+                   %% 1 minute
+                   timer:minutes(1);
+               2#010 ->
+                   %% 10 minutes
+                   timer:minutes(10);
+               2#011 ->
+                   %% 1 hour
+                   timer:hours(1);
+               2#100 ->
+                   %% 10 hours
+                   timer:hours(10);
+               2#111 ->
+                   %% infinite
+                   0;
+               _ ->
+                   %% 1 minute
+                   timer:minutes(1)
+           end,
+    #{unit_ms => TUMs,
+      value => TimerValue};
+decode_parameter(signalling_priority_indication, V) ->
+    <<_:7, LAPI:1>> = V,
+    #{low_access_priority => case LAPI of 0 -> false; 1 -> true end};
+decode_parameter(temporary_mobile_group_identity, V) ->
+    %% 3GPP TS 29.061 and 3GPP TS 24.008
+    <<TMGI:5/binary>> = V,
+    TMGI;
+decode_parameter(additional_mm_context_for_srvcc, V) ->
+    <<MSC2Len:8, R0/binary>> = V,
+    <<MSC2:MSC2Len/binary,
+      MSC3Len:8, R1/binary>> = R0,
+    <<MSC3:MSC3Len/binary,
+      SCLLen:8, R2/binary>> = R1,
+    <<SCL:SCLLen/binary>> = R2,
+    #{mobile_station_classmark_2 => MSC2,
+      mobile_station_classmark_3 => MSC3,
+      supported_codec_list => SCL};
+decode_parameter(additional_flags_for_srvcc, V) ->
+    <<_:6, VF:1, ICS:1>> = V,
+    #{ims_centralized_service => case ICS of 0 -> false; 1 -> true end,
+      vsrvcc_flag => case VF of 0 -> false; 1 -> true end};
+decode_parameter(mdt_configuration, V) ->
+    <<JobType:8,
+      ListOfMeasurements:4/binary,
+      ReportingTrigger:8,
+      ReportInterval:8,
+      ReportAmount:8,
+      EventThresholdRSRP:8,
+      EventThresholdRSRQ:8,
+      AreaScopeLen:8, R0/binary>> = V,
+    <<AreaScope:AreaScopeLen/binary,
+      _:4, PLI:1, PMI:1, MPI:1, CRRMI:1, R1/binary>> = R0,
+    {CollP, R3} = case CRRMI of
+                      0 ->
+                          {#{}, R1};
+                      1 ->
+                          <<CollectionPeriod:8, R2/binary>> = R1,
+                          {#{collection_period_for_rrm_measurements_lte => CollectionPeriod}, R2}
+                  end,
+    {MeasP, R5} = case MPI of
+                      0 ->
+                          {#{}, R3};
+                      1 ->
+                          <<MeasurementPeriod:8, R4/binary>> = R3,
+                          {#{measurement_period_lte => MeasurementPeriod}, R4}
+                  end,
+    {PosM, R7} = case PMI of
+                     0 ->
+                         {#{}, R5};
+                     1 ->
+                         <<PositioningMethod:8, R6/binary>> = R5,
+                         {#{positioning_method => PositioningMethod}, R6}
+                 end,
+    {MDTPLMNs, _} = case PLI of
+                        0 ->
+                            {#{}, R7};
+                        1 ->
+                            <<NumberOfMDTPLMNs:8, R8/binary>> = R7,
+                            <<MDTPLMNList:(NumberOfMDTPLMNs*3)/binary>> = R8,
+                            {#{mdt_plmn_list => [M || <<M:3/binary>> <= MDTPLMNList]}, <<>>}
+                    end,
+    Base = maps_merge_all([CollP, MeasP, PosM, MDTPLMNs]),
+    Base#{job_type => JobType,
+          list_of_measurements => ListOfMeasurements,
+          reporting_trigger => ReportingTrigger,
+          report_interval => ReportInterval,
+          report_amount => ReportAmount,
+          event_threshold_rsrp => EventThresholdRSRP,
+          event_threshold_rsrq => EventThresholdRSRQ,
+          area_scope => AreaScope};
+decode_parameter(additional_protocol_configuration_options, V) ->
+    %% Specified in 3GPP TS 29.275
+    V;
+decode_parameter(absolute_time_of_mbms_data_transfer, V) ->
+    %% Octets are coded as the time in seconds relative to
+    %% 00:00:00 on 1 January 1900 (calculated as continuous time
+    %% without leap seconds and traceable to a common time reference)
+    %% where binary encoding of the integer part is in the 32 most
+    %% significant bits and binary encoding of the fraction part in
+    %% the 32 least significant bits. The fraction part is expressed
+    %% with a granularity of 1 /2**32 second.
+    <<Seconds:32, Fraction:32>> = V,
+    DT = datetime_from_epoch(Seconds),
+    F = Fraction / math:pow(2, 32),
+    #{date_time => DT, fraction => F};
+decode_parameter(henb_information_reporting, V) ->
+    <<_:7, FTI:1>> = V,
+    case FTI of
+        0 -> stop_reporting;
+        1 -> start_reporting
+    end;
+decode_parameter(ipv4_configuration_parameters, V) ->
+    <<SubnetPrefixLen:8, IP1:8, IP2:8, IP3:8, IP4:8>> = V,
+    #{subnet_prefix_length => SubnetPrefixLen,
+      ipv4_address => {IP1, IP2, IP3, IP4}};
+decode_parameter(change_to_report_flags, V) ->
+    <<_:6, TZCR:1, SNCR:1>> = V,
+    #{time_zone => case TZCR of 0 -> false; 1 -> true end,
+      serving_network => case SNCR of 0 -> false; 1 -> true end};
+decode_parameter(action_indication, V) ->
+    <<_:5, AI:3>> = V,
+    case AI of
+        0 -> no_action;
+        1 -> deactivation;
+        2 -> paging;
+        3 -> paging_stop
+    end;
+decode_parameter(twan_identifier, V) ->
+    %% 3GPP TS 23.402
+    <<_:3, LAII:1, OPNAI:1, PLMNI:1, CIVAI:1, BSSIDI:1,
+      SSIDLen:8, R0/binary>> = V,
+    <<SSID:SSIDLen/binary, R1/binary>> = R0,
+    {BSSID, R3} = case BSSIDI of
+                      0 ->
+                          {#{}, R1};
+                      1 ->
+                          <<BSS:6/binary, R2/binary>> = R1,
+                          {#{bss_id => BSS}, R2}
+                  end,
+    {CIVAddr, R6} = case CIVAI of
+                        0 ->
+                            {#{}, R3};
+                        1 ->
+                            <<CivicAddressLen:8, R4/binary>> = R3,
+                            <<CivA:CivicAddressLen/binary, R5/binary>> = R4,
+                            {#{civic_address => CivA}, R5}
+                    end,
+    {TWANPLMN, R8} = case PLMNI of
+                         0 ->
+                             {#{}, R6};
+                         1 ->
+                             <<PLMN:3/binary, R7/binary>> = R6,
+                             {#{twan_plmn_id => PLMN}, R7}
+                     end,
+    {TWANOpName, R11} = case OPNAI of
+                           0 ->
+                               {#{}, R8};
+                           1 ->
+                               <<TWANOpNameLen:8, R9/binary>> = R8,
+                               <<OpName:TWANOpNameLen/binary, R10/binary>> = R9,
+                               {#{twan_operator_name => OpName}, R10}
+                       end,
+    {LAId, _} = case LAII of
+                    0 ->
+                        {#{}, R11};
+                    1 ->
+                        <<RelayIdType:8, RelayIdLen:8, R12/binary>> = R11,
+                        <<RI:RelayIdLen/binary, CircuitIdLen:8, R13/binary>> = R12,
+                        <<CId:CircuitIdLen/binary, R14/binary>> = R13,
+                        case {RelayIdType, RelayIdLen} of
+                            {0, 4} ->
+                                %% IPv4
+                                {#{ipv4 => bin_to_ip_addr(RI), circuit_id => CId}, R14};
+                            {0, 16} ->
+                                %% IPv6
+                                {#{ipv6 => bin_to_ip_addr(RI), circuit_id => CId}, R14};
+                            {1, _} ->
+                                %% FQDN
+                                {#{fqdn => RI, circuit_id => CId}, R14}
+                        end
+                end,
+    Base = maps_merge_all([BSSID, CIVAddr, TWANPLMN, TWANOpName, LAId]),
+    Base#{ssid => SSID};
+decode_parameter(uli_timestamp, V) ->
+    %% Defined in IETF RFC 5905
+    <<Seconds:32>> = V,
+    datetime_from_epoch(Seconds);
+decode_parameter(mbms_flags, V) ->
+    <<_:6, LMRI:1, MSRI:1>> = V,
+    #{mbms_session_re_establishment => case MSRI of 0 -> false; 1 -> true end,
+      local_mbms_bearer_context_release => case LMRI of 0 -> false; 1 -> true end};
+decode_parameter(ran_nas_cause, V) ->
+    <<ProtoType:4, CauseType:4, R0/binary>> = V,
+    case ProtoType of
+        0 ->
+            %% S1AP
+            %% Defined in clause 9.2.1.3 in 3GPP TS 36.413
+            <<Val:1/binary>> = R0,
+            #{protocol_type => s1ap,
+              cause_type => case CauseType of
+                                0 -> radio_network_layer;
+                                1 -> transport_layer;
+                                2 -> nas;
+                                3 -> protocol;
+                                4 -> miscellaneous
+                            end,
+              cause_value => Val};
+        1 ->
+            %% EMM
+            <<Val:1/binary>> = R0,
+            #{protocol_type => emm,
+              cause_value => Val};
+        2 ->
+            %% ESM
+            <<Val:1/binary>> = R0,
+            #{protocol_type => esm,
+              cause_value => Val};
+        3 ->
+            %% Diameter
+            <<Val:2/binary>> = R0,
+            #{protocol_type => diameter,
+              cause_value => Val};
+        4 ->
+            %% IKEv2
+            <<Val:2/binary>> = R0,
+            #{protocol_type => ikev2,
+              cause_value => Val}
+    end;
+decode_parameter(cn_operator_selection_entity, V) ->
+    <<_:6, SelectionEntity:2>> = V,
+    case SelectionEntity of
+        0 -> ue;
+        1 -> network;
+        _ -> network
+    end;
+decode_parameter(trusted_wlan_mode_indication, V) ->
+    <<_:6, MCM:1, SCM:1>> = V,
+    #{multi_connection_mode => case MCM of 0 -> false; 1 -> true end,
+      single_connection_mode => case SCM of 0 -> false; 1 -> true end};
+decode_parameter(node_number, V) ->
+    %% ISDN-number of SGSN (3GPP TS 23.003), MME (3GPP TS 29.002), or
+    %% MSC (3GPP TS 29.002)
+    <<NodeNumLen:8, R0/binary>> = V,
+    <<NodeNum:NodeNumLen/binary>> = R0,
+    NodeNum;
+decode_parameter(node_identifier, V) ->
+    <<NodeNameLen:8, R0/binary>> = V,
+    <<NodeName:NodeNameLen/binary, NodeRealmLen:8, R1/binary>> = R0,
+    <<NodeRealm:NodeRealmLen/binary>> = R1,
+    #{node_name => NodeName,
+      node_realm => NodeRealm};
+decode_parameter(presence_reporting_area_action, V) ->
+    <<_:4, INAPRA:1, A:3, R0/binary>> = V,
+    {Action, R2} = case A of
+                       1 ->
+                           <<PresenceReportingAreaIdentifier:3/binary, R1/binary>> = R0,
+                           {#{presence_reporting_area_identifier => PresenceReportingAreaIdentifier,
+                              action => start}, R1};
+                       2 ->
+                           <<PresenceReportingAreaIdentifier:3/binary, R1/binary>> = R0,
+                           {#{presence_reporting_area_identifier => PresenceReportingAreaIdentifier,
+                              action => stop}, R1};
+                       3 ->
+                           <<PresenceReportingAreaIdentifier:3/binary, R1/binary>> = R0,
+                           {#{presence_reporting_area_identifier => PresenceReportingAreaIdentifier,
+                              action => modify}, R1};
+                       _ ->
+                           {#{}, R0}
+                   end,
+    <<TAINum:4, RAINum:4,
+      _:3, MacroENBNum:5,
+      _:3, HomeENBNum:5,
+      _:3, ECGINum:5,
+      _:3, SAINum:5,
+      _:3, CGINum:5,
+      R3/binary>> = R2,
+    <<TAIs:(5*TAINum)/binary,
+      RAIs:(7*RAINum)/binary,
+      MacroENBs:(6*MacroENBNum)/binary,
+      HomeENBs:(6*HomeENBNum)/binary,
+      ECGIs:(7*ECGINum)/binary,
+      SAIs:(7*SAINum)/binary,
+      CGIs:(7*CGINum)/binary,
+      R4/binary>> = R3,
+    <<_:3, ExtendedMacroENBNum:5, R5/binary>> = R4,
+    <<ExtendedMacroENBs:(6*ExtendedMacroENBNum)/binary>> = R5,
+    Action#{flag => case INAPRA of 0 -> active; 1 -> inactive end,
+            tais => [decode_tai(T) || <<T:5>> <= TAIs],
+            rais => [decode_rai(R) || <<R:7>> <= RAIs],
+            macro_enbs => [decode_macro_enodeb_id(M) || <<M:6>> <= MacroENBs],
+            home_enbs => [decode_macro_enodeb_id(H) || <<H:6>> <= HomeENBs],
+            ecgis => [decode_ecgi(E) || <<E:7>> <= ECGIs],
+            sais => [decode_sai(S) || <<S:7>> <= SAIs],
+            cgis => [decode_cgi(C) || <<C:7>> <= CGIs],
+            extended_macro_enbs => [decode_extended_macro_enodeb_id(Ex) || <<Ex:6>> <= ExtendedMacroENBs]};
+decode_parameter(presence_reporting_area_information, V) ->
+    <<PRAI:3/binary,
+      _:4, INAPRA:1, APRA:1, OPRA:1, IPRA:1,
+      R0/binary>> = V,
+    PRA = case {INAPRA, OPRA, IPRA} of
+              {0, 0, 0} ->
+                  #{presence_reporting_area_identifier => PRAI};
+              {0, 0, 1} ->
+                  #{presence_reporting_area_identifier => PRAI,
+                    flag => inside};
+              {0, 1, 0} ->
+                  #{presence_reporting_area_identifier => PRAI,
+                    flag => outside};
+              {1, 0, 0} ->
+                  #{presence_reporting_area_identifier => PRAI,
+                    flag => inactive}
+          end,
+    APRAs = decode_additional_pras(APRA, R0),
+    PRA#{additional_presence_reporting_areas => APRAs};
+decode_parameter(twan_identifier_timestamp, V) ->
+    <<Seconds:32>> = V,
+    datetime_from_epoch(Seconds);
+decode_parameter(overload_control_information, V) ->
+    %% Overload Control Information Grouped Type
+    V;
+decode_parameter(load_control_information, V) ->
+    %% Load Control Information Grouped Type
+    V;
+decode_parameter(metric, V) ->
+    <<Metric:8>> = V,
+    case Metric of
+        _ when Metric >= 0; Metric =< 100 ->
+            Metric;
+        _ ->
+            0
+    end;
+decode_parameter(sequence_number, V) ->
+    <<SeqNum:32>> = V,
+    SeqNum;
+decode_parameter(apn_and_relative_capacity, V) ->
+    <<RC:8, APNLen:8, R0/binary>> = V,
+    <<APN:APNLen/binary>> = R0,
+    RelativeCapacity = case RC of
+                           _ when RC >= 1; RC =< 100 ->
+                               RC;
+                           _ ->
+                               0
+                       end,
+    #{relative_capacity => RelativeCapacity,
+      apn => APN};
+decode_parameter(wlan_offloadability_indication, V) ->
+    <<_:6, EI:1, UI:1>> = V,
+    #{eutran_offloadability => case EI of 0 -> false; 1 -> true end,
+      utran_offloadability => case UI of 0 -> false; 1 -> true end};
+decode_parameter(paging_and_service_information, V) ->
+    <<0:4, EBI:4, _:7, PPI:1, R0/binary>> = V,
+    case PPI of
+        0 ->
+            #{eps_bearer_id => EBI};
+        1 ->
+            <<_:2, PPIValue:6>> = R0,
+            #{eps_bearer_id => EBI,
+              paging_policy_indication => PPIValue}
+    end;
+decode_parameter(integer_number, V) ->
+    V;
+decode_parameter(millisecond_time_stamp, V) ->
+    <<Milliseconds:48>> = V,
+    Milliseconds;
+decode_parameter(monitoring_event_information, V) ->
+    <<SCEFRefID:4/binary,
+      SCEFIDLen:8, R0/binary>> = V,
+    <<SCEFID:SCEFIDLen/binary,
+      RemainingReports:2/binary>> = R0,
+    #{scef_reference_id => SCEFRefID,
+      scef_id => SCEFID,
+      remaining_number_of_reports => RemainingReports};
+decode_parameter(ecgi_list, V) ->
+    <<_ECGINum:2/binary,
+      R0/binary>> = V,
+    [decode_ecgi(E) || <<E:7>> <= R0];
+decode_parameter(remote_ue_context, V) ->
+    %% Remote UE Context Grouped Type
+    V;
+decode_parameter(remote_user_id, V) ->
+    <<0:5, IMEIF:1, MSISDNF:1, IMSILen:8, R0/binary>> = V,
+    <<IMSI:IMSILen/binary, R1/binary>> = R0,
+    {MSISDN, R4} = case MSISDNF of
+                       0 ->
+                           {#{}, R1};
+                       1 ->
+                           <<MSISDNLen:8, R2/binary>> = R1,
+                           <<M:MSISDNLen/binary, R3/binary>> = R2,
+                           {#{msisdn => M}, R3}
+                   end,
+    {IMEI, _} = case IMEIF of
+                    0 ->
+                        {#{}, R4};
+                    1 ->
+                        <<IMEILen:8, R5/binary>> = R4,
+                        <<I:IMEILen/binary, R6/binary>> = R5,
+                        {#{imei => I}, R6}
+                end,
+    maps_merge_all([MSISDN, IMEI, #{imsi => IMSI}]);
+decode_parameter(remote_ue_ip_information, V) ->
+    V;
+decode_parameter(ciot_optimizations_support_indication, V) ->
+    <<_:4, IHCSI:1, AWOPDN:1, SCNIPDN:1, SGNIPDN:1>> = V,
+    #{ip_header_compression_support => case IHCSI of 0 -> false; 1 -> true end,
+      attach_without_pdn_support => case AWOPDN of 0 -> false; 1 -> true end,
+      scef_non_ip_pdn_support => case SCNIPDN of 0 -> false; 1 -> true end,
+      sgi_non_ip_pdn_support => case SGNIPDN of 0 -> false; 1 -> true end};
+decode_parameter(scef_pdn_connection, V) ->
+    %% PDN Connection Grouped Type
+    V;
+decode_parameter(header_compression_configuration, V) ->
+    <<I2:1, I3:1, I4:1, I6:1, I102:1, I103:1, I104:1, _:9, MAXCID:16>> = V,
+    Identifiers = [{I2, 16#0002}, {I3, 16#0003}, {I4, 16#0004}, {I6, 16#0006},
+                   {I102, 16#0102}, {I103, 16#0103}, {I104, 16#0104}],
+    #{max_cid_value => MAXCID,
+      profile_identifiers => [P || {1, P} <- Identifiers]};
+decode_parameter(extended_protocol_configuration_options, V) ->
+    V;
+decode_parameter(serving_plmn_rate_control, V) ->
+    %% 5 to 6 Uplink Rate Limit
+    %% 7 to 8 Downlink Rate Limit
+    <<UplinkRateLimit:16, DownlinkRateLimit:16>> = V,
+    #{uplink_rate_limit => UplinkRateLimit,
+      downlink_rate_limit => DownlinkRateLimit};
+decode_parameter(counter, V) ->
+    %% IETF RFC 5905
+    <<Timestamp:4/binary, Counter:32>> = V,
+    #{timestamp => Timestamp,
+      counter => Counter};
+decode_parameter(mapped_ue_usage_type, V) ->
+    <<MappedUEUsageType:16>> = V,
+    MappedUEUsageType;
+decode_parameter(secondary_rat_usage_data_report, V) ->
+    <<_:5, SRUDN:1, IRSGW:1, IRPGW:1,
+      SecRATType:8,
+      0:4, EBI:4,
+      TimeUsage:24/binary,
+      R0/binary>> = V,
+    SecondaryRATType = case SecRATType of
+                           0 -> nr;
+                           1 -> unlicensed_spectrum
+                       end,
+    IntendedReceiverSGW = case IRSGW of 0 -> dont_store; 1 -> store end,
+    IntendedReceiverPGW = case IRPGW of 0 -> dont_forward; 1 -> forward end,
+    Base = #{intended_receiver_sgw => IntendedReceiverSGW,
+             intended_receiver_pgw => IntendedReceiverPGW,
+             secondary_rat_type => SecondaryRATType,
+             eps_bearer_id => EBI},
+    case {SRUDN, IRPGW} of
+        {1, 1} ->
+            <<0:(16*8)>> = TimeUsage,
+            <<LengthOfSRDURT:8, R1/binary>> = R0,
+            <<SRDURT:LengthOfSRDURT/binary>> = R1,
+            Base#{secondary_rat_data_usage_report_transfer => SRDURT};
+        {0, _} ->
+            <<StartTimestamp:32,
+              EndTimestamp:32,
+              UsageDataDL:32,
+              UsageDataUL:32>> = TimeUsage,
+            <<>> = R0,
+            Base#{start_timestamp => datetime_from_epoch(StartTimestamp),
+                  end_timestamp => datetime_from_epoch(EndTimestamp),
+                  usage_data_dl => UsageDataDL,
+                  usage_data_ul => UsageDataUL}
+    end;
+decode_parameter(up_function_selection_indication_flags, V) ->
+    <<_:7, DCNR:1>> = V,
+    case DCNR of
+        0 ->
+            undefined;
+        1 ->
+            dual_connectivity
+    end;
+decode_parameter(maximum_packet_loss_rate, V) ->
+    <<_:6, DL:1, UL:1, R0/binary>> = V,
+    case {DL, UL} of
+        {0, 0} ->
+            #{};
+        {0, 1} ->
+            <<ULMaxPacketLossRate:16>> = R0,
+            #{maximum_packet_loss_rate_ul => ULMaxPacketLossRate};
+        {1, 0} ->
+            <<DLMaxPacketLossRate:16>> = R0,
+            #{maximum_packet_loss_rate_dl => DLMaxPacketLossRate};
+        {1, 1} ->
+            <<ULMaxPacketLossRate:16, DLMaxPacketLossRate:16>> = R0,
+            #{maximum_packet_loss_rate_ul => ULMaxPacketLossRate,
+              maximum_packet_loss_rate_dl => DLMaxPacketLossRate}
+    end;
+decode_parameter(apn_rate_control_status, V) ->
+    <<UplinkPacketsAllowed:32,
+      AdditionalExceptionReports:32,
+      DownlinkPacketsAllowed:32,
+      ValidityTimeS:32,
+      ValidityTimeF:32>> = V,
+    #{uplink_packets_allowed => UplinkPacketsAllowed,
+      additional_exception_reports => AdditionalExceptionReports,
+      downlink_packets_allowed => DownlinkPacketsAllowed,
+      validity_time => datetime_from_epoch(ValidityTimeS),
+      validity_time_fractions => ValidityTimeF};
+decode_parameter(extended_trace_information, V) ->
+    <<MCCMNCBin:3/binary,
+      TraceId:3/binary,
+      LengthOfTriggeringEvents:8,
+      R0/binary>> = V,
+    <<TriggeringEvents:LengthOfTriggeringEvents/binary,
+      LengthOfListNEType:8,
+      R1/binary>> = R0,
+    <<ListNEType:LengthOfListNEType/binary,
+      SessionTraceDepth:8,
+      LengthOfListInterfaces:8,
+      R2/binary>> = R1,
+    <<ListInterfaces:LengthOfListInterfaces/binary,
+      LengthOfIPAddressOfTraceCollectionEntity:8,
+      R3/binary>> = R2,
+    <<IPAddressOfTraceCollectionEntity:LengthOfIPAddressOfTraceCollectionEntity/binary>> = R3,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{trace_id => TraceId,
+            triggering_events => TriggeringEvents,
+            list_ne_type => ListNEType,
+            session_trace_depth => SessionTraceDepth,
+            list_interfaces => ListInterfaces,
+            ip_address_of_trace_collection_entity => IPAddressOfTraceCollectionEntity};
+decode_parameter(monitoring_event_extension_information, V) ->
+%% 5 Spare LRTP
+%% 6 to 9 SCEF Reference ID
+%% 10 SCEF ID Length
+%% 11 to k SCEF ID
+%% (h) to (h+3) Remaining Minimum Periodic Location Reporting Time
+    <<_:7, LRTP:1,
+      SCEFRefID:4/binary,
+      SCEFIDLen:8, R0/binary>> = V,
+    <<SCEFID:SCEFIDLen/binary, R1/binary>> = R0,
+    Base = #{scef_reference_id => SCEFRefID,
+             scef_id => SCEFID},
+    case LRTP of
+        0 ->
+            Base;
+        1 ->
+            <<RemainingTime:4/binary>> = R1,
+            Base#{remaining_minimum_periodic_location_reporting_time => RemainingTime}
+    end;
+decode_parameter(additional_rrm_policy_index, V) ->
+    <<AdditionalRRMPolicyIndex:32>> = V,
+    AdditionalRRMPolicyIndex;
+decode_parameter(v2x_context, V) ->
+    %% V2X Context Grouped Type
+    V;
+decode_parameter(pc5_qos_parameters, V) ->
+    %% PC5 QoS Parameters Grouped Type
+    V;
+decode_parameter(services_authorized, V) ->
+    <<VA:8, PA:8>> = V,
+    #{vehicle => case VA of 0 -> authorized; 1 -> unauthorized end,
+      pedestrian => case PA of 0 -> authorized; 1 -> unauthorized end};
+decode_parameter(bit_rate, V) ->
+    <<BitRate:32>> = V,
+    BitRate;
+decode_parameter(pc5_qos_flow, V) ->
+    <<_:7, R:1,
+      PQI:8,
+      GFBR:32,
+      MFBR:32,
+      R0/binary>> = V,
+    Base = #{pqi => PQI,
+             guaranteed_flow_bit_rate => GFBR,
+             maximum_flow_bit_rate => MFBR},
+    case R of
+        0 ->
+            Base;
+        1 ->
+            <<Range:1/binary>> = R0,
+            Base#{range => Range}
+    end;
+decode_parameter(sgi_ptp_tunnel_address, V) ->
+    <<_:5, P:1, V6:1, V4:1, R0/binary>> = V,
+    case {V4, V6, P} of
+        {0, 0, 0} ->
+            #{};
+        {0, 0, 1} ->
+            <<Port:16>> = R0,
+            #{port => Port};
+        {0, 1, 0} ->
+            <<IPv6:16/binary>> = R0,
+            #{ipv6 => bin_to_ip_addr(IPv6)};
+        {0, 1, 1} ->
+            <<IPv6:16/binary, Port:16>> = R0,
+            #{ipv6 => bin_to_ip_addr(IPv6),
+              port => Port};
+        {1, 0, 0} ->
+            <<IPv4:4/binary>> = R0,
+            #{ipv4 => bin_to_ip_addr(IPv4)};
+        {1, 0, 1} ->
+            <<IPv4:4/binary, Port:16>> = R0,
+            #{ipv4 => bin_to_ip_addr(IPv4),
+              port => Port}
+    end;
+decode_parameter(pgw_change_info, V) ->
+    %% PGW Change Info Grouped Type
+    V;
+decode_parameter(pgw_fqdn, V) ->
+    <<_:8, FQDN/binary>> = V,
+    FQDN;
+decode_parameter(group_id, V) ->
+    %% Specified in 3GPP TS 29.244
+    V;
+decode_parameter(pscell_id, V) ->
+    <<MCCMNCBin:3/binary,
+      _:4, NRCGI:36>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{nr_cell_identity => NRCGI};
+decode_parameter(up_security_policy, V) ->
+    <<_:6, UPIPPolicy:2>> = V,
+    case UPIPPolicy of
+        0 ->
+            #{user_plane_integrity => not_needed};
+        1 ->
+            #{user_plane_integrity => preferred};
+        2 ->
+            #{user_plane_integrity => required}
+    end;
+decode_parameter(alternative_imsi, V) ->
+    %% ITU-T Rec E.212 TBCD digits
+    tcbd_decode(V);
 decode_parameter(_, V) ->
     V.
+
+%% The encoding the APN field follows 3GPP TS 23.003 [2] clause
+%% 9.1. The content of the APN field shall be the full APN with
+%% both the APN Network Identifier and APN Operator Identifier
+%% being present as specified in 3GPP TS 23.003 [2] clauses 9.1.1
+%% and 9.1.2, 3GPP TS 23.060 [35] Annex A and 3GPP TS 23.401 [3]
+%% clauses 4.3.8.1.
+decode_apn(Bin) ->
+    decode_apn(Bin, []).
+
+decode_apn(<<>>, Acc) ->
+    lists:flatten(lists:join(".", lists:reverse(Acc)));
+decode_apn(<<A1L, A1R/binary>>, Acc) ->
+    <<A1:A1L/binary, A2/binary>> = A1R,
+    decode_apn(A2, [binary_to_list(A1) | Acc]).
+
+decode_mcc_mnc(V) ->
+    <<MCC2:4/big, MCC1:4/big,
+      MNC3:4/big, MCC3:4/big,
+      MNC2:4/big, MNC1:4/big>> = V,
+    MCC = [MCC3+$0, MCC2+$0, MCC1+$0],
+    MNC = case MNC3 of
+              2#1111 ->
+                  [MNC2+$0, MNC1+$0];
+              _ ->
+                  [MNC3+$0, MNC2+$0, MNC1+$0]
+          end,
+    #{mcc => MCC, mnc => MNC}.
+
+bin_to_ip_addr(IP) ->
+    IPParts = [A || <<A:8>> <= IP],
+    list_to_tuple(IPParts).
+
+pdn_type(<<_:5, 1:3>>) -> ipv4;
+pdn_type(<<_:5, 2:3>>) -> ipv6;
+pdn_type(<<_:5, 3:3>>) -> ipv4v6;
+pdn_type(<<_:5, 4:3>>) -> non_ip;
+pdn_type(<<_:5, 5:3>>) -> ethernet.
+
+triplets(NumTriplets, R0) ->
+    triplets(NumTriplets, R0, []).
+
+triplets(0, R0, Acc) ->
+    {lists:reverse(Acc), R0};
+triplets(NumTriplets, R0, Acc) ->
+    <<RAND:16/binary, SRES:4/binary, Kc0:8/binary, R1/binary>> = R0,
+    T = #{rand => RAND, sres => SRES, kc => Kc0},
+    triplets(NumTriplets - 1, R1, [T | Acc]).
+
+quadruplets(NumQuadruplets, R0) ->
+    quadruplets(NumQuadruplets, R0, []).
+
+quadruplets(0, R0, Acc) ->
+    {lists:reverse(Acc), R0};
+quadruplets(NumQuadruplets, R0, Acc) ->
+    <<RAND:16/binary, XRESLen:8, R1/binary>> = R0,
+    <<XRES:XRESLen/binary, AUTNLen:8,
+      R2/binary>> = R1,
+    <<AUTN:AUTNLen/binary, Kasme:32/binary, R3/binary>> = R2,
+    Q = #{rand => RAND, xres => XRES, autn => AUTN, kasme => Kasme},
+    quadruplets(NumQuadruplets - 1, R3, [Q | Acc]).
+
+quintuplets(NumQuintuplets, R0) ->
+    quintuplets(NumQuintuplets, R0, []).
+
+quintuplets(0, R0, Acc) ->
+    {lists:reverse(Acc), R0};
+quintuplets(NumQuintuplets, R0, Acc) ->
+    <<RAND:16/binary, XRESLen:8, R1/binary>> = R0,
+    <<XRES:XRESLen/binary, CK:16/binary, IK:16/binary, AUTNLen:8,
+      R2/binary>> = R1,
+    <<AUTN:AUTNLen/binary, R3/binary>> = R2,
+    Q = #{rand => RAND, xres => XRES, ck => CK, ik => IK, autn => AUTN},
+    quintuplets(NumQuintuplets - 1, R3, [Q | Acc]).
+
+apn_rate_control_statuses(APNRateControlStatusesBin) ->
+    apn_rate_control_statuses(APNRateControlStatusesBin, []).
+
+apn_rate_control_statuses(<<>>, Acc) ->
+    lists:reverse(Acc);
+apn_rate_control_statuses(APNRateControlStatusesBin, Acc) ->
+    <<_FullLen:16, APNLen:16, R0/binary>> = APNRateControlStatusesBin,
+    <<APN:APNLen/binary,
+      UplinkNumPackets:4/binary,
+      AdditionExceptionReports:4/binary,
+      DownlinkNumPackets:4/binary,
+      StatusValidityTime:8/binary, R1/binary>> = R0,
+    S = #{apn => APN,
+          uplink_num_packets_allowed => UplinkNumPackets,
+          addition_exception_reports => AdditionExceptionReports,
+          downlink_num_packets_allowed => DownlinkNumPackets,
+          apn_rate_control_status_validity_time => StatusValidityTime},
+    apn_rate_control_statuses(R1, [S | Acc]).
+
+decode_cgi(V) ->
+    <<MCCMNCBin:3/binary, LAC:2/binary, CI:2/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{location_area_code => LAC,
+            cell_identity => CI}.
+
+decode_sai(V) ->
+    <<MCCMNCBin:3/binary, LAC:2/binary, SAC:2/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{location_area_code => LAC,
+            service_area_code => SAC}.
+
+decode_rai(V) ->
+    <<MCCMNCBin:3/binary, LAC:2/binary, RAC:2/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{location_area_code => LAC,
+            routing_area_code => RAC}.
+
+decode_tai(V) ->
+    <<MCCMNCBin:3/binary, TAC:2/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{tracking_area_code => TAC}.
+
+decode_ecgi(V) ->
+    <<MCCMNCBin:3/binary, _:4, ECI:28>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{eutran_cell_identifier => ECI}.
+
+decode_lai(V) ->
+    <<MCCMNCBin:3/binary, LAC:2/binary>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{location_area_code => LAC}.
+
+decode_macro_enodeb_id(V) ->
+    <<MCCMNCBin:3/binary, _:4, ID:20>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    MCCMNC#{macro_enodeb_id => ID}.
+
+decode_extended_macro_enodeb_id(V) ->
+    <<MCCMNCBin:3/binary, SMENB:1, _:2, ID:21/bitstring>> = V,
+    MCCMNC = decode_mcc_mnc(MCCMNCBin),
+    case SMENB of
+        0 ->
+            MCCMNC#{long_macro_enodeb_id => ID};
+        1 ->
+            <<_:3, SID>> = ID,
+            MCCMNC#{short_macro_enodeb_id => SID}
+    end.
+
+decode_csg_id(CSGIDBin) ->
+    <<_:5, CSGID:27>> = CSGIDBin,
+    CSGID.
+
+datetime_from_epoch(Seconds) ->
+    Epoch = calendar:datetime_to_gregorian_seconds({{1900, 1, 1}, {0, 0, 0}}),
+    calendar:gregorian_seconds_to_datetime(Epoch + Seconds).
+
+decode_additional_pras(0, _) ->
+    [];
+decode_additional_pras(1, V) ->
+    <<PRAI:3/binary,
+      _:5, APRA:1, OPRA:1, IPRA:1,
+      R0/binary>> = V,
+    PRA = case {OPRA, IPRA} of
+              {0, 0} ->
+                  #{presence_reporting_area_identifier => PRAI};
+              {0, 1} ->
+                  #{presence_reporting_area_identifier => PRAI,
+                    flag => inside};
+              {1, 0} ->
+                  #{presence_reporting_area_identifier => PRAI,
+                    flag => outside}
+          end,
+    [PRA | decode_additional_pras(APRA, R0)].
+
+decode_pco(<<>>) ->
+    [];
+decode_pco(V) ->
+    <<ID:16, R0/binary>> = V,
+    LenLen =
+        case ID of
+            16#0023 ->
+                %% QoS rules with the length of two octets
+                16;
+            16#0024 ->
+                %% QoS flow descriptions with the length of two octets);
+                16;
+            16#0030 ->
+                %% ATSSS response with the length of two octets);
+                16;
+            16#0031 ->
+                %% DNS server security information with length of two octets);
+                16;
+            16#0032 ->
+                %% ECS address with the length of two octets);or
+                16;
+            16#0041 ->
+                %% Service-level-AA container with the length of two octets);
+                16;
+            _ ->
+                8
+        end,
+    <<ContentLen:LenLen, R1/binary>> = R0,
+    <<Content:ContentLen/binary, R2/binary>> = R1,
+    PCO = case ContentLen of
+              0 ->
+                  #{id => ID};
+              _ ->
+                  #{id => ID, content => Content}
+          end,
+    [PCO | decode_pco(R2)].
+
+maps_merge_all([]) ->
+    #{};
+maps_merge_all([H|T]) ->
+    maps:merge(H, maps_merge_all(T)).
 
 parse_cause_type(?GTPv2_CAUSE_TYPE_LOCAL_DETACH) ->
     local_detach;
@@ -1425,3 +3393,1210 @@ compose_cause_type(pgw_mismatch_with_network_slice_subscribed_by_the_ue) ->
     ?GTPv2_CAUSE_TYPE_PGW_MISMATCH_WITH_NETWORK_SLICE_SUBSCRIBED_BY_THE_UE;
 compose_cause_type(rejection_due_to_paging_restriction) ->
     ?GTPv2_CAUSE_TYPE_REJECTION_DUE_TO_PAGING_RESTRICTION.
+
+decode_tliv(<<254:8, Len:16, _Spare:4, Instance:4, Type:16, Bin0/binary>>) ->
+    <<Data:Len/binary, Rest/binary>> = Bin0,
+    {Type, Instance, Data, Rest};
+decode_tliv(<<Type:8, Len:16, _Spare:4, Instance:4, Bin0/binary>>) ->
+    <<Data:Len/binary, Rest/binary>> = Bin0,
+    {Type, Instance, Data, Rest}.
+
+decode_tliv_list(Bin, List) ->
+    decode_tliv_list(Bin, List, #{}).
+
+decode_tliv_list(<<>>, List, Acc) ->
+    %% All mandatory TLIVs are present
+    case [N || {N, _, mandatory} <- List] of
+        [] ->
+            {Acc, <<>>};
+        T ->
+            {error, {missing_mandatory_tlivs, T}}
+    end;
+decode_tliv_list(Bin, [], Acc) ->
+    {Acc, Bin};
+decode_tliv_list(Bin, List, Acc) ->
+    %% TODO: support for Private Extension instance=VS
+    {Type, Instance, DataBin, Rest} = decode_tliv(Bin),
+    {value, {Name, _, _}, NewList} = tlivtake(Type, Instance, List),
+    Data = decode_parameter(parse_iei(Type), DataBin),
+    decode_tliv_list(Rest, NewList, Acc#{Name => Data}).
+
+tlivtake(Type, Instance, List) ->
+    tlivtake(Type, Instance, List, []).
+tlivtake(_Type, _Instance, [], _Acc) ->
+    false;
+tlivtake(Type, Instance, [H|T], Acc) ->
+    %% {name, {type, instance}, mandatory|optional}
+    %% {mm_context, {?GTPv2_IEI_MM_CONTEXT, 0}, mandatory},
+    case element(2, H) of
+        {Types, Instance} when is_list(Types) ->
+            case lists:member(Type, Types) of
+                true ->
+                    {value, H, lists:reverse(Acc) ++ T};
+                false ->
+                    tlivtake(Type, Instance, T, [H|Acc])
+            end;
+        {Type, Instance} ->
+            {value, H, lists:reverse(Acc) ++ T};
+        _ ->
+            tlivtake(Type, Instance, T, [H|Acc])
+    end.
+
+decode_msg(echo_request, Bin0) ->
+    Fields = [{recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
+              {sending_node_features, {?GTPv2_IEI_NODE_FEATURES, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => path_management
+        };
+decode_msg(echo_response, Bin0) ->
+    Fields = [{recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
+              {sending_node_features, {?GTPv2_IEI_NODE_FEATURES, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => path_management
+        };
+decode_msg(version_not_supported, Bin0) ->
+    Fields = [],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => path_management
+        };
+decode_msg(create_session_request, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {msisdn, {?GTPv2_IEI_MSISDN, 0}, conditional},
+              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional},
+              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, mandatory},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
+              {pgw_s5s8_address, {?GTPv2_IEI_F_TEID, 1}, conditional},
+              {apn, {?GTPv2_IEI_APN, 0}, mandatory},
+              {selection_mode, {?GTPv2_IEI_SELECTION_MODE, 0}, conditional},
+              {pdn_type, {?GTPv2_IEI_PDN_TYPE, 0}, conditional},
+              {pdn_address_allocation, {?GTPv2_IEI_PDN_ADDRESS_ALLOCATION, 0}, conditional},
+              {maximum_apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
+              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
+              {trusted_wlan_mode_indication, {?GTPv2_IEI_TRUSTED_WLAN_MODE_INDICATION, 0}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {bearer_contexts_to_be_created, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {bearer_contexts_to_be_removed, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional},
+              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional},
+              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional},
+              {charging_characteristics, {?GTPv2_IEI_CHARGING_CHARACTERISTICS, 0}, conditional},
+              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {epdg_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 2}, optional},
+              {twan_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 3}, optional},
+              {signalling_priority_indication, {?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional},
+              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional},
+              {additional_protocol_config_opts, {?GTPv2_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {henb_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
+              {henb_udp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional},
+              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 2}, conditional},
+              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional},
+              {epdg_ip_address, {?GTPv2_IEI_IP_ADDRESS, 3}, optional},
+              {cn_operator_selection_entity, {?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY, 0}, conditional},
+              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional},
+              {origination_time_stamp, {?GTPv2_IEI_MILLISECOND_TIME_STAMP, 0}, conditional},
+              {maximum_wait_time, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional},
+              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional},
+              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
+              {remote_ue_context_connected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 0}, conditional},
+              {tgpp_aaa_server_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, optional},
+              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional},
+              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional},
+              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 2}, conditional},
+              {mapped_ue_usage_type, {?GTPv2_IEI_MAPPED_UE_USAGE_TYPE, 0}, conditional},
+              {uli_for_sgw, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 1}, conditional},
+              {sgw_u_node_name, {?GTPv2_IEI_FQDN, 0}, conditional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional},
+              {up_function_selection_indication_flags, {?GTPv2_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS, 0}, conditional},
+              {apn_rate_control_status, {?GTPv2_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(create_session_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional},
+              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {pgw_s5s8s2as2b_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
+              {pdn_address_allocation, {?GTPv2_IEI_PDN_ADDRESS_ALLOCATION, 0}, conditional},
+              {apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
+              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {bearer_contexts_created, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {bearer_contexts_marked_for_removal, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {charging_gateway_name, {?GTPv2_IEI_FQDN, 0}, conditional},
+              {charging_gateway_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {pgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {pgw_back_off_time, {?GTPv2_IEI_EPC_TIMER, 0}, optional},
+              {additional_protocol_config_opts, {?GTPv2_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {trusted_wlan_ipv4_parameters, {?GTPv2_IEI_IPV4_CONFIGURATION_PARAMETERS, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional},
+              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional},
+              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
+              {pdn_connection_charging_id, {?GTPv2_IEI_CHARGING_ID, 0}, conditional},
+              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {pgw_node_name, {?GTPv2_IEI_FQDN, 1}, conditional},
+              {sgi_ptp_tunnel_address, {?GTPv2_IEI_SGI_PTP_TUNNEL_ADDRESS, 0}, conditional},
+              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional},
+              {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_FQDN, 3}, optional},
+              {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, optional},
+              {up_security_policy, {?GTPv2_IEI_UP_SECURITY_POLICY, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(create_bearer_request, Bin0) ->
+    Fields = [{procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(create_bearer_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional},
+              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(bearer_resource_command, Bin0) ->
+    Fields = [{linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
+              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, mandatory},
+              {flow_qos, {?GTPv2_IEI_FLOW_QOS, 0}, conditional},
+              {traffic_aggregate_description, {?GTPv2_IEI_TRAFFIC_AGGREGATE_DESCRIPTION, 0}, conditional},
+              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional},
+              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, optional},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, optional},
+              {eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 1}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {s4_u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {s12_rnc_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+              {signalling_priority_indication, {?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 2}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(bearer_resource_failure_indication, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
+              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, mandatory},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(modify_bearer_request, Bin0) ->
+    Fields = [{mei, {?GTPv2_IEI_MEI, 0}, conditional},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, conditional},
+              {delay_downlink_packet_notification_request, {?GTPv2_IEI_DELAY_VALUE, 0}, conditional},
+              {bearer_contexts_to_be_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional},
+              {bearer_contexts_to_be_removed, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional_optional},
+              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {henb_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {henb_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 2}, conditional_optional},
+              {cn_operator_selection_entity, {?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY, 0}, conditional_optional},
+              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {epdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional},
+              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
+              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional_optional},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, optional},
+              {uli_for_sgw, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 1}, conditional_optional},
+              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(modify_bearer_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {msisdn, {?GTPv2_IEI_MSISDN, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
+              {apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {bearer_contexts_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional},
+              {bearer_contexts_marked_for_removal, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional},
+              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+              {charging_gateway_name, {?GTPv2_IEI_FQDN, 0}, conditional},
+              {charging_gateway_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {pgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {pdn_connection_charging_id, {?GTPv2_IEI_CHARGING_ID, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_session_request, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli_timestamp, {?GTPv2_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
+              {rannas_release_cause, {?GTPv2_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {twan_identifier_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional},
+              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_bearer_request, Bin0) ->
+    Fields = [{linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
+              {eps_bearer_ids, {?GTPv2_IEI_EPS_BEARER_ID, 1}, conditional},
+              {failed_bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, optional},
+              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {cause, {?GTPv2_IEI_CAUSE, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {apn_rate_control_status, {?GTPv2_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional_optional},
+              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_session_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {apn_rate_control_status, {?GTPv2_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_bearer_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
+              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {uli_timestamp, {?GTPv2_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {twan_identifier_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional},
+              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(downlink_data_notification, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, conditional_optional},
+              {eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {allocation_retention_priority, {?GTPv2_IEI_ALLOCATION_RETENTION_PRIORITY, 0}, conditional_optional},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, optional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional},
+              {paging_and_service_information, {?GTPv2_IEI_PAGING_AND_SERVICE_INFORMATION, 0}, conditional_optional},
+              {dl_data_packets_size, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(downlink_data_notification_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {data_notification_delay, {?GTPv2_IEI_DELAY_VALUE, 0}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {dl_low_priority_traffic_throttling, {?GTPv2_IEI_THROTTLING, 0}, optional},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
+              {dl_buffering_duration, {?GTPv2_IEI_EPC_TIMER, 0}, conditional_optional},
+              {dl_buffering_suggested_packet_count, {?GTPv2_IEI_INTEGER_NUMBER, 0}, optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(downlink_data_notification_failure_indication, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_indirect_data_forwarding_tunnel_request, Bin0) ->
+    Fields = [{private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_indirect_data_forwarding_tunnel_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(modify_bearer_command, Bin0) ->
+    Fields = [{apn_ambr, {?GTPv2_IEI_AMBR, 0}, mandatory},
+              {bearer_context, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(modify_bearer_failure_indication, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(update_bearer_request, Bin0) ->
+    Fields = [{bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, mandatory},
+              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(update_bearer_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional},
+              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_bearer_command, Bin0) ->
+    Fields = [{bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {uli_timestamp, {?GTPv2_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(delete_bearer_failure_indication, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {bearer_context, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(create_indirect_data_forwarding_tunnel_request, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(create_indirect_data_forwarding_tunnel_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(release_access_bearers_request, Bin0) ->
+    Fields = [{list_of_rabs, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
+              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(release_access_bearers_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(stop_paging_indication, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(modify_access_bearers_request, Bin0) ->
+    Fields = [{indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {delay_downlink_packet_notification_request, {?GTPv2_IEI_DELAY_VALUE, 0}, conditional},
+              {bearer_contexts_to_be_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional},
+              {bearer_contexts_to_be_removed, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(modify_access_bearers_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {bearer_contexts_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional},
+              {bearer_contexts_marked_for_removal, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, optional},
+              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(remote_ue_report_notification, Bin0) ->
+    Fields = [{remote_ue_context_connected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 0}, conditional},
+              {remote_ue_context_disconnected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 1}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(remote_ue_report_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => tunnel_management
+        };
+decode_msg(forward_relocation_request, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
+              {mmesgsnamf_ue_eps_pdn_connections, {?GTPv2_IEI_PDN_CONNECTION, 0}, conditional},
+              {sgw_s11s4_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
+              {sgw_node_name, {?GTPv2_IEI_FQDN, 0}, conditional},
+              {mmesgsnamf_ue_mm_context, {?GTPv2_IEI_MM_CONTEXTS, 0}, mandatory},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
+              {utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 1}, conditional},
+              {bss_container, {?GTPv2_IEI_F_CONTAINER, 2}, conditional},
+              {target_identification, {?GTPv2_IEI_TARGET_IDENTIFICATION, 0}, conditional},
+              {hrpd_access_node_s101_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {iws_1x_s102_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
+              {s1_ap_cause, {?GTPv2_IEI_F_CAUSE, 0}, conditional},
+              {ranap_cause, {?GTPv2_IEI_F_CAUSE, 1}, conditional},
+              {bssgp_cause, {?GTPv2_IEI_F_CAUSE, 2}, conditional},
+              {source_identification, {?GTPv2_IEI_SOURCE_IDENTIFICATION, 0}, conditional},
+              {selected_plmn_id, {?GTPv2_IEI_PLMN_ID, 0}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional},
+              {subscribed_rfsp_index, {?GTPv2_IEI_RFSP_INDEX, 0}, conditional_optional},
+              {rfsp_index_in_use, {?GTPv2_IEI_RFSP_INDEX, 1}, conditional_optional},
+              {csg_id, {?GTPv2_IEI_CSG_ID, 0}, conditional_optional},
+              {csg_membership_indication, {?GTPv2_IEI_CSG_MEMBERSHIP_INDICATION, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {additional_mm_context_for_srvcc, {?GTPv2_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC, 0}, conditional_optional},
+              {additional_flags_for_srvcc, {?GTPv2_IEI_ADDITIONAL_FLAGS_FOR_SRVCC, 0}, conditional_optional},
+              {stn_sr, {?GTPv2_IEI_STN_SR, 0}, conditional_optional},
+              {c_msisdn, {?GTPv2_IEI_MSISDN, 0}, conditional_optional},
+              {mdt_configuration, {?GTPv2_IEI_MDT_CONFIGURATION, 0}, conditional_optional},
+              {sgsn_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
+              {mme_node_name, {?GTPv2_IEI_FQDN, 2}, conditional_optional},
+              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_information, {?GTPv2_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_extension_information, {?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
+              {ue_usage_type, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {mmesgsn_ue_scef_pdn_connections, {?GTPv2_IEI_SCEF_PDN_CONNECTION, 0}, conditional_optional},
+              {msisdn, {?GTPv2_IEI_MSISDN, 1}, conditional_optional},
+              {source_udp_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
+              {extended_trace_information, {?GTPv2_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
+              {subscribed_additional_rrm_policy_index, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 0}, conditional_optional},
+              {additional_rrm_policy_index_in_use, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 1}, conditional_optional},
+              {subscribed_v2x_information, {?GTPv2_IEI_V2X_CONTEXT, 0}, conditional_optional},
+              {iwk_scef_id_for_monitoring_event, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
+              {alternative_imsi, {?GTPv2_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(forward_relocation_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {list_of_set_up_bearers, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional},
+              {list_of_set_up_rabs, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional},
+              {list_of_set_up_pfcs, {?GTPv2_IEI_BEARER_CONTEXT, 2}, optional},
+              {s1_ap_cause, {?GTPv2_IEI_F_CAUSE, 0}, conditional},
+              {ranap_cause, {?GTPv2_IEI_F_CAUSE, 1}, conditional},
+              {bssgp_cause, {?GTPv2_IEI_F_CAUSE, 2}, conditional},
+              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
+              {utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 1}, conditional},
+              {bss_container, {?GTPv2_IEI_F_CONTAINER, 2}, conditional},
+              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgsn_node_name, {?GTPv2_IEI_FQDN, 0}, conditional_optional},
+              {mme_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
+              {sgsn_number, {?GTPv2_IEI_NODE_NUMBER, 0}, conditional_optional},
+              {sgsn_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, optional},
+              {mme_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 1}, optional},
+              {mme_number_for_mt_sms, {?GTPv2_IEI_NODE_NUMBER, 1}, conditional_optional},
+              {sgsn_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 2}, conditional_optional},
+              {mme_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 3}, conditional_optional},
+              {list_of_set_up_bearers_for_scef_pdn_connections, {?GTPv2_IEI_BEARER_CONTEXT, 3}, conditional_optional},
+              {vsrvcc_rejected_cause, {?GTPv2_IEI_SRVCC_CAUSE, 0}, conditional_optional},
+              {msc_number, {?GTPv2_IEI_NODE_NUMBER, 2}, optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(forward_relocation_complete_notification, Bin0) ->
+    Fields = [{indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(forward_relocation_complete_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {secondary_rat_usage_data_report_from_ng_ran, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 1}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(context_request, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {guti, {?GTPv2_IEI_GUTI, 0}, conditional},
+              {rai, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {p_tmsi, {?GTPv2_IEI_P_TMSI, 0}, conditional},
+              {p_tmsi_signature, {?GTPv2_IEI_P_TMSI_SIGNATURE, 0}, conditional},
+              {complete_tau_request_message, {?GTPv2_IEI_COMPLETE_REQUEST_MESSAGE, 0}, conditional},
+              {s3s16s10n26_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {udp_source_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional},
+              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional},
+              {indication, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {hop_counter, {?GTPv2_IEI_HOP_COUNTER, 0}, optional},
+              {target_plmn_id, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgsn_node_name, {?GTPv2_IEI_FQDN, 0}, conditional_optional},
+              {mme_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
+              {sgsn_number, {?GTPv2_IEI_NODE_NUMBER, 0}, optional},
+              {sgsn_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, optional},
+              {mme_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 1}, optional},
+              {ciot_optimizations_support_indication, {?GTPv2_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(context_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {mmesgsnamf_ue_mm_context, {?GTPv2_IEI_MM_CONTEXTS, 0}, conditional},
+              {mmesgsnamf_ue_eps_pdn_connections, {?GTPv2_IEI_PDN_CONNECTION, 0}, conditional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {sgw_s11s4_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
+              {sgw_node_name, {?GTPv2_IEI_FQDN, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional},
+              {hrpd_access_node_s101_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {iws_1x_s102_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
+              {subscribed_rfsp_index, {?GTPv2_IEI_RFSP_INDEX, 0}, conditional_optional},
+              {rfsp_index_in_use, {?GTPv2_IEI_RFSP_INDEX, 1}, conditional_optional},
+              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {mdt_configuration, {?GTPv2_IEI_MDT_CONFIGURATION, 0}, conditional_optional},
+              {sgsn_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
+              {mme_node_name, {?GTPv2_IEI_FQDN, 2}, conditional_optional},
+              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_information, {?GTPv2_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_extension_information, {?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
+              {ue_usage_type, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {mmesgsn_ue_scef_pdn_connections, {?GTPv2_IEI_SCEF_PDN_CONNECTION, 0}, conditional},
+              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional_optional},
+              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
+              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional_optional},
+              {remaining_running_service_gap_timer, {?GTPv2_IEI_INTEGER_NUMBER, 1}, conditional_optional},
+              {extended_trace_information, {?GTPv2_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
+              {subscribed_additional_rrm_policy_index, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 0}, conditional_optional},
+              {additional_rrm_policy_index_in_use, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 1}, conditional_optional},
+              {iwk_scef_id_for_monitoring_event, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
+              {alternative_imsi, {?GTPv2_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(context_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
+              {forwarding_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
+              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional_optional},
+              {sgsn_number, {?GTPv2_IEI_NODE_NUMBER, 0}, conditional_optional},
+              {mme_number_for_mt_sms, {?GTPv2_IEI_NODE_NUMBER, 1}, conditional_optional},
+              {sgsn_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
+              {mme_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 1}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(identification_request, Bin0) ->
+    Fields = [{guti, {?GTPv2_IEI_GUTI, 0}, conditional},
+              {rai, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {p_tmsi, {?GTPv2_IEI_P_TMSI, 0}, conditional},
+              {p_tmsi_signature, {?GTPv2_IEI_P_TMSI_SIGNATURE, 0}, conditional},
+              {complete_attach_request_message, {?GTPv2_IEI_COMPLETE_REQUEST_MESSAGE, 0}, conditional},
+              {address, {?GTPv2_IEI_IP_ADDRESS, 0}, optional},
+              {udp_source_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional},
+              {hop_counter, {?GTPv2_IEI_HOP_COUNTER, 0}, optional},
+              {target_plmn_id, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(identification_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {mmesgsn_ue_mm_context, {?GTPv2_IEI_MM_CONTEXTS, 0}, conditional},
+              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional_optional},
+              {ue_usage_type, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {monitoring_event_information, {?GTPv2_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_extension_information, {?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
+              {extended_trace_information, {?GTPv2_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(forward_access_context_notification, Bin0) ->
+    Fields = [{rab_contexts, {?GTPv2_IEI_RAB_CONTEXT, 0}, conditional},
+              {source_rnc_pdcp_context_info, {?GTPv2_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO, 0}, conditional},
+              {pdu_numbers, {?GTPv2_IEI_PDU_NUMBERS, 0}, conditional},
+              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
+              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 1}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(forward_access_context_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(detach_notification, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {detach_type, {?GTPv2_IEI_DETACH_TYPE, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(detach_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(change_notification_request, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, mandatory},
+              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {pgw_s5s8_gtp_c_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {lbi, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(change_notification_response, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
+              {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(relocation_cancel_request, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
+              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
+              {ranap_cause, {?GTPv2_IEI_F_CAUSE, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(relocation_cancel_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(configuration_transfer_tunnel, Bin0) ->
+    Fields = [{son_container, {?GTPv2_IEI_F_CONTAINER, 0}, mandatory},
+              {target_node_id, {?GTPv2_IEI_TARGET_IDENTIFICATION, 0}, mandatory},
+              {connected_target_enodeb_id, {?GTPv2_IEI_TARGET_IDENTIFICATION, 1}, conditional_optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(ran_information_relay, Bin0) ->
+    Fields = [{bss_container, {?GTPv2_IEI_F_CONTAINER, 0}, mandatory},
+              {rim_routing_address, {?GTPv2_IEI_TARGET_IDENTIFICATION, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(isr_status_indication, Bin0) ->
+    Fields = [{action_indication, {?GTPv2_IEI_ACTION_INDICATION, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(ue_registration_query_request, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(ue_registration_query_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
+              {selected_core_network_operator_identifier, {?GTPv2_IEI_PLMN_ID, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mobility_management
+        };
+decode_msg(suspend_notification, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {rai, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {p_tmsi, {?GTPv2_IEI_P_TMSI, 0}, conditional},
+              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
+              {address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {udp_source_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {hop_counter, {?GTPv2_IEI_HOP_COUNTER, 0}, optional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(suspend_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(resume_notification, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
+              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(resume_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(cs_paging_indication, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
+              {vlr_name, {?GTPv2_IEI_FQDN, 0}, mandatory},
+              {tmsi, {?GTPv2_IEI_TMSI, 0}, optional},
+              {location_area_identifier, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, optional},
+              {global_cn_id, {?GTPv2_IEI_GLOBAL_CN_ID, 0}, optional},
+              {channel_needed, {?GTPv2_IEI_CHANNEL_NEEDED, 0}, optional},
+              {emlpp_priority, {?GTPv2_IEI_EMLPP_PRIORITY, 0}, optional},
+              {service_indicator, {?GTPv2_IEI_SERVICE_INDICATOR, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(alert_mme_notification, Bin0) ->
+    Fields = [{private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(alert_mme_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(ue_activity_notification, Bin0) ->
+    Fields = [{private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(ue_activity_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => cs_fallback_and_srvcc_related
+        };
+decode_msg(create_forwarding_tunnel_request, Bin0) ->
+    Fields = [{s103_pdn_data_forwarding_info, {?GTPv2_IEI_S103_PDN_DATA_FORWARDING_INFO, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => non_3gpp_access_related
+        };
+decode_msg(create_forwarding_tunnel_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {s1_u_data_forwarding_info, {?GTPv2_IEI_S1_U_DATA_FORWARDING_INFO, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => non_3gpp_access_related
+        };
+decode_msg(delete_pdn_connection_set_request, Bin0) ->
+    Fields = [{mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
+              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
+              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 4}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(delete_pdn_connection_set_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(update_pdn_connection_set_request, Bin0) ->
+    Fields = [{mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(update_pdn_connection_set_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(pgw_restart_notification, Bin0) ->
+    Fields = [{pgw_s5s8_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, mandatory},
+              {sgw_s11s4_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, mandatory},
+              {cause, {?GTPv2_IEI_CAUSE, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(pgw_restart_notification_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(pgw_downlink_triggering_notification, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
+              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {pgw_s5_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(pgw_downlink_triggering_acknowledge, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => restoration_and_recovery
+        };
+decode_msg(trace_session_activation, Bin0) ->
+    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
+              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, mandatory},
+              {mei, {?GTPv2_IEI_MEI, 0}, conditional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => trace_management
+        };
+decode_msg(trace_session_deactivation, Bin0) ->
+    Fields = [{trace_reference, {?GTPv2_IEI_TRACE_REFERENCE, 0}, mandatory}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => trace_management
+        };
+decode_msg(mbms_session_start_request, Bin0) ->
+    Fields = [{sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
+              {tmgi, {?GTPv2_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY, 0}, mandatory},
+              {mbms_session_duration, {?GTPv2_IEI_MBMS_SESSION_DURATION, 0}, mandatory},
+              {mbms_service_area, {?GTPv2_IEI_MBMS_SERVICE_AREA, 0}, mandatory},
+              {mbms_session_identifier, {?GTPv2_IEI_MBMS_SESSION_IDENTIFIER, 0}, conditional},
+              {mbms_flow_identifier, {?GTPv2_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
+              {qos_profile, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
+              {mbms_ip_multicast_distribution, {?GTPv2_IEI_MBMS_IP_MULTICAST_DISTRIBUTION, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mbms_time_to_data_transfer, {?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_data_transfer, {?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_flags, {?GTPv2_IEI_MBMS_FLAGS, 0}, conditional_optional},
+              {mbms_alternative_ip_multicast_distribution, {?GTPv2_IEI_MBMS_IP_MULTICAST_DISTRIBUTION, 1}, conditional_optional},
+              {mbms_cell_list, {?GTPv2_IEI_ECGI_LIST, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mbms
+        };
+decode_msg(mbms_session_start_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
+              {mbms_distribution_acknowledge, {?GTPv2_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE, 0}, conditional},
+              {sn_u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mbms
+        };
+decode_msg(mbms_session_update_request, Bin0) ->
+    Fields = [{mbms_service_area, {?GTPv2_IEI_MBMS_SERVICE_AREA, 0}, conditional},
+              {tmgi, {?GTPv2_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY, 0}, mandatory},
+              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, optional},
+              {mbms_session_duration, {?GTPv2_IEI_MBMS_SESSION_DURATION, 0}, mandatory},
+              {qos_profile, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
+              {mbms_session_identifier, {?GTPv2_IEI_MBMS_SESSION_IDENTIFIER, 0}, conditional},
+              {mbms_flow_identifier, {?GTPv2_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
+              {mbms_time_to_data_transfer, {?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_data_transfer, {?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_cell_list, {?GTPv2_IEI_ECGI_LIST, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mbms
+        };
+decode_msg(mbms_session_update_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {mbms_distribution_acknowledge, {?GTPv2_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE, 0}, conditional},
+              {sn_u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mbms
+        };
+decode_msg(mbms_session_stop_request, Bin0) ->
+    Fields = [{mbms_flow_identifier, {?GTPv2_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
+              {mbms_data_transfer, {?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_flags, {?GTPv2_IEI_MBMS_FLAGS, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mbms
+        };
+decode_msg(mbms_session_stop_response, Bin0) ->
+    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
+    Msg#{message_group => mbms
+        }.
+
+tcbd_decode(<<>>) ->
+    [];
+tcbd_decode(<<2#1111:4, A:4>>) ->
+    [A+$0];
+tcbd_decode(<<B:4, A:4, Rest/binary>>) ->
+    [A+$0, B+$0 | tcbd_decode(Rest)].
+
+encode_msg(_, _Msg) ->
+    <<>>.

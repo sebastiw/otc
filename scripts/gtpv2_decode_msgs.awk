@@ -102,7 +102,7 @@ $3 !~ /.*(Spare|Reserved).*/ && active && inside_iei {
     iei_ref=trim($4)
     iei_name=atom(trim($3))
     iei_code=trim($2)
-    iei_type="TLV"
+    iei_type="TLIV"
     iei_length_type=trim($5)
     iei_length=trim($6)
 
@@ -139,60 +139,39 @@ active && !inside_messages {
     active=0
     printf("%s", parse_man_s)
     # Remove trailing comma and prefix whitespace
-    optionals=trim(optionals)
-    optionals=substr(optionals, 1, length(optionals)-1)
     fields=trim(fields)
     fields=substr(fields, 1, length(fields)-1)
-    printf("    Opts = [%s],\n", optionals)
-    printf("    {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin%d, Opts),\n", bin_ctr)
+    variables=trim(variables)
+    variables=substr(variables, 1, length(variables)-1)
+    printf("    Fields = [%s],\n", variables)
+    printf("    {Msg, _Unknown} = decode_tliv_list(Bin%d, Fields),\n", bin_ctr)
     if(fields == "") {
-        printf("    Optionals;\n")
+        printf("    Msg;\n")
     } else {
-        printf("    Optionals#{%s\n              };\n", fields)
+        printf("    Msg#{%s\n        };\n", fields)
     }
     # Reset
-    optionals=""
     parse_man_s=""
     fields=""
+    variables=""
     bin_ctr=0
 }
 
-# Optional variables
-$3 ~ /(Optional|Conditional)/ && inside_messages {
+# Variables
+$3 ~ /(Mandatory|Optional|Conditional)/ && inside_messages {
     iei_ref=trim($4)
     iei_name=iei_names[iei_ref]
     field_name=atom($2)
     var_name=atom_to_var(field_name)
     iei_code=iei_codes[iei_ref]
     iei_type=tag(iei_types[iei_ref])
+    iei_instance=tolower(trim($5))
     if(iei_code == 254) {
         iei_length=2+iei_lengths[iei_ref]
     } else {
         iei_length=1+iei_lengths[iei_ref]
     }
-    optional=sprintf("\n            {%s, %s, %s, %s},", field_name, iei_code, iei_type, iei_length)
-    optionals=optionals optional
+    variable=sprintf("\n              {%s, {?GTPv2_IEI_%s, %s}, %s},", field_name, toupper(iei_name), iei_instance, atom(trim($3)))
+    variables=variables variable
 }
 
-# Mandatory variables
-$3 ~ /Mandatory/ && inside_messages {
-    iei_ref=trim($4)
-    iei_name=iei_names[iei_ref]
-    field_name=atom($2)
-    var_name=atom_to_var(field_name)
-    bin_ctr++
-    iei_type=tolower(iei_types[iei_ref])
-    iei_length_type=iei_length_types[iei_ref]
-    if(iei_type != "tlv" && iei_length_type == "Fixed") {
-        maybe_len=", "iei_lengths[iei_ref]
-    }
-    if(substr(iei_type, 1, 1) == "t") {
-        maybe_tag="?GTP_IEI_"toupper(iei_name)", "
-    }
-    parse_man=sprintf("    {%s%s, Bin%s} = otc_l3_codec:decode_%s(Bin%d%s),\n",
-                      maybe_tag, var_name, bin_ctr, iei_type, bin_ctr-1, maybe_len)
-    maybe_tag=""
-    maybe_len=""
-    parse_man_s=parse_man_s parse_man
-    fields=fields sprintf("               %s => %s,\n", field_name, var_name)
-}
