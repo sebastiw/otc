@@ -489,7 +489,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | WLAN Location Timestamp                    | Conditional          |   8.110 |    0 |
 | NBIFOM Container                           | Conditional          |    8.48 |    0 |
 | Remote UE Context Connected                | Conditional          |   8.122 |    0 |
-| 3GPP AAA Server Identifier                 | Optional             |   8.107 |    0 |
+| TGPP AAA Server Identifier                 | Optional             |   8.107 |    0 |
 | Extended Protocol Config Opts              | Conditional          |   8.128 |    0 |
 | Serving PLMN Rate Control                  | Conditional          |   8.129 |    0 |
 | MO Exception Data Counter                  | Conditional          |   8.130 |    0 |
@@ -1081,7 +1081,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | BSS Container                          | Conditional          |       8.48 |    2 |
 | Target Identification                  | Conditional          |       8.51 |    0 |
 | HRPD access node S101 IP address       | Conditional          |        8.9 |    0 |
-| 1xIWS S102 IP address                  | Conditional          |        8.9 |    1 |
+| IWS 1x S102 IP address                 | Conditional          |        8.9 |    1 |
 | S1-AP Cause                            | Conditional          |       8.49 |    0 |
 | RANAP Cause                            | Conditional          |       8.49 |    1 |
 | BSSGP Cause                            | Conditional          |       8.49 |    2 |
@@ -1205,7 +1205,7 @@ NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set 
 | Indication Flags                       | Conditional          |    8.12 |    0 |
 | Trace Information                      | Conditional          |    8.31 |    0 |
 | HRPD access node S101 IP address       | Conditional          |     8.9 |    0 |
-| 1xIWS S102 IP address                  | Conditional          |     8.9 |    1 |
+| IWS 1x S102 IP address                 | Conditional          |     8.9 |    1 |
 | Subscribed RFSP Index                  | Conditional-Optional |    8.77 |    0 |
 | RFSP Index in Use                      | Conditional-Optional |    8.77 |    1 |
 | UE Time Zone                           | Conditional-Optional |    8.44 |    0 |

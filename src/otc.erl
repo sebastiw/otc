@@ -16,7 +16,8 @@
          nas_5gs/1,
          nas_5gs_5gmm/1,
          nas_5gs_5gsm/1,
-         gtp/1
+         gtp/1,
+         gtpv2/1
         ]).
 
 %% General functions
@@ -32,7 +33,7 @@
 
 %% Supported protocols ---------------------------------------------------------
 
--type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | tcap | map | nas_eps | nas_eps_emm | nas_eps_esm | gtp.
+-type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | tcap | map | nas_eps | nas_eps_emm | nas_eps_esm | gtp | gtpv2.
 
 next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
 %% next({sctp, V}) -> otc_sctp:next(V);
@@ -48,7 +49,8 @@ next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V);
 next({nas_5gs, V}) -> otc_nas_5gs:next(V);
 next({nas_5gs_5gmm, V}) -> otc_nas_5gs_5gmm:next(V);
 next({nas_5gs_5gsm, V}) -> otc_nas_5gs_5gsm:next(V);
-next({gtp, V}) -> otc_gtp:next(V).
+next({gtp, V}) -> otc_gtp:next(V);
+next({gtpv2, V}) -> otc_gtpv2:next(V).
 
 sctp_ppi(PPI) -> otc_sctp_ppi:codec(PPI).
 %% sctp(D) -> otc_sctp:codec(D).
@@ -65,6 +67,7 @@ nas_5gs(D) -> otc_nas_5gs:codec(D).
 nas_5gs_5gmm(D) -> otc_nas_5gs_5gmm:codec(D).
 nas_5gs_5gsm(D) -> otc_nas_5gs_5gsm:codec(D).
 gtp(D) -> otc_gtp:codec(D).
+gtpv2(D) -> otc_gtpv2:codec(D).
 
 %% General functions -----------------------------------------------------------
 
