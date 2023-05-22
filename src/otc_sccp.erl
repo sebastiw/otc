@@ -382,21 +382,31 @@ separate_fields(Pointer, Bin, OptPointer) ->
     AbsPointers = get_absolute_pointers(Pointer),
     get_fields(AbsPointers, Bin, OptPointer - 1).
 
-get_absolute_pointers_test() ->
-    ?assertEqual([{90,0},{0,1},{12,2},{0,3}], get_absolute_pointers(<<94, 3, 14, 0>>)),
-    ?assertEqual([{20,0},{93,1}], get_absolute_pointers(<<22, 94>>)).
+get_absolute_pointers_test_() ->
+    [?_assertEqual([{90,0},{0,1},{12,2},{0,3}], get_absolute_pointers(<<94, 3, 14, 0>>)),
+     ?_assertEqual([{20,0},{93,1}], get_absolute_pointers(<<22, 94>>))].
 
-separate_fields_test() ->
-    %% Example:
+separate_fields_test_() ->
+    %% Example: <<PointerBin:3/b, Bin/b>>
     %% Expected order: [CdPA, CgPA, LD, OptBin]
-    %% PointerBin: <<94 = PointCdPA, 3 = PointCgPA, 14 = PointLD, 0 = PointOpt>>
-    %% Bin: <<CgPABin1, LDBin2, CdPABin3, OptBin4>>
+    %% PointerBin: <<10 = PointCdPA, 3 = PointCgPA, 8 = PointLD, 0 = PointOpt>>
+    %% Bin: <<CgPABin1:5/b, LDBin2:2/b, CdPABin3:5/b, OptBin4>>
     CdPA = <<4, "CdPA">>,
     CgPA = <<4, "CgPA">>,
     D = <<1, "D">>,
     Bin = <<CgPA/binary, D/binary, CdPA/binary>>,
-    ?assertEqual([<<"CgPA">>,<<"CgPA">>,<<"CgPA">>,<<"D">>], separate_fields(<<4, 3, 2, 6>>, Bin)),
-    ?assertEqual([<<"CdPA">>,<<"D">>,<<"CgPA">>,<<>>], separate_fields(<<11, 8, 2, 0>>, Bin, 4)).
+    [{"Pointers in sorted order + optional",
+      ?_assertEqual([<<"CgPA">>,<<"D">>,<<"CdPA">>,<<>>], separate_fields(<<2, 8, 11, 0>>, Bin, 4))},
+     {"Pointers in non-sorted order + optional",
+      ?_assertEqual([<<"CdPA">>,<<"CgPA">>,<<"D">>,<<>>], separate_fields(<<11, 2, 8, 0>>, Bin, 4))},
+     {"Pointers in reverse order + optional",
+      ?_assertEqual([<<"CdPA">>,<<"D">>,<<"CgPA">>,<<>>], separate_fields(<<11, 8, 2, 0>>, Bin, 4))},
+     {"Pointers in sorted order",
+      ?_assertEqual([<<"CgPA">>,<<"D">>,<<"CdPA">>], separate_fields(<<2, 8, 11>>, Bin))},
+     {"Pointers in non-sorted order",
+      ?_assertEqual([<<"CdPA">>,<<"CgPA">>,<<"D">>], separate_fields(<<11, 2, 8>>, Bin))},
+     {"Pointers in reverse order",
+      ?_assertEqual([<<"CdPA">>,<<"D">>,<<"CgPA">>], separate_fields(<<11, 8, 2>>, Bin))}].
 
 get_absolute_pointers(Bin) ->
     NumPointers = byte_size(Bin),
