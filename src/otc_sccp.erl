@@ -102,7 +102,7 @@ compose_message_type(ludts) -> ?SCCP_MSG_TYPE_LUDTS.
 decode_msg(cr, Bin) ->
     NumPointers = 2,
     <<SLR:3/binary, PC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, OptBin] = separate_fields(Pointers, Bin1, 2),
+    [CdPA, OptBin] = separate_fields(Pointers, Bin1, NumPointers),
     AllowedParameters = [{credit, 3},
                          {calling_party_address, {4, n}},
                          {data, {3, 130}},
@@ -116,7 +116,7 @@ decode_msg(cr, Bin) ->
 decode_msg(cc, Bin) ->
     NumPointers = 1,
     <<DLR:3/binary, SLR:3/binary, PC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [OptBin] = separate_fields(Pointers, Bin1, 1),
+    [OptBin] = separate_fields(Pointers, Bin1, NumPointers),
     AllowedParameters = [{credit, 3},
                          {called_party_address, {4, n}},
                          {data, {3, 130}},
@@ -129,7 +129,7 @@ decode_msg(cc, Bin) ->
 decode_msg(cref, Bin) ->
     NumPointers = 1,
     <<DLR:3/binary, RC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [OptBin] = separate_fields(Pointers, Bin1, 1),
+    [OptBin] = separate_fields(Pointers, Bin1, NumPointers),
     AllowedParameters = [{called_party_address, {4, n}},
                          {data, {3, 130}},
                          {importance, 3},
@@ -140,7 +140,7 @@ decode_msg(cref, Bin) ->
 decode_msg(rlsd, Bin) ->
     NumPointers = 1,
     <<DLR:3/binary, SLR:3/binary, RC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [OptBin] = separate_fields(Pointers, Bin1, 1),
+    [OptBin] = separate_fields(Pointers, Bin1, NumPointers),
     AllowedParameters = [{data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -249,7 +249,7 @@ decode_msg(it, Bin) ->
 decode_msg(xudt, Bin) ->
     NumPointers = 4,
     <<PC:1/binary, HC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, D, OptBin] = separate_fields(Pointers, Bin1, 4),
+    [CdPA, CgPA, D, OptBin] = separate_fields(Pointers, Bin1, NumPointers),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -264,7 +264,7 @@ decode_msg(xudt, Bin) ->
 decode_msg(xudts, Bin) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, D, OptBin] = separate_fields(Pointers, Bin1, 4),
+    [CdPA, CgPA, D, OptBin] = separate_fields(Pointers, Bin1, NumPointers),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -327,9 +327,11 @@ separate_fields(Pointer, Bin) ->
 separate_fields(Pointer, Bin, OptPointer) ->
     AbsPointers = get_absolute_pointers(Pointer),
     get_fields(AbsPointers, Bin, OptPointer - 1).
+
 get_absolute_pointers_test() ->
     ?assertEqual([{90,0},{0,1},{12,2},{0,3}], get_absolute_pointers(<<94, 3, 14, 0>>)),
     ?assertEqual([{20,0},{93,1}], get_absolute_pointers(<<22, 94>>)).
+
 separate_fields_test() ->
     %% Example:
     %% Expected order: [CdPA, CgPA, LD, OptBin]
@@ -808,9 +810,6 @@ decode_parameters(<<IEI:8/big, Len:8/big, Bin0/binary>>, Os, Acc) ->
     <<V:Len/binary, Rest/binary>> = Bin0,
     Param = parse_iei(IEI),
     case lists:keytake(Param, 1, Os) of
-        {value, {Name, _, _}, NOs} ->
-            Par = decode_parameter(Name, V),
-            decode_parameters(Rest, NOs, Acc#{Name => Par});
         {value, {Name, _}, NOs} ->
             Par = decode_parameter(Name, V),
             decode_parameters(Rest, NOs, Acc#{Name => Par});
