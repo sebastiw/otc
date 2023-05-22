@@ -1,0 +1,192 @@
+;; 3GPP TS 29.215 v17.0.0 S9
+
+@id       16777267
+@name     dia_3gpp_ts_29215_S9
+@vendor   10415 3GPP
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@inherits dia_3gpp2
+
+@messages
+CC-Request ::= <Diameter Header: 272, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+          *   [ Subscription-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ QoS-Information ]
+          *   [ QoS-Rule-Report ]
+         0*2  [ AN-GW-Address ]
+              [ Network-Request-Support ]
+          *   [ Packet-Filter-Information ]
+              [ Packet-Filter-Operation ]
+          *   [ Subsession-Enforcement-Info ]
+              [ IP-CAN-Type ]
+              [ RAT-Type ]
+              [ Termination-Cause ]
+              [ User-Equipment-Info ]
+              [ QoS-Negotiation ]
+              [ QoS-Upgrade ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ 3GPP-MS-TimeZone ]
+              [ 3GPP2-BSID ]
+          *   [ Event-Trigger ]
+              [ Multiple-BBERF-Action ]
+              [ User-CSG-Information ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+CC-Answer ::= <Diameter Header: 272, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ QoS-Rule-Install ]
+          *   [ QoS-Rule-Remove ]
+          *   [ QoS-Information ]
+              [ Bearer-Control-Mode ]
+          *   [ Event-Trigger ]
+              [ Charging-Information ]
+          *   [ Subsession-Decision-Info ]
+          *   [ CSG-Information-Reporting ]
+         0*2  [ AN-GW-Address ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Load ]
+          *   [ AVP ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Re-Auth-Request-Type }
+              [ DRMP ]
+              [ Origin-State-Id ]
+              [ OC-Supported-Features ]
+          *   [ QoS-Rule-Install ]
+          *   [ QoS-Rule-Remove ]
+          *   [ QoS-Information ]
+          *   [ Event-Trigger ]
+          *   [ Subsession-Decision-Info ]
+         0*2  [ AN-GW-Address ]
+              [ Session-Release-Cause ]
+              [ HeNB-Local-IP-Address ]
+              [ UE-Local-IP-Address ]
+              [ UDP-Source-Port ]
+          *   [ Proxy-Info ]
+              [ Called-Station-Id ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ IP-CAN-Type ]
+              [ RAT-Type ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ 3GPP-MS-TimeZone ]
+              [ 3GPP2-BSID ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ QoS-Information ]
+          *   [ QoS-Rule-Report ]
+         0*2  [ AN-GW-Address ]
+          *   [ Subsession-Enforcement-Info ]
+              [ User-CSG-Information ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Load ]
+          *   [ AVP ]
+
+TE-Request ::= <Diameter Header: 8388656, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              [ DRMP ]
+              [ Auth-Session-State ]
+              [ Origin-State-Id ]
+              [ Subscription-Id ]
+              [ OC-Supported-Features ]
+              [ Called-Station-Id ]
+              [ UE-Local-IP-Address ]
+              [ HeNB-Local-IP-Address ]
+              [ DRA-Binding ]
+              [ UDP-Source-Port ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+TE-Answer ::= <Diameter Header: 8388656, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ DRA-Deployment ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Load ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_SUBSESSION                                   5470
+DIAMETER_ERROR_ONGOING_SESSION_ESTABLISHMENT                5471
+DIAMETER_PENDING_TRANSACTION                                4144
+

@@ -1,0 +1,126 @@
+;; ETSI TS 183 060 v3.1.1 Re
+
+@id       16777253
+@name     dia_etsi_ts_183060_Re
+@vendor   13019 etsi
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_itu
+
+@inherits dia_etsi
+
+@messages
+Policy-Install-Request ::= <Diameter Header: 315, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { PI-Request-Type }
+              { PI-Request-Number }
+              [ Origin-State-Id ]
+              [ Auth-Session-State ]
+          *   [ Event-Trigger ]
+          *   [ Policy-Rule-Remove ]
+          *   [ Policy-Rule-Install ]
+              [ User-Name ]
+              [ Logical-Access-ID ]
+              [ Framed-IP-Address ]
+              [ Address-Realm ]
+              [ Called-Station-Id ]
+              [ ToS-Traffic-Class ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+PI-Answer ::= <Diameter Header: 315, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { PI-Request-Type }
+              { PI-Request-Number }
+              [ Result-Code ]
+              [ Policy-Rule-Report ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+          *   [ Policy-Rule-Definition ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+CC-Request ::= <Diameter Header: 272, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Service-Context-Id }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ Destination-Host ]
+              [ User-Name ]
+              [ Origin-State-Id ]
+              [ Event-Timestamp ]
+              [ Auth-Session-State ]
+              [ Termination-Cause ]
+              [ Called-Station-Id ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+          *   [ Traffic-Flow ]
+          *   [ Flow-Description ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ Framed-IP-Address ]
+              [ Address-Realm ]
+          *   [ Policy-Rule-Report ]
+          *   [ Policy-Update-Request ]
+          *   [ Event-Trigger ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+CC-Answer ::= <Diameter Header: 272, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Auth-Application-Id }
+              { Result-Code }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ User-Name ]
+              [ Framed-IP-Address ]
+              [ Address-Realm ]
+              [ Called-Station-Id ]
+              [ Logical-Access-ID ]
+              [ ToS-Traffic-Class ]
+              [ Origin-State-Id ]
+              [ Event-Timestamp ]
+              [ Auth-Session-State ]
+          *   [ Event-Trigger ]
+          *   [ Policy-Rule-Remove ]
+          *   [ Policy-Rule-Install ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+COMMIT_FAILURE                                              4043
+UNKNOWN_POLICY_RULE                                         5061
+UNKNOWN_POLICY_RULE_BASE_NAME                               5062
+UNKNOWN_POLICY_RULE_FOR_TRANSPORT_RESOURCE                  5063
+UNKNOWN_POLICY_RULE_BASE_NAME_FOR_TRANSPORT_RESOURCE        5064
+UNKNOWN_TRANSPORT_RESOURCE                                  5065
+POLICY_ACTIVATION_FAILURE                                   5066
+POLICY_MODIFICATION_FAILURE                                 5067
+AUTHORIZATION_REJECTED_FOR_TRANSPORT_RESOURCE               5068
+AUTHORIZATION_REJECTED_FOR_POLICY_RULE_NAME                 5069
+AUTHORIZATION_REJECTED_FOR_POLICY_RULE_BASE_NAME            5070

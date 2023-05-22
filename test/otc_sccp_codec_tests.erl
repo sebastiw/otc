@@ -145,6 +145,50 @@ xudt_opt_segmentation_test() ->
       NewBin = otc_sccp:encode(Val),
       ?assertEqual(Bin, NewBin).
 
+udts_test() ->
+    CdPA = called_party_address(),
+    CgPA = calling_party_address(),
+    D = data(),
+
+    Bin = <<16#0a, 16#01, 16#03, 16#0e, 16#19,
+            16#0b, CgPA/binary,
+            16#0b, CdPA/binary,
+            16#18, D/binary>>,
+    Exp = #{called_party_address =>
+                #{global_title =>
+                      #{address => "46729887766",
+                        encoding_scheme => bcd,
+                        nature_of_address_indicator => 8,
+                        numbering_plan => 1,
+                        odd_even_indicator => odd,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,
+                  routing_indicator => global_title,
+                  subsystem_number => hlr},
+            calling_party_address =>
+                #{global_title =>
+                      #{address => "467211221122",
+                        encoding_scheme => bcd,
+                        nature_of_address_indicator => 4,
+                        numbering_plan => 1,
+                        odd_even_indicator => even,
+                        translation_type => 0},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,
+                  routing_indicator => global_title,
+                  subsystem_number => msc},
+            data => D,
+            message_type => udts,
+            return_cause => no_translation_for_this_specific_address},
+
+    Val = otc_sccp:decode(Bin),
+    ?assertEqual(Exp, Val),
+    NewBin = otc_sccp:encode(Val),
+    ?assertEqual(Bin, NewBin).
+
 xudts_test() ->
     CdPA = called_party_address(),
     CgPA = calling_party_address(),

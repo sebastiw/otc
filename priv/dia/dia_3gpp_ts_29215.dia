@@ -1,0 +1,121 @@
+;; 3GPP TS 29.215 v17.0.0
+
+@name     dia_3gpp_ts_29215
+@vendor   10415 3GPP
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+Subsession-Decision-Info                                    2200 Grouped           MV
+Subsession-Enforcement-Info                                 2201 Grouped           MV
+Subsession-Id                                               2202 Unsigned32        MV
+Subsession-Operation                                        2203 Enumerated        MV
+Multiple-BBERF-Action                                       2204 Enumerated        MV
+UE-Local-IPv6-Prefix                                        2205 OctetString       MV
+DRA-Deployment                                              2206 Enumerated        V 
+PCRF-Address                                                2207 DiameterIdentity  MV
+DRA-Binding                                                 2208 Enumerated        V 
+
+@grouped
+Subsession-Decision-Info ::= <AVP Header: 2200>
+              { Subsession-Id }
+         0*2  [ AN-GW-Address ]
+              [ Result-Code ]
+              [ Experimental-Result-Code ]
+          *   [ Charging-Rule-Remove ]
+          *   [ Charging-Rule-Install ]
+              [ Event-Report-Indication ]
+          *   [ QoS-Rule-Install ]
+          *   [ QoS-Rule-Remove ]
+              [ Default-EPS-Bearer-QoS ]
+              [ Framed-IPv6-Prefix ]
+          *   [ Usage-Monitoring-Information ]
+              [ Session-Release-Cause ]
+              [ Bearer-Control-Mode ]
+          *   [ Event-Trigger ]
+              [ Revalidation-Time ]
+              [ Default-Access ]
+              [ NBIFOM-Support ]
+              [ NBIFOM-Mode ]
+              [ RAN-Rule-Support ]
+          *   [ Routing-Rule-Report ]
+              [ Removal-Of-Access ]
+              [ IP-CAN-Type ]
+              [ Online ]
+              [ Offline ]
+          *   [ QoS-Information ]
+          *   [ AVP ]
+
+Subsession-Enforcement-Info ::= <AVP Header: 2201>
+              { Subsession-Id }
+              [ Subsession-Operation ]
+         0*2  [ AN-GW-Address ]
+              [ Bearer-Identifier ]
+              [ Bearer-Operation ]
+          *   [ Packet-Filter-Information ]
+              [ Packet-Filter-Operation ]
+              [ QoS-Information ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+          *   [ CoA-Information ]
+              [ Called-Station-Id ]
+              [ PDN-Connection-ID ]
+              [ Bearer-Usage ]
+          *   [ TFT-Packet-Filter-Information ]
+              [ Online ]
+              [ Offline ]
+              [ Result-Code ]
+              [ Experimental-Result-Code ]
+          *   [ Charging-Rule-Report ]
+              [ Credit-Management-Status ]
+          *   [ QoS-Rule-Report ]
+          *   [ Application-Detection-Information ]
+              [ IP-CAN-Type ]
+              [ RAT-Type ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-SGSN-Address ]
+              [ 3GPP-SGSN-IPv6-Address ]
+              [ RAI ]
+              [ 3GPP-User-Location-Info ]
+              [ 3GPP2-BSID ]
+              [ User-CSG-Information ]
+              [ Default-EPS-Bearer-QoS ]
+              [ Default-Access ]
+              [ NBIFOM-Support ]
+              [ NBIFOM-Mode ]
+              [ Access-Availability-Change-Reason ]
+              [ Network-Request-Support ]
+              [ Routing-Rule-Install ]
+              [ Routing-Rule-Remove ]
+              [ User-Location-Info-Time ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
+          *   [ Usage-Monitoring-Information ]
+              [ Multiple-BBERF-Action ]
+          *   [ Event-Trigger ]
+              [ Access-Network-Charging-Address ]
+          *   [ Access-Network-Charging-Identifier-Gx ]
+              [ Session-Linking-Indicator ]
+              [ HeNB-Local-IP-Address ]
+              [ UE-Local-IP-Address ]
+              [ UE-Local-IPv6-Prefix ]
+              [ UDP-Source-Port ]
+              [ AN-GW-Status ]
+          *   [ AVP ]
+
+@enum Subsession-Operation
+TERMINATION                                                  0
+ESTABLISHMENT                                                1
+MODIFICATION                                                 2
+
+@enum Multiple-BBERF-Action
+ESTABLISHMENT                                                0
+TERMINATION                                                  1
+
+@enum DRA-Deployment
+DRA_DEPLOYED                                                 0
+
+@enum DRA-Binding
+DRA_BINDING_DELETION                                         0

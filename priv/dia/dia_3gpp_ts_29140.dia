@@ -1,0 +1,84 @@
+;; 3GPP TS 29.140
+
+@name     dia_3gpp_ts_29140
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+3GPP-IMSI                                                   1    UTF8String        MV
+MSISDN                                                      701  OctetString       MV
+Served-User-Identity                                        1100 Grouped           MV
+VASP-ID                                                     1101 UTF8String        MV
+VAS-ID                                                      1102 UTF8String        MV
+Trigger-Event                                               1103 Enumerated        MV
+Sender-Address                                              1104 UTF8String        MV
+Initial-Recipient-Address                                   1105 Grouped           MV
+Result-Recipient-Address                                    1106 Grouped           MV
+Sequence-Number                                             1107 Unsigned32        MV
+Recipient-Address                                           1108 UTF8String        MV
+Routeing-Address                                            1109 UTF8String        MV
+Originating-Interface                                       1110 Enumerated        MV
+Delivery-Report                                             1111 Enumerated        MV
+Read-Reply                                                  1112 Enumerated        MV
+Sender-Visibility                                           1113 Enumerated        MV
+Service-Key                                                 1114 UTF8String        MV
+Billing-Information                                         1115 UTF8String        MV
+Status                                                      1116 Grouped           MV
+Status-Code                                                 1117 UTF8String        MV
+Status-Text                                                 1118 UTF8String        MV
+Routeing-Address-Resolution                                 1119 Enumerated        MV
+
+@grouped
+Served-User-Identity ::= <AVP Header: 1100>
+              [ MSISDN ]
+              [ VASP-ID ]
+              [ VAS-ID ]
+          *   [ AVP ]
+
+Initial-Recipient-Address ::= <AVP Header: 1105>
+              { Sequence-Number }
+              { Recipient-Address }
+          *   [ AVP ]
+
+Result-Recipient-Address ::= <AVP Header: 1106>
+              { Sequence-Number }
+              [ Recipient-Address ]
+              [ Routeing-Address ]
+              [ Sender-Address ]
+          *   [ AVP ]
+
+Status ::= <AVP Header: 1116>
+              [ Status-Code ]
+              [ Status-Text ]
+
+@enum Trigger-Event
+MM1_MESSAGE_SUBMISSION_PROFILE_BASED                         0
+MM1_MESSAGE_SUBMISSION_ADDRESS_BASED                         1
+MM1_MESSAGE_DELIVERY                                         2
+MM7_MESSAGE_SUBMISSION_PROFILE_BASED                         3
+MM7_MESSAGE_SUBMISSION_ADDRESS_BASED                         4
+
+@enum Originating-Interface
+MM1                                                          0
+MM3                                                          1
+MM4                                                          2
+MM7                                                          3
+
+@enum Delivery-Report
+NO_DELIVERY_REPORT_REQUESTED                                 0
+DELIVERY_REPORT_REQUESTED                                    1
+
+@enum Read-Reply
+NO_READ_REPLY_REQUESTED                                      0
+READ_REPLY_REQUESTED                                         1
+
+@enum Sender-Visibility
+SENDER_IDENTIFICATION_REQUESTED_NOT_TO_BE_HIDDEN             0
+SENDER_IDENTIFICATION_REQUESTED_TO_BE_HIDDEN                 1
+
+@enum Routeing-Address-Resolution
+UNRESOLVED                                                   0
+RESOLVED                                                     1

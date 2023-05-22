@@ -1,24 +1,11 @@
+;; 3GPP TS 29.272 v16.4.0
+
 @name     dia_3gpp_ts_29272
 @vendor   10415 3gpp
 
-;; 3GPP TS 29.272 v16.4.0
+@inherits diameter_gen_base_rfc6733
 
-@inherits dia_ietf_rfc5447
-MIP6-Agent-Info ;; IETF RFC 5447
-
-@inherits dia_3gpp_ts_29061
-@inherits dia_3gpp_ts_29212
-@inherits dia_3gpp_ts_29214
-@inherits dia_3gpp_ts_29229
-@inherits dia_3gpp_ts_29299
-@inherits dia_3gpp_ts_29336
-SCEF-ID
-SCEF-Reference-ID-for-Deletion
-
-;; @inherits dia_3gpp
-;; Extended-Max-Requested-BW-DL
-;; Extended-Max-Requested-BW-UL
-;; SCEF-ID
+@inherits dia_3gpp
 
 @avp_types
 Subscription-Data                                 1400 Grouped          MV
@@ -100,7 +87,7 @@ External-Client                                   1479 Grouped          MV
 Client-Identity                                   1480 OctetString      MV
 GMLC-Restriction                                  1481 Enumerated       MV
 PLMN-Client                                       1482 Enumerated       MV
-Service-Type                                      1483 Grouped          MV
+LCS-Service-Type                                  1483 Grouped          MV ; Service-Type in spec
 ServiceTypeIdentity                               1484 Unsigned32       MV
 MO-LR                                             1485 Grouped          MV
 Teleservice-List                                  1486 Grouped          MV
@@ -194,7 +181,7 @@ AIR-Flags                                         1679 Unsigned32       V
 UE-Usage-Type                                     1680 Unsigned32       V
 Non-IP-PDN-Type-Indicator                         1681 Enumerated       V
 Non-IP-Data-Delivery-Mechanism                    1682 Unsigned32       V
-Additional-Context-ID                             1683 Unsigned32       V
+Additional-Context-Identifier                     1683 Unsigned32       V
 SCEF-Realm                                        1684 DiameterIdentity V
 Subscription-Data-Deletion                        1685 Grouped          V
 Preferred-Data-Mode                               1686 Unsigned32       V
@@ -231,7 +218,6 @@ Maximum-Flow-Bitrates                             1716 Integer32        V
 PC5-Range                                         1717 Integer32        V
 PC5-Link-AMBR                                     1718 Integer32        V
 Monitoring-Event-Configuration                    3122 Grouped          V
-
 
 @grouped
 Subscription-Data ::= <AVP Header: 1400>
@@ -295,13 +281,13 @@ Terminal-Information ::= <AVP Header: 1401>
 Requested-EUTRAN-Authentication-Info ::= <AVP Header: 1408>
               [ Number-Of-Requested-Vectors ]
               [ Immediate-Response-Preferred ]
-              [ Re-synchronization-Info ]
+              [ Re-Synchronization-Info ]
           *   [ AVP ]
 
 Requested-UTRAN-GERAN-Authentication-Info ::= <AVP Header: 1409>
               [ Number-Of-Requested-Vectors ]
               [ Immediate-Response-Preferred ]
-              [ Re-synchronization-Info ]
+              [ Re-Synchronization-Info ]
           *   [ AVP ]
 
 Authentication-Info ::= <AVP Header: 1413>
@@ -444,7 +430,7 @@ LCS-PrivacyException ::= <AVP Header: 1475>
               [ Notification-To-UE-User ]
           *   [ External-Client ]
           *   [ PLMN-Client ]
-          *   [ Service-Type ]
+          *   [ LCS-Service-Type ]
           *   [ AVP ]
 
 External-Client ::= <AVP Header: 1479>
@@ -453,7 +439,7 @@ External-Client ::= <AVP Header: 1479>
               [ Notification-To-UE-User ]
           *   [ AVP ]
 
-Service-Type ::= <AVP Header: 1483>
+LCS-Service-Type ::= <AVP Header: 1483>
               { ServiceTypeIdentity }
               [ GMLC-Restriction ]
               [ Notification-To-UE-User ]
@@ -499,8 +485,8 @@ MME-Location-Information ::= <AVP Header: 1600>
               [ Current-Location-Retrieved ]
               [ Age-Of-Location-Information ]
               [ User-CSG-Information ]
-              [ eNodeB-ID ]
-              [ Extended-eNodeB-ID ]
+              [ eNodeB-Id ]
+              [ Extended-eNodeB-Id ]
           *   [ AVP ]
 
 SGSN-Location-Information ::= <AVP Header: 1601>
@@ -662,7 +648,6 @@ Monitoring-Event-Configuration ::= <AVP Header: 3122>
               [ MTC-Provider-Info ]
               [ PDN-Connectivity-Status-Configuration ]
           *   [ AVP ]
-
 
 @enum Network-Access-Mode
 PACKET_AND_CIRCUIT                                           0

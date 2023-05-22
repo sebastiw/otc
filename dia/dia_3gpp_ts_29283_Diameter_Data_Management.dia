@@ -1,0 +1,141 @@
+;; 3GPP TS 29.283 v17.0.0 Diameter Data Management
+;; MCPTT-2, MCVideo-2, MCData-2 and CSC-13 interfaces
+
+@id       16777351
+@name     dia_3gpp_ts_29283_Diameter_Data_Management
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+Data-Pull-Request ::= <Diameter Header: 8388728, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ User-Identifier ]
+          *   [ Data-Identification ]
+              [ DPR-Flags ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Data-Pull-Answer ::= <Diameter Header: 8388728, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+          *   [ Data ]
+          *   [ Data-Identification ]
+              [ DPA-Flags ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+              [ Route-Record ]
+
+Data-Update-Request ::= <Diameter Header: 8388729, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ User-Identifier ]
+              [ Data ]
+              [ DUR-Flags ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Data-Update-Answer ::= <Diameter Header: 8388729, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Data-Identification ]
+          *   [ MC-Service-User-Profile-Data ]
+              [ DUA-Flags ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Notification-Data-Request ::= <Diameter Header: 8388730, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ User-Identifier ]
+              [ Data ]
+              [ NDR-Flags ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Notification-Data-Answer ::= <Diameter Header: 8388730, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Data-Identification ]
+              [ NDA-Flags ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED                     5100
+DIAMETER_ERROR_OPERATION_NOT_ALLOWED                        5101
+DIAMETER_ERROR_USER_DATA_CANNOT_BE_READ                     5102
+DIAMETER_ERROR_USER_DATA_CANNOT_BE_MODIFIED                 5103
+DIAMETER_ERROR_USER_DATA_CANNOT_BE_NOTIFIED                 5104
+DIAMETER_ERROR_TOO_MUCH_DATA                                5008
+DIAMETER_ERROR_DATA_OUT_OF_SYNC                             5105
+DIAMETER_ERROR_FEATURE_UNSUPPORTED                          5011
+DIAMETER_ERROR_NO_SUBSCRIPTION_TO_DATA                      5107
+DIAMETER_ERROR_UNKNOWN_DATA                                 5670
+DIAMETER_ERROR_REQUIRED_KEY_NOT_PROVIDED                    5671
+DIAMETER_USER_DATA_NOT_AVAILABLE                            4100
+DIAMETER_PRIOR_UPDATE_IN_PROGRESS                           4101

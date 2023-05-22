@@ -1,9 +1,21 @@
 {application, otc,
- [{description, "Erlang codec for Universal Mobile Telecommunications System specifations"},
+ [{description, "Erlang codec for 3GPP Telecommunication specifications"},
   {vsn, "1.0.0"},
   {registered, []},
   {applications,
    [kernel,
     stdlib
-   ]}
+   ]},
+  %% hex.pm stuff
+  {licenses, ["Apache-2.0"]},
+  {links, [{"GitHub", "https://github.com/sebastiw/otc"}]},
+  {files, [%% directories
+           "asn1", "dia", "src", "include",
+           %% files
+           "rebar.config", "rebar.lock", "LICENSE", "README.org"]},
+  {exclude_patterns, [%% ASN.1 generated files
+                      "src/[A-Z].*\.erl", "include/[A-Z].*\.erl",
+                      %% Diameter generated files
+                      "src/dia_.*\.erl", "include/dia_.*\.hrl"
+                     ]}
  ]}.

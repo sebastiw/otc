@@ -1,0 +1,75 @@
+;; 3GPP TS 29.337 v17.0.0
+
+@name     dia_3gpp_ts_29337
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+Serving-Node                                                2401 Grouped           MV
+Additional-Serving-Node                                     2406 Grouped           MV
+SM-Delivery-Outcome-T4                                      3200 Enumerated        MV
+Absent-Subscriber-Diagnostic-T4                             3201 Enumerated        MV
+Trigger-Action                                              3202 Unsigned32        V 
+MTC-Error-Diagnostic                                        3203 Unsigned32        V 
+
+@grouped
+Serving-Node ::= <AVP Header: 2401>
+              [ SMSF-3GPP-Name ]
+              [ SMSF-3GPP-Realm ]
+              [ SMSF-3GPP-Number ]
+              [ SMSF-Non-3GPP-Name ]
+              [ SMSF-Non-3GPP-Realm ]
+              [ SMSF-Non-3GPP-Number ]
+              [ SGSN-Name ]
+              [ SGSN-Realm ]
+              [ SGSN-Number ]
+              [ MME-Name ]
+              [ MME-Realm ]
+              [ MME-Number-for-MT-SMS ]
+              [ MSC-Number ]
+              [ IP-SM-GW-Number ]
+              [ IP-SM-GW-Name ]
+              [ IP-SM-GW-Realm ]
+          *   [ AVP ]
+
+Additional-Serving-Node ::= <AVP Header: 2406>
+              [ SMSF-3GPP-Name ]
+              [ SMSF-3GPP-Realm ]
+              [ SMSF-3GPP-Number ]
+              [ SMSF-Non-3GPP-Name ]
+              [ SMSF-Non-3GPP-Realm ]
+              [ SMSF-Non-3GPP-Number ]
+              [ SGSN-Name ]
+              [ SGSN-Realm ]
+              [ SGSN-Number ]
+              [ MME-Name ]
+              [ MME-Realm ]
+              [ MME-Number-for-MT-SMS ]
+              [ MSC-Number ]
+          *   [ AVP ]
+
+@enum SM-Delivery-Outcome-T4
+ABSENT_SUBSCRIBER                                            0
+UE_MEMORY_CAPACITY_EXCEEDED                                  1
+SUCCESSFUL_TRANSFER                                          2
+VALIDITY_TIME_EXPIRED                                        3
+
+@enum Absent-Subscriber-Diagnostic-T4
+NO_PAGING_RESPONSE                                           0
+UE_DETACHED                                                  1
+UE_DEREGISTERED                                              2
+UE_PURGED                                                    3
+ROAMING_RESTRICTION                                          4
+UNIDENTIFIED_SUBSCRIBER                                      5
+
+@define Trigger-Action
+TRIGGER                                                      0
+RECALL                                                       1
+REPLACE                                                      2
+
+@define MTC-Error-Diagnostic
+ORIGINAL_MESSAGE_NOT_DELETED                                 0
+NEW_MESSAGE_NOT_STORED                                       1

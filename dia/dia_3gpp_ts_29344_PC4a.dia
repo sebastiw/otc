@@ -1,0 +1,190 @@
+;; 3GPP TS 29.344 v17.0.0 PC4a
+
+@id       16777336
+@name     dia_3gpp_ts_29344_PC4a
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+ProSe-Subscriber-Information-Request ::= <Diameter Header: 8388664, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Name }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Subscriber-Information-Answer ::= <Diameter Header: 8388664, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ ProSe-Subscription-Data ]
+              [ MSISDN ]
+              [ Visited-PLMN-Id ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+          *   [ Reset-ID ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Update-ProSe-Subscriber-Data-Request ::= <Diameter Header: 8388665, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { User-Name }
+              { UPR-Flags }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ ProSe-Subscription-Data ]
+              [ Visited-PLMN-Id ]
+          *   [ Reset-ID ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Update-ProSe-Subscriber-Data-Answer ::= <Diameter Header: 8388665, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Notify-Request ::= <Diameter Header: 8388666, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+              [ User-Name ]
+              [ ProSe-Permission ]
+              [ Visited-PLMN-Id ]
+              [ PNR-Flags ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Notify-Answer ::= <Diameter Header: 8388666, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Load ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Reset-Request ::= <Diameter Header: 322, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+          *   [ User-Id ]
+          *   [ Reset-ID ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Reset-Answer ::= <Diameter Header: 322, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+          *   [ Supported-Features ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Initial-Location-Information-Request ::= <Diameter Header: 8388713, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Name }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ProSe-Initial-Location-Information-Answer ::= <Diameter Header: 8388713, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ ProSe-Initial-Location-Information ]
+              [ Visited-PLMN-Id ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+@define Experimental-Result
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNKNOWN_PROSE_SUBSCRIPTION                   5610
+DIAMETER_ERROR_PROSE_NOT_ALLOWED                            5611
+DIAMETER_ERROR_UE_LOCATION_UNKNOWN                          5612
+

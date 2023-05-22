@@ -1,0 +1,16 @@
+;; ETSI TS 183 066 v2.1.1
+
+@name     dia_etsi_ts_183066
+@vendor   13019 etsi
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
+@avp_types
+Data-Operation-Indicator                                    420  Enumerated        V 
+
+@enum Data-Operation-Indicator
+UPDATE                                                       0
+REMOVE                                                       1
+

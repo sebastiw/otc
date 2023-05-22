@@ -1,0 +1,17 @@
+;; IEFT RFC 5779
+
+@name     dia_ietf_rfc5779
+
+@inherits diameter_gen_base_rfc6733
+
+@avp_types
+PMIP6-DHCP-Server-Address                                   504  Address           M
+PMIP6-IPv4-Home-Address                                     505  Address           M
+Mobile-Node-Identifier                                      506  UTF8String        M
+Service-Configuration                                       507  Grouped           M
+
+@grouped
+Service-Configuration ::= <AVP-Header: 507>
+              [ MIP6-Agent-Info ]
+              [ Service-Selection ]
+          *   [ AVP ]

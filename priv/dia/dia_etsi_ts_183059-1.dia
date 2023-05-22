@@ -1,0 +1,20 @@
+;; ETSI TS 183 059-1 v2.1.1
+
+@name     dia_etsi_ts_183059-1
+@vendor   13019 etsi
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
+@avp_types
+CNGCF-Address                                               600  Grouped           V 
+SIP-Outbound-Proxy                                          601  OctetString       V 
+TFTP-Server                                                 602  UTF8String        V 
+ACS-Server                                                  603  UTF8String        V 
+
+@grouped
+CNGCF-Address ::= <AVP Header: 600>
+              [ TFTP-Server ]
+              [ ACS-Server ]
+

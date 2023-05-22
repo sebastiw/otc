@@ -1,0 +1,152 @@
+;; ETSI TS 183 071 v3.1.1 Rr request model
+
+@id       16777278
+@name     dia_etsi_ts_183071_Rr_request
+@vendor   13019 etsi
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+Abort-Cause
+AF-Charging-Identifier
+Flows
+Media-Component-Description
+Specific-Action
+
+@inherits dia_etsi
+
+@messages
+AA-Request ::= <Diameter Header: 265, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ Destination-Host ]
+          *   [ Specific-Action ]
+              [ AF-Charging-Identifier ]
+          *   [ Media-Component-Description ]
+              [ User-Name ]
+              [ Logical-Access-ID ]
+              [ Globally-Unique-Address ]
+              [ Service-Class ]
+              [ Authorization-Lifetime ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+AA-Answer ::= <Diameter Header: 265, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Auth-Grace-Period ]
+          *   [ Session-Bundle-Id ]
+              [ Authorization-Lifetime ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+RA-Request ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+          *   { Specific-Action }
+          *   [ Flows ]
+              [ Abort-Cause ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+RA-Answer ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Media-Component-Description ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+ST-Request ::= <Diameter Header: 275, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Termination-Cause }
+              [ Destination-Host ]
+          *   [ Class ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+ST-Answer ::= <Diameter Header: 275, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+              [ AVP ]
+
+AS-Request ::= <Diameter Header: 274, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              { Abort-Cause }
+          *   [ Session-Bundle-Id ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ AVP ]
+
+AS-Answer ::= <Diameter Header: 274, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+INVALID_SERVICE_INFORMATION                                 5061
+FILTER_RESTRICTIONS                                         5062
+INSUFFICIENT_RESOURCES                                      4041
+MODIFICATION_FAILURE                                        5041
+COMMIT_FAILURE                                              4043
+REFRESH_FAILURE                                             4044
+QOS_PROFILE_FAILURE                                         4045
+ACCESS_PROFILE_FAILURE                                      4046
+PRIORITY_NOT_GRANTED                                        4047

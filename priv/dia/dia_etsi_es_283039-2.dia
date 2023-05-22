@@ -1,0 +1,13 @@
+;; ETSI ES 283 039-2 v3.1.1
+
+@name     dia_etsi_es_283039-2
+@vendor   13019 etsi
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_etsi
+
+@avp_types
+Auth-Scope                                                  620  UTF8String        MV
+GOCAP-Body                                                  621  UTF8String        MV
+

@@ -1,0 +1,142 @@
+;; 3GPP TS 29.468 v17.1.0
+
+@name     dia_3gpp_ts_29468
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+BMSC-Address                                                3500 Address           MV
+BMSC-Port                                                   3501 Unsigned32        MV
+MBMS-Bearer-Event                                           3502 Unsigned32        MV
+MBMS-Bearer-Event-Notification                              3503 Grouped           MV
+MBMS-Bearer-Request                                         3504 Grouped           MV
+MBMS-Bearer-Response                                        3505 Grouped           MV
+MBMS-Bearer-Result                                          3506 Unsigned32        MV
+MBMS-Start-Time                                             3507 Time              MV
+Radio-Frequency                                             3508 Unsigned32        MV
+TMGI-Allocation-Request                                     3509 Grouped           MV
+TMGI-Allocation-Response                                    3510 Grouped           MV
+TMGI-Allocation-Result                                      3511 Unsigned32        MV
+TMGI-Deallocation-Request                                   3512 Grouped           MV
+TMGI-Deallocation-Response                                  3513 Grouped           MV
+TMGI-Deallocation-Result                                    3514 Unsigned32        MV
+TMGI-Expiry                                                 3515 Grouped           MV
+TMGI-Number                                                 3516 Unsigned32        MV
+MB2U-Security                                               3517 Unsigned32        MV
+Local-M1-Information                                        3518 Grouped           V 
+Local-MB2-U-Information                                     3519 Grouped           V 
+MBMS-eNB-IP-Multicast-Address                               3520 Address           V 
+MBMS-eNB-IPv6-Multicast-Address                             3521 Address           V 
+MBMS-GW-SSM-IP-Address                                      3522 Address           V 
+MBMS-GW-SSM-IPv6-Address                                    3523 Address           V 
+Common-Tunnel-Endpoint-Identifier                           3524 OctetString       V 
+FEC-Request                                                 3525 OctetString       V 
+ROHC-Request                                                3526 Grouped           V 
+ROHC-Full-Header-Periodicity                                3527 Float32           V 
+ROHC-Profile                                                3528 Unsigned32        V 
+Userplane-Protocol-Result                                   3529 Grouped           V 
+ROHC-Result                                                 3530 Unsigned32        V 
+FEC-Result                                                  3531 Unsigned32        V 
+ROHC-Max-CID                                                3532 Unsigned32        V 
+MBMS-Bearer-Event-Diagnostic-Info                           3533 Enumerated        V 
+
+@grouped
+MBMS-Bearer-Event-Notification ::= <AVP Header: 3503>
+              { TMGI }
+              { MBMS-Flow-Identifier }
+              { MBMS-Bearer-Event }
+              [ MBMS-Bearer-Event-Diagnostic-Info ]
+          *   [ Userplane-Protocol-Result ]
+          *   [ AVP ]
+
+MBMS-Bearer-Request ::= <AVP Header: 3504>
+              { MBMS-StartStop-Indication }
+              [ TMGI ]
+              [ MBMS-Flow-Identifier ]
+              [ QoS-Information ]
+              [ MBMS-Service-Area ]
+              [ MBMS-Start-Time ]
+              [ MB2U-Security ]
+              [ MBMS-Cell-List ]
+              [ Local-M1-Information ]
+              [ Local-MB2-U-Information ]
+              [ FEC-Request ]
+          *   [ ROHC-Request ]
+              [ ROHC-Max-CID ]
+          *   [ AVP ]
+
+MBMS-Bearer-Response ::= <AVP Header: 3505>
+              [ TMGI ]
+              [ MBMS-Flow-Identifier ]
+              [ MBMS-Session-Duration ]
+              [ MBMS-Bearer-Result ]
+         0*2  [ BMSC-Address ]
+              [ BMSC-Port ]
+              [ MB2U-Security ]
+          *   [ Radio-Frequency ]
+          *   [ Userplane-Protocol-Result ]
+          *   [ AVP ]
+
+TMGI-Allocation-Request ::= <AVP Header: 3509>
+              { TMGI-Number }
+          *   [ TMGI ]
+          *   [ AVP ]
+
+TMGI-Allocation-Response ::= <AVP Header: 3510>
+          *   [ TMGI ]
+              [ MBMS-Session-Duration ]
+              [ TMGI-Allocation-Result ]
+          *   [ AVP ]
+
+TMGI-Deallocation-Request ::= <AVP Header: 3512>
+          *   [ TMGI ]
+          *   [ AVP ]
+
+TMGI-Deallocation-Response ::= <AVP Header: 3513>
+              { TMGI }
+              [ TMGI-Deallocation-Result ]
+          *   [ AVP ]
+
+TMGI-Expiry ::= <AVP Header: 3515>
+          *   { TMGI }
+          *   [ AVP ]
+
+Local-M1-Information ::= <AVP Header: 3518>
+              [ MBMS-eNB-IP-Multicast-Address ]
+              [ MBMS-eNB-IPv6-Multicast-Address ]
+              [ MBMS-GW-SSM-IP-Address ]
+              [ MBMS-GW-SSM-IPv6-Address ]
+              [ Common-Tunnel-Endpoint-Identifier ]
+
+Local-MB2-U-Information ::= <AVP Header: 3519>
+         0*2  [ BMSC-Address ]
+              [ BMSC-Port ]
+
+ROHC-Request ::= <AVP Header: 3526>
+         1*   { Flow-Description }
+              { ROHC-Profile }
+              [ ROHC-Full-Header-Periodicity ]
+          *   [ AVP ]
+
+Userplane-Protocol-Result ::= <AVP Header: 3529>
+          *   [ Flow-Description ]
+              [ ROHC-Result ]
+              [ FEC-Result ]
+          *   [ AVP ]
+
+@enum MBMS-Bearer-Event-Diagnostic-Info
+TMGI_Expiry                                                  0
+MBMS_GW_Not_Establishment                                    1
+SGmb_Transient_Path_Failure                                  2
+SGmb_Non_Transient_Path_Failure                              3
+MBMS_GW_User_Plane_Failure                                   4
+MBMS_GW_Permanent_Error                                      5
+MBMS_GW_Transient_Error                                      6
+
+@define MB2U-Security
+NO_SECURITY                                                  0
+SECURITY                                                     1
+

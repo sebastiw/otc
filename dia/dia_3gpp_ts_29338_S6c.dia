@@ -1,0 +1,134 @@
+;; 3GPP TS 29.338 v17.1.0 S6c
+
+@id       16777312
+@name     dia_3gpp_ts_29338_S6c
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+Send-Routing-Info-for-SM-Request ::= <Diameter Header: 8388647, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+              [ MSISDN ]
+              [ User-Name ]
+              [ SMSMI-Correlation-ID ]
+          *   [ Supported-Features ]
+              [ SC-Address ]
+              [ SM-RP-MTI ]
+              [ SM-RP-SMEA ]
+              [ SRR-Flags ]
+              [ SM-Delivery-Not-Intended ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Send-Routing-info-for-SM-Answer ::= <Diameter Header: 8388647, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ User-Name ]
+          *   [ Supported-Features ]
+              [ Serving-Node ]
+              [ Additional-Serving-Node ]
+              [ SMSF-3GPP-Address ]
+              [ SMSF-Non-3GPP-Address ]
+              [ LMSI ]
+              [ User-Identifier ]
+              [ MWD-Status ]
+              [ MME-Absent-User-Diagnostic-SM ]
+              [ MSC-Absent-User-Diagnostic-SM ]
+              [ SGSN-Absent-User-Diagnostic-SM ]
+              [ SMSF-3GPP-Absent-User-Diagnostic-SM ]
+              [ SMSF-Non-3GPP-Absent-User-Diagnostic-SM ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Alert-Service-Centre-Request ::= <Diameter Header: 8388648, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { SC-Address }
+              { User-Identifier }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+              [ SMSMI-Correlation-ID ]
+              [ Maximum-UE-Availability-Time ]
+              [ SMS-GMSC-Alert-Event ]
+              [ Serving-Node ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Alert-Service-Centre-Answer ::= <Diameter Header: 8388648, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Report-SM-Delivery-Status-Request ::= <Diameter Header: 8388649, REQ, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { User-Identifier }
+              { SC-Address }
+              { SM-Delivery-Outcome }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Destination-Host ]
+          *   [ Supported-Features ]
+              [ SMSMI-Correlation-ID ]
+              [ RDR-Flags ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Report-SM-Delivery-Status-Answer ::= <Diameter Header: 8388649, PXY>
+              < Session-Id >
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ DRMP ]
+              [ Vendor-Specific-Application-Id ]
+              [ Result-Code ]
+              [ Experimental-Result ]
+          *   [ Supported-Features ]
+              [ User-Identifier ]
+          *   [ AVP ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+

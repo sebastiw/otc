@@ -1,0 +1,62 @@
+;; 3GPP TS 29.343
+
+@name     dia_3gpp_ts_29343
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+Origin-App-Layer-User-Id                                    3600 UTF8String        MV
+Target-App-Layer-User-Id                                    3601 UTF8String        MV
+ProSe-Function-ID                                           3602 OctetString       MV
+ProSe-Request-Type                                          3603 Unsigned32        MV
+PDUID                                                       3604 OctetString       V 
+Application-Data                                            3605 UTF8String        V 
+Allowed-Suffixes-Number                                     3606 Unsigned32        V 
+Monitor-Target                                              3607 Grouped           V 
+ProSe-Code-Suffix-Mask                                      3608 Grouped           V 
+Suffix-Code                                                 3609 OctetString       V 
+Suffix-Mask                                                 3610 OctetString       V 
+Banned-User-Target                                          3611 Grouped           V 
+Metadata-Indicator                                          3612 Unsigned32        V 
+
+@grouped
+Monitor-Target ::= <AVP Header: 3607>
+              { Target-RPAUID }
+              { PDUID }
+              [ Metadata-Indicator ]
+          *   [ ProSe-Code-Suffix-Mask ]
+          *   [ AVP ]
+
+ProSe-Code-Suffix-Mask ::= <AVP Header: 3608>
+              { Suffix-Code }
+         1*   { Suffix-Mask }
+          *   [ AVP ]
+
+Banned-User-Target ::= <AVP Header: 3611>
+              { Target-RPAUID }
+              { Target-PDUID }
+          *   [ AVP ]
+
+@define ProSe-Request-Type
+APPLICATION_REGISTRATION_FOR_PROSE                           0
+PROSE_MAP_REQUEST                                            1
+AUTHORIZATION_ANNOUNCE                                       2
+AUTHORIZATION_ANNOUNCE_ACE                                   3
+AUTHORIZATION_MONITOR                                        4
+AUTHORIZATION_MONITOR_ACE                                    5
+MONITOR_PERMISSION                                           6
+AUTHORIZATION_RESPONSE                                       7
+AUTHORIZATION_QUERY                                          8
+AUTHORIZATION_MATCH_REPORT                                   9
+QUERY_PERMISSION                                            10
+AUTHORIZATION_UPDATE                                        11
+AUTHORIZATION_ANNOUNCE_ACE_OPEN                             12
+AUTHORIZATION_MONITOR_ACE_OPEN                              13
+
+@define Metadata-Indicator
+NO_METADATA                                                  0
+METADATA_UPDATE_DISALLOWED                                   1
+METADATA_UPDATE_ALLOWED                                      2

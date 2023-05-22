@@ -18,14 +18,14 @@ codec(Bin) when is_binary(Bin) ->
     case decode(Bin) of
         #{long_data := LD} = Msg2
           when is_map(LD) ->
-            Msg2;
+            Msg2; %% MGMT message
         #{long_data := LD, message_type := MessageType} = Msg2
           when ludt =:= MessageType;
                ludts =:= MessageType ->
             {Msg2, LD};
         #{data := D} = Msg2
           when is_map(D) ->
-            Msg2;
+            Msg2; %% MGMT message
         #{data := D, message_type := MessageType} = Msg2
           when cr =:= MessageType;
                cc =:= MessageType;
@@ -45,6 +45,60 @@ codec(Bin) when is_binary(Bin) ->
 codec(Map) when is_map(Map) ->
     encode(Map).
 
+
+-define(IS_CONNECTIONLESS(M),
+        0 =:= map_get(class, map_get(protocol_class, M));
+        1 =:= map_get(class, map_get(protocol_class, M))).
+
+%% TS 29.002 v17.2.0 Chapter 6
+next(#{called_party_address := #{subsystem_number := hlr}} = M)
+  when ?IS_CONNECTIONLESS(M) ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := vlr}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       hlr =:= CgSSN; vlr =:= CgSSN; msc =:= CgSSN; css =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := msc}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       msc =:= CgSSN; sgsn =:= CgSSN; gmlc =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := eir}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       msc =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := gsmSCF}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       hlr =:= CgSSN; vlr =:= CgSSN; msc =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := sgsn}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       hlr =:= CgSSN; msc =:= CgSSN; gmlc =:= CgSSN; css =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := hlr},
+       called_party_address := #{subsystem_number := ggsn}} = M)
+  when ?IS_CONNECTIONLESS(M) ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := css}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       vlr =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+next(#{calling_party_address := #{subsystem_number := CgSSN},
+       called_party_address := #{subsystem_number := glmc}} = M)
+  when ?IS_CONNECTIONLESS(M),
+       msc =:= CgSSN; gsmSCF =:= CgSSN; sgsn =:= CgSSN ->
+    {ok, tcap};
+%% TS 29.078 v17.0.0 Chapter 14.2.2
+next(#{calling_party_address := #{subsystem_number := cap},
+       called_party_address := #{subsystem_number := cap}} = M)
+  when ?IS_CONNECTIONLESS(M) ->
+    {ok, tcap};
+%% TODO: ITU-T Q.1400 (03/93)
 next(_) -> '$stop'.
 
 decode(<<MT:8/big, Rest/binary>>) ->
@@ -1368,23 +1422,21 @@ parse_ssn(?SCCP_SSN_AUC) -> auc;
 parse_ssn(?SCCP_SSN_ISSS) -> isss;
 parse_ssn(?SCCP_SSN_BROADBAND) -> broadband_isdn_edge_to_edge_applications;
 parse_ssn(?SCCP_SSN_TC_TEST_RESPONDER) -> tc_test_responder;
-
-parse_ssn(?SCCP_SSN_NAT_CSS) -> css;
-parse_ssn(?SCCP_SSN_NAT_PCAP) -> pcap;
-parse_ssn(?SCCP_SSN_NAT_BSS) -> bss;
-parse_ssn(?SCCP_SSN_NAT_MSC) -> msc;
-parse_ssn(?SCCP_SSN_NAT_SMLC) -> smlc;
-parse_ssn(?SCCP_SSN_NAT_BSS_OM) -> bss_om;
-parse_ssn(?SCCP_SSN_NAT_BSSAP) -> bssap;
-parse_ssn(?SCCP_SSN_NAT_RANAP) -> ranap;
-parse_ssn(?SCCP_SSN_NAT_RNSAP) -> rnsap;
-parse_ssn(?SCCP_SSN_NAT_GMLC) -> gmlc;
-parse_ssn(?SCCP_SSN_NAT_CAP) -> cap;
-parse_ssn(?SCCP_SSN_NAT_SCF) -> scf;
-parse_ssn(?SCCP_SSN_NAT_SIWF) -> siwf;
-parse_ssn(?SCCP_SSN_NAT_SGSN) -> sgsn;
-parse_ssn(?SCCP_SSN_NAT_GGSN) -> ggsn;
-
+parse_ssn(?SCCP_SSN_GSM_UMTS_CSS) -> css;
+parse_ssn(?SCCP_SSN_GSM_UMTS_PCAP) -> pcap;
+parse_ssn(?SCCP_SSN_GSM_UMTS_BSC) -> bssap_bsc;
+parse_ssn(?SCCP_SSN_GSM_UMTS_MSC) -> bssap_msc;
+parse_ssn(?SCCP_SSN_GSM_UMTS_SMLC) -> bssap_smlc;
+parse_ssn(?SCCP_SSN_GSM_UMTS_BSS_OM) -> bss_om;
+parse_ssn(?SCCP_SSN_GSM_UMTS_BSSAP) -> bssap;
+parse_ssn(?SCCP_SSN_GSM_UMTS_RANAP) -> ranap;
+parse_ssn(?SCCP_SSN_GSM_UMTS_RNSAP) -> rnsap;
+parse_ssn(?SCCP_SSN_GSM_UMTS_GMLC) -> gmlc;
+parse_ssn(?SCCP_SSN_GSM_UMTS_CAP) -> cap;
+parse_ssn(?SCCP_SSN_GSM_UMTS_SCF) -> scf;
+parse_ssn(?SCCP_SSN_GSM_UMTS_SIWF) -> siwf;
+parse_ssn(?SCCP_SSN_GSM_UMTS_SGSN) -> sgsn;
+parse_ssn(?SCCP_SSN_GSM_UMTS_GGSN) -> ggsn;
 parse_ssn(SSN) when SSN == 2#00001100 -> {international, SSN};
 parse_ssn(SSN) when SSN >= 2#00001111, SSN =< 2#00011111 -> {international, SSN};
 parse_ssn(SSN) when SSN >= 2#00100000, SSN =< 2#11111110 -> {national, SSN};
@@ -1404,6 +1456,21 @@ compose_ssn(auc) -> ?SCCP_SSN_AUC;
 compose_ssn(isss) -> ?SCCP_SSN_ISSS;
 compose_ssn(broadband_isdn_edge_to_edge_applications) -> ?SCCP_SSN_BROADBAND;
 compose_ssn(tc_test_responder) -> ?SCCP_SSN_TC_TEST_RESPONDER;
+compose_ssn(css) -> ?SCCP_SSN_GSM_UMTS_CSS;
+compose_ssn(pcap) -> ?SCCP_SSN_GSM_UMTS_PCAP;
+compose_ssn(bssap_bsc) -> ?SCCP_SSN_GSM_UMTS_BSC;
+compose_ssn(bssap_msc) -> ?SCCP_SSN_GSM_UMTS_MSC;
+compose_ssn(bssap_smlc) -> ?SCCP_SSN_GSM_UMTS_SMLC;
+compose_ssn(bss_om) -> ?SCCP_SSN_GSM_UMTS_BSS_OM;
+compose_ssn(bssap) -> ?SCCP_SSN_GSM_UMTS_BSSAP;
+compose_ssn(ranap) -> ?SCCP_SSN_GSM_UMTS_RANAP;
+compose_ssn(rnsap) -> ?SCCP_SSN_GSM_UMTS_RNSAP;
+compose_ssn(gmlc) -> ?SCCP_SSN_GSM_UMTS_GMLC;
+compose_ssn(cap) -> ?SCCP_SSN_GSM_UMTS_CAP;
+compose_ssn(scf) -> ?SCCP_SSN_GSM_UMTS_SCF;
+compose_ssn(siwf) -> ?SCCP_SSN_GSM_UMTS_SIWF;
+compose_ssn(sgsn) -> ?SCCP_SSN_GSM_UMTS_SGSN;
+compose_ssn(ggsn) -> ?SCCP_SSN_GSM_UMTS_GGSN;
 compose_ssn({international, SSN}) -> SSN;
 compose_ssn({national, SSN}) -> SSN;
 compose_ssn(expansion) -> 2#11111111.

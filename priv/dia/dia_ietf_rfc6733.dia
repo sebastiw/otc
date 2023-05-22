@@ -2,4 +2,6 @@
 
 @name     dia_ietf_rfc6733
 
+@inherits diameter_gen_base_rfc6733
+
 @avp_types

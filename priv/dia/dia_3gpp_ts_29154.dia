@@ -1,0 +1,75 @@
+;; 3GPP TS 29.154 v17.0.0
+
+@name     dia_3gpp_ts_29154
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@avp_types
+Network-Area-Info-List                                      4201 OctetString       MV
+Reference-Id                                                4202 OctetString       MV
+Transfer-Request-Type                                       4203 Unsigned32        MV
+Time-Window                                                 4204 Grouped           MV
+Transfer-End-Time                                           4205 Time              MV
+Transfer-Start-Time                                         4206 Time              MV
+Transfer-Policy                                             4207 Grouped           MV
+Transfer-Policy-Id                                          4208 Unsigned32        MV
+Number-Of-UEs                                               4209 Unsigned32        MV
+Access-Network-Reports                                      4210 Grouped           MV
+Event-Configuration                                         4211 Grouped           MV
+Event-Configuration-State                                   4212 Unsigned32        MV
+Event-Configuration-Status                                  4213 Grouped           MV
+Event-Reporting-Results                                     4214 Unsigned32        MV
+Event-Reports                                               4215 Grouped           MV
+Extended-SCEF-Reference-ID                                  4216 Unsigned64        MV
+
+@grouped
+Time-Window ::= <AVP Header: 4204>
+              { Transfer-Start-Time }
+              { Transfer-End-Time }
+          *   [ AVP ]
+
+Transfer-Policy ::= <AVP Header: 4207>
+              { Transfer-Policy-Id }
+              [ Time-Window ]
+              [ Rating-Group ]
+              [ Max-Requested-Bandwidth-DL ]
+              [ Max-Requested-Bandwidth-UL ]
+          *   [ AVP ]
+
+Access-Network-Reports ::= <AVP Header: 4210>
+              [ MSISDN ]
+              [ External-Identifier ]
+              [ 3GPP-User-Location-Info ]
+              [ User-Location-Info-Time ]
+              [ 3GPP-SGSN-MCC-MNC ]
+              [ 3GPP-MS-TimeZone ]
+              [ UE-Local-IP-Address ]
+              [ TCP-Source-Port ]
+              [ UDP-Source-Port ]
+              [ NetLoc-Access-Support ]
+          *   [ AVP ]
+
+Event-Configuration ::= <AVP Header: 4211>
+              { Extended-SCEF-Reference-ID }
+              { SCEF-ID }
+              { Monitoring-Type }
+              [ Location-Information-Configuration ]
+          *   [ AVP ]
+
+Event-Configuration-Status ::= <AVP Header: 4213>
+              { Event-Configuration-State }
+              { Extended-SCEF-Reference-ID }
+          *   [ AVP ]
+
+Event-Reports ::= <AVP Header: 4215>
+              { Event-Reporting-Results }
+              { Extended-SCEF-Reference-ID }
+          *   [ Access-Network-Reports ]
+          *   [ AVP ]
+
+@define Transfer-Request-Type
+TRANSFER_POLICY_REQUEST                                      0
+TRANSFER_POLICY_NOTIFICATION                                 1

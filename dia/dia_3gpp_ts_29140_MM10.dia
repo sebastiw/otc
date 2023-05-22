@@ -1,0 +1,54 @@
+;; 3GPP TS 29.140 v7.0.0 MM10
+
+@id       16777226
+@name     dia_3gpp_ts_29140
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+Message-Process-Request ::= <Diameter Header: 311, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Host }
+              { Destination-Realm }
+              { Event-Timestamp }
+              { Trigger-Event }
+              { Served-User-Identity }
+          *   { Initial-Recipient-Address }
+              { Originating-Interface }
+              [ 3GPP-IMSI ]
+              [ Sender-Address ]
+              [ Service-Key ]
+              [ Delivery-Report ]
+              [ Read-Reply ]
+              [ Sender-Visibility ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+Message-Process-Answer ::= <Diameter Header: 311, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Status ]
+          *   [ Result-Recipient-Address ]
+              [ Delivery-Report ]
+              [ Read-Reply ]
+              [ Billing-Information ]
+              [ Sender-Visibility ]
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+

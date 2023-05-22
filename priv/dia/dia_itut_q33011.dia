@@ -1,0 +1,41 @@
+;; ITU-T Q.3301.1 (08/2013)
+
+@name     dia_itut_q33011
+@vendor   11502 ITU-T
+
+@avp_types
+QoS-Downgradable                                            1001 Enumerated        V 
+Dynamic-Firewall-Working-Mode                               1002 Enumerated        V 
+Resource-Reservation-Mode                                   1003 Enumerated        V 
+Connection-Status-Timer                                     1004 Unsigned32        V 
+SDP-Direction                                               1005 Unsigned32        V 
+Operation-Indication                                        1006 Unsigned32        V 
+TLM-PE-Identifier                                           1007 DiameterIdentity  V 
+Restoration-Indication                                      1008 Enumerated        V 
+Downgraded-Indication                                       1009 Enumerated        V 
+
+@enum QoS-Downgradable
+NORMAL                                                       0
+MAY_DOWNGRADE                                                1
+
+@enum Dynamic-Firewall-Working-Mode
+STATIC_PACKET_FILTERING                                      0
+DYNAMIC_PACKET_FILTERING                                     1
+STATEFUL_INSPECTION                                          2
+DEEP_PACKET_INSPECTION                                       3
+
+@enum Resource-Reservation-Mode
+AUTHORIZATION_ONLY_PULL                                      0
+AUTHORIZATION_RESERVATION_PUSH                               1
+AUTHORIZATION_RESERVATION_COMMITMENT_PUSH                    2
+RESOURCE_RELEASE                                             3
+
+@enum Restoration-Indication
+RESTORATION_INFORMATION_REQUEST                              0
+NORMAL                                                       1
+MAY_RESTORE                                                  2
+
+@enum Downgraded-Indication
+DOWNGRADED_INFORMATION_REQUEST                               0
+NORMAL                                                       1
+DOWNGRADED                                                   2

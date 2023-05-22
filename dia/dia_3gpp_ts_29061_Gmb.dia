@@ -1,0 +1,170 @@
+;; 3GPP TS 29.061 v17.6.0 Gmb
+
+@id       16777223
+@name     dia_3gpp_ts_29061_Gmb
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@inherits dia_ietf
+
+@messages
+AA-Request ::= <Diameter Header: 265, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Request-Type }
+              [ Destination-Host ]
+              [ Called-Station-Id ]
+              [ Calling-Station-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Framed-Interface-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ 3GPP-IMSI ]
+              [ RAI ]
+              [ 3GPP-IMEISV ]
+              [ 3GPP-RAT-Type ]
+              [ 3GPP-User-Location-Info ]
+              [ 3GPP-MS-TimeZone ]
+              [ Additional-MBMS-Trace-Info ]
+
+AA-Answer ::= <Diameter Header: 265, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+              [ Alternative-APN ]
+              [ 3GPP-IMSI ]
+              [ TMGI ]
+              [ Required-MBMS-Bearer-Capabilities ]
+
+ST-Request ::= <Diameter Header: 275, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Termination-Cause }
+              [ Destination-Host ]
+          *   [ Class ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ Additional-MBMS-Trace-Info ]
+
+
+ST-Answer ::= <Diameter Header: 275, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+          *   [ Class ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+
+
+RAR ::= <Diameter Header: 258, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              { Re-Auth-Request-Type }
+              [ Called-Station-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Framed-Interface-Id ]
+              [ MBMS-StartStop-Indication ]
+              [ MBMS-Service-Area ]
+              [ MBMS-Required-QoS ]
+              [ MBMS-Session-Duration ]
+              [ MBMS-Service-Type ]
+              [ MBMS-Counting-Information ]
+              [ MBMS-Session-Identity ]
+              [ MBMS-Session-Identity-Repetition-Number ]
+              [ TMGI ]
+          *   [ 3GPP-SGSN-Address ]                                              ; broadcast case only
+          *   [ 3GPP-SGSN-IPv6-Address ]                                         ; broadcast case only
+              [ MBMS-2G-3G-Indicator ]
+              [ MBMS-Time-To-Data-Transfer ]
+              [ MBMS-User-Data-Mode-Indication ]
+              [ MBMS-BMSC-SSM-IP-Address ]
+              [ MBMS-BMSC-SSM-IPv6-Address ]
+              [ MBMS-Flow-Identifier ]
+              [ CN-IP-Multicast-Distribution ]
+              [ MBMS-HC-Indicator ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+RAA ::= <Diameter Header: 258, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ MBMS-StartStop-Indication ]
+              [ MBMS-GGSN-Address ]                                              ; for unicast encapsulated user data
+              [ MBMS-GGSN-IPv6-Address ]                                         ; for unicast encapsulated user data
+              [ MBMS-GW-UDP-Port ]                                               ; for unicast encapsulated user data
+              [ MBMS-User-Data-Mode-Indication ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+
+ASR ::= <Diameter Header: 274, REQ, PXY>
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+ASA ::= <Diameter Header: 274, PXY>
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_START_INDICATION                             5120
+DIAMETER_ERROR_STOP_INDICATION                              5121
+DIAMETER_ERROR_UNKNOWN_MBMS_BEARER_SERVICE                  5122
+DIAMETER_ERROR_SERVICE_AREA                                 5123
+DIAMETER_ERROR_OUT_OF_RESOURCES                             4121
+

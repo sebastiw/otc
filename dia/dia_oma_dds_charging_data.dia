@@ -1,0 +1,46 @@
+;; OMA DDS Charging Data 2011-02-01
+
+@name     dia_oma_dds_charging_data
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@avp_types
+Service-Generic-Information                       1256 Grouped          VM
+Application-Server-ID                             2101 UTF8String       VM
+Application-Service-Type                          2102 Enumerated       VM
+Application-Session-ID                            2103 Unsigned32       VM
+Delivery-Status                                   2104 UTF8String       VM
+IM-Information                                    2110 Grouped          VM
+Number-Of-Messages-Successfully-Exploded          2111 Unsigned32       VM
+Number-Of-Messages-Successfully-Sent              2112 Unsigned32       VM
+Total-Number-Of-Messages-Exploded                 2113 Unsigned32       VM
+Total-Number-Of-Messages-Sent                     2114 Unsigned32       VM
+DCD-Information                                   2115 Grouped          VM
+Content-ID                                        2116 UTF8String       VM
+Content-Provider-ID                               2117 UTF8String       VM
+
+@grouped
+Service-Generic-Information ::= < AVP Header: 1256 >
+              [ Application-Server-ID ]
+              [ Application-Service-Type ]
+              [ Application-Session-ID ]
+              [ Delivery-Status ]
+
+IM-Information ::= < AVP Header: 2110 >
+              [ Total-Number-Of-Messages-Sent ]
+              [ Total-Number-Of-Messages-Exploded ]
+              [ Number-Of-Messages-Successfully-Sent ]
+              [ Number-Of-Messages-Successfully-Exploded ]
+
+DCD-Information ::= < AVP Header: 2115 >
+              [ Content-ID ]
+              [ Content-Provider-ID ]
+
+@enum Application-Service-Type
+SENDING                        100
+RECEIVING                      101
+RETRIEVAL                      102
+INVITING                       103
+LEAVING                        104
+JOINING                        105

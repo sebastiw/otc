@@ -1,0 +1,83 @@
+;; 3GPP TS 29.368 v17.0.0 Tsp
+
+@id       16777309
+@name     dia_3gpp_ts_29368_Tsp
+@vendor   10415 3gpp
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_ietf
+
+@inherits dia_3gpp
+
+@messages
+DA-Request ::= <Diameter Header: 8388639, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              [ Destination-Host ]
+              [ Origin-State-Id ]
+              [ Device-Action ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ Supported-Features ]
+          *   [ AVP ]
+
+DA-Answer ::= <Diameter Header: 8388639, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Device-Notification }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+              [ Origin-State-Id ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Supported-Features ]
+              [ Feature-Supported-In-Final-Target ]
+          *   [ Load ]
+          *   [ AVP ]
+
+DN-Request ::= <Diameter Header: 8388640, REQ, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              [ Origin-State-Id ]
+              [ Device-Notification ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+          *   [ AVP ]
+
+DN-Answer ::= <Diameter Header: 8388640, PXY>
+              < Session-Id >
+              { Auth-Application-Id }
+              { Auth-Session-State }
+              { Origin-Host }
+              { Origin-Realm }
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+              [ Failed-AVP ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+

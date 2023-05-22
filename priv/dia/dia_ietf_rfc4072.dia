@@ -1,0 +1,10 @@
+;; IETF RFC 4072
+
+@name     dia_ietf_rfc4072
+
+@avp_types
+EAP-Key-Name                                                102  OctetString       - 
+EAP-Payload                                                 462  OctetString       - 
+EAP-Reissued-Payload                                        463  OctetString       - 
+EAP-Master-Session-Key                                      464  OctetString       - 
+Accounting-EAP-Auth-Method                                  465  Unsigned64        - 

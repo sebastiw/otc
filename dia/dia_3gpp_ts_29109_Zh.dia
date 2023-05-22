@@ -1,0 +1,44 @@
+;; 3GPP TS 29.109 v17.0.0 Zh
+
+@id       16777221
+@name     dia_3gpp_ts_29109_Zh
+@vendor   10415 3GPP
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@messages
+Multimedia-Auth-Request ::= <Diameter Header: 303, REQ, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }                                             ; NO_STATE_MAINTAINED
+              { Origin-Host }                                                    ; Address of BSF
+              { Origin-Realm }                                                   ; Realm of BSF
+              { Destination-Realm }                                              ; Realm of HSS
+              [ Destination-Host ]                                               ; Address of the HSS
+              [ User-Name ]                                                      ; IMPI from UE
+              [ Public-Identity ]                                                ; IMPU from UE
+              [ 3GPP-SIP-Auth-Data-Item ]                                        ; Authentication Scheme, Synchronization Failure
+              [ GUSS-Timestamp ]                                                 ; Timestamp of GUSS in BSF
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
+
+Multimedia-Auth-Answer ::= <Diameter Header: 303, PXY>
+              < Session-Id >
+              { Vendor-Specific-Application-Id }
+              { Auth-Session-State }                                             ; NO_STATE_MAINTAINED
+              { Origin-Host }                                                    ; Address of HSS
+              { Origin-Realm }                                                   ; Realm of HSS
+              [ Result-Code ]
+              [ Experimental-Result ]
+              [ User-Name ]                                                      ; IMPI
+              [ Public-Identity ]                                                ; IMPU
+              [ 3GPP-SIP-Auth-Data-Item ]
+              [ GBA-UserSecSettings ]                                            ; GUSS
+          *   [ AVP ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+
