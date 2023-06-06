@@ -53,7 +53,8 @@ xudt_test() ->
     CgPA = calling_party_address(),
     D = data(),
 
-    Bin = <<16#11, 16#81, 16#0f, 16#04, 16#0f, 16#1a, 16#00,
+    Bin = <<16#11, 16#81, 16#0f,
+            16#04, 16#0f, 16#1a, 16#00, %% Pointers
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
@@ -97,49 +98,50 @@ xudt_opt_segmentation_test() ->
     CdPA = called_party_address(),
     CgPA = calling_party_address(),
     D = data(),
-    
-    Bin = <<16#11, 16#01, 16#0D, 16#04, 16#0F, 16#1A, 16#1E,
-            16#0B, CgPA/binary,
+
+    Bin = <<16#11, 16#01, 16#0D,
+            16#04, 16#0F, 16#1A, 16#32, %% pointers
             16#0B, CdPA/binary,
+            16#0B, CgPA/binary,
             16#18, D/binary,
-            16#10, 16#04, 16#40, 16#EB, 16#4D, 16#01, %% segmentation
+            16#10, 16#04, 16#01, 16#02, 16#03, 16#04, %% segmentation
             16#00>>, %% end of optional parameters
-      Exp =
-        #{called_party_address =>
-            #{global_title =>
+
+    Exp = #{called_party_address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "467211221122",
                         nature_of_address_indicator => 4,
                         numbering_plan => 1,
                         odd_even_indicator => even,
                         translation_type => 0},
-              global_title_indicator => 4,
-              national_use_indicator => 0,
-              point_code => undefined,
-              routing_indicator => global_title,
-              subsystem_number => msc},
-        calling_party_address =>
-            #{global_title =>
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,
+                  routing_indicator => global_title,
+                  subsystem_number => msc},
+            calling_party_address =>
+                #{global_title =>
                       #{encoding_scheme => bcd,
                         address => "46729887766",
                         nature_of_address_indicator => 8,
                         numbering_plan => 1,
                         odd_even_indicator => odd,
                         translation_type => 0},
-              global_title_indicator => 4,
-              national_use_indicator => 0,
-              point_code => undefined,
-              routing_indicator => global_title,
-              subsystem_number => msc},
-        data => D,
-        hop_counter => 13,
-        message_type => xudt,
-        protocol_class => #{class => 1, options => no_options},
-        segmentation =>
-            #{class => 1,
-              first_segment_indication => true,
-              local_reference => <<235,77,1>>,
-              remaining_segments => 0}},
+                  global_title_indicator => 4,
+                  national_use_indicator => 0,
+                  point_code => undefined,
+                  routing_indicator => global_title,
+                  subsystem_number => hlr},
+            data => D,
+            hop_counter => 13,
+            message_type => xudt,
+            protocol_class => #{class => 1, options => no_options},
+            segmentation =>
+                #{class => 0,
+                  first_segment_indication => true,
+                  local_reference => <<16#02, 16#03, 16#04>>,
+                  remaining_segments => 1}},
       Val = otc_sccp:decode(Bin),
       ?assertEqual(Exp, Val),
       NewBin = otc_sccp:encode(Val),
