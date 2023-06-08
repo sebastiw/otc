@@ -155,8 +155,8 @@ compose_message_type(ludts) -> ?SCCP_MSG_TYPE_LUDTS.
 
 decode_msg(cr, Bin) ->
     NumPointers = 2,
-    <<SLR:3/binary, PC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, OptBin] = separate_fields(Pointers, Bin1),
+    <<SLR:3/binary, PC:1/binary, Bin1/binary>> = Bin,
+    [CdPA, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{credit, 3},
                          {calling_party_address, {4, n}},
                          {data, {3, 130}},
@@ -169,8 +169,8 @@ decode_msg(cr, Bin) ->
                called_party_address => decode_parameter(called_party_address, CdPA)};
 decode_msg(cc, Bin) ->
     NumPointers = 1,
-    <<DLR:3/binary, SLR:3/binary, PC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [OptBin] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SLR:3/binary, PC:1/binary, Bin1/binary>> = Bin,
+    [OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{credit, 3},
                          {called_party_address, {4, n}},
                          {data, {3, 130}},
@@ -182,8 +182,8 @@ decode_msg(cc, Bin) ->
                protocol_class => decode_parameter(protocol_class, PC)};
 decode_msg(cref, Bin) ->
     NumPointers = 1,
-    <<DLR:3/binary, RC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [OptBin] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, RC:1/binary, Bin1/binary>> = Bin,
+    [OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{called_party_address, {4, n}},
                          {data, {3, 130}},
                          {importance, 3},
@@ -193,8 +193,8 @@ decode_msg(cref, Bin) ->
                refusal_cause => decode_parameter(refusal_cause, RC)};
 decode_msg(rlsd, Bin) ->
     NumPointers = 1,
-    <<DLR:3/binary, SLR:3/binary, RC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [OptBin] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SLR:3/binary, RC:1/binary, Bin1/binary>> = Bin,
+    [OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -204,39 +204,39 @@ decode_msg(rlsd, Bin) ->
                release_cause => decode_parameter(release_cause, RC)};
 decode_msg(rlc, Bin) ->
     NumPointers = 0,
-    <<DLR:3/binary, SLR:3/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SLR:3/binary, Bin1/binary>> = Bin,
+    [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                source_local_reference => decode_parameter(source_local_reference, SLR)};
 decode_msg(dt1, Bin) ->
     NumPointers = 1,
-    <<DLR:3/binary, SR:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [D] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SR:1/binary, Bin1/binary>> = Bin,
+    [D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                segmenting_reassembling => decode_parameter(segmenting_reassembling, SR),
                data => decode_parameter(data, D)};
 decode_msg(dt2, Bin) ->
     NumPointers = 1,
-    <<DLR:3/binary, SS:2/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [D] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SS:2/binary, Bin1/binary>> = Bin,
+    [D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                sequencing_segmenting => decode_parameter(sequencing_segmenting, SS),
                data => decode_parameter(data, D)};
 decode_msg(ak, Bin) ->
     NumPointers = 0,
-    <<DLR:3/binary, RSN:1/binary, C:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, RSN:1/binary, C:1/binary, Bin1/binary>> = Bin,
+    [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                receive_sequence_number => decode_parameter(receive_sequence_number, RSN),
                credit => decode_parameter(credit, C)};
 decode_msg(udt, Bin) ->
     NumPointers = 3,
-    <<PC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, D] = separate_fields(Pointers, Bin1),
+    <<PC:1/binary, Bin1/binary>> = Bin,
+    [CdPA, CgPA, D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     CalledPartyAddress = decode_parameter(called_party_address, CdPA),
     CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = #{},
@@ -246,8 +246,8 @@ decode_msg(udt, Bin) ->
                data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(udts, Bin) ->
     NumPointers = 3,
-    <<RC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, D] = separate_fields(Pointers, Bin1),
+    <<RC:1/binary, Bin1/binary>> = Bin,
+    [CdPA, CgPA, D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     CalledPartyAddress = decode_parameter(called_party_address, CdPA),
     CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
     Optionals = #{},
@@ -257,43 +257,43 @@ decode_msg(udts, Bin) ->
                data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(ed, Bin) ->
     NumPointers = 1,
-    <<DLR:3/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [D] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, Bin1/binary>> = Bin,
+    [D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                data => decode_parameter(data, D)};
 decode_msg(ea, Bin) ->
     NumPointers = 0,
-    <<DLR:3/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, Bin1/binary>> = Bin,
+    [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR)};
 decode_msg(rsr, Bin) ->
     NumPointers = 0,
-    <<DLR:3/binary, SLR:3/binary, RC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SLR:3/binary, RC:1/binary, Bin1/binary>> = Bin,
+    [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                source_local_reference => decode_parameter(source_local_reference, SLR),
                reset_cause => decode_parameter(reset_cause, RC)};
 decode_msg(rsc, Bin) ->
     NumPointers = 0,
-    <<DLR:3/binary, SLR:3/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SLR:3/binary, Bin1/binary>> = Bin,
+    [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                source_local_reference => decode_parameter(source_local_reference, SLR)};
 decode_msg(err, Bin) ->
     NumPointers = 0,
-    <<DLR:3/binary, EC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, EC:1/binary, Bin1/binary>> = Bin,
+    [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                error_cause => decode_parameter(error_cause, EC)};
 decode_msg(it, Bin) ->
     NumPointers = 0,
-    <<DLR:3/binary, SLR:3/binary, PC:1/binary, SS:2/binary, C:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [] = separate_fields(Pointers, Bin1),
+    <<DLR:3/binary, SLR:3/binary, PC:1/binary, SS:2/binary, C:1/binary, Bin1/binary>> = Bin,
+    [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
     Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
                source_local_reference => decode_parameter(source_local_reference, SLR),
@@ -302,8 +302,8 @@ decode_msg(it, Bin) ->
                credit => decode_parameter(credit, C)};
 decode_msg(xudt, Bin) ->
     NumPointers = 4,
-    <<PC:1/binary, HC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, D, OptBin] = separate_fields(Pointers, Bin1),
+    <<PC:1/binary, HC:1/binary, Bin1/binary>> = Bin,
+    [CdPA, CgPA, D, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -317,8 +317,8 @@ decode_msg(xudt, Bin) ->
                data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
 decode_msg(xudts, Bin) ->
     NumPointers = 4,
-    <<RC:1/binary, HC:1/binary, Pointers:NumPointers/binary, Bin1/binary>> = Bin,
-    [CdPA, CgPA, D, OptBin] = separate_fields(Pointers, Bin1),
+    <<RC:1/binary, HC:1/binary, Bin1/binary>> = Bin,
+    [CdPA, CgPA, D, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
@@ -375,41 +375,145 @@ decode_msg(ludts, Bin) ->
                calling_party_address => CallingPartyAddress,
                long_data => decode_data(long_data, LD, CalledPartyAddress, CallingPartyAddress)}.
 
-separate_fields_test() ->
-    %% Example:
+
+absolute_pointers(Bin, NumPointers) ->
+    absolute_pointers(Bin, NumPointers, false).
+
+absolute_pointers(Bin, NumPointers, IncOptional) ->
+    absolute_pointers(Bin, NumPointers, IncOptional, 1).
+
+absolute_pointers(Bin, NumPointers, IncOptional, PointSize) ->
+    absolute_pointers(Bin, NumPointers, IncOptional, PointSize, 1).
+
+absolute_pointers(Bin, NumPointers, IncOptional, PointSize, LengthFieldLength) ->
+    %% Extract all pointers
+    <<PointerBin:(NumPointers*PointSize)/binary, Rest/binary>> = Bin,
+    RelativePointers = [P || <<P:(8*PointSize)/big>> <= PointerBin],
+    %% Zip with the order and length of length-field
+    RPs = lists:zipwith(fun (N, P) -> {N, P-(NumPointers-N)-1, LengthFieldLength} end,
+                        lists:seq(1, NumPointers), RelativePointers),
+    %% If optional is included, set length to rest of binary
+    case IncOptional of
+        true ->
+            {value, {NumPointers, Pos, _}, RPs0} = lists:keytake(NumPointers, 1, RPs),
+            case Pos of
+                -1 ->
+                    %% If optional pointer is set to 0, set pointer to end of binary
+                    RPs1 = RPs0 ++ [{NumPointers, byte_size(Rest)-1, 0}],
+                    {RPs1, Rest};
+                _ ->
+                    %% optional pointers don't have length
+                    RPs1 = RPs0 ++ [{NumPointers, Pos-1, 0}],
+                    {RPs1, Rest}
+            end;
+        false ->
+            {RPs, Rest}
+    end.
+
+absolute_pointers_test_() ->
+    %% Example: <<PointerBin:3/b, Bin/b>>
     %% Expected order: [CdPA, CgPA, LD, OptBin]
-    %% PointerBin: <<94 = PointCdPA, 3 = PointCgPA, 14 = PointLD, 0 = PointOpt>>
-    %% Bin: <<CgPABin1, LDBin2, CdPABin3, OptBin4>>
+    %% PointerBin: <<10 = PointCdPA, 3 = PointCgPA, 8 = PointLD, 0 = PointOpt>>
+    %% Bin: <<CgPABin1:5/b, LDBin2:2/b, CdPABin3:5/b, OptBin4>>
+    CdPA = <<4, "CdPA">>,
+    CgPA = <<4, "CgPA">>,
+    D = <<1, "D">>,
+    Data = <<CgPA/binary, D/binary, CdPA/binary>>,
+    Seg = <<16#10, 16#04, 16#01, 16#02, 16#03, 16#04>>,
+    [{"Pointers in sorted order + optional",
+      ?_assertEqual({[{1,0,1}, {2,5,1}, {3,7,1}, {4,10,0}], <<Data/binary, Seg/binary>>},
+                    absolute_pointers(<<4, 8, 9, 12, Data/binary, Seg/binary>>, 4, true))},
+     {"Pointers in sorted order + blank optional",
+      ?_assertEqual({[{1,0,1}, {2,5,1}, {3,7,1}, {4,10,0}], Data},
+                    absolute_pointers(<<4, 8, 9, 12, Data/binary>>, 4, true))},
+     {"Pointers in sorted order + empty optional",
+      ?_assertEqual({[{1,0,1}, {2,5,1}, {3,7,1}, {4,11,0}], Data},
+                    absolute_pointers(<<4, 8, 9, 0, Data/binary>>, 4, true))},
+     {"Pointers in non-sorted order + optional",
+      ?_assertEqual({[{1,7,1}, {2,0,1}, {3,5,1}, {4,10,0}], <<Data/binary, Seg/binary>>},
+                    absolute_pointers(<<11, 3, 7, 12, Data/binary, Seg/binary>>, 4, true))},
+     {"Pointers in non-sorted order + blank optional",
+      ?_assertEqual({[{1,7,1}, {2,0,1}, {3,5,1}, {4,10,0}], Data},
+                    absolute_pointers(<<11, 3, 7, 12, Data/binary>>, 4, true))},
+     {"Pointers in non-sorted order + empty optional",
+      ?_assertEqual({[{1,7,1}, {2,0,1}, {3,5,1}, {4,11,0}], Data},
+                    absolute_pointers(<<11, 3, 7, 0, Data/binary>>, 4, true))},
+     {"Pointers in reverse order + optional",
+      ?_assertEqual({[{1,7,1}, {2,5,1}, {3,0,1}, {4,10,0}], <<Data/binary, Seg/binary>>},
+                    absolute_pointers(<<11, 8, 2, 12, Data/binary, Seg/binary>>, 4, true))},
+     {"Pointers in reverse order + blank optional",
+      ?_assertEqual({[{1,7,1}, {2,5,1}, {3,0,1}, {4,10,0}], Data},
+                    absolute_pointers(<<11, 8, 2, 12, Data/binary>>, 4, true))},
+     {"Pointers in reverse order + empty optional",
+      ?_assertEqual({[{1,7,1}, {2,5,1}, {3,0,1}, {4,11,0}], Data},
+                    absolute_pointers(<<11, 8, 2, 0, Data/binary>>, 4, true))},
+     {"Pointers in sorted order",
+      ?_assertEqual({[{1,0,1}, {2,5,1}, {3,7,1}], Data},
+                    absolute_pointers(<<3, 7, 8, Data/binary>>, 3))},
+     {"Pointers in non-sorted order",
+      ?_assertEqual({[{1,7,1}, {2,0,1}, {3,5,1}], Data},
+                    absolute_pointers(<<10, 2, 6, Data/binary>>, 3))},
+     {"Pointers in reverse order",
+      ?_assertEqual({[{1,7,1}, {2,5,1}, {3,0,1}], Data},
+                    absolute_pointers(<<10, 7, 1, Data/binary>>, 3))}].
+
+separate_fields({RPs, Bin}) ->
+    separate_fields(RPs, Bin).
+
+separate_fields(Pointers, Bin) ->
+    separate_fields(Pointers, Bin, []).
+
+separate_fields([], _, Acc) ->
+    lists:reverse(Acc);
+separate_fields([{_, P, 0}|Ps], Bin, Acc) ->
+    %% Just take rest of binary
+    B = binary:part(Bin, P+1, byte_size(Bin)-(P+1)),
+    separate_fields(Ps, Bin, [B|Acc]);
+separate_fields([{_, P, L}|Ps], Bin, Acc) ->
+    <<Len:(8*L)/big>> = binary:part(Bin, P, L),
+    B = binary:part(Bin, P+1, Len),
+    separate_fields(Ps, Bin, [B|Acc]).
+
+separate_fields_test_() ->
+    %% Example: <<PointerBin:3/b, Bin/b>>
+    %% Expected order: [CdPA, CgPA, LD, OptBin]
+    %% PointerBin: <<10 = PointCdPA, 3 = PointCgPA, 8 = PointLD, 0 = PointOpt>>
+    %% Bin: <<CgPABin1:5/b, LDBin2:2/b, CdPABin3:5/b, OptBin4:0/b>>
     CdPA = <<4, "CdPA">>,
     CgPA = <<4, "CgPA">>,
     D = <<1, "D">>,
     Bin = <<CgPA/binary, D/binary, CdPA/binary>>,
-    Vs = separate_fields(<<94, 3, 14, 0>>, Bin),
-    ?assertEqual([<<"CdPA">>, <<"CgPA">>, <<"D">>, <<>>], Vs).
-
-separate_fields(PointerBin, Bin) ->
-    %% Split and add appearance counter
-    {Pointers, Vs} = separate_fields(PointerBin, Bin, {1, [], []}),
-    %% Sort pointers (with optional last)
-    Ordered = case lists:sort(Pointers) of
-                  [{0, _} = O|Rest] ->
-                      %% No optionals, put it last
-                      Rest ++ [O];
-                  R -> R
-              end,
-    %% Zip with values and order on the appearance counter
-    Zipped = lists:zip(Ordered, Vs),
-    ReOrdered = lists:sort(fun ({{_, A}, _}, {{_, B}, _}) -> A < B end, Zipped),
-    {_, Vals} = lists:unzip(ReOrdered),
-    Vals.
-
-separate_fields(<<>>, _, {_, PAcc, BAcc}) ->
-    {PAcc, lists:reverse(BAcc)};
-separate_fields(<<0:8/big>>, _, {N, PAcc, BAcc}) ->
-    {[{0, N}|PAcc], lists:reverse([<<>>|BAcc])};
-separate_fields(<<P:8/big, R/binary>>, <<L:8/big, Bin/binary>>, {N, PAcc, BAcc}) ->
-    <<Val:L/binary, Rest/binary>> = Bin,
-    separate_fields(R, Rest, {N+1, [{P, N}|PAcc], [Val|BAcc]}).
+    Seg = <<16#10, 16#04, 16#01, 16#02, 16#03, 16#04>>,
+    [{"Pointers in sorted order + optional",
+      ?_assertEqual([<<"CgPA">>,<<"D">>,<<"CdPA">>,Seg],
+                    separate_fields(absolute_pointers(<<4, 8, 9, 13, Bin/binary, Seg/binary>>, 4, true)))},
+     {"Pointers in sorted order + blank optional",
+      ?_assertEqual([<<"CgPA">>,<<"D">>,<<"CdPA">>,<<>>],
+                    separate_fields(absolute_pointers(<<4, 8, 9, 13, Bin/binary>>, 4, true)))},
+     {"Pointers in sorted order + empty optional",
+      ?_assertEqual([<<"CgPA">>,<<"D">>,<<"CdPA">>,<<>>],
+                    separate_fields(absolute_pointers(<<4, 8, 9, 0, Bin/binary>>, 4, true)))},
+     {"Pointers in non-sorted order + blank optional",
+      ?_assertEqual([<<"CdPA">>,<<"CgPA">>,<<"D">>,<<>>],
+                    separate_fields(absolute_pointers(<<11, 3, 7, 13, Bin/binary>>, 4, true)))},
+     {"Pointers in non-sorted order + empty optional",
+      ?_assertEqual([<<"CdPA">>,<<"CgPA">>,<<"D">>,<<>>],
+                    separate_fields(absolute_pointers(<<11, 3, 7, 0, Bin/binary>>, 4, true)))},
+     {"Pointers in reverse order + blank optional",
+      ?_assertEqual([<<"CdPA">>,<<"D">>,<<"CgPA">>,<<>>],
+                    separate_fields(absolute_pointers(<<11, 8, 2, 13, Bin/binary>>, 4, true)))},
+     {"Pointers in reverse order + empty optional",
+      ?_assertEqual([<<"CdPA">>,<<"D">>,<<"CgPA">>,<<>>],
+                    separate_fields(absolute_pointers(<<11, 8, 2, 0, Bin/binary>>, 4, true)))},
+     {"Pointers in sorted order",
+      ?_assertEqual([<<"CgPA">>,<<"D">>,<<"CdPA">>],
+                    separate_fields(absolute_pointers(<<3, 7, 8, Bin/binary>>, 3)))},
+     {"Pointers in non-sorted order",
+      ?_assertEqual([<<"CdPA">>,<<"CgPA">>,<<"D">>],
+                    separate_fields(absolute_pointers(<<10, 2, 6, Bin/binary>>, 3)))},
+     {"Pointers in reverse order",
+      ?_assertEqual([<<"CdPA">>,<<"D">>,<<"CgPA">>],
+                    separate_fields(absolute_pointers(<<10, 7, 1, Bin/binary>>, 3)))}].
 
 -define(IS_SCCP_MGMT,
         #{routing_indicator := subsystem_number, subsystem_number := management}).
@@ -848,13 +952,13 @@ decode_parameters(_, [], Acc) ->
     Acc;
 decode_parameters(<<>>, _, Acc) ->
     Acc;
-decode_parameters(<<?SCCP_IEI_END_OF_OPTIONAL_PARAMETERS>>, _, Acc) ->
+decode_parameters(<<?SCCP_IEI_END_OF_OPTIONAL_PARAMETERS:8/big>>, _, Acc) ->
     Acc;
 decode_parameters(<<IEI:8/big, Len:8/big, Bin0/binary>>, Os, Acc) ->
     <<V:Len/binary, Rest/binary>> = Bin0,
     Param = parse_iei(IEI),
     case lists:keytake(Param, 1, Os) of
-        {value, {Name, _, _}, NOs} ->
+        {value, {Name, _}, NOs} ->
             Par = decode_parameter(Name, V),
             decode_parameters(Rest, NOs, Acc#{Name => Par});
         false ->
@@ -1233,7 +1337,12 @@ encode_parameter(refusal_cause, RC) ->
 encode_parameter(data, Bin) ->
     Bin;
 encode_parameter(segmentation, V) ->
-    F = maps:get(first_segment_indication, V, true),
+    F = case maps:get(first_segment_indication, V, true) of 
+            true ->
+                0;
+            _ ->
+                1
+        end,
     C = maps:get(class, V, 0),
     Rem = maps:get(remaining_segments, V, 0),
     LR = rand:uniform(2#1111)-1,
