@@ -23,8 +23,7 @@ codec(Map) when is_map(Map) ->
 next(_) ->
     '$stop'.
 
-decode(<<2:3, P:1, T:1, MP:1, _:2, MT:8, Len:16, Rest0/binary>>) ->
-    <<GTP0:Len/binary>> = Rest0,
+decode(<<2:3, P:1, T:1, MP:1, _:2, MT:8, Len:16, GTP0:Len/binary>>) ->
     MessageType = parse_message_type(MT),
     {MsgFields, GTP1} = decode_msg_fields(P, T, MP, GTP0),
     Msg0 = decode_msg(MessageType, GTP1),
@@ -1231,9 +1230,6 @@ decode_parameter(serving_network, V, _) ->
     decode_mcc_mnc(V);
 decode_parameter(bearer_tft, V, _) ->
     %% Specified in 3GPP TS 24.008
-%% TFT operation code E bit Number of packet filters Octet 3
-%% Packet filter list Octet 4 - Octet z
-%% Parameters list Octet z+1 - Octet v
     <<OpCode:3, Ebit:1, PacketFiltersNum:4, R0/binary>> = V,
     {PktFilters, R2} = case OpCode of
                            2#000 ->
@@ -1280,55 +1276,34 @@ decode_parameter(traffic_aggregate_description, V, _) ->
     %% Specified in 3GPP TS 24.008
     V;
 decode_parameter(user_location_information, V, _) ->
-    <<EMIDI:1, MIDI:1, LAII:1, ECGII:1, TAII:1, RAII:1, SAII:1, CGII:1, Rest/binary>> = V,
-    Fields = [{cgi, CGII},
-              {sai, SAII},
-              {rai, RAII},
-              {tai, TAII},
-              {ecgi, ECGII},
-              {lai, LAII},
-              {macro_enodeb_id, MIDI},
-              {extended_macro_enodeb_id, EMIDI}],
-    {ULI, _} = lists:foldl(fun ({_Name, 0}, {Acc, Bin}) ->
-                                   {Acc, Bin};
-                               ({cgi, 1}, {Acc, Bin}) ->
-                                   <<CGIBin:7/binary, R/binary>> = Bin,
-                                   CGI = decode_cgi(CGIBin),
-                                   {Acc#{cgi => CGI}, R};
-                               ({sai, 1}, {Acc, Bin}) ->
-                                   <<SAIBin:7/binary, R/binary>> = Bin,
-                                   SAI = decode_sai(SAIBin),
-                                   {Acc#{sai => SAI}, R};
-                               ({rai, 1}, {Acc, Bin}) ->
-                                   <<RAIBin:7/binary, R/binary>> = Bin,
-                                   RAI = decode_rai(RAIBin),
-                                   {Acc#{rai => RAI}, R};
-                               ({tai, 1}, {Acc, Bin}) ->
-                                   <<TAIBin:5/binary, R/binary>> = Bin,
-                                   TAI = decode_tai(TAIBin),
-                                   {Acc#{tai => TAI}, R};
-                               ({ecgi, 1}, {Acc, Bin}) ->
-                                   <<ECGIBin:7/binary, R/binary>> = Bin,
-                                   ECGI = decode_ecgi(ECGIBin),
-                                   {Acc#{ecgi => ECGI}, R};
-                               ({lai, 1}, {Acc, Bin}) ->
-                                   <<LAIBin:7/binary, R/binary>> = Bin,
-                                   LAI = decode_lai(LAIBin),
-                                   {Acc#{lai => LAI}, R};
-                               ({macro_enodeb_id, 1}, {Acc, Bin}) ->
-                                   <<MIDBin:6/binary, R/binary>> = Bin,
-                                   MID = decode_macro_enodeb_id(MIDBin),
-                                   {Acc#{macro_enodeb_id => MID}, R};
-                               ({extended_macro_enodeb_id, 1}, {Acc, Bin}) ->
-                                   <<EMIDBin:6/binary, R/binary>> = Bin,
-                                   EMID = decode_extended_macro_enodeb_id(EMIDBin),
-                                   {Acc#{extended_macro_enodeb_id => EMID}, R}
-                           end,
-                           {#{}, Rest},
-                           Fields),
-    ULI;
+    <<EMIDI:1, MIDI:1, LAII:1, ECGII:1, TAII:1, RAII:1, SAII:1, CGII:1,
+      CGIBin:(CGII*7)/binary,
+      SAIBin:(SAII*7)/binary,
+      RAIBin:(RAII*7)/binary,
+      TAIBin:(TAII*5)/binary,
+      ECGIBin:(ECGII*7)/binary,
+      LAIBin:(LAII*5)/binary,
+      MIDBin:(MIDI*6)/binary,
+      EMIDBin:(EMIDI*6)/binary,
+      _Rest/binary>> = V,
+    Fields = [{cgi, CGII, fun decode_cgi/1, CGIBin},
+              {sai, SAII, fun decode_sai/1, SAIBin},
+              {rai, RAII, fun decode_rai/1, RAIBin},
+              {tai, TAII, fun decode_tai/1, TAIBin},
+              {ecgi, ECGII, fun decode_ecgi/1, ECGIBin},
+              {lai, LAII, fun decode_lai/1, LAIBin},
+              {macro_enodeb_id, MIDI, fun decode_macro_enodeb_id/1, MIDBin},
+              {extended_macro_enodeb_id, EMIDI, fun decode_extended_macro_enodeb_id/1, EMIDBin}],
+    lists:foldl(fun ({_Name, 0, _, _}, Acc) ->
+                        Acc;
+                    ({Name, 1, DFun, Bin}, Acc) ->
+                        Acc#{Name => DFun(Bin)}
+                end,
+                #{},
+                Fields);
 decode_parameter(f_teid, V, _) ->
-    <<V4:1, V6:1, IT:6, TEIDGRE:32, IP/binary>> = V,
+    <<V4:1, V6:1, IT:6, TEIDGRE:32,
+      IPv4:(V4*4)/binary, IPv6:(V6*16)/binary>> = V,
     InterfaceType = case IT of
                         0 -> s1u_enodeb_gtpu;
                         1 -> s1u_sgw_gtpu;
@@ -1375,17 +1350,14 @@ decode_parameter(f_teid, V, _) ->
                     end,
     case {V4, V6} of
         {1, 0} ->
-            <<IPv4:4/binary>> = IP,
             #{interface_type => InterfaceType,
               teid_gre_key => TEIDGRE,
               ipv4 => bin_to_ip_addr(IPv4)};
         {0, 1} ->
-            <<IPv6:16/binary>> = IP,
             #{interface_type => InterfaceType,
               teid_gre_key => TEIDGRE,
               ipv6 => bin_to_ip_addr(IPv6)};
         {1, 1} ->
-            <<IPv4:4/binary, IPv6:16/binary>> = IP,
             #{interface_type => InterfaceType,
               teid_gre_key => TEIDGRE,
               ipv4 => bin_to_ip_addr(IPv4),
@@ -1399,21 +1371,15 @@ decode_parameter(global_cn_id, V, _) ->
     MCCMNC = decode_mcc_mnc(MCCMNCBin),
     MCCMNC#{cn_id => CNID};
 decode_parameter(s103_pdn_data_forwarding_info, V, _) ->
-    <<Len:8, Rest/binary>> = V,
-    <<HSGWAddr:Len/binary, GREKey:4/binary, EPSNum:8, EPSBearers/binary>> = Rest,
-    {EPSBearerIDs, _} = lists:foldl(
-                          fun(_, {Acc, Bin}) ->
-                                  <<_:4, ID:4, More/binary>> = Bin,
-                                  {Acc ++ [ID], More}
-                          end,
-                          {[], EPSBearers},
-                          lists:seq(1, EPSNum)),
+    <<Len:8, HSGWAddr:Len/binary, GREKey:4/binary,
+      EPSNum:8, EPSBearers/binary>> = V,
+    EPSBearerIDs = [ID || <<_:4, ID:4>> <= EPSBearers],
+    EPSNum = length(EPSBearerIDs),
     #{hsgw_address => HSGWAddr,
       gre_key => GREKey,
       eps_bearer_ids => EPSBearerIDs};
 decode_parameter(s1_u_data_forwarding_info, V, _) ->
-    <<_:4, EPSBearerId:4, Len:8, Rest>> = V,
-    <<SGWAddr:Len/binary, Teid:4/binary>> = Rest,
+    <<_:4, EPSBearerId:4, Len:8, SGWAddr:Len/binary, Teid:4/binary>> = V,
     #{eps_bearer_id => EPSBearerId,
       sgw_address => SGWAddr,
       sgw_s1u_teid => Teid};
@@ -1673,14 +1639,47 @@ decode_parameter(hop_counter, V, _) ->
     <<HopCounter:8/binary>> = V,
     HopCounter;
 decode_parameter(ue_time_zone, V, _) ->
-    <<TimeZone:8,
+    <<TZa:4, S:1, TZb:3,
       _:6, DaylightSavingTime:2>> = V,
     DST = case DaylightSavingTime of
               0 -> no_adjustment;
               1 -> plus_one_hour;
               2 -> plus_two_hours
           end,
-    #{time_zone => TimeZone*15,
+    %% 3GPP TS 23.040
+    %%
+    %% The Time Zone indicates the difference, expressed in quarters
+    %% of an hour, between the local time and GMT. In the first of the
+    %% two semi‑octets, the first bit (bit 3 of the seventh octet of
+    %% the TP‑Service‑Centre‑Time‑Stamp field) represents the
+    %% algebraic sign of this difference (0: positive, 1: negative).
+    %%
+    %% ..Semi-octet as the representation given in 3GPP TS 24.008 [12]
+    %% under "called BCD number"..
+    %%
+    %% E.g.
+    %%
+    %% 3GPP-MS-TimeZone: 8001
+    %% Timezone: GMT + 2 hours 0 minutes
+    %% .... ..01 = Adjustment: +1 hour adjustment for Daylight Saving Time (1)
+    %% 01 is DST (+1 hour), as defined in 29.274
+    %% 0x80 = 1000 0000
+    %% as it is BCD, swap "semi-octets"
+    %% 0000 1000
+    %% 1st bit is the + - indicator (0 = +, 1 = -)
+    %% so after BCD decode,  it is dec 8 here, 8 / 4 (quarters) =  2 hours
+    %%
+    %% 3GPP-MS-TimeZone: 2300
+    %% Timezone: GMT + 8 hours 0 minutes
+    %% .... ..00 = Adjustment: No adjustment (0)
+    %% 0x23 = 0010 0011
+    %% 0011 0010 = BCD 32
+    %% 32 / 4 = 8 hours
+    Tz = case S of
+             1 -> -1 * (TZb * 10 + TZa);
+             0 ->       TZb * 10 + TZa
+         end,
+    #{time_zone => Tz*15,
       daylight_saving_time => DST};
 decode_parameter(trace_reference, V, _) ->
     %% TraceId defined in 3GPP TS 32.422
@@ -1766,9 +1765,8 @@ decode_parameter(target_identification, V, _) ->
         5 ->
             %% gNB-ID
             <<MCCMNCBin:3/binary, _:2, GnodeBLen:6, GnodeBBin:4/binary, TAC:3/binary>> = TargetID,
+            <<_:(32-GnodeBLen), GnodeB:GnodeBLen>> = GnodeBBin,
             MCCMNC = decode_mcc_mnc(MCCMNCBin),
-            Spares = 32-GnodeBLen,
-            <<_:Spares, GnodeB:GnodeBLen>> = GnodeBBin,
             MCCMNC#{gnodeb_id => GnodeB,
                     tracking_area_code => TAC};
         6 ->
@@ -1791,22 +1789,21 @@ decode_parameter(target_identification, V, _) ->
                     '5gs_tracking_area_code' => TAC};
         8 ->
             %% en-gNB-ID
-            <<MCCMNCBin:3/binary, TAC5I:1, TACI:1, ENGNBLen:6, ID:4/binary, R/binary>> = TargetID,
+            <<MCCMNCBin:3/binary, TAC5I:1, TACI:1, ENGNBLen:6, ID:4/binary,
+              T0:(TAC5I*3)/binary,
+              T1:(TACI*3)/binary>> = TargetID,
+            <<_:(32-ENGNBLen), ENGNBID:ENGNBLen>> = ID,
             MCCMNC = decode_mcc_mnc(MCCMNCBin),
-            Spares = 32-ENGNBLen,
-            <<_:Spares, ENGNBID:ENGNBLen>> = ID,
-            {TAC5, R2} = case TAC5I of
-                             0 ->
-                                 {undefined, R};
-                             1 ->
-                                 <<T0:3/binary, R1/binary>> = R,
-                                 {T0, R1}
-                         end,
+            TAC5 = case TAC5I of
+                       0 ->
+                           undefined;
+                       1 ->
+                           T0
+                   end,
             TAC = case TACI of
                       0 ->
                           undefined;
                       1 ->
-                          <<T1:3/binary>> = R2,
                           T1
                   end,
             MCCMNC#{engnb_id => ENGNBID,
@@ -1884,7 +1881,8 @@ decode_parameter(change_reporting_action, V, _) ->
             {start_reporting, [tai, macro_enodeb_id, extended_macro_enodeb_id]}
     end;
 decode_parameter(fq_csid, V, _) ->
-    <<NodeIDType:4, NumberOfCSIDs:4, R0/binary>> = V,
+    <<NodeIDType:4, NumberOfCSIDs:4,
+      R0/binary>> = V,
     {NodeId, R2} = case NodeIDType of
                        0 ->
                            <<NID:4/binary, R1/binary>> = R0,
@@ -1939,29 +1937,25 @@ decode_parameter(mbms_flow_identifier, V, _) ->
     MBMSFlowIdentifier;
 decode_parameter(mbms_ip_multicast_distribution, V, _) ->
     <<CTEID:32,
-      DAType:2, DALen:6, R0/binary>> = V,
-    {IPMulticastDistributionAddress, R2} = case {DAType, DALen} of
-                                               {0, 4} ->
-                                                   %% ipv4
-                                                   <<IPMD:4/binary, R1/binary>> = R0,
-                                                   {#{ipv4 => bin_to_ip_addr(IPMD)}, R1};
-                                               {1, 16} ->
-                                                   %% ipv6
-                                                   <<IPMD:16/binary, R1/binary>> = R0,
-                                                   {#{ipv6 => bin_to_ip_addr(IPMD)}, R1}
-                                           end,
-    <<SAType:2, SALen:6, R3/binary>> = R2,
-    {IPMulticastSourceAddress, R5} = case {SAType, SALen} of
+      DAType:2, DALen:6, IPMD:DALen/binary,
+      SAType:2, SALen:6, IPMS:SALen/binary,
+      MBMSHCIndicator:1/binary>> = V,
+    IPMulticastDistributionAddress = case {DAType, DALen} of
                                          {0, 4} ->
                                              %% ipv4
-                                             <<IPMS:4/binary, R4/binary>> = R3,
-                                             {#{ipv4 => bin_to_ip_addr(IPMS)}, R4};
+                                             #{ipv4 => bin_to_ip_addr(IPMD)};
                                          {1, 16} ->
                                              %% ipv6
-                                             <<IPMS:16/binary, R4/binary>> = R3,
-                                             {#{ipv6 => bin_to_ip_addr(IPMS)}, R4}
+                                             #{ipv6 => bin_to_ip_addr(IPMD)}
                                      end,
-    <<MBMSHCIndicator:1/binary>> = R5,
+    IPMulticastSourceAddress = case {SAType, SALen} of
+                                   {0, 4} ->
+                                       %% ipv4
+                                       #{ipv4 => bin_to_ip_addr(IPMS)};
+                                   {1, 16} ->
+                                       %% ipv6
+                                       #{ipv6 => bin_to_ip_addr(IPMS)}
+                               end,
     #{cteid => CTEID,
       ip_multicast_distribution_address => IPMulticastDistributionAddress,
       ip_multicast_source_address => IPMulticastSourceAddress,
@@ -2052,10 +2046,10 @@ decode_parameter(throttling, V, _) ->
                    %% 1 minute
                    timer:minutes(1)
            end,
-    F = case Factor of
-            _ when 0 < Factor; Factor =< 100 ->
+    F = case 0 < Factor andalso Factor =< 100 of
+            true ->
                 Factor;
-            _ ->
+            false ->
                 0
         end,
     #{value => DelayValue,
@@ -2098,12 +2092,9 @@ decode_parameter(temporary_mobile_group_identity, V, _) ->
     <<TMGI:5/binary>> = V,
     TMGI;
 decode_parameter(additional_mm_context_for_srvcc, V, _) ->
-    <<MSC2Len:8, R0/binary>> = V,
-    <<MSC2:MSC2Len/binary,
-      MSC3Len:8, R1/binary>> = R0,
-    <<MSC3:MSC3Len/binary,
-      SCLLen:8, R2/binary>> = R1,
-    <<SCL:SCLLen/binary>> = R2,
+    <<MSC2Len:8, MSC2:MSC2Len/binary,
+      MSC3Len:8, MSC3:MSC3Len/binary,
+      SCLLen:8, SCL:SCLLen/binary>> = V,
     #{mobile_station_classmark_2 => MSC2,
       mobile_station_classmark_3 => MSC3,
       supported_codec_list => SCL};
@@ -2119,38 +2110,37 @@ decode_parameter(mdt_configuration, V, _) ->
       ReportAmount:8,
       EventThresholdRSRP:8,
       EventThresholdRSRQ:8,
-      AreaScopeLen:8, R0/binary>> = V,
-    <<AreaScope:AreaScopeLen/binary,
-      _:4, PLI:1, PMI:1, MPI:1, CRRMI:1, R1/binary>> = R0,
-    {CollP, R3} = case CRRMI of
-                      0 ->
-                          {#{}, R1};
-                      1 ->
-                          <<CollectionPeriod:8, R2/binary>> = R1,
-                          {#{collection_period_for_rrm_measurements_lte => CollectionPeriod}, R2}
-                  end,
-    {MeasP, R5} = case MPI of
-                      0 ->
-                          {#{}, R3};
-                      1 ->
-                          <<MeasurementPeriod:8, R4/binary>> = R3,
-                          {#{measurement_period_lte => MeasurementPeriod}, R4}
-                  end,
-    {PosM, R7} = case PMI of
-                     0 ->
-                         {#{}, R5};
-                     1 ->
-                         <<PositioningMethod:8, R6/binary>> = R5,
-                         {#{positioning_method => PositioningMethod}, R6}
-                 end,
-    {MDTPLMNs, _} = case PLI of
-                        0 ->
-                            {#{}, R7};
-                        1 ->
-                            <<NumberOfMDTPLMNs:8, R8/binary>> = R7,
-                            <<MDTPLMNList:(NumberOfMDTPLMNs*3)/binary>> = R8,
-                            {#{mdt_plmn_list => [M || <<M:3/binary>> <= MDTPLMNList]}, <<>>}
-                    end,
+      AreaScopeLen:8, AreaScope:AreaScopeLen/binary,
+      _:4, PLI:1, PMI:1, MPI:1, CRRMI:1,
+      CollectionPeriod:(CRRMI*8),
+      MeasurementPeriod:(MPI*8),
+      PositioningMethod:(PMI*8),
+      NumberOfMDTPLMNs:(PLI*8), MDTPLMNList:(NumberOfMDTPLMNs*3)/binary,
+      _/binary>> = V,
+    CollP = case CRRMI of
+                0 ->
+                    #{};
+                1 ->
+                    #{collection_period_for_rrm_measurements_lte => CollectionPeriod}
+            end,
+    MeasP = case MPI of
+                0 ->
+                    #{};
+                1 ->
+                    #{measurement_period_lte => MeasurementPeriod}
+            end,
+    PosM = case PMI of
+               0 ->
+                   #{};
+               1 ->
+                   #{positioning_method => PositioningMethod}
+           end,
+    MDTPLMNs = case PLI of
+                   0 ->
+                       #{};
+                   1 ->
+                       #{mdt_plmn_list => [M || <<M:3/binary>> <= MDTPLMNList]}
+               end,
     Base = maps_merge_all([CollP, MeasP, PosM, MDTPLMNs]),
     Base#{job_type => JobType,
           list_of_measurements => ListOfMeasurements,
@@ -2200,59 +2190,57 @@ decode_parameter(action_indication, V, _) ->
 decode_parameter(twan_identifier, V, _) ->
     %% 3GPP TS 23.402
     <<_:3, LAII:1, OPNAI:1, PLMNI:1, CIVAI:1, BSSIDI:1,
-      SSIDLen:8, R0/binary>> = V,
-    <<SSID:SSIDLen/binary, R1/binary>> = R0,
-    {BSSID, R3} = case BSSIDI of
-                      0 ->
-                          {#{}, R1};
-                      1 ->
-                          <<BSS:6/binary, R2/binary>> = R1,
-                          {#{bss_id => hex_string(BSS)}, R2}
-                  end,
-    {CIVAddr, R6} = case CIVAI of
-                        0 ->
-                            {#{}, R3};
-                        1 ->
-                            <<CivicAddressLen:8, R4/binary>> = R3,
-                            <<CivA:CivicAddressLen/binary, R5/binary>> = R4,
-                            %% IETF RFC 4776 section 3.1 excluding
-                            %% first 3 octets
-                            {#{civic_address => hex_string(CivA)}, R5}
-                    end,
-    {TWANPLMN, R8} = case PLMNI of
-                         0 ->
-                             {#{}, R6};
-                         1 ->
-                             <<PLMN:3/binary, R7/binary>> = R6,
-                             {#{twan_plmn_id => decode_mcc_mnc(PLMN)}, R7}
-                     end,
-    {TWANOpName, R11} = case OPNAI of
-                           0 ->
-                               {#{}, R8};
-                           1 ->
-                               <<TWANOpNameLen:8, R9/binary>> = R8,
-                               <<OpName:TWANOpNameLen/binary, R10/binary>> = R9,
-                               {#{twan_operator_name => OpName}, R10}
-                       end,
-    {LAId, _} = case LAII of
-                    0 ->
-                        {#{}, R11};
-                    1 ->
-                        <<RelayIdType:8, RelayIdLen:8, R12/binary>> = R11,
-                        <<RI:RelayIdLen/binary, CircuitIdLen:8, R13/binary>> = R12,
-                        <<CId:CircuitIdLen/binary, R14/binary>> = R13,
-                        case {RelayIdType, RelayIdLen} of
-                            {0, 4} ->
-                                %% IPv4
-                                {#{ipv4 => bin_to_ip_addr(RI), circuit_id => CId}, R14};
-                            {0, 16} ->
-                                %% IPv6
-                                {#{ipv6 => bin_to_ip_addr(RI), circuit_id => CId}, R14};
-                            {1, _} ->
-                                %% FQDN
-                                {#{fqdn => RI, circuit_id => CId}, R14}
-                        end
-                end,
+      SSIDLen:8, SSID:SSIDLen/binary,
+      BSS:(BSSIDI*6)/binary,
+      CivicAddressLen:(CIVAI*8), CivA:CivicAddressLen/binary,
+      PLMN:(PLMNI*3)/binary,
+      TWANOpNameLen:(OPNAI*8), OpName:TWANOpNameLen/binary,
+      R11/binary>> = V,
+    BSSID = case BSSIDI of
+                0 ->
+                    #{};
+                1 ->
+                    #{bss_id => hex_string(BSS)}
+            end,
+    CIVAddr = case CIVAI of
+                  0 ->
+                      #{};
+                  1 ->
+                      %% IETF RFC 4776 section 3.1 excluding
+                      %% first 3 octets
+                      #{civic_address => hex_string(CivA)}
+              end,
+    TWANPLMN = case PLMNI of
+                   0 ->
+                       #{};
+                   1 ->
+                       #{twan_plmn_id => decode_mcc_mnc(PLMN)}
+               end,
+    TWANOpName = case OPNAI of
+                     0 ->
+                         #{};
+                     1 ->
+                         #{twan_operator_name => OpName}
+                 end,
+    LAId = case LAII of
+               0 ->
+                   #{};
+               1 ->
+                   <<RelayIdType:8,
+                     RelayIdLen:8, RI:RelayIdLen/binary,
+                     CircuitIdLen:8, CId:CircuitIdLen/binary, _R14/binary>> = R11,
+                   case {RelayIdType, RelayIdLen} of
+                       {0, 4} ->
+                           %% IPv4
+                           #{ipv4 => bin_to_ip_addr(RI), circuit_id => CId};
+                       {0, 16} ->
+                           %% IPv6
+                           #{ipv6 => bin_to_ip_addr(RI), circuit_id => CId};
+                       {1, _} ->
+                           %% FQDN
+                           #{fqdn => RI, circuit_id => CId}
+                   end
+           end,
     Base = maps_merge_all([BSSID, CIVAddr, TWANPLMN, TWANOpName, LAId]),
     Base#{ssid => hex_string(SSID)};
 decode_parameter(uli_timestamp, V, _) ->
@@ -2314,13 +2302,11 @@ decode_parameter(trusted_wlan_mode_indication, V, _) ->
 decode_parameter(node_number, V, _) ->
     %% ISDN-number of SGSN (3GPP TS 23.003), MME (3GPP TS 29.002), or
     %% MSC (3GPP TS 29.002)
-    <<NodeNumLen:8, R0/binary>> = V,
-    <<NodeNum:NodeNumLen/binary>> = R0,
+    <<NodeNumLen:8, NodeNum:NodeNumLen/binary>> = V,
     NodeNum;
 decode_parameter(node_identifier, V, _) ->
-    <<NodeNameLen:8, R0/binary>> = V,
-    <<NodeName:NodeNameLen/binary, NodeRealmLen:8, R1/binary>> = R0,
-    <<NodeRealm:NodeRealmLen/binary>> = R1,
+    <<NodeNameLen:8, NodeName:NodeNameLen/binary,
+      NodeRealmLen:8, NodeRealm:NodeRealmLen/binary>> = V,
     #{node_name => NodeName,
       node_realm => NodeRealm};
 decode_parameter(presence_reporting_area_action, V, _) ->
@@ -2347,17 +2333,15 @@ decode_parameter(presence_reporting_area_action, V, _) ->
       _:3, ECGINum:5,
       _:3, SAINum:5,
       _:3, CGINum:5,
-      R3/binary>> = R2,
-    <<TAIs:(5*TAINum)/binary,
+      TAIs:(5*TAINum)/binary,
       RAIs:(7*RAINum)/binary,
       MacroENBs:(6*MacroENBNum)/binary,
       HomeENBs:(6*HomeENBNum)/binary,
       ECGIs:(7*ECGINum)/binary,
       SAIs:(7*SAINum)/binary,
       CGIs:(7*CGINum)/binary,
-      R4/binary>> = R3,
-    <<_:3, ExtendedMacroENBNum:5, R5/binary>> = R4,
-    <<ExtendedMacroENBs:(6*ExtendedMacroENBNum)/binary>> = R5,
+      _:3, ExtendedMacroENBNum:5,
+      ExtendedMacroENBs:(6*ExtendedMacroENBNum)/binary>> = R2,
     Action#{flag => case INAPRA of 0 -> active; 1 -> inactive end,
             tais => [decode_tai(T) || <<T:5>> <= TAIs],
             rais => [decode_rai(R) || <<R:7>> <= RAIs],
@@ -2371,18 +2355,16 @@ decode_parameter(presence_reporting_area_information, V, _) ->
     <<PRAI:3/binary,
       _:4, INAPRA:1, APRA:1, OPRA:1, IPRA:1,
       R0/binary>> = V,
+    Base = #{presence_reporting_area_identifier => PRAI},
     PRA = case {INAPRA, OPRA, IPRA} of
               {0, 0, 0} ->
-                  #{presence_reporting_area_identifier => PRAI};
+                  Base;
               {0, 0, 1} ->
-                  #{presence_reporting_area_identifier => PRAI,
-                    flag => inside};
+                  Base#{flag => inside};
               {0, 1, 0} ->
-                  #{presence_reporting_area_identifier => PRAI,
-                    flag => outside};
+                  Base#{flag => outside};
               {1, 0, 0} ->
-                  #{presence_reporting_area_identifier => PRAI,
-                    flag => inactive}
+                  Base#{flag => inactive}
           end,
     APRAs = decode_additional_pras(APRA, R0),
     PRA#{additional_presence_reporting_areas => APRAs};
@@ -2399,22 +2381,22 @@ decode_parameter(load_control_information, V, Opts) ->
     LoadControlInfo;
 decode_parameter(metric, V, _) ->
     <<Metric:8>> = V,
-    case Metric of
-        _ when Metric >= 0; Metric =< 100 ->
+    case Metric >= 0 andalso Metric =< 100 of
+        true  ->
             Metric;
-        _ ->
+        false ->
             0
     end;
 decode_parameter(sequence_number, V, _) ->
     <<SeqNum:32>> = V,
     SeqNum;
 decode_parameter(apn_and_relative_capacity, V, _) ->
-    <<RC:8, APNLen:8, R0/binary>> = V,
-    <<APN:APNLen/binary>> = R0,
-    RelativeCapacity = case RC of
-                           _ when RC >= 1; RC =< 100 ->
+    <<RC:8,
+      APNLen:8, APN:APNLen/binary>> = V,
+    RelativeCapacity = case RC >= 1 andalso RC =< 100 of
+                           true ->
                                RC;
-                           _ ->
+                           false ->
                                0
                        end,
     #{relative_capacity => RelativeCapacity,
@@ -2425,13 +2407,13 @@ decode_parameter(wlan_offloadability_indication, V, _) ->
       utran_offloadability => case UI of 0 -> false; 1 -> true end};
 decode_parameter(paging_and_service_information, V, _) ->
     <<0:4, EBI:4, _:7, PPI:1, R0/binary>> = V,
+    Base = #{eps_bearer_id => EBI},
     case PPI of
         0 ->
-            #{eps_bearer_id => EBI};
+            Base;
         1 ->
             <<_:2, PPIValue:6>> = R0,
-            #{eps_bearer_id => EBI,
-              paging_policy_indication => PPIValue}
+            Base#{paging_policy_indication => PPIValue}
     end;
 decode_parameter(integer_number, V, _) ->
     V;
@@ -2440,9 +2422,8 @@ decode_parameter(millisecond_time_stamp, V, _) ->
     Milliseconds;
 decode_parameter(monitoring_event_information, V, _) ->
     <<SCEFRefID:4/binary,
-      SCEFIDLen:8, R0/binary>> = V,
-    <<SCEFID:SCEFIDLen/binary,
-      RemainingReports:2/binary>> = R0,
+      SCEFIDLen:8, SCEFID:SCEFIDLen/binary,
+      RemainingReports:2/binary>> = V,
     #{scef_reference_id => SCEFRefID,
       scef_id => SCEFID,
       remaining_number_of_reports => RemainingReports};
@@ -2455,24 +2436,22 @@ decode_parameter(remote_ue_context, V, Opts) ->
     {RemoteUEContext, _} = decode_tliv_list(V, Opts),
     RemoteUEContext;
 decode_parameter(remote_user_id, V, _) ->
-    <<0:5, IMEIF:1, MSISDNF:1, IMSILen:8, R0/binary>> = V,
-    <<IMSI:IMSILen/binary, R1/binary>> = R0,
-    {MSISDN, R4} = case MSISDNF of
-                       0 ->
-                           {#{}, R1};
-                       1 ->
-                           <<MSISDNLen:8, R2/binary>> = R1,
-                           <<M:MSISDNLen/binary, R3/binary>> = R2,
-                           {#{msisdn => M}, R3}
-                   end,
-    {IMEI, _} = case IMEIF of
-                    0 ->
-                        {#{}, R4};
-                    1 ->
-                        <<IMEILen:8, R5/binary>> = R4,
-                        <<I:IMEILen/binary, R6/binary>> = R5,
-                        {#{imei => I}, R6}
-                end,
+    <<0:6, IMEIF:1, MSISDNF:1,
+      IMSILen:8, IMSI:IMSILen/binary,
+      MSISDNLen:(MSISDNF*8), M:MSISDNLen/binary,
+      IMEILen:(IMEIF*8), I:IMEILen/binary, _/binary>> = V,
+    MSISDN = case MSISDNF of
+                 0 ->
+                     #{};
+                 1 ->
+                     #{msisdn => M}
+             end,
+    IMEI = case IMEIF of
+               0 ->
+                   #{};
+               1 ->
+                   #{imei => I}
+           end,
     maps_merge_all([MSISDN, IMEI, #{imsi => IMSI}]);
 decode_parameter(remote_ue_ip_information, V, _) ->
     V;
@@ -2526,15 +2505,14 @@ decode_parameter(secondary_rat_usage_data_report, V, _) ->
              eps_bearer_id => EBI},
     case {SRUDN, IRPGW} of
         {1, 1} ->
-            <<0:(16*8)>> = TimeUsage,
-            <<LengthOfSRDURT:8, R1/binary>> = R0,
-            <<SRDURT:LengthOfSRDURT/binary>> = R1,
+            <<0:(24*8)>> = TimeUsage,
+            <<LengthOfSRDURT:8, SRDURT:LengthOfSRDURT/binary>> = R0,
             Base#{secondary_rat_data_usage_report_transfer => SRDURT};
         {0, _} ->
             <<StartTimestamp:32,
               EndTimestamp:32,
-              UsageDataDL:32,
-              UsageDataUL:32>> = TimeUsage,
+              UsageDataDL:64,
+              UsageDataUL:64>> = TimeUsage,
             <<>> = R0,
             Base#{start_timestamp => datetime_from_epoch(StartTimestamp),
                   end_timestamp => datetime_from_epoch(EndTimestamp),
@@ -2550,18 +2528,17 @@ decode_parameter(up_function_selection_indication_flags, V, _) ->
             dual_connectivity
     end;
 decode_parameter(maximum_packet_loss_rate, V, _) ->
-    <<_:6, DL:1, UL:1, R0/binary>> = V,
+    <<_:6, DL:1, UL:1,
+      ULMaxPacketLossRate:(UL*16),
+      DLMaxPacketLossRate:(DL*16)>> = V,
     case {DL, UL} of
         {0, 0} ->
             #{};
         {0, 1} ->
-            <<ULMaxPacketLossRate:16>> = R0,
             #{maximum_packet_loss_rate_ul => ULMaxPacketLossRate};
         {1, 0} ->
-            <<DLMaxPacketLossRate:16>> = R0,
             #{maximum_packet_loss_rate_dl => DLMaxPacketLossRate};
         {1, 1} ->
-            <<ULMaxPacketLossRate:16, DLMaxPacketLossRate:16>> = R0,
             #{maximum_packet_loss_rate_ul => ULMaxPacketLossRate,
               maximum_packet_loss_rate_dl => DLMaxPacketLossRate}
     end;
@@ -2580,26 +2557,18 @@ decode_parameter(apn_rate_control_status, V, _) ->
 decode_parameter(extended_trace_information, V, _) ->
     <<MCCMNCBin:3/binary,
       TraceId:3/binary,
-      LengthOfTriggeringEvents:8,
-      R0/binary>> = V,
-    <<TriggeringEvents:LengthOfTriggeringEvents/binary,
-      LengthOfListNEType:8,
-      R1/binary>> = R0,
-    <<ListNEType:LengthOfListNEType/binary,
+      LengthOfTriggeringEvents:8, TriggeringEvents:LengthOfTriggeringEvents/binary,
+      LengthOfListNEType:8, ListNEType:LengthOfListNEType/binary,
       SessionTraceDepth:8,
-      LengthOfListInterfaces:8,
-      R2/binary>> = R1,
-    <<ListInterfaces:LengthOfListInterfaces/binary,
-      LengthOfIPAddressOfTraceCollectionEntity:8,
-      R3/binary>> = R2,
-    <<IPAddressOfTraceCollectionEntity:LengthOfIPAddressOfTraceCollectionEntity/binary>> = R3,
+      LengthOfListInterfaces:8, ListInterfaces:LengthOfListInterfaces/binary,
+      LengthOfIPsOfTCE:8, IPsOfTraceCollectionEntity:LengthOfIPsOfTCE/binary>> = V,
     MCCMNC = decode_mcc_mnc(MCCMNCBin),
     MCCMNC#{trace_id => TraceId,
             triggering_events => TriggeringEvents,
             list_ne_type => ListNEType,
             session_trace_depth => SessionTraceDepth,
             list_interfaces => ListInterfaces,
-            ip_address_of_trace_collection_entity => IPAddressOfTraceCollectionEntity};
+            ip_address_of_trace_collection_entity => IPsOfTraceCollectionEntity};
 decode_parameter(monitoring_event_extension_information, V, _) ->
 %% 5 Spare LRTP
 %% 6 to 9 SCEF Reference ID
@@ -2608,15 +2577,15 @@ decode_parameter(monitoring_event_extension_information, V, _) ->
 %% (h) to (h+3) Remaining Minimum Periodic Location Reporting Time
     <<_:7, LRTP:1,
       SCEFRefID:4/binary,
-      SCEFIDLen:8, R0/binary>> = V,
-    <<SCEFID:SCEFIDLen/binary, R1/binary>> = R0,
+      SCEFIDLen:8, SCEFID:SCEFIDLen/binary,
+      RemainingTime:(LRTP*4)/binary,
+      _R1/binary>> = V,
     Base = #{scef_reference_id => SCEFRefID,
              scef_id => SCEFID},
     case LRTP of
         0 ->
             Base;
         1 ->
-            <<RemainingTime:4/binary>> = R1,
             Base#{remaining_minimum_periodic_location_reporting_time => RemainingTime}
     end;
 decode_parameter(additional_rrm_policy_index, V, _) ->
@@ -2718,8 +2687,7 @@ decode_apn(Bin) ->
 
 decode_apn(<<>>, Acc) ->
     lists:flatten(lists:join(".", lists:reverse(Acc)));
-decode_apn(<<A1L, A1R/binary>>, Acc) ->
-    <<A1:A1L/binary, A2/binary>> = A1R,
+decode_apn(<<A1L, A1:A1L/binary, A2/binary>>, Acc) ->
     decode_apn(A2, [binary_to_list(A1) | Acc]).
 
 decode_mcc_mnc(V) ->
@@ -2769,10 +2737,10 @@ quadruplets(NumQuadruplets, R0) ->
 quadruplets(0, R0, Acc) ->
     {lists:reverse(Acc), R0};
 quadruplets(NumQuadruplets, R0, Acc) ->
-    <<RAND:16/binary, XRESLen:8, R1/binary>> = R0,
-    <<XRES:XRESLen/binary, AUTNLen:8,
-      R2/binary>> = R1,
-    <<AUTN:AUTNLen/binary, Kasme:32/binary, R3/binary>> = R2,
+    <<RAND:16/binary,
+      XRESLen:8, XRES:XRESLen/binary,
+      AUTNLen:8, AUTN:AUTNLen/binary,
+      Kasme:32/binary, R3/binary>> = R0,
     Q = #{rand => RAND, xres => XRES, autn => AUTN, kasme => Kasme},
     quadruplets(NumQuadruplets - 1, R3, [Q | Acc]).
 
@@ -2782,10 +2750,10 @@ quintuplets(NumQuintuplets, R0) ->
 quintuplets(0, R0, Acc) ->
     {lists:reverse(Acc), R0};
 quintuplets(NumQuintuplets, R0, Acc) ->
-    <<RAND:16/binary, XRESLen:8, R1/binary>> = R0,
-    <<XRES:XRESLen/binary, CK:16/binary, IK:16/binary, AUTNLen:8,
-      R2/binary>> = R1,
-    <<AUTN:AUTNLen/binary, R3/binary>> = R2,
+    <<RAND:16/binary,
+      XRESLen:8, XRES:XRESLen/binary,
+      CK:16/binary, IK:16/binary,
+      AUTNLen:8, AUTN:AUTNLen/binary, R3/binary>> = R0,
     Q = #{rand => RAND, xres => XRES, ck => CK, ik => IK, autn => AUTN},
     quintuplets(NumQuintuplets - 1, R3, [Q | Acc]).
 
@@ -2885,9 +2853,9 @@ apn_rate_control_statuses(APNRateControlStatusesBin) ->
 apn_rate_control_statuses(<<>>, Acc) ->
     lists:reverse(Acc);
 apn_rate_control_statuses(APNRateControlStatusesBin, Acc) ->
-    <<_FullLen:16, APNLen:16, R0/binary>> = APNRateControlStatusesBin,
-    <<APN:APNLen/binary,
-     APNRateControlStatus:20/binary, R1/binary>> = R0,
+    <<_FullLen:16, APNLen:16,
+      APN:APNLen/binary,
+      APNRateControlStatus:20/binary, R1/binary>> = APNRateControlStatusesBin,
     APNRCS = decode_parameter(apn_rate_control_status, APNRateControlStatus, []),
     S = APNRCS#{apn => decode_apn(APN)},
     apn_rate_control_statuses(R1, [S | Acc]).
@@ -2957,15 +2925,14 @@ decode_additional_pras(1, V) ->
     <<PRAI:3/binary,
       _:5, APRA:1, OPRA:1, IPRA:1,
       R0/binary>> = V,
+    Base = #{presence_reporting_area_identifier => PRAI},
     PRA = case {OPRA, IPRA} of
               {0, 0} ->
-                  #{presence_reporting_area_identifier => PRAI};
+                  Base;
               {0, 1} ->
-                  #{presence_reporting_area_identifier => PRAI,
-                    flag => inside};
+                  Base#{flag => inside};
               {1, 0} ->
-                  #{presence_reporting_area_identifier => PRAI,
-                    flag => outside}
+                  Base#{flag => outside}
           end,
     [PRA | decode_additional_pras(APRA, R0)].
 
@@ -2996,8 +2963,7 @@ decode_pco(V) ->
             _ ->
                 8
         end,
-    <<ContentLen:LenLen, R1/binary>> = R0,
-    <<Content:ContentLen/binary, R2/binary>> = R1,
+    <<ContentLen:LenLen, Content:ContentLen/binary, R2/binary>> = R0,
     PCO = case ContentLen of
               0 ->
                   #{id => ID};
@@ -3032,8 +2998,8 @@ decode_tft_packet_filters(Num, V) ->
 decode_tft_packet_filters(0, R, Acc) ->
     {lists:reverse(Acc), R};
 decode_tft_packet_filters(N, R0, Acc) ->
-    <<_:2, Dir:2, PFID:4, EvalPrec:8, PFLen:8, R1/binary>> = R0,
-    <<PFBin:PFLen/binary, R2/binary>> = R1,
+    <<_:2, Dir:2, PFID:4, EvalPrec:8, PFLen:8,
+      PFBin:PFLen/binary, R2/binary>> = R0,
     PF = #{identifier => PFID,
            direction => case Dir of
                             2#00 -> pre_rel7;
@@ -3161,8 +3127,7 @@ decode_tft_parameters_list(R) ->
 decode_tft_parameters_list(<<>>, Acc) ->
     lists:reverse(Acc);
 decode_tft_parameters_list(R0, Acc) ->
-    <<PID:8, PLen:8, R1/binary>> = R0,
-    <<PCon:PLen, R2/binary>> = R1,
+    <<PID:8, PLen:8, PCon:PLen, R2/binary>> = R0,
     P = #{identifier => PID, content => PCon},
     decode_tft_parameters_list(R2, [P|Acc]).
 
@@ -5138,9 +5103,26 @@ decode_msg(mbms_session_stop_response, Bin0) ->
 tcbd_decode(<<>>) ->
     [];
 tcbd_decode(<<2#1111:4, A:4>>) ->
-    [A+$0];
+    [tbcd_decode_num(A)];
 tcbd_decode(<<B:4, A:4, Rest/binary>>) ->
-    [A+$0, B+$0 | tcbd_decode(Rest)].
+    [tbcd_decode_num(A), tbcd_decode_num(B) | tcbd_decode(Rest)].
+
+tbcd_decode_num(2#0000) -> $0;
+tbcd_decode_num(2#0001) -> $1;
+tbcd_decode_num(2#0010) -> $2;
+tbcd_decode_num(2#0011) -> $3;
+tbcd_decode_num(2#0100) -> $4;
+tbcd_decode_num(2#0101) -> $5;
+tbcd_decode_num(2#0110) -> $6;
+tbcd_decode_num(2#0111) -> $7;
+tbcd_decode_num(2#1000) -> $8;
+tbcd_decode_num(2#1001) -> $9;
+tbcd_decode_num(2#1010) -> $A;
+tbcd_decode_num(2#1011) -> $B;
+tbcd_decode_num(2#1100) -> $C;
+tbcd_decode_num(2#1101) -> $D;
+tbcd_decode_num(2#1110) -> $E;
+tbcd_decode_num(2#1111) -> $F.
 
 encode_msg(_, _Msg) ->
     <<>>.
