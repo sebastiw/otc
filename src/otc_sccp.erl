@@ -523,6 +523,8 @@ decode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
 decode_data(Type, D, _, _) ->
     decode_parameter(Type, D).
 
+encode_data(_, D, _, _) when is_binary(D) ->
+    D;
 encode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
     encode_mgmt_data(D);
 encode_data(Type, D, _, _) ->
@@ -1409,7 +1411,7 @@ decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                      1 -> subsystem_number;
                      0 -> global_title
                  end,
-    #{national_use_indicator => NR,
+    #{national_use_indicator => 1 =:= NR,
       routing_indicator => RoutingInd,
       global_title => GT,
       subsystem_number => SSN,
@@ -1441,9 +1443,11 @@ encode_gt_part(#{encoding_scheme := national,
                  address := GT}) ->
     GT.
 
-encode_address(#{national_use_indicator := NR,
-                 routing_indicator := RoutingInd
-                } = Address) ->
+encode_address(#{routing_indicator := RoutingInd} = Address) ->
+    NR = case maps:get(national_use_indicator, Address, false) of
+             true -> 1;
+             _ -> 0
+         end,
     {PCI, PCBin} = case maps:get(point_code, Address, undefined) of
                        undefined ->
                            {0, <<>>};
