@@ -42,7 +42,7 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
     %% |     unused    |                      FSN                      |
     %% +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     <<_:8, BSN:24/big, _:8, FSN:24/big, Rest/binary>> = Bin,
-    Base = #{protocol => m2pa,
+    Base = #{message_class => m2pa,
              message_type => MT,
              backward_sequence_number => BSN,
              forward_sequence_number => FSN
@@ -54,13 +54,13 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
             maps:merge(Msg, Base)
     end.
 
-encode({#{protocol := m2pa, message_type := MessageType} = Msg, Payload}) ->
+encode({#{message_type := MessageType} = Msg, Payload}) ->
     MT = compose_message_type(MessageType),
-    Bin = encode_msg(MessageType, Msg, Payload),
+    Bin = encode_msg(MessageType, Msg, <<0:8, Payload/binary>>),
     BSN = maps:get(backward_sequence_number, Msg, 0),
     FSN = maps:get(forward_sequence_number, Msg, 0),
-    Len = byte_size(Bin) + 8 + 8 + 1,
-    <<1:8, 0:8, ?M2PA_MSG_CLASS_MSGS:8, MT:8, Len:32/big, 0:8, BSN:24/big, 0:8, FSN:24/big, 0:8, Bin/binary>>;
+    Len = byte_size(Bin) + 8 + 8,
+    <<1:8, 0:8, ?M2PA_MSG_CLASS_MSGS:8, MT:8, Len:32/big, 0:8, BSN:24/big, 0:8, FSN:24/big, Bin/binary>>;
 encode(Msg) ->
     encode({Msg, <<>>}).
 
