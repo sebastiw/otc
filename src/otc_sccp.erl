@@ -523,6 +523,8 @@ decode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
 decode_data(Type, D, _, _) ->
     decode_parameter(Type, D).
 
+encode_data(_, D, _, _) when is_binary(D) ->
+    D;
 encode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
     encode_mgmt_data(D);
 encode_data(Type, D, _, _) ->
@@ -1359,7 +1361,7 @@ decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
     {PC, Bin1} = case PCI of
                      0 -> {undefined, Bin0};
                      1 -> <<LSB:8, 0:2, MSB:6, Rest0/binary>> = Bin0,
-                          {<<MSB:6, LSB:8>>, Rest0}
+                          {<<0:2, MSB:6, LSB:8>>, Rest0}
                  end,
     {SSN, Bin2} = case SSNI of
                       0 -> {undefined, Bin1};
@@ -1367,7 +1369,7 @@ decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                            {parse_ssn(SSN0), Rest1}
                   end,
     GT = case GTI of
-             0 ->
+             2#0000 ->
                  undefined;
              2#0001 ->
                  %% global title includes nature of address
@@ -1409,9 +1411,8 @@ decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                      1 -> subsystem_number;
                      0 -> global_title
                  end,
-    #{national_use_indicator => NR,
+    #{national_use_indicator => 1 =:= NR,
       routing_indicator => RoutingInd,
-      global_title_indicator => GTI,
       global_title => GT,
       subsystem_number => SSN,
       point_code => PC
@@ -1442,13 +1443,17 @@ encode_gt_part(#{encoding_scheme := national,
                  address := GT}) ->
     GT.
 
-encode_address(#{national_use_indicator := NR,
-                 routing_indicator := RoutingInd,
-                 global_title_indicator := GTI
-                } = Address) ->
+encode_address(#{routing_indicator := RoutingInd} = Address) ->
+    NR = case maps:get(national_use_indicator, Address, false) of
+             true -> 1;
+             _ -> 0
+         end,
     {PCI, PCBin} = case maps:get(point_code, Address, undefined) of
-                       undefined -> {0, <<>>};
-                       PC -> {1, PC}
+                       undefined ->
+                           {0, <<>>};
+                       PC ->
+                           <<0:2, MSB:6, LSB:8>> = PC,
+                           {1, <<LSB:8, 0:2, MSB:6>>}
                    end,
     {SSNI, SSNBin} = case maps:get(subsystem_number, Address, undefined) of
                          undefined -> {0, <<>>};
@@ -1459,39 +1464,35 @@ encode_address(#{national_use_indicator := NR,
              global_title -> 0
          end,
     GlobalTitle = maps:get(global_title, Address, #{}),
-    GT = case GTI of
-             2#0100 ->
-                 #{translation_type := TT,
-                   numbering_plan := NP,
-                   encoding_scheme := EncodingScheme,
-                   nature_of_address_indicator := NI
-                  } = GlobalTitle,
-                 GT1 = encode_gt_part(GlobalTitle),
-                 ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
-                 <<TT:8/big, NP:4, ES:4, 0:1, NI:7, GT1/binary>>;
-             2#0011 ->
-                 #{translation_type := TT,
-                   numbering_plan := NP,
-                   encoding_scheme := EncodingScheme
-                  } = GlobalTitle,
-                 GT1 = encode_gt_part(GlobalTitle),
-                 ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
-                 <<TT:8/big, NP:4, ES:4, GT1/binary>>;
-             2#0010 ->
-                 #{translation_type := TT
-                  } = GlobalTitle,
-                 GT1 = encode_gt_part(GlobalTitle),
-                 <<TT:8/big, GT1/binary>>;
-             2#0001 ->
-                 #{odd_even_indicator := OE,
-                   nature_of_address_indicator := NI
-                  } = GlobalTitle,
-                 GT1 = encode_gt_part(GlobalTitle),
-                 <<OE:1, NI:7, GT1/binary>>;
-             2#0000 ->
-                 <<>>
-         end,
-    <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, SSNBin/binary, PCBin/binary, GT/binary>>.
+    {GTI, GTBin} = case GlobalTitle of
+                       #{translation_type := TT,
+                         numbering_plan := NP,
+                         encoding_scheme := EncodingScheme,
+                         nature_of_address_indicator := NI
+                        } ->
+                           GT1 = encode_gt_part(GlobalTitle),
+                           ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
+                           {2#0100, <<TT:8/big, NP:4, ES:4, 0:1, NI:7, GT1/binary>>};
+                       #{translation_type := TT,
+                         numbering_plan := NP,
+                         encoding_scheme := EncodingScheme
+                        } ->
+                           GT1 = encode_gt_part(GlobalTitle),
+                           ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
+                           {2#0011, <<TT:8/big, NP:4, ES:4, GT1/binary>>};
+                       #{translation_type := TT
+                        } ->
+                           GT1 = encode_gt_part(GlobalTitle),
+                           {2#0010, <<TT:8/big, GT1/binary>>};
+                       #{odd_even_indicator := OE,
+                         nature_of_address_indicator := NI
+                        } ->
+                           GT1 = encode_gt_part(GlobalTitle),
+                           {2#0001, <<OE:1, NI:7, GT1/binary>>};
+                       _ ->
+                           {2#0000, <<>>}
+                   end,
+    <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, PCBin/binary, SSNBin/binary, GTBin/binary>>.
 
 compose_encoding_scheme(unknown, _) ->
     2#0000;
