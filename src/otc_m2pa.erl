@@ -56,7 +56,7 @@ decode(<<1:8, _:8, ?M2PA_MSG_CLASS_MSGS:8, MessageType:8, Len:32/big, Remain/bin
 
 encode({#{message_type := MessageType} = Msg, Payload}) ->
     MT = compose_message_type(MessageType),
-    Bin = encode_msg(MessageType, Msg, <<0:8, Payload/binary>>),
+    Bin = encode_msg(MessageType, Msg, Payload),
     BSN = maps:get(backward_sequence_number, Msg, 0),
     FSN = maps:get(forward_sequence_number, Msg, 0),
     Len = byte_size(Bin) + 8 + 8,
@@ -77,8 +77,9 @@ decode_msg(user_data, Data) ->
         <<>> ->
             #{};
         <<PRI:2, _:6, Payload/binary>> ->
-            %% PRI - Priority used only in national MTP defined in [JT-Q703] and
-            %% [JT-Q704].  These bits are spare for other MTP versions.
+            %% PRI - Priority used only in national MTP defined in
+            %% [JT-Q703] and [JT-Q704].  These bits are spare for
+            %% other MTP versions.
             {#{priority => PRI}, Payload}
     end;
 decode_msg(link_status, <<State:32/big>>) ->
@@ -88,12 +89,14 @@ decode_msg(link_status, <<State:32/big, Filler/binary>>) ->
     #{link_status => proving_normal,
       link_status_filler => Filler}.
 
+encode_msg(user_data, _, <<>>) ->
+    <<>>;
 encode_msg(user_data, Msg, Payload) ->
     case Msg of
         #{priority := PRI} ->
             <<PRI:2, 0:6, Payload/binary>>;
         _ ->
-            Payload
+            <<0:8, Payload/binary>>
     end;
 encode_msg(link_status, Msg, _) ->
     LinkStatus = maps:get(link_status, Msg),
