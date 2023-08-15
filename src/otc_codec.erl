@@ -2,6 +2,7 @@
 
 -callback spec() -> string().
 
--callback codec(binary() | map() | tuple()) -> map() | binary().
+-type part() :: {map(), binary()}.
+-callback codec(binary() | map() | part()) -> map() | binary().
 
 -callback next(map()) -> '$stop' | {ok, atom()}.
