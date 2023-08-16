@@ -5,7 +5,8 @@
          codec/1,
          next/1,
          decode/1,
-         encode/1
+         encode/1,
+         encode_data/4
         ]).
 
 -include("include/sccp.hrl").
