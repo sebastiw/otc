@@ -8,6 +8,7 @@
          mtp3/1,
          m3ua/1,
          sccp/1,
+         sccp_mgmt/1,
          tcap/1,
          map/1,
          nas_eps/1,
@@ -39,6 +40,7 @@ next({m2pa, V}) -> otc_m2pa:next(V);
 next({m3ua, V}) -> otc_m3ua:next(V);
 next({mtp3, V}) -> otc_mtp3:next(V);
 next({sccp, V}) -> otc_sccp:next(V);
+next({sccp_mgmt, V}) -> otc_sccp_mgmt:next(V);
 next({tcap, V}) -> otc_tcap:next(V);
 next({map, V}) -> otc_map:next(V);
 next({nas_eps, V}) -> otc_nas_eps:next(V);
@@ -54,6 +56,7 @@ m2pa(D) -> otc_m2pa:codec(D).
 mtp3(D) -> otc_mtp3:codec(D).
 m3ua(D) -> otc_m3ua:codec(D).
 sccp(D) -> otc_sccp:codec(D).
+sccp_mgmt(D) -> otc_sccp_mgmt:codec(D).
 tcap(D) -> otc_tcap:codec(D).
 map(D) -> otc_map:codec(D).
 nas_eps(D) -> otc_nas_eps:codec(D).
@@ -139,10 +142,9 @@ encode(#{protocol := Proto} = Pdu) ->
     ?MODULE:Proto(Pdu);
 encode(Pdus) when is_list(Pdus) ->
     encode({Pdus, <<>>});
-encode({Pdus, Payload}) when is_list(Pdus) or is_tuple(Pdus), is_binary(Payload) ->
+encode({Pdus, Payload}) when is_list(Pdus), is_binary(Payload) ->
     lists:foldr(fun (P, Acc) ->
-                        B = encode(P),
-                        <<B/binary, Acc/binary>>
+                        encode({P, Acc})
                 end, Payload, Pdus);
 encode({#{protocol := Proto} = Pdu, Payload}) ->
     ?MODULE:Proto({Pdu, Payload});

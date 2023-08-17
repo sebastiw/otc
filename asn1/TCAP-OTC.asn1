@@ -67,16 +67,21 @@ Continue ::= SEQUENCE {
    }
 
 ComponentPortion ::=
-   [APPLICATION 12] SEQUENCE SIZE (1..MAX) OF
-   Component
+    [APPLICATION 12] SEQUENCE SIZE (1..MAX) OF Component
 
-Component ::= CHOICE {
-   invoke [1] Invoke,
-   returnResultLast [2] ReturnResult,
-   returnError [3] ReturnError,
-   reject [4] Reject,
+Component ::= CHOICE
+{
+   basicROS ROS,
    returnResultNotLast [7] ReturnResult
-   }
+}
+
+ROS ::= CHOICE
+{
+   invoke       [1] Invoke,
+   returnResult [2] ReturnResult,
+   returnError  [3] ReturnError,
+   reject       [4] Reject
+}
 
 Invoke ::= SEQUENCE
 {

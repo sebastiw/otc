@@ -20,7 +20,9 @@ spec() ->
 codec(Bin) when is_binary(Bin) ->
     decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
+    encode({Map, <<>>});
+codec({Map, PDU}) when is_map(Map), is_binary(PDU) ->
+    encode({Map, PDU}).
 
 -spec next(map()) -> '$stop' | {ok, nas_eps | nas_eps_emm | nas_eps_esm}.
 next(#{protocol_discriminator := eps_mobility_management_messages}) -> {ok, nas_eps_emm};
@@ -44,16 +46,16 @@ decode(<<EBI_SHT:4, PD:4, Rest/binary>>) ->
             {Msg, Rest}
     end.
 
-encode(#{protocol_discriminator := ProtocolDiscriminator} = Msg) ->
+encode({#{protocol_discriminator := ProtocolDiscriminator} = Msg, PDU}) ->
     PD = otc_l3_codec:compose_protocol_discriminator(ProtocolDiscriminator),
     case ProtocolDiscriminator of
         eps_mobility_management_messages -> %% security protected
             SecurityHeaderType = maps:get(security_header_type, Msg, undefined),
             SHT = compose_security_header_type(SecurityHeaderType),
-            <<SHT:4, PD:4>>;
+            <<SHT:4, PD:4, PDU/binary>>;
         eps_session_management_messages ->
             EBI = maps:get(eps_bearer_identity, Msg, undefined),
-            <<EBI:4, PD:4>>
+            <<EBI:4, PD:4, PDU/binary>>
     end.
 
 %% 9.3.1 Security header type

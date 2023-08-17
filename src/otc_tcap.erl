@@ -17,19 +17,30 @@ next(#{dialogue :=
 next(_) -> '$stop'.
 
 codec(Bin) when is_binary(Bin) ->
-    case decode(Bin) of
-        #{dialogue := #{application_context_family := map} = Dialogue,
-          components := [_|_] = Cs} = TC -> {TC, {Dialogue, Cs}};
-        TC -> TC
-    end;
-
+    decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
+    encode({Map, <<>>});
+codec({Map, PDU}) when is_map(Map) ->
+    encode({Map, PDU}).
 
 decode(Bin) ->
     {ok, D} = 'TCAP-OTC':decode('TCMessage', Bin),
-    decode_message(D).
+    case decode_message(D) of
+        #{dialogue := #{application_context_family := map},
+          components := [_|_]} = TC ->
+            %% MAP actually specifies that the full TCAP should be
+            %% decoded/encoded with the MAP message, but OTC cannot
+            %% really determine if it's MAP or CAP itself without
+            %% first decoding TCAP to fetch the ACN.
+            {TC, Bin};
+        TC ->
+            TC
+    end.
 
+encode({Map, <<>>}) ->
+    encode({Map, []});
+encode({Map, Components}) when is_list(Components) ->
+    encode(Map#{components => Components});
 encode(Map) ->
     TC = encode_message(Map),
     {ok, Bin} = 'TCAP-OTC':encode('TCMessage', TC),
@@ -210,6 +221,7 @@ compose_application_context_name(#{application_context_family := map} = D) ->
 compose_application_context_name(#{application_context_family := unknown} = D) ->
     maps:get(application_context_name, D).
 
+
 decode_components([]) ->
     [];
 decode_components([C|Cs]) ->
@@ -220,16 +232,16 @@ encode_components([]) ->
 encode_components([C|Cs]) ->
     [encode_component(C)|encode_components(Cs)].
 
-decode_component({invoke, C}) ->
+decode_component({basicROS, {invoke, C}}) ->
     InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
     LinkedId = parse_invoke_id(maps:get(linkedId, C, absent)),
     C#{component_type => invoke,
        invokeId => InvokeId,
        linkedId => LinkedId
       };
-decode_component({R, C}) when returnResultLast =:= R; returnResultNotLast =:= R ->
+decode_component({basicROS, {returnResult, C}}) ->
     InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
-    Base = C#{component_type => R,
+    Base = C#{component_type => returnResult,
               invokeId => InvokeId
              },
     case C of
@@ -240,12 +252,25 @@ decode_component({R, C}) when returnResultLast =:= R; returnResultNotLast =:= R 
         _ ->
             Base
     end;
-decode_component({returnError, C}) ->
+decode_component({returnResultNotLast, C}) ->
+    InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
+    Base = C#{component_type => returnResultNotLast,
+              invokeId => InvokeId
+             },
+    case C of
+        #{result := Result} ->
+            #{opcode := OpCode,
+              result := Res} = Result,
+            Base#{opcode => OpCode, result => Res};
+        _ ->
+            Base
+    end;
+decode_component({basicROS, {returnError, C}}) ->
     InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
     C#{component_type => returnError,
        invokeId => InvokeId
       };
-decode_component({reject, C}) ->
+decode_component({basicROS, {reject, C}}) ->
     InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
     {ProblemType, Problem} = maps:get(problem, C),
     C#{component_type => returnError,
@@ -257,9 +282,9 @@ decode_component({reject, C}) ->
 encode_component(#{component_type := invoke} = C) ->
     InvokeId = compose_invoke_id(maps:get(invokeId, C, absent)),
     LinkedId = compose_invoke_id(maps:get(linkedId, C, absent)),
-    {invoke, C#{invokeId => InvokeId,
-                linkedId => LinkedId}};
-encode_component(#{component_type := returnResultLast} = C) ->
+    {basicROS, {invoke, C#{invokeId => InvokeId,
+                           linkedId => LinkedId}}};
+encode_component(#{component_type := returnResult} = C) ->
     InvokeId = compose_invoke_id(maps:get(invokeId, C, absent)),
     LinkedId = compose_invoke_id(maps:get(linkedId, C, absent)),
     Base = C#{invokeId => InvokeId,
@@ -267,12 +292,24 @@ encode_component(#{component_type := returnResultLast} = C) ->
     case C of
         #{opcode := OpCode, result := Res} ->
             Comp = Base#{result => #{opcode => OpCode, result => Res}},
-            {returnResultLast, Comp};
+            {basicROS, {returnResult, Comp}};
         _ ->
-            {returnResultLast, Base}
+            {basicROS, {returnResult, Base}}
+    end;
+encode_component(#{component_type := returnResultNotLast} = C) ->
+    InvokeId = compose_invoke_id(maps:get(invokeId, C, absent)),
+    LinkedId = compose_invoke_id(maps:get(linkedId, C, absent)),
+    Base = C#{invokeId => InvokeId,
+              linkedId => LinkedId},
+    case C of
+        #{opcode := OpCode, result := Res} ->
+            Comp = Base#{result => #{opcode => OpCode, result => Res}},
+            {returnResultNotLast, Comp};
+        _ ->
+            {returnResultNotLast, Base}
     end;
 encode_component(#{component_type := CType} = C) ->
-    {CType, C}.
+    {basicROS, {CType, C}}.
 
 parse_invoke_id({present, I}) ->
     I;

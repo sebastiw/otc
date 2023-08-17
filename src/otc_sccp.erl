@@ -8,6 +8,10 @@
          encode/1
         ]).
 
+-export([parse_ssn/1,
+         compose_ssn/1
+        ]).
+
 -include("include/sccp.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
@@ -15,41 +19,22 @@ spec() ->
     "ITU-T Q.713 (03/2001)".
 
 codec(Bin) when is_binary(Bin) ->
-    case decode(Bin) of
-        #{long_data := LD} = Msg2
-          when is_map(LD) ->
-            Msg2; %% MGMT message
-        #{long_data := LD, message_type := MessageType} = Msg2
-          when ludt =:= MessageType;
-               ludts =:= MessageType ->
-            {Msg2, LD};
-        #{data := D} = Msg2
-          when is_map(D) ->
-            Msg2; %% MGMT message
-        #{data := D, message_type := MessageType} = Msg2
-          when cr =:= MessageType;
-               cc =:= MessageType;
-               cref =:= MessageType;
-               rlsd =:= MessageType;
-               dt1 =:= MessageType;
-               dt2 =:= MessageType;
-               udt =:= MessageType;
-               udts =:= MessageType;
-               ed =:= MessageType;
-               xudt =:= MessageType;
-               xudts =:= MessageType ->
-            {Msg2, D};
-        Msg2 ->
-            Msg2
-    end;
+    decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
+    encode({Map, <<>>});
+codec({Map, PDU}) ->
+    encode({Map, PDU}).
 
-
+-define(IS_SCCP_MGMT,
+        #{routing_indicator := subsystem_number, subsystem_number := management}).
 -define(IS_CONNECTIONLESS(M),
         0 =:= map_get(class, map_get(protocol_class, M));
         1 =:= map_get(class, map_get(protocol_class, M))).
 
+%% ITU-T Q.713 (03/2001) Chapter 5
+next(#{calling_party_address := ?IS_SCCP_MGMT,
+       called_party_address := ?IS_SCCP_MGMT}) ->
+    {ok, sccp_mgmt};
 %% TS 29.002 v17.2.0 Chapter 6
 next(#{called_party_address := #{subsystem_number := hlr}} = M)
   when ?IS_CONNECTIONLESS(M) ->
@@ -104,9 +89,37 @@ next(_) -> '$stop'.
 decode(<<MT:8/big, Rest/binary>>) ->
     MessageType = parse_message_type(MT),
     Msg = decode_msg(MessageType, Rest),
-    Msg#{message_type => MessageType}.
+    case Msg#{message_type => MessageType} of
+        #{long_data := LD} = Msg2 ->
+            {maps:without([long_data], Msg2), LD};
+        #{data := D} = Msg2 ->
+            {maps:without([data], Msg2), D};
+        Msg2 ->
+            Msg2
+    end.
 
-encode(#{message_type := MessageType} = Msg) ->
+encode({#{message_type := MessageType} = Msg, PDU})
+  when ludt =:= MessageType;
+       ludts =:= MessageType ->
+    MT = compose_message_type(MessageType),
+    Bin = encode_msg(MessageType, Msg#{long_data => PDU}),
+    <<MT:8/big, Bin/binary>>;
+encode({#{message_type := MessageType} = Msg, PDU})
+    when cr =:= MessageType;
+         cc =:= MessageType;
+         cref =:= MessageType;
+         rlsd =:= MessageType;
+         dt1 =:= MessageType;
+         dt2 =:= MessageType;
+         udt =:= MessageType;
+         udts =:= MessageType;
+         ed =:= MessageType;
+         xudt =:= MessageType;
+         xudts =:= MessageType ->
+    MT = compose_message_type(MessageType),
+    Bin = encode_msg(MessageType, Msg#{data => PDU}),
+    <<MT:8/big, Bin/binary>>;
+encode({#{message_type := MessageType} = Msg, _}) ->
     MT = compose_message_type(MessageType),
     Bin = encode_msg(MessageType, Msg),
     <<MT:8/big, Bin/binary>>.
@@ -243,7 +256,7 @@ decode_msg(udt, Bin) ->
     Optionals#{protocol_class => decode_parameter(protocol_class, PC),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
-               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
+               data => D};
 decode_msg(udts, Bin) ->
     NumPointers = 3,
     <<RC:1/binary, Bin1/binary>> = Bin,
@@ -254,7 +267,7 @@ decode_msg(udts, Bin) ->
     Optionals#{return_cause => decode_parameter(return_cause, RC),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
-               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
+               data => D};
 decode_msg(ed, Bin) ->
     NumPointers = 1,
     <<DLR:3/binary, Bin1/binary>> = Bin,
@@ -314,7 +327,7 @@ decode_msg(xudt, Bin) ->
                hop_counter => decode_parameter(hop_counter, HC),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
-               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
+               data => D};
 decode_msg(xudts, Bin) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Bin1/binary>> = Bin,
@@ -329,7 +342,7 @@ decode_msg(xudts, Bin) ->
                hop_counter => decode_parameter(hop_counter, HC),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
-               data => decode_data(data, D, CalledPartyAddress, CallingPartyAddress)};
+               data => D};
 decode_msg(ludt, Bin) ->
     NumPointers = 4,
     <<PC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
@@ -351,7 +364,7 @@ decode_msg(ludt, Bin) ->
                hop_counter => decode_parameter(hop_counter, HC),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
-               long_data => decode_data(long_data, LD, CalledPartyAddress, CallingPartyAddress)};
+               long_data => LD};
 decode_msg(ludts, Bin) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
@@ -373,7 +386,7 @@ decode_msg(ludts, Bin) ->
                hop_counter => decode_parameter(hop_counter, HC),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
-               long_data => decode_data(long_data, LD, CalledPartyAddress, CallingPartyAddress)}.
+               long_data => LD}.
 
 
 absolute_pointers(Bin, NumPointers) ->
@@ -515,85 +528,6 @@ separate_fields_test_() ->
       ?_assertEqual([<<"CdPA">>,<<"D">>,<<"CgPA">>],
                     separate_fields(absolute_pointers(<<10, 7, 1, Bin/binary>>, 3)))}].
 
--define(IS_SCCP_MGMT,
-        #{routing_indicator := subsystem_number, subsystem_number := management}).
-
-decode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
-    decode_mgmt_data(D);
-decode_data(Type, D, _, _) ->
-    decode_parameter(Type, D).
-
-encode_data(_, D, _, _) when is_binary(D) ->
-    D;
-encode_data(_, D, ?IS_SCCP_MGMT, ?IS_SCCP_MGMT) ->
-    encode_mgmt_data(D);
-encode_data(Type, D, _, _) ->
-    encode_parameter(Type, D).
-
-decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_ALLOWED:8, ASSN:8, APC:2/binary, SMI:8>>) ->
-    #{format_identifier => allowed,
-      affected_subsystem_number => parse_ssn(ASSN),
-      affected_point_code => APC,
-      subsystem_multiplicity_indicator => SMI};
-decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_PROHIBITED:8, ASSN:8, APC:2/binary, SMI:8>>) ->
-    #{format_identifier => prohibited,
-      affected_subsystem_number => parse_ssn(ASSN),
-      affected_point_code => APC,
-      subsystem_multiplicity_indicator => SMI};
-decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_STATUS_TEST:8, ASSN:8, APC:2/binary, SMI:8>>) ->
-    #{format_identifier => status_test,
-      affected_subsystem_number => parse_ssn(ASSN),
-      affected_point_code => APC,
-      subsystem_multiplicity_indicator => SMI};
-decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_REQUEST:8, ASSN:8, APC:2/binary, SMI:8>>) ->
-    #{format_identifier => out_of_service_request,
-      affected_subsystem_number => parse_ssn(ASSN),
-      affected_point_code => APC,
-      subsystem_multiplicity_indicator => SMI};
-decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_GRANT:8, ASSN:8, APC:2/binary, SMI:8>>) ->
-    #{format_identifier => out_of_service_grant,
-      affected_subsystem_number => parse_ssn(ASSN),
-      affected_point_code => APC,
-      subsystem_multiplicity_indicator => SMI};
-decode_mgmt_data(<<?SCCP_SCMG_SUBSYSTEM_CONGESTED:8, ASSN:8, APC:2/binary, SMI:8, CL:8>>) ->
-    #{format_identifier => congested,
-      affected_subsystem_number => parse_ssn(ASSN),
-      affected_point_code => APC,
-      subsystem_multiplicity_indicator => SMI,
-      congestion_level => CL}.
-
-encode_mgmt_data(#{format_identifier := allowed,
-                   affected_subsystem_number := ASSN,
-                   affected_point_code := APC,
-                   subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_ALLOWED:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
-encode_mgmt_data(#{format_identifier := prohibited,
-                   affected_subsystem_number := ASSN,
-                   affected_point_code := APC,
-                   subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_PROHIBITED:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
-encode_mgmt_data(#{format_identifier := status_test,
-                   affected_subsystem_number := ASSN,
-                   affected_point_code := APC,
-                   subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_STATUS_TEST:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
-encode_mgmt_data(#{format_identifier := out_of_service_request,
-                   affected_subsystem_number := ASSN,
-                   affected_point_code := APC,
-                   subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_REQUEST:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
-encode_mgmt_data(#{format_identifier := out_of_service_grant,
-                   affected_subsystem_number := ASSN,
-                   affected_point_code := APC,
-                   subsystem_multiplicity_indicator := SMI}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_OUT_OF_SERVICE_GRANT:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8>>;
-encode_mgmt_data(#{format_identifier := congested,
-                   affected_subsystem_number := ASSN,
-                   affected_point_code := APC,
-                   subsystem_multiplicity_indicator := SMI,
-                   congestion_level := CL}) ->
-    <<?SCCP_SCMG_SUBSYSTEM_CONGESTED:8, (compose_ssn(ASSN)):8, APC:2/binary, SMI:8, CL:8>>.
-
 encode_msg(cr,
            #{source_local_reference := SourceLocalReference,
              protocol_class := ProtocolClass,
@@ -734,13 +668,12 @@ encode_msg(udt,
            #{protocol_class := ProtocolClass,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := Data} = Msg) ->
+             data := D} = Msg) ->
     PC = encode_parameter(protocol_class, ProtocolClass),
     CdPA = encode_parameter(called_party_address, CalledPartyAddress),
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [],
     OptBin = encode_parameters(Msg, AllowedParameters),
@@ -752,13 +685,12 @@ encode_msg(udts,
            #{return_cause := ReturnCause,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := Data} = Msg) ->
+             data := D} = Msg) ->
     RC = encode_parameter(return_cause, ReturnCause),
     CdPA = encode_parameter(called_party_address, CalledPartyAddress),
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [],
     OptBin = encode_parameters(Msg, AllowedParameters),
@@ -839,14 +771,13 @@ encode_msg(xudt,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := Data} = Msg) ->
+             data := D} = Msg) ->
     PC = encode_parameter(protocol_class, ProtocolClass),
     HC = encode_parameter(hop_counter, HopCounter),
     CdPA = encode_parameter(called_party_address, CalledPartyAddress),
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
@@ -867,14 +798,13 @@ encode_msg(xudts,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := Data} = Msg) ->
+             data := D} = Msg) ->
     RC = encode_parameter(return_cause, ReturnCause),
     HC = encode_parameter(hop_counter, HopCounter),
     CdPA = encode_parameter(called_party_address, CalledPartyAddress),
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    D = encode_data(data, Data, CalledPartyAddress, CallingPartyAddress),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
@@ -895,14 +825,13 @@ encode_msg(ludt,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             long_data := LongData} = Msg) ->
+             long_data := LD} = Msg) ->
     PC = encode_parameter(protocol_class, ProtocolClass),
     HC = encode_parameter(hop_counter, HopCounter),
     CdPA = encode_parameter(called_party_address, CalledPartyAddress),
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    LD = encode_data(long_data, LongData, CalledPartyAddress, CallingPartyAddress),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
@@ -923,14 +852,13 @@ encode_msg(ludts,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             long_data := LongData} = Msg) ->
+             long_data := LD} = Msg) ->
     RC = encode_parameter(return_cause, ReturnCause),
     HC = encode_parameter(hop_counter, HopCounter),
     CdPA = encode_parameter(called_party_address, CalledPartyAddress),
     CdPALen = byte_size(CdPA),
     CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
     CgPALen = byte_size(CgPA),
-    LD = encode_data(long_data, LongData, CalledPartyAddress, CallingPartyAddress),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},

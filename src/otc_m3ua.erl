@@ -15,15 +15,11 @@ spec() ->
     "IETF RFC 4666 September 2006".
 
 codec(Bin) when is_binary(Bin) ->
-    case decode(Bin) of
-        #{protocol_data := #{user_protocol_data := UPD} = _PD} = Msg ->
-            {Msg, UPD};
-        Msg ->
-            Msg
-    end;
+    decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
-
+    encode({Map, <<>>});
+codec({Map, PDU}) when is_map(Map), is_binary(PDU) ->
+    encode({Map, PDU}).
 
 -type subproto() :: sccp | tup | isup | broadband_isup |
                     satellite_isup |
@@ -54,9 +50,18 @@ decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) -
     ValLen = Len - 8,                 % Remove version, reserved, mc, mt, length
     <<Bin:ValLen/binary>> = Remain,
     {ok, Msg} = decode_msg(MC, MT, Bin),
-    Msg#{message_type => MT,
-         message_class => MC}.
+    case Msg#{message_type => MT, message_class => MC} of
+        #{protocol_data := PD} = Msg2 ->
+            {UPD, PD2} = maps:take(user_protocol_data, PD),
+            {Msg2#{protocol_data => PD2}, UPD};
+        Msg2 ->
+            Msg2
+    end.
 
+encode({#{protocol_data := PD} = Msg, UDP}) ->
+    encode(Msg#{protocol_data => PD#{user_protocol_data => UDP}});
+encode({Msg, _UDP}) ->
+    encode(Msg);
 encode(#{message_type := MessageType, message_class := MessageClass} = Msg) ->
     MC = compose_message_class(MessageClass),
     MT = compose_message_type(MessageClass, MessageType),

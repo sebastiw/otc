@@ -10,10 +10,12 @@
 spec() ->
     "3GPP TS 24.301 version 16.8.0".
 
-codec({SecurityHeaderType, Bin}) when is_binary(Bin) ->
+codec({SecurityHeaderType, Bin}) when is_atom(SecurityHeaderType), is_binary(Bin) ->
     decode({SecurityHeaderType, Bin});
 codec(Map) when is_map(Map) ->
-    encode(Map).
+    encode({Map, <<>>});
+codec({Map, PDU}) when is_map(Map) ->
+    encode({Map, PDU}).
 
 next(_) -> {ok, nas_eps}.
 
@@ -29,11 +31,11 @@ decode({_SHT, <<MAC:4/binary, SN:1/binary, NMSG/binary>>}) ->
        sequence_number => SN
       }, NMSG}.
 
-encode(#{message_authentication_code := MAC, sequence_number := SN}) ->
-    <<MAC:4/binary, SN:1/binary>>;
-encode(#{message_type := service_request} = Msg) ->
+encode({#{message_authentication_code := MAC, sequence_number := SN}, NMSG}) ->
+    <<MAC:4/binary, SN:1/binary, NMSG/binary>>;
+encode({#{message_type := service_request} = Msg, _}) ->
     encode_emm_msg(service_request, Msg);
-encode(#{message_type := MsgType} = Msg) ->
+encode({#{message_type := MsgType} = Msg, _}) ->
     Bin = encode_emm_msg(MsgType, Msg),
     MT = otc_nas_eps:compose_msg_type(MsgType),
     <<MT:8/big, Bin/binary>>.
