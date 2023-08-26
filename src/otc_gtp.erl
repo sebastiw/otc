@@ -17,6 +17,8 @@ spec() ->
 codec(Bin) when is_binary(Bin) ->
     decode(Bin);
 codec(Map) when is_map(Map) ->
+    encode(Map);
+codec({Map, <<>>}) ->
     encode(Map).
 
 next(_) ->
@@ -41,287 +43,287 @@ encode(Map) ->
     Len = byte_size(MsgBin),
     <<1:3, 1:1, 0:1, E:1, S:1, PN:1, MT:8, Len:16, TEID:32, MsgFields/binary, MsgBin/binary>>.
 
-parse_message_type(?GTP_MSG_TYPE_ECHO_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_ECHO_REQUEST) ->
     echo_request;
-parse_message_type(?GTP_MSG_TYPE_ECHO_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_ECHO_RESPONSE) ->
     echo_response;
-parse_message_type(?GTP_MSG_TYPE_VERSION_NOT_SUPPORTED) ->
+parse_message_type(?GTPv1C_MSG_TYPE_VERSION_NOT_SUPPORTED) ->
     version_not_supported;
-parse_message_type(?GTP_MSG_TYPE_NODE_ALIVE_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_NODE_ALIVE_REQUEST) ->
     node_alive_request;
-parse_message_type(?GTP_MSG_TYPE_NODE_ALIVE_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_NODE_ALIVE_RESPONSE) ->
     node_alive_response;
-parse_message_type(?GTP_MSG_TYPE_REDIRECTION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_REDIRECTION_REQUEST) ->
     redirection_request;
-parse_message_type(?GTP_MSG_TYPE_REDIRECTION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_REDIRECTION_RESPONSE) ->
     redirection_response;
-parse_message_type(?GTP_MSG_TYPE_CREATE_PDP_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_CREATE_PDP_CONTEXT_REQUEST) ->
     create_pdp_context_request;
-parse_message_type(?GTP_MSG_TYPE_CREATE_PDP_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_CREATE_PDP_CONTEXT_RESPONSE) ->
     create_pdp_context_response;
-parse_message_type(?GTP_MSG_TYPE_UPDATE_PDP_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_UPDATE_PDP_CONTEXT_REQUEST) ->
     update_pdp_context_request;
-parse_message_type(?GTP_MSG_TYPE_UPDATE_PDP_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_UPDATE_PDP_CONTEXT_RESPONSE) ->
     update_pdp_context_response;
-parse_message_type(?GTP_MSG_TYPE_DELETE_PDP_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_DELETE_PDP_CONTEXT_REQUEST) ->
     delete_pdp_context_request;
-parse_message_type(?GTP_MSG_TYPE_DELETE_PDP_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_DELETE_PDP_CONTEXT_RESPONSE) ->
     delete_pdp_context_response;
-parse_message_type(?GTP_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_REQUEST) ->
     initiate_pdp_context_activation_request;
-parse_message_type(?GTP_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_RESPONSE) ->
     initiate_pdp_context_activation_response;
-parse_message_type(?GTP_MSG_TYPE_ERROR_INDICATION) ->
+parse_message_type(?GTPv1C_MSG_TYPE_ERROR_INDICATION) ->
     error_indication;
-parse_message_type(?GTP_MSG_TYPE_PDU_NOTIFICATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_REQUEST) ->
     pdu_notification_request;
-parse_message_type(?GTP_MSG_TYPE_PDU_NOTIFICATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_RESPONSE) ->
     pdu_notification_response;
-parse_message_type(?GTP_MSG_TYPE_PDU_NOTIFICATION_REJECT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_REJECT_REQUEST) ->
     pdu_notification_reject_request;
-parse_message_type(?GTP_MSG_TYPE_PDU_NOTIFICATION_REJECT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_REJECT_RESPONSE) ->
     pdu_notification_reject_response;
-parse_message_type(?GTP_MSG_TYPE_SUPPORTED_EXTENSION_HEADERS_NOTIFICATION) ->
+parse_message_type(?GTPv1C_MSG_TYPE_SUPPORTED_EXTENSION_HEADERS_NOTIFICATION) ->
     supported_extension_headers_notification;
-parse_message_type(?GTP_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_REQUEST) ->
     send_routeing_information_for_gprs_request;
-parse_message_type(?GTP_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_RESPONSE) ->
     send_routeing_information_for_gprs_response;
-parse_message_type(?GTP_MSG_TYPE_FAILURE_REPORT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FAILURE_REPORT_REQUEST) ->
     failure_report_request;
-parse_message_type(?GTP_MSG_TYPE_FAILURE_REPORT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FAILURE_REPORT_RESPONSE) ->
     failure_report_response;
-parse_message_type(?GTP_MSG_TYPE_NOTE_MS_GPRS_PRESENT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_NOTE_MS_GPRS_PRESENT_REQUEST) ->
     note_ms_gprs_present_request;
-parse_message_type(?GTP_MSG_TYPE_NOTE_MS_GPRS_PRESENT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_NOTE_MS_GPRS_PRESENT_RESPONSE) ->
     note_ms_gprs_present_response;
-parse_message_type(?GTP_MSG_TYPE_IDENTIFICATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_IDENTIFICATION_REQUEST) ->
     identification_request;
-parse_message_type(?GTP_MSG_TYPE_IDENTIFICATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_IDENTIFICATION_RESPONSE) ->
     identification_response;
-parse_message_type(?GTP_MSG_TYPE_SGSN_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_SGSN_CONTEXT_REQUEST) ->
     sgsn_context_request;
-parse_message_type(?GTP_MSG_TYPE_SGSN_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_SGSN_CONTEXT_RESPONSE) ->
     sgsn_context_response;
-parse_message_type(?GTP_MSG_TYPE_SGSN_CONTEXT_ACKNOWLEDGE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_SGSN_CONTEXT_ACKNOWLEDGE) ->
     sgsn_context_acknowledge;
-parse_message_type(?GTP_MSG_TYPE_FORWARD_RELOCATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_REQUEST) ->
     forward_relocation_request;
-parse_message_type(?GTP_MSG_TYPE_FORWARD_RELOCATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_RESPONSE) ->
     forward_relocation_response;
-parse_message_type(?GTP_MSG_TYPE_FORWARD_RELOCATION_COMPLETE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE) ->
     forward_relocation_complete;
-parse_message_type(?GTP_MSG_TYPE_RELOCATION_CANCEL_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_RELOCATION_CANCEL_REQUEST) ->
     relocation_cancel_request;
-parse_message_type(?GTP_MSG_TYPE_RELOCATION_CANCEL_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_RELOCATION_CANCEL_RESPONSE) ->
     relocation_cancel_response;
-parse_message_type(?GTP_MSG_TYPE_FORWARD_SRNS_CONTEXT) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FORWARD_SRNS_CONTEXT) ->
     forward_srns_context;
-parse_message_type(?GTP_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE) ->
     forward_relocation_complete_acknowledge;
-parse_message_type(?GTP_MSG_TYPE_FORWARD_SRNS_CONTEXT_ACKNOWLEDGE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_FORWARD_SRNS_CONTEXT_ACKNOWLEDGE) ->
     forward_srns_context_acknowledge;
-parse_message_type(?GTP_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST) ->
     ue_registration_query_request;
-parse_message_type(?GTP_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE) ->
     ue_registration_query_response;
-parse_message_type(?GTP_MSG_TYPE_RAN_INFORMATION_RELAY) ->
+parse_message_type(?GTPv1C_MSG_TYPE_RAN_INFORMATION_RELAY) ->
     ran_information_relay;
-parse_message_type(?GTP_MSG_TYPE_MBMS_NOTIFICATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_REQUEST) ->
     mbms_notification_request;
-parse_message_type(?GTP_MSG_TYPE_MBMS_NOTIFICATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_RESPONSE) ->
     mbms_notification_response;
-parse_message_type(?GTP_MSG_TYPE_MBMS_NOTIFICATION_REJECT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_REJECT_REQUEST) ->
     mbms_notification_reject_request;
-parse_message_type(?GTP_MSG_TYPE_MBMS_NOTIFICATION_REJECT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_REJECT_RESPONSE) ->
     mbms_notification_reject_response;
-parse_message_type(?GTP_MSG_TYPE_CREATE_MBMS_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_CREATE_MBMS_CONTEXT_REQUEST) ->
     create_mbms_context_request;
-parse_message_type(?GTP_MSG_TYPE_CREATE_MBMS_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_CREATE_MBMS_CONTEXT_RESPONSE) ->
     create_mbms_context_response;
-parse_message_type(?GTP_MSG_TYPE_UPDATE_MBMS_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_UPDATE_MBMS_CONTEXT_REQUEST) ->
     update_mbms_context_request;
-parse_message_type(?GTP_MSG_TYPE_UPDATE_MBMS_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_UPDATE_MBMS_CONTEXT_RESPONSE) ->
     update_mbms_context_response;
-parse_message_type(?GTP_MSG_TYPE_DELETE_MBMS_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_DELETE_MBMS_CONTEXT_REQUEST) ->
     delete_mbms_context_request;
-parse_message_type(?GTP_MSG_TYPE_DELETE_MBMS_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_DELETE_MBMS_CONTEXT_RESPONSE) ->
     delete_mbms_context_response;
-parse_message_type(?GTP_MSG_TYPE_MBMS_REGISTRATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_REGISTRATION_REQUEST) ->
     mbms_registration_request;
-parse_message_type(?GTP_MSG_TYPE_MBMS_REGISTRATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_REGISTRATION_RESPONSE) ->
     mbms_registration_response;
-parse_message_type(?GTP_MSG_TYPE_MBMS_DE_REGISTRATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_DE_REGISTRATION_REQUEST) ->
     mbms_de_registration_request;
-parse_message_type(?GTP_MSG_TYPE_MBMS_DE_REGISTRATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_DE_REGISTRATION_RESPONSE) ->
     mbms_de_registration_response;
-parse_message_type(?GTP_MSG_TYPE_MBMS_SESSION_START_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_SESSION_START_REQUEST) ->
     mbms_session_start_request;
-parse_message_type(?GTP_MSG_TYPE_MBMS_SESSION_START_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_SESSION_START_RESPONSE) ->
     mbms_session_start_response;
-parse_message_type(?GTP_MSG_TYPE_MBMS_SESSION_STOP_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_SESSION_STOP_REQUEST) ->
     mbms_session_stop_request;
-parse_message_type(?GTP_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE) ->
     mbms_session_stop_response;
-parse_message_type(?GTP_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST) ->
     mbms_session_update_request;
-parse_message_type(?GTP_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE) ->
     mbms_session_update_response;
-parse_message_type(?GTP_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_REQUEST) ->
     ms_info_change_notification_request;
-parse_message_type(?GTP_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_RESPONSE) ->
     ms_info_change_notification_response;
-parse_message_type(?GTP_MSG_TYPE_DATA_RECORD_TRANSFER_REQUEST) ->
+parse_message_type(?GTPv1C_MSG_TYPE_DATA_RECORD_TRANSFER_REQUEST) ->
     data_record_transfer_request;
-parse_message_type(?GTP_MSG_TYPE_DATA_RECORD_TRANSFER_RESPONSE) ->
+parse_message_type(?GTPv1C_MSG_TYPE_DATA_RECORD_TRANSFER_RESPONSE) ->
     data_record_transfer_response;
-parse_message_type(?GTP_MSG_TYPE_TUNNEL_STATUS) ->
+parse_message_type(?GTPv1C_MSG_TYPE_TUNNEL_STATUS) ->
     tunnel_status;
-parse_message_type(?GTP_MSG_TYPE_END_MARKER) ->
+parse_message_type(?GTPv1C_MSG_TYPE_END_MARKER) ->
     end_marker;
-parse_message_type(?GTP_MSG_TYPE_G_PDU) ->
+parse_message_type(?GTPv1C_MSG_TYPE_G_PDU) ->
     g_pdu.
 
 compose_message_type(echo_request) ->
-    ?GTP_MSG_TYPE_ECHO_REQUEST;
+    ?GTPv1C_MSG_TYPE_ECHO_REQUEST;
 compose_message_type(echo_response) ->
-    ?GTP_MSG_TYPE_ECHO_RESPONSE;
+    ?GTPv1C_MSG_TYPE_ECHO_RESPONSE;
 compose_message_type(version_not_supported) ->
-    ?GTP_MSG_TYPE_VERSION_NOT_SUPPORTED;
+    ?GTPv1C_MSG_TYPE_VERSION_NOT_SUPPORTED;
 compose_message_type(node_alive_request) ->
-    ?GTP_MSG_TYPE_NODE_ALIVE_REQUEST;
+    ?GTPv1C_MSG_TYPE_NODE_ALIVE_REQUEST;
 compose_message_type(node_alive_response) ->
-    ?GTP_MSG_TYPE_NODE_ALIVE_RESPONSE;
+    ?GTPv1C_MSG_TYPE_NODE_ALIVE_RESPONSE;
 compose_message_type(redirection_request) ->
-    ?GTP_MSG_TYPE_REDIRECTION_REQUEST;
+    ?GTPv1C_MSG_TYPE_REDIRECTION_REQUEST;
 compose_message_type(redirection_response) ->
-    ?GTP_MSG_TYPE_REDIRECTION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_REDIRECTION_RESPONSE;
 compose_message_type(create_pdp_context_request) ->
-    ?GTP_MSG_TYPE_CREATE_PDP_CONTEXT_REQUEST;
+    ?GTPv1C_MSG_TYPE_CREATE_PDP_CONTEXT_REQUEST;
 compose_message_type(create_pdp_context_response) ->
-    ?GTP_MSG_TYPE_CREATE_PDP_CONTEXT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_CREATE_PDP_CONTEXT_RESPONSE;
 compose_message_type(update_pdp_context_request) ->
-    ?GTP_MSG_TYPE_UPDATE_PDP_CONTEXT_REQUEST;
+    ?GTPv1C_MSG_TYPE_UPDATE_PDP_CONTEXT_REQUEST;
 compose_message_type(update_pdp_context_response) ->
-    ?GTP_MSG_TYPE_UPDATE_PDP_CONTEXT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_UPDATE_PDP_CONTEXT_RESPONSE;
 compose_message_type(delete_pdp_context_request) ->
-    ?GTP_MSG_TYPE_DELETE_PDP_CONTEXT_REQUEST;
+    ?GTPv1C_MSG_TYPE_DELETE_PDP_CONTEXT_REQUEST;
 compose_message_type(delete_pdp_context_response) ->
-    ?GTP_MSG_TYPE_DELETE_PDP_CONTEXT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_DELETE_PDP_CONTEXT_RESPONSE;
 compose_message_type(initiate_pdp_context_activation_request) ->
-    ?GTP_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_REQUEST;
 compose_message_type(initiate_pdp_context_activation_response) ->
-    ?GTP_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_INITIATE_PDP_CONTEXT_ACTIVATION_RESPONSE;
 compose_message_type(error_indication) ->
-    ?GTP_MSG_TYPE_ERROR_INDICATION;
+    ?GTPv1C_MSG_TYPE_ERROR_INDICATION;
 compose_message_type(pdu_notification_request) ->
-    ?GTP_MSG_TYPE_PDU_NOTIFICATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_REQUEST;
 compose_message_type(pdu_notification_response) ->
-    ?GTP_MSG_TYPE_PDU_NOTIFICATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_RESPONSE;
 compose_message_type(pdu_notification_reject_request) ->
-    ?GTP_MSG_TYPE_PDU_NOTIFICATION_REJECT_REQUEST;
+    ?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_REJECT_REQUEST;
 compose_message_type(pdu_notification_reject_response) ->
-    ?GTP_MSG_TYPE_PDU_NOTIFICATION_REJECT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_PDU_NOTIFICATION_REJECT_RESPONSE;
 compose_message_type(supported_extension_headers_notification) ->
-    ?GTP_MSG_TYPE_SUPPORTED_EXTENSION_HEADERS_NOTIFICATION;
+    ?GTPv1C_MSG_TYPE_SUPPORTED_EXTENSION_HEADERS_NOTIFICATION;
 compose_message_type(send_routeing_information_for_gprs_request) ->
-    ?GTP_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_REQUEST;
+    ?GTPv1C_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_REQUEST;
 compose_message_type(send_routeing_information_for_gprs_response) ->
-    ?GTP_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_RESPONSE;
+    ?GTPv1C_MSG_TYPE_SEND_ROUTEING_INFORMATION_FOR_GPRS_RESPONSE;
 compose_message_type(failure_report_request) ->
-    ?GTP_MSG_TYPE_FAILURE_REPORT_REQUEST;
+    ?GTPv1C_MSG_TYPE_FAILURE_REPORT_REQUEST;
 compose_message_type(failure_report_response) ->
-    ?GTP_MSG_TYPE_FAILURE_REPORT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_FAILURE_REPORT_RESPONSE;
 compose_message_type(note_ms_gprs_present_request) ->
-    ?GTP_MSG_TYPE_NOTE_MS_GPRS_PRESENT_REQUEST;
+    ?GTPv1C_MSG_TYPE_NOTE_MS_GPRS_PRESENT_REQUEST;
 compose_message_type(note_ms_gprs_present_response) ->
-    ?GTP_MSG_TYPE_NOTE_MS_GPRS_PRESENT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_NOTE_MS_GPRS_PRESENT_RESPONSE;
 compose_message_type(identification_request) ->
-    ?GTP_MSG_TYPE_IDENTIFICATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_IDENTIFICATION_REQUEST;
 compose_message_type(identification_response) ->
-    ?GTP_MSG_TYPE_IDENTIFICATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_IDENTIFICATION_RESPONSE;
 compose_message_type(sgsn_context_request) ->
-    ?GTP_MSG_TYPE_SGSN_CONTEXT_REQUEST;
+    ?GTPv1C_MSG_TYPE_SGSN_CONTEXT_REQUEST;
 compose_message_type(sgsn_context_response) ->
-    ?GTP_MSG_TYPE_SGSN_CONTEXT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_SGSN_CONTEXT_RESPONSE;
 compose_message_type(sgsn_context_acknowledge) ->
-    ?GTP_MSG_TYPE_SGSN_CONTEXT_ACKNOWLEDGE;
+    ?GTPv1C_MSG_TYPE_SGSN_CONTEXT_ACKNOWLEDGE;
 compose_message_type(forward_relocation_request) ->
-    ?GTP_MSG_TYPE_FORWARD_RELOCATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_REQUEST;
 compose_message_type(forward_relocation_response) ->
-    ?GTP_MSG_TYPE_FORWARD_RELOCATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_RESPONSE;
 compose_message_type(forward_relocation_complete) ->
-    ?GTP_MSG_TYPE_FORWARD_RELOCATION_COMPLETE;
+    ?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE;
 compose_message_type(relocation_cancel_request) ->
-    ?GTP_MSG_TYPE_RELOCATION_CANCEL_REQUEST;
+    ?GTPv1C_MSG_TYPE_RELOCATION_CANCEL_REQUEST;
 compose_message_type(relocation_cancel_response) ->
-    ?GTP_MSG_TYPE_RELOCATION_CANCEL_RESPONSE;
+    ?GTPv1C_MSG_TYPE_RELOCATION_CANCEL_RESPONSE;
 compose_message_type(forward_srns_context) ->
-    ?GTP_MSG_TYPE_FORWARD_SRNS_CONTEXT;
+    ?GTPv1C_MSG_TYPE_FORWARD_SRNS_CONTEXT;
 compose_message_type(forward_relocation_complete_acknowledge) ->
-    ?GTP_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE;
+    ?GTPv1C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE;
 compose_message_type(forward_srns_context_acknowledge) ->
-    ?GTP_MSG_TYPE_FORWARD_SRNS_CONTEXT_ACKNOWLEDGE;
+    ?GTPv1C_MSG_TYPE_FORWARD_SRNS_CONTEXT_ACKNOWLEDGE;
 compose_message_type(ue_registration_query_request) ->
-    ?GTP_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST;
+    ?GTPv1C_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST;
 compose_message_type(ue_registration_query_response) ->
-    ?GTP_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE;
+    ?GTPv1C_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE;
 compose_message_type(ran_information_relay) ->
-    ?GTP_MSG_TYPE_RAN_INFORMATION_RELAY;
+    ?GTPv1C_MSG_TYPE_RAN_INFORMATION_RELAY;
 compose_message_type(mbms_notification_request) ->
-    ?GTP_MSG_TYPE_MBMS_NOTIFICATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_REQUEST;
 compose_message_type(mbms_notification_response) ->
-    ?GTP_MSG_TYPE_MBMS_NOTIFICATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_RESPONSE;
 compose_message_type(mbms_notification_reject_request) ->
-    ?GTP_MSG_TYPE_MBMS_NOTIFICATION_REJECT_REQUEST;
+    ?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_REJECT_REQUEST;
 compose_message_type(mbms_notification_reject_response) ->
-    ?GTP_MSG_TYPE_MBMS_NOTIFICATION_REJECT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MBMS_NOTIFICATION_REJECT_RESPONSE;
 compose_message_type(create_mbms_context_request) ->
-    ?GTP_MSG_TYPE_CREATE_MBMS_CONTEXT_REQUEST;
+    ?GTPv1C_MSG_TYPE_CREATE_MBMS_CONTEXT_REQUEST;
 compose_message_type(create_mbms_context_response) ->
-    ?GTP_MSG_TYPE_CREATE_MBMS_CONTEXT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_CREATE_MBMS_CONTEXT_RESPONSE;
 compose_message_type(update_mbms_context_request) ->
-    ?GTP_MSG_TYPE_UPDATE_MBMS_CONTEXT_REQUEST;
+    ?GTPv1C_MSG_TYPE_UPDATE_MBMS_CONTEXT_REQUEST;
 compose_message_type(update_mbms_context_response) ->
-    ?GTP_MSG_TYPE_UPDATE_MBMS_CONTEXT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_UPDATE_MBMS_CONTEXT_RESPONSE;
 compose_message_type(delete_mbms_context_request) ->
-    ?GTP_MSG_TYPE_DELETE_MBMS_CONTEXT_REQUEST;
+    ?GTPv1C_MSG_TYPE_DELETE_MBMS_CONTEXT_REQUEST;
 compose_message_type(delete_mbms_context_response) ->
-    ?GTP_MSG_TYPE_DELETE_MBMS_CONTEXT_RESPONSE;
+    ?GTPv1C_MSG_TYPE_DELETE_MBMS_CONTEXT_RESPONSE;
 compose_message_type(mbms_registration_request) ->
-    ?GTP_MSG_TYPE_MBMS_REGISTRATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_MBMS_REGISTRATION_REQUEST;
 compose_message_type(mbms_registration_response) ->
-    ?GTP_MSG_TYPE_MBMS_REGISTRATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MBMS_REGISTRATION_RESPONSE;
 compose_message_type(mbms_de_registration_request) ->
-    ?GTP_MSG_TYPE_MBMS_DE_REGISTRATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_MBMS_DE_REGISTRATION_REQUEST;
 compose_message_type(mbms_de_registration_response) ->
-    ?GTP_MSG_TYPE_MBMS_DE_REGISTRATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MBMS_DE_REGISTRATION_RESPONSE;
 compose_message_type(mbms_session_start_request) ->
-    ?GTP_MSG_TYPE_MBMS_SESSION_START_REQUEST;
+    ?GTPv1C_MSG_TYPE_MBMS_SESSION_START_REQUEST;
 compose_message_type(mbms_session_start_response) ->
-    ?GTP_MSG_TYPE_MBMS_SESSION_START_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MBMS_SESSION_START_RESPONSE;
 compose_message_type(mbms_session_stop_request) ->
-    ?GTP_MSG_TYPE_MBMS_SESSION_STOP_REQUEST;
+    ?GTPv1C_MSG_TYPE_MBMS_SESSION_STOP_REQUEST;
 compose_message_type(mbms_session_stop_response) ->
-    ?GTP_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE;
 compose_message_type(mbms_session_update_request) ->
-    ?GTP_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST;
+    ?GTPv1C_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST;
 compose_message_type(mbms_session_update_response) ->
-    ?GTP_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE;
 compose_message_type(ms_info_change_notification_request) ->
-    ?GTP_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_REQUEST;
+    ?GTPv1C_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_REQUEST;
 compose_message_type(ms_info_change_notification_response) ->
-    ?GTP_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_RESPONSE;
+    ?GTPv1C_MSG_TYPE_MS_INFO_CHANGE_NOTIFICATION_RESPONSE;
 compose_message_type(data_record_transfer_request) ->
-    ?GTP_MSG_TYPE_DATA_RECORD_TRANSFER_REQUEST;
+    ?GTPv1C_MSG_TYPE_DATA_RECORD_TRANSFER_REQUEST;
 compose_message_type(data_record_transfer_response) ->
-    ?GTP_MSG_TYPE_DATA_RECORD_TRANSFER_RESPONSE;
+    ?GTPv1C_MSG_TYPE_DATA_RECORD_TRANSFER_RESPONSE;
 compose_message_type(tunnel_status) ->
-    ?GTP_MSG_TYPE_TUNNEL_STATUS;
+    ?GTPv1C_MSG_TYPE_TUNNEL_STATUS;
 compose_message_type(end_marker) ->
-    ?GTP_MSG_TYPE_END_MARKER;
+    ?GTPv1C_MSG_TYPE_END_MARKER;
 compose_message_type(g_pdu) ->
-    ?GTP_MSG_TYPE_G_PDU.
+    ?GTPv1C_MSG_TYPE_G_PDU.
 
 decode_msg_fields(E, S, PN, GTP0) ->
     case E+S+PN > 0 of
@@ -448,7 +450,7 @@ decode_msg(echo_request, Bin0) ->
     Optionals#{message_group => path_management
               };
 decode_msg(echo_response, Bin0) ->
-    {?GTP_IEI_RECOVERY, Recovery, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_RECOVERY, Recovery, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => path_management,
@@ -460,16 +462,16 @@ decode_msg(version_not_supported, Bin0) ->
     Optionals#{message_group => path_management
               };
 decode_msg(supported_extension_headers_notification, Bin0) ->
-    {?GTP_IEI_EXTENSION_HEADER_TYPE_LIST, ExtensionHeaderTypeList, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_EXTENSION_HEADER_TYPE_LIST, ExtensionHeaderTypeList, Bin1} = otc_l3_codec:decode_tlv(Bin0),
     Opts = [],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => path_management,
                extension_header_type_list => ExtensionHeaderTypeList
               };
 decode_msg(create_pdp_context_request, Bin0) ->
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
-    {?GTP_IEI_NSAPI, Nsapi, Bin2} = otc_l3_codec:decode_tv(Bin1, 1),
-    {?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
+    {?GTPv1C_IEI_NSAPI, Nsapi, Bin2} = otc_l3_codec:decode_tv(Bin1, 1),
+    {?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin3} = otc_l3_codec:decode_tlv(Bin2),
     Opts = [{rai, 3, tv, 6},
             {recovery, 14, tv, 1},
             {trace_reference, 27, tv, 2},
@@ -501,7 +503,7 @@ decode_msg(create_pdp_context_request, Bin0) ->
                quality_of_service_profile => QualityOfServiceProfile
               };
 decode_msg(create_pdp_context_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{recovery, 14, tv, 1},
             {nsapi, 20, tv, 1},
             {protocol_configuration_options, 132, tlv, {4, n}},
@@ -523,9 +525,9 @@ decode_msg(create_pdp_context_response, Bin0) ->
                cause => Cause
               };
 decode_msg(update_pdp_context_request_sgsn, Bin0) ->
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
-    {?GTP_IEI_NSAPI, Nsapi, Bin2} = otc_l3_codec:decode_tv(Bin1, 1),
-    {?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
+    {?GTPv1C_IEI_NSAPI, Nsapi, Bin2} = otc_l3_codec:decode_tv(Bin1, 1),
+    {?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin3} = otc_l3_codec:decode_tlv(Bin2),
     Opts = [{imsi, 2, tv, 8},
             {rai, 3, tv, 6},
             {recovery, 14, tv, 1},
@@ -556,7 +558,7 @@ decode_msg(update_pdp_context_request_sgsn, Bin0) ->
                quality_of_service_profile => QualityOfServiceProfile
               };
 decode_msg(update_pdp_context_request_ggsn, Bin0) ->
-    {?GTP_IEI_NSAPI, Nsapi, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_NSAPI, Nsapi, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{imsi, 2, tv, 8},
             {recovery, 14, tv, 1},
             {end_user_address, 128, tlv, {6, n}},
@@ -578,7 +580,7 @@ decode_msg(update_pdp_context_request_ggsn, Bin0) ->
                nsapi => Nsapi
               };
 decode_msg(update_pdp_context_response_sgsn, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{recovery, 14, tv, 1},
             {tunnel_endpoint_identifier_data_i, 16, tv, 4},
             {protocol_configuration_options, 132, tlv, {4, n}},
@@ -593,7 +595,7 @@ decode_msg(update_pdp_context_response_sgsn, Bin0) ->
                cause => Cause
               };
 decode_msg(update_pdp_context_response_ggsn, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{recovery, 14, tv, 1},
             {protocol_configuration_options, 132, tlv, {4, n}},
             {charging_gateway_address, 251, tlv, {4, 16}},
@@ -611,7 +613,7 @@ decode_msg(update_pdp_context_response_ggsn, Bin0) ->
                cause => Cause
               };
 decode_msg(delete_pdp_context_request, Bin0) ->
-    {?GTP_IEI_NSAPI, Nsapi, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_NSAPI, Nsapi, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{cause, 1, tv, 1},
             {protocol_configuration_options, 132, tlv, {4, n}},
             {user_location_information, 152, tlv, {5, n}},
@@ -624,7 +626,7 @@ decode_msg(delete_pdp_context_request, Bin0) ->
                nsapi => Nsapi
               };
 decode_msg(delete_pdp_context_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {user_location_information, 152, tlv, {5, n}},
             {ms_time_zone, 153, tlv, 1},
@@ -635,8 +637,8 @@ decode_msg(delete_pdp_context_response, Bin0) ->
                cause => Cause
               };
 decode_msg(error_indication, Bin0) ->
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
-    {?GTP_IEI_GTP_U_PEER_ADDRESS, GtpUPeerAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
+    {?GTPv1C_IEI_GTP_U_PEER_ADDRESS, GtpUPeerAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
     Opts = [{recovery_time_stamp, aa, tlv, {8, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin2, Opts),
@@ -645,11 +647,11 @@ decode_msg(error_indication, Bin0) ->
                gtp_u_peer_address => GtpUPeerAddress
               };
 decode_msg(pdu_notification_request, Bin0) ->
-    {?GTP_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin3} = otc_l3_codec:decode_tlv(Bin2),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin4} = otc_l3_codec:decode_tlv(Bin3),
-    {?GTP_IEI_GSN_ADDRESS, GsnAddress, Bin5} = otc_l3_codec:decode_tlv(Bin4),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, Bin5} = otc_l3_codec:decode_tlv(Bin4),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin5, Opts),
@@ -661,17 +663,17 @@ decode_msg(pdu_notification_request, Bin0) ->
                gsn_address => GsnAddress
               };
 decode_msg(pdu_notification_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => tunnel_management,
                cause => Cause
               };
 decode_msg(pdu_notification_reject_request, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin3} = otc_l3_codec:decode_tlv(Bin2),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin4} = otc_l3_codec:decode_tlv(Bin3),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin4, Opts),
@@ -682,16 +684,16 @@ decode_msg(pdu_notification_reject_request, Bin0) ->
                access_point_name => AccessPointName
               };
 decode_msg(pdu_notification_reject_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => tunnel_management,
                cause => Cause
               };
 decode_msg(initiate_pdp_context_activation_request, Bin0) ->
-    {?GTP_IEI_NSAPI, Nsapi, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
-    {?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin2} = otc_l3_codec:decode_tlv(Bin1),
-    {?GTP_IEI_CORRELATION_ID, CorrelationId, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_NSAPI, Nsapi, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_CORRELATION_ID, CorrelationId, Bin3} = otc_l3_codec:decode_tlv(Bin2),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {evolved_allocationretention_priority_i, 191, tlv, 1},
             {private_extension, 255, tlv, {6, n}}],
@@ -702,22 +704,22 @@ decode_msg(initiate_pdp_context_activation_request, Bin0) ->
                correlation_id => CorrelationId
               };
 decode_msg(initiate_pdp_context_activation_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => tunnel_management,
                cause => Cause
               };
 decode_msg(send_routeing_information_for_gprs_request, Bin0) ->
-    {?GTP_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => location_management,
                imsi => Imsi
               };
 decode_msg(send_routeing_information_for_gprs_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
-    {?GTP_IEI_IMSI, Imsi, Bin2} = otc_l3_codec:decode_tv(Bin1, 8),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin2} = otc_l3_codec:decode_tv(Bin1, 8),
     Opts = [{map_cause, 11, tv, 1},
             {ms_not_reachable_reason, 29, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
@@ -728,14 +730,14 @@ decode_msg(send_routeing_information_for_gprs_response, Bin0) ->
                imsi => Imsi
               };
 decode_msg(failure_report_request, Bin0) ->
-    {?GTP_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => location_management,
                imsi => Imsi
               };
 decode_msg(failure_report_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{map_cause, 11, tv, 1},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
@@ -743,8 +745,8 @@ decode_msg(failure_report_response, Bin0) ->
                cause => Cause
               };
 decode_msg(note_ms_gprs_present_request, Bin0) ->
-    {?GTP_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
-    {?GTP_IEI_GSN_ADDRESS, GsnAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
+    {?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{message_group => location_management,
@@ -752,15 +754,15 @@ decode_msg(note_ms_gprs_present_request, Bin0) ->
                gsn_address => GsnAddress
               };
 decode_msg(note_ms_gprs_present_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => location_management,
                cause => Cause
               };
 decode_msg(identification_request, Bin0) ->
-    {?GTP_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
-    {?GTP_IEI_P_TMSI, PTmsi, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
+    {?GTPv1C_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
+    {?GTPv1C_IEI_P_TMSI, PTmsi, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
     Opts = [{gsn_address, 133, tlv, {4, n}},
             {hop_counter, 163, tlv, 1},
             {private_extension, 255, tlv, {6, n}}],
@@ -770,7 +772,7 @@ decode_msg(identification_request, Bin0) ->
                p_tmsi => PTmsi
               };
 decode_msg(identification_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{ue_usage_type, 217, tlv, 7},
             {iov_updates_counter, 222, tlv, 1}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
@@ -778,9 +780,9 @@ decode_msg(identification_response, Bin0) ->
                cause => Cause
               };
 decode_msg(sgsn_context_request, Bin0) ->
-    {?GTP_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
-    {?GTP_IEI_GSN_ADDRESS, GsnAddress, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
+    {?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, Bin3} = otc_l3_codec:decode_tlv(Bin2),
     Opts = [{ms_validated, 13, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
             {sgsn_number, 147, tlv, {4, n}},
@@ -794,7 +796,7 @@ decode_msg(sgsn_context_request, Bin0) ->
                gsn_address => GsnAddress
               };
 decode_msg(sgsn_context_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{radio_priority_sms, 23, tv, 1},
             {radio_priority, 24, tv, 1},
             {packet_flow_id, 25, tv, 2},
@@ -826,7 +828,7 @@ decode_msg(sgsn_context_response, Bin0) ->
                cause => Cause
               };
 decode_msg(sgsn_context_acknowledge, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{sgsn_number, 147, tlv, {4, n}},
             {node_identifier, 219, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
@@ -835,12 +837,12 @@ decode_msg(sgsn_context_acknowledge, Bin0) ->
                cause => Cause
               };
 decode_msg(forward_relocation_request, Bin0) ->
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
-    {?GTP_IEI_RANAP_CAUSE, RanapCause, Bin2} = otc_l3_codec:decode_tv(Bin1, 1),
-    {?GTP_IEI_MM_CONTEXT, MmContext, Bin3} = otc_l3_codec:decode_tlv(Bin2),
-    {?GTP_IEI_GSN_ADDRESS, GsnAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
-    {?GTP_IEI_TARGET_IDENTIFICATION, TargetIdentification, Bin5} = otc_l3_codec:decode_tlv(Bin4),
-    {?GTP_IEI_UTRAN_TRANSPARENT_CONTAINER, UtranTransparentContainer, Bin6} = otc_l3_codec:decode_tlv(Bin5),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin1} = otc_l3_codec:decode_tv(Bin0, 4),
+    {?GTPv1C_IEI_RANAP_CAUSE, RanapCause, Bin2} = otc_l3_codec:decode_tv(Bin1, 1),
+    {?GTPv1C_IEI_MM_CONTEXT, MmContext, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_TARGET_IDENTIFICATION, TargetIdentification, Bin5} = otc_l3_codec:decode_tlv(Bin4),
+    {?GTPv1C_IEI_UTRAN_TRANSPARENT_CONTAINER, UtranTransparentContainer, Bin6} = otc_l3_codec:decode_tlv(Bin5),
     Opts = [{packet_flow_id, 25, tv, 2},
             {charging_characteristics, 26, tv, 2},
             {gsn_address, 133, tlv, {4, n}},
@@ -887,7 +889,7 @@ decode_msg(forward_relocation_request, Bin0) ->
                utran_transparent_container => UtranTransparentContainer
               };
 decode_msg(forward_relocation_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{tunnel_endpoint_identifier_data_ii, 18, tv, 5},
             {gsn_address, 133, tlv, {4, n}},
             {utran_transparent_container, 139, tlv, {4, n}},
@@ -915,28 +917,28 @@ decode_msg(relocation_cancel_request, Bin0) ->
     Optionals#{message_group => mobility_management
               };
 decode_msg(relocation_cancel_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mobility_management,
                cause => Cause
               };
 decode_msg(forward_relocation_complete_acknowledge, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{charging_id, 127, tv, 4}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mobility_management,
                cause => Cause
               };
 decode_msg(forward_srns_context_acknowledge, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{charging_id, 127, tv, 4}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mobility_management,
                cause => Cause
               };
 decode_msg(forward_srns_context, Bin0) ->
-    {?GTP_IEI_RAB_CONTEXT, RabContext, Bin1} = otc_l3_codec:decode_tv(Bin0, 9),
+    {?GTPv1C_IEI_RAB_CONTEXT, RabContext, Bin1} = otc_l3_codec:decode_tv(Bin0, 9),
     Opts = [{source_rnc_pdcp_context_info, 161, tlv, {4, n}},
             {pdu_numbers, 175, tlv, 9},
             {private_extension, 255, tlv, {6, n}}],
@@ -945,7 +947,7 @@ decode_msg(forward_srns_context, Bin0) ->
                rab_context => RabContext
               };
 decode_msg(ran_information_relay, Bin0) ->
-    {?GTP_IEI_RAN_TRANSPARENT_CONTAINER, RanTransparentContainer, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_RAN_TRANSPARENT_CONTAINER, RanTransparentContainer, Bin1} = otc_l3_codec:decode_tlv(Bin0),
     Opts = [{rim_routing_address, 158, tlv, {4, n}},
             {rim_routing_address_discriminator, 178, tlv, 1},
             {private_extension, 255, tlv, {6, n}}],
@@ -954,15 +956,15 @@ decode_msg(ran_information_relay, Bin0) ->
                ran_transparent_container => RanTransparentContainer
               };
 decode_msg(ue_registration_query_request, Bin0) ->
-    {?GTP_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mobility_management,
                imsi => Imsi
               };
 decode_msg(ue_registration_query_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
-    {?GTP_IEI_IMSI, Imsi, Bin2} = otc_l3_codec:decode_tv(Bin1, 8),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin2} = otc_l3_codec:decode_tv(Bin1, 8),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{message_group => mobility_management,
@@ -970,12 +972,12 @@ decode_msg(ue_registration_query_response, Bin0) ->
                imsi => Imsi
               };
 decode_msg(mbms_notification_request, Bin0) ->
-    {?GTP_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
-    {?GTP_IEI_NSAPI, Nsapi, Bin3} = otc_l3_codec:decode_tv(Bin2, 1),
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin5} = otc_l3_codec:decode_tlv(Bin4),
-    {?GTP_IEI_GSN_ADDRESS, GsnAddress, Bin6} = otc_l3_codec:decode_tlv(Bin5),
+    {?GTPv1C_IEI_IMSI, Imsi, Bin1} = otc_l3_codec:decode_tv(Bin0, 8),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
+    {?GTPv1C_IEI_NSAPI, Nsapi, Bin3} = otc_l3_codec:decode_tv(Bin2, 1),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin5} = otc_l3_codec:decode_tlv(Bin4),
+    {?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, Bin6} = otc_l3_codec:decode_tlv(Bin5),
     Opts = [{mbms_protocol_configuration_options, 159, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin6, Opts),
@@ -988,18 +990,18 @@ decode_msg(mbms_notification_request, Bin0) ->
                gsn_address => GsnAddress
               };
 decode_msg(mbms_notification_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mbms,
                cause => Cause
               };
 decode_msg(mbms_notification_reject_request, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
-    {?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
-    {?GTP_IEI_NSAPI, Nsapi, Bin3} = otc_l3_codec:decode_tv(Bin2, 1),
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin5} = otc_l3_codec:decode_tlv(Bin4),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, Bin2} = otc_l3_codec:decode_tv(Bin1, 4),
+    {?GTPv1C_IEI_NSAPI, Nsapi, Bin3} = otc_l3_codec:decode_tv(Bin2, 1),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin5} = otc_l3_codec:decode_tlv(Bin4),
     Opts = [{gsn_address, 133, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin5, Opts),
@@ -1011,18 +1013,18 @@ decode_msg(mbms_notification_reject_request, Bin0) ->
                access_point_name => AccessPointName
               };
 decode_msg(mbms_notification_reject_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mbms,
                cause => Cause
               };
 decode_msg(create_mbms_context_request, Bin0) ->
-    {?GTP_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin3} = otc_l3_codec:decode_tlv(Bin2),
-    {?GTP_IEI_GSN_ADDRESS, GsnAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
-    {?GTP_IEI_ENHANCED_NSAPI, EnhancedNsapi, Bin5} = otc_l3_codec:decode_tlv(Bin4),
+    {?GTPv1C_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_ENHANCED_NSAPI, EnhancedNsapi, Bin5} = otc_l3_codec:decode_tlv(Bin4),
     Opts = [{recovery, 14, tv, 1},
             {trace_reference, 27, tv, 2},
             {trace_type, 28, tv, 2},
@@ -1045,7 +1047,7 @@ decode_msg(create_mbms_context_request, Bin0) ->
                enhanced_nsapi => EnhancedNsapi
               };
 decode_msg(create_mbms_context_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{recovery, 14, tv, 1},
             {charging_gateway_address, 251, tlv, {4, 16}},
             {charging_gateway_address, 251, tlv, {4, 16}},
@@ -1056,9 +1058,9 @@ decode_msg(create_mbms_context_response, Bin0) ->
                cause => Cause
               };
 decode_msg(update_mbms_context_request, Bin0) ->
-    {?GTP_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
-    {?GTP_IEI_GSN_ADDRESS, GsnAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
-    {?GTP_IEI_ENHANCED_NSAPI, EnhancedNsapi, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_RAI, Rai, Bin1} = otc_l3_codec:decode_tv(Bin0, 6),
+    {?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_ENHANCED_NSAPI, EnhancedNsapi, Bin3} = otc_l3_codec:decode_tlv(Bin2),
     Opts = [{recovery, 14, tv, 1},
             {trace_reference, 27, tv, 2},
             {trace_type, 28, tv, 2},
@@ -1077,7 +1079,7 @@ decode_msg(update_mbms_context_request, Bin0) ->
                enhanced_nsapi => EnhancedNsapi
               };
 decode_msg(update_mbms_context_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{recovery, 14, tv, 1},
             {charging_gateway_address, 251, tlv, {4, 16}},
             {charging_gateway_address, 251, tlv, {4, 16}},
@@ -1093,7 +1095,7 @@ decode_msg(delete_mbms_context_request, Bin0) ->
     Optionals#{message_group => mbms
               };
 decode_msg(delete_mbms_context_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{mbms_protocol_configuration_options, 159, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
@@ -1101,8 +1103,8 @@ decode_msg(delete_mbms_context_response, Bin0) ->
                cause => Cause
               };
 decode_msg(mbms_registration_request, Bin0) ->
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
     Opts = [{gsn_address, 133, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin2, Opts),
@@ -1111,15 +1113,15 @@ decode_msg(mbms_registration_request, Bin0) ->
                access_point_name => AccessPointName
               };
 decode_msg(mbms_registration_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mbms,
                cause => Cause
               };
 decode_msg(mbms_deregistration_request, Bin0) ->
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin2, Opts),
     Optionals#{message_group => mbms,
@@ -1127,22 +1129,22 @@ decode_msg(mbms_deregistration_request, Bin0) ->
                access_point_name => AccessPointName
               };
 decode_msg(mbms_deregistration_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mbms,
                cause => Cause
               };
 decode_msg(mbms_session_start_request, Bin0) ->
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
-    {?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin3} = otc_l3_codec:decode_tlv(Bin2),
-    {?GTP_IEI_COMMON_FLAGS, CommonFlags, Bin4} = otc_l3_codec:decode_tlv(Bin3),
-    {?GTP_IEI_TMGI, Tmgi, Bin5} = otc_l3_codec:decode_tlv(Bin4),
-    {?GTP_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, Bin6} = otc_l3_codec:decode_tlv(Bin5),
-    {?GTP_IEI_MBMS_2G3G_INDICATOR, Mbms2g3gIndicator, Bin7} = otc_l3_codec:decode_tlv(Bin6),
-    {?GTP_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, Bin8} = otc_l3_codec:decode_tlv(Bin7),
-    {?GTP_IEI_MBMS_TIME_TO_DATA_TRANSFER, MbmsTimeToDataTransfer, Bin9} = otc_l3_codec:decode_tlv(Bin8),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_COMMON_FLAGS, CommonFlags, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_TMGI, Tmgi, Bin5} = otc_l3_codec:decode_tlv(Bin4),
+    {?GTPv1C_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, Bin6} = otc_l3_codec:decode_tlv(Bin5),
+    {?GTPv1C_IEI_MBMS_2G3G_INDICATOR, Mbms2g3gIndicator, Bin7} = otc_l3_codec:decode_tlv(Bin6),
+    {?GTPv1C_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, Bin8} = otc_l3_codec:decode_tlv(Bin7),
+    {?GTPv1C_IEI_MBMS_TIME_TO_DATA_TRANSFER, MbmsTimeToDataTransfer, Bin9} = otc_l3_codec:decode_tlv(Bin8),
     Opts = [{recovery, 14, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
             {mbms_session_identifier, 165, tlv, 1},
@@ -1163,7 +1165,7 @@ decode_msg(mbms_session_start_request, Bin0) ->
                mbms_time_to_data_transfer => MbmsTimeToDataTransfer
               };
 decode_msg(mbms_session_start_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{recovery, 14, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
             {mbms_distribution_acknowledgement, 187, tlv, 1},
@@ -1173,8 +1175,8 @@ decode_msg(mbms_session_start_response, Bin0) ->
                cause => Cause
               };
 decode_msg(mbms_session_stop_request, Bin0) ->
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
     Opts = [{mbms_flow_identifier, 185, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin2, Opts),
@@ -1183,18 +1185,18 @@ decode_msg(mbms_session_stop_request, Bin0) ->
                access_point_name => AccessPointName
               };
 decode_msg(mbms_session_stop_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin1, Opts),
     Optionals#{message_group => mbms,
                cause => Cause
               };
 decode_msg(mbms_session_update_request, Bin0) ->
-    {?GTP_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
-    {?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
-    {?GTP_IEI_TMGI, Tmgi, Bin3} = otc_l3_codec:decode_tlv(Bin2),
-    {?GTP_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, Bin4} = otc_l3_codec:decode_tlv(Bin3),
-    {?GTP_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, Bin5} = otc_l3_codec:decode_tlv(Bin4),
+    {?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, Bin2} = otc_l3_codec:decode_tlv(Bin1),
+    {?GTPv1C_IEI_TMGI, Tmgi, Bin3} = otc_l3_codec:decode_tlv(Bin2),
+    {?GTPv1C_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, Bin4} = otc_l3_codec:decode_tlv(Bin3),
+    {?GTPv1C_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, Bin5} = otc_l3_codec:decode_tlv(Bin4),
     Opts = [{tunnel_endpoint_identifier_control_plane, 17, tv, 4},
             {gsn_address, 133, tlv, {4, n}},
             {mbms_session_identifier, 165, tlv, 1},
@@ -1210,7 +1212,7 @@ decode_msg(mbms_session_update_request, Bin0) ->
                mbms_service_area => MbmsServiceArea
               };
 decode_msg(mbms_session_update_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{tunnel_endpoint_identifier_data_i, 16, tv, 4},
             {tunnel_endpoint_identifier_control_plane, 17, tv, 4},
             {gsn_address, 133, tlv, {4, n}},
@@ -1221,7 +1223,7 @@ decode_msg(mbms_session_update_response, Bin0) ->
                cause => Cause
               };
 decode_msg(ms_info_change_notification_request, Bin0) ->
-    {?GTP_IEI_RAT_TYPE, RatType, Bin1} = otc_l3_codec:decode_tlv(Bin0),
+    {?GTPv1C_IEI_RAT_TYPE, RatType, Bin1} = otc_l3_codec:decode_tlv(Bin0),
     Opts = [{nsapi, 20, tv, 1},
             {extended_common_flags, 193, tlv, {4, n}},
             {uci, 194, tlv, 8},
@@ -1231,7 +1233,7 @@ decode_msg(ms_info_change_notification_request, Bin0) ->
                rat_type => RatType
               };
 decode_msg(ms_info_change_notification_response, Bin0) ->
-    {?GTP_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
+    {?GTPv1C_IEI_CAUSE, Cause, Bin1} = otc_l3_codec:decode_tv(Bin0, 1),
     Opts = [{nsapi, 20, tv, 1},
             {ms_info_change_reporting_action, 181, tlv, 1},
             {csg_information_reporting_action, 195, tlv, {4, n}},
@@ -1246,7 +1248,7 @@ encode_msg(echo_request, #{} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     OptBin;
 encode_msg(echo_response, #{recovery := Recovery} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RECOVERY, Recovery, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_RECOVERY, Recovery, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
@@ -1255,16 +1257,16 @@ encode_msg(version_not_supported, #{} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     OptBin;
 encode_msg(supported_extension_headers_notification, #{extension_header_type_list := ExtensionHeaderTypeList} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_EXTENSION_HEADER_TYPE_LIST, ExtensionHeaderTypeList, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_EXTENSION_HEADER_TYPE_LIST, ExtensionHeaderTypeList, <<>>),
     Opts = [],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(create_pdp_context_request, #{tunnel_endpoint_identifier_data_i := TunnelEndpointIdentifierDataI,
                                          nsapi := Nsapi,
                                          quality_of_service_profile := QualityOfServiceProfile} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_NSAPI, Nsapi, 1, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
     Opts = [{rai, 3, tv, 6},
             {recovery, 14, tv, 1},
             {trace_reference, 27, tv, 2},
@@ -1292,7 +1294,7 @@ encode_msg(create_pdp_context_request, #{tunnel_endpoint_identifier_data_i := Tu
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, OptBin/binary>>;
 encode_msg(create_pdp_context_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {nsapi, 20, tv, 1},
             {protocol_configuration_options, 132, tlv, {4, n}},
@@ -1314,9 +1316,9 @@ encode_msg(create_pdp_context_response, #{cause := Cause} = Msg) ->
 encode_msg(update_pdp_context_request_sgsn, #{tunnel_endpoint_identifier_data_i := TunnelEndpointIdentifierDataI,
                                               nsapi := Nsapi,
                                               quality_of_service_profile := QualityOfServiceProfile} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_NSAPI, Nsapi, 1, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
     Opts = [{imsi, 2, tv, 8},
             {rai, 3, tv, 6},
             {recovery, 14, tv, 1},
@@ -1343,7 +1345,7 @@ encode_msg(update_pdp_context_request_sgsn, #{tunnel_endpoint_identifier_data_i 
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, OptBin/binary>>;
 encode_msg(update_pdp_context_request_ggsn, #{nsapi := Nsapi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_NSAPI, Nsapi, 1, <<>>),
     Opts = [{imsi, 2, tv, 8},
             {recovery, 14, tv, 1},
             {end_user_address, 128, tlv, {6, n}},
@@ -1363,7 +1365,7 @@ encode_msg(update_pdp_context_request_ggsn, #{nsapi := Nsapi} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(update_pdp_context_response_sgsn, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {tunnel_endpoint_identifier_data_i, 16, tv, 4},
             {protocol_configuration_options, 132, tlv, {4, n}},
@@ -1376,7 +1378,7 @@ encode_msg(update_pdp_context_response_sgsn, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(update_pdp_context_response_ggsn, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {protocol_configuration_options, 132, tlv, {4, n}},
             {charging_gateway_address, 251, tlv, {4, 16}},
@@ -1392,7 +1394,7 @@ encode_msg(update_pdp_context_response_ggsn, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(delete_pdp_context_request, #{nsapi := Nsapi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_NSAPI, Nsapi, 1, <<>>),
     Opts = [{cause, 1, tv, 1},
             {protocol_configuration_options, 132, tlv, {4, n}},
             {user_location_information, 152, tlv, {5, n}},
@@ -1403,7 +1405,7 @@ encode_msg(delete_pdp_context_request, #{nsapi := Nsapi} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(delete_pdp_context_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {user_location_information, 152, tlv, {5, n}},
             {ms_time_zone, 153, tlv, 1},
@@ -1413,8 +1415,8 @@ encode_msg(delete_pdp_context_response, #{cause := Cause} = Msg) ->
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(error_indication, #{tunnel_endpoint_identifier_data_i := TunnelEndpointIdentifierDataI,
                                gtp_u_peer_address := GtpUPeerAddress} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_GTP_U_PEER_ADDRESS, GtpUPeerAddress, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_DATA_I, TunnelEndpointIdentifierDataI, 4, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GTP_U_PEER_ADDRESS, GtpUPeerAddress, <<>>),
     Opts = [{recovery_time_stamp, aa, tlv, {8, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
@@ -1424,17 +1426,17 @@ encode_msg(pdu_notification_request, #{imsi := Imsi,
                                        end_user_address := EndUserAddress,
                                        access_point_name := AccessPointName,
                                        gsn_address := GsnAddress} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
-    Bin5 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin5 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, <<>>),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, Bin5/binary, OptBin/binary>>;
 encode_msg(pdu_notification_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
@@ -1442,44 +1444,44 @@ encode_msg(pdu_notification_reject_request, #{cause := Cause,
                                               tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
                                               end_user_address := EndUserAddress,
                                               access_point_name := AccessPointName} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, OptBin/binary>>;
 encode_msg(pdu_notification_reject_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(initiate_pdp_context_activation_request, #{nsapi := Nsapi,
                                                       quality_of_service_profile := QualityOfServiceProfile,
                                                       correlation_id := CorrelationId} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_CORRELATION_ID, CorrelationId, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_NSAPI, Nsapi, 1, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_CORRELATION_ID, CorrelationId, <<>>),
     Opts = [{protocol_configuration_options, 132, tlv, {4, n}},
             {evolved_allocationretention_priority_i, 191, tlv, 1},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, OptBin/binary>>;
 encode_msg(initiate_pdp_context_activation_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(send_routeing_information_for_gprs_request, #{imsi := Imsi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(send_routeing_information_for_gprs_response, #{cause := Cause,
                                                           imsi := Imsi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
     Opts = [{map_cause, 11, tv, 1},
             {ms_not_reachable_reason, 29, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
@@ -1487,39 +1489,39 @@ encode_msg(send_routeing_information_for_gprs_response, #{cause := Cause,
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(failure_report_request, #{imsi := Imsi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(failure_report_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{map_cause, 11, tv, 1},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(note_ms_gprs_present_request, #{imsi := Imsi,
                                            gsn_address := GsnAddress} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(note_ms_gprs_present_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(identification_request, #{rai := Rai,
                                      p_tmsi := PTmsi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_P_TMSI, PTmsi, 4, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_RAI, Rai, 6, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_P_TMSI, PTmsi, 4, <<>>),
     Opts = [{gsn_address, 133, tlv, {4, n}},
             {hop_counter, 163, tlv, 1},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(identification_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{ue_usage_type, 217, tlv, 7},
             {iov_updates_counter, 222, tlv, 1}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
@@ -1527,9 +1529,9 @@ encode_msg(identification_response, #{cause := Cause} = Msg) ->
 encode_msg(sgsn_context_request, #{rai := Rai,
                                    tunnel_endpoint_identifier_control_plane := TunnelEndpointIdentifierControlPlane,
                                    gsn_address := GsnAddress} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_RAI, Rai, 6, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, <<>>),
     Opts = [{ms_validated, 13, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
             {sgsn_number, 147, tlv, {4, n}},
@@ -1539,7 +1541,7 @@ encode_msg(sgsn_context_request, #{rai := Rai,
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, OptBin/binary>>;
 encode_msg(sgsn_context_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{radio_priority_sms, 23, tv, 1},
             {radio_priority, 24, tv, 1},
             {packet_flow_id, 25, tv, 2},
@@ -1569,7 +1571,7 @@ encode_msg(sgsn_context_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(sgsn_context_acknowledge, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{sgsn_number, 147, tlv, {4, n}},
             {node_identifier, 219, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
@@ -1581,12 +1583,12 @@ encode_msg(forward_relocation_request, #{tunnel_endpoint_identifier_control_plan
                                          gsn_address := GsnAddress,
                                          target_identification := TargetIdentification,
                                          utran_transparent_container := UtranTransparentContainer} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_RANAP_CAUSE, RanapCause, 1, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_MM_CONTEXT, MmContext, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
-    Bin5 = otc_l3_codec:encode_tlv(?GTP_IEI_TARGET_IDENTIFICATION, TargetIdentification, <<>>),
-    Bin6 = otc_l3_codec:encode_tlv(?GTP_IEI_UTRAN_TRANSPARENT_CONTAINER, UtranTransparentContainer, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_RANAP_CAUSE, RanapCause, 1, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_MM_CONTEXT, MmContext, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, <<>>),
+    Bin5 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_TARGET_IDENTIFICATION, TargetIdentification, <<>>),
+    Bin6 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_UTRAN_TRANSPARENT_CONTAINER, UtranTransparentContainer, <<>>),
     Opts = [{packet_flow_id, 25, tv, 2},
             {charging_characteristics, 26, tv, 2},
             {gsn_address, 133, tlv, {4, n}},
@@ -1626,7 +1628,7 @@ encode_msg(forward_relocation_request, #{tunnel_endpoint_identifier_control_plan
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, Bin5/binary, Bin6/binary, OptBin/binary>>;
 encode_msg(forward_relocation_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{tunnel_endpoint_identifier_data_ii, 18, tv, 5},
             {gsn_address, 133, tlv, {4, n}},
             {utran_transparent_container, 139, tlv, {4, n}},
@@ -1650,43 +1652,43 @@ encode_msg(relocation_cancel_request, #{} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     OptBin;
 encode_msg(relocation_cancel_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(forward_relocation_complete_acknowledge, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{charging_id, 127, tv, 4}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(forward_srns_context_acknowledge, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{charging_id, 127, tv, 4}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(forward_srns_context, #{rab_context := RabContext} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAB_CONTEXT, RabContext, 9, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_RAB_CONTEXT, RabContext, 9, <<>>),
     Opts = [{source_rnc_pdcp_context_info, 161, tlv, {4, n}},
             {pdu_numbers, 175, tlv, 9},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(ran_information_relay, #{ran_transparent_container := RanTransparentContainer} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_RAN_TRANSPARENT_CONTAINER, RanTransparentContainer, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_RAN_TRANSPARENT_CONTAINER, RanTransparentContainer, <<>>),
     Opts = [{rim_routing_address, 158, tlv, {4, n}},
             {rim_routing_address_discriminator, 178, tlv, 1},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(ue_registration_query_request, #{imsi := Imsi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(ue_registration_query_response, #{cause := Cause,
                                              imsi := Imsi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
@@ -1696,18 +1698,18 @@ encode_msg(mbms_notification_request, #{imsi := Imsi,
                                         end_user_address := EndUserAddress,
                                         access_point_name := AccessPointName,
                                         gsn_address := GsnAddress} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_IMSI, Imsi, 8, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
-    Bin3 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin5 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
-    Bin6 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_IMSI, Imsi, 8, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
+    Bin3 = otc_l3_codec:encode_tv(?GTPv1C_IEI_NSAPI, Nsapi, 1, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin5 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin6 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, <<>>),
     Opts = [{mbms_protocol_configuration_options, 159, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, Bin5/binary, Bin6/binary, OptBin/binary>>;
 encode_msg(mbms_notification_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
@@ -1716,17 +1718,17 @@ encode_msg(mbms_notification_reject_request, #{cause := Cause,
                                                nsapi := Nsapi,
                                                end_user_address := EndUserAddress,
                                                access_point_name := AccessPointName} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
-    Bin2 = otc_l3_codec:encode_tv(?GTP_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
-    Bin3 = otc_l3_codec:encode_tv(?GTP_IEI_NSAPI, Nsapi, 1, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin5 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
+    Bin2 = otc_l3_codec:encode_tv(?GTPv1C_IEI_TUNNEL_ENDPOINT_IDENTIFIER_CONTROL_PLANE, TunnelEndpointIdentifierControlPlane, 4, <<>>),
+    Bin3 = otc_l3_codec:encode_tv(?GTPv1C_IEI_NSAPI, Nsapi, 1, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin5 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{gsn_address, 133, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, Bin5/binary, OptBin/binary>>;
 encode_msg(mbms_notification_reject_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
@@ -1735,11 +1737,11 @@ encode_msg(create_mbms_context_request, #{rai := Rai,
                                           access_point_name := AccessPointName,
                                           gsn_address := GsnAddress,
                                           enhanced_nsapi := EnhancedNsapi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
-    Bin5 = otc_l3_codec:encode_tlv(?GTP_IEI_ENHANCED_NSAPI, EnhancedNsapi, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_RAI, Rai, 6, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, <<>>),
+    Bin5 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ENHANCED_NSAPI, EnhancedNsapi, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {trace_reference, 27, tv, 2},
             {trace_type, 28, tv, 2},
@@ -1756,7 +1758,7 @@ encode_msg(create_mbms_context_request, #{rai := Rai,
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, Bin5/binary, OptBin/binary>>;
 encode_msg(create_mbms_context_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {charging_gateway_address, 251, tlv, {4, 16}},
             {charging_gateway_address, 251, tlv, {4, 16}},
@@ -1767,9 +1769,9 @@ encode_msg(create_mbms_context_response, #{cause := Cause} = Msg) ->
 encode_msg(update_mbms_context_request, #{rai := Rai,
                                           gsn_address := GsnAddress,
                                           enhanced_nsapi := EnhancedNsapi} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_RAI, Rai, 6, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_GSN_ADDRESS, GsnAddress, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_ENHANCED_NSAPI, EnhancedNsapi, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_RAI, Rai, 6, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_GSN_ADDRESS, GsnAddress, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ENHANCED_NSAPI, EnhancedNsapi, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {trace_reference, 27, tv, 2},
             {trace_type, 28, tv, 2},
@@ -1784,7 +1786,7 @@ encode_msg(update_mbms_context_request, #{rai := Rai,
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, OptBin/binary>>;
 encode_msg(update_mbms_context_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {charging_gateway_address, 251, tlv, {4, 16}},
             {charging_gateway_address, 251, tlv, {4, 16}},
@@ -1797,33 +1799,33 @@ encode_msg(delete_mbms_context_request, #{} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     OptBin;
 encode_msg(delete_mbms_context_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{mbms_protocol_configuration_options, 159, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_registration_request, #{end_user_address := EndUserAddress,
                                         access_point_name := AccessPointName} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{gsn_address, 133, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(mbms_registration_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_deregistration_request, #{end_user_address := EndUserAddress,
                                           access_point_name := AccessPointName} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(mbms_deregistration_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
@@ -1836,15 +1838,15 @@ encode_msg(mbms_session_start_request, #{end_user_address := EndUserAddress,
                                          mbms_2g3g_indicator := Mbms2g3gIndicator,
                                          mbms_session_duration := MbmsSessionDuration,
                                          mbms_time_to_data_transfer := MbmsTimeToDataTransfer} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_COMMON_FLAGS, CommonFlags, <<>>),
-    Bin5 = otc_l3_codec:encode_tlv(?GTP_IEI_TMGI, Tmgi, <<>>),
-    Bin6 = otc_l3_codec:encode_tlv(?GTP_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, <<>>),
-    Bin7 = otc_l3_codec:encode_tlv(?GTP_IEI_MBMS_2G3G_INDICATOR, Mbms2g3gIndicator, <<>>),
-    Bin8 = otc_l3_codec:encode_tlv(?GTP_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, <<>>),
-    Bin9 = otc_l3_codec:encode_tlv(?GTP_IEI_MBMS_TIME_TO_DATA_TRANSFER, MbmsTimeToDataTransfer, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE, QualityOfServiceProfile, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_COMMON_FLAGS, CommonFlags, <<>>),
+    Bin5 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_TMGI, Tmgi, <<>>),
+    Bin6 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, <<>>),
+    Bin7 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_MBMS_2G3G_INDICATOR, Mbms2g3gIndicator, <<>>),
+    Bin8 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, <<>>),
+    Bin9 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_MBMS_TIME_TO_DATA_TRANSFER, MbmsTimeToDataTransfer, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
             {mbms_session_identifier, 165, tlv, 1},
@@ -1855,7 +1857,7 @@ encode_msg(mbms_session_start_request, #{end_user_address := EndUserAddress,
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, Bin5/binary, Bin6/binary, Bin7/binary, Bin8/binary, Bin9/binary, OptBin/binary>>;
 encode_msg(mbms_session_start_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{recovery, 14, tv, 1},
             {gsn_address, 133, tlv, {4, n}},
             {mbms_distribution_acknowledgement, 187, tlv, 1},
@@ -1864,14 +1866,14 @@ encode_msg(mbms_session_start_response, #{cause := Cause} = Msg) ->
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(mbms_session_stop_request, #{end_user_address := EndUserAddress,
                                         access_point_name := AccessPointName} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
     Opts = [{mbms_flow_identifier, 185, tlv, {4, n}},
             {private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, OptBin/binary>>;
 encode_msg(mbms_session_stop_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{private_extension, 255, tlv, {6, n}}],
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
@@ -1880,11 +1882,11 @@ encode_msg(mbms_session_update_request, #{end_user_address := EndUserAddress,
                                           tmgi := Tmgi,
                                           mbms_session_duration := MbmsSessionDuration,
                                           mbms_service_area := MbmsServiceArea} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
-    Bin2 = otc_l3_codec:encode_tlv(?GTP_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
-    Bin3 = otc_l3_codec:encode_tlv(?GTP_IEI_TMGI, Tmgi, <<>>),
-    Bin4 = otc_l3_codec:encode_tlv(?GTP_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, <<>>),
-    Bin5 = otc_l3_codec:encode_tlv(?GTP_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_END_USER_ADDRESS, EndUserAddress, <<>>),
+    Bin2 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_ACCESS_POINT_NAME, AccessPointName, <<>>),
+    Bin3 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_TMGI, Tmgi, <<>>),
+    Bin4 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_MBMS_SESSION_DURATION, MbmsSessionDuration, <<>>),
+    Bin5 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_MBMS_SERVICE_AREA, MbmsServiceArea, <<>>),
     Opts = [{tunnel_endpoint_identifier_control_plane, 17, tv, 4},
             {gsn_address, 133, tlv, {4, n}},
             {mbms_session_identifier, 165, tlv, 1},
@@ -1894,7 +1896,7 @@ encode_msg(mbms_session_update_request, #{end_user_address := EndUserAddress,
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, Bin2/binary, Bin3/binary, Bin4/binary, Bin5/binary, OptBin/binary>>;
 encode_msg(mbms_session_update_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{tunnel_endpoint_identifier_data_i, 16, tv, 4},
             {tunnel_endpoint_identifier_control_plane, 17, tv, 4},
             {gsn_address, 133, tlv, {4, n}},
@@ -1903,7 +1905,7 @@ encode_msg(mbms_session_update_response, #{cause := Cause} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(ms_info_change_notification_request, #{rat_type := RatType} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tlv(?GTP_IEI_RAT_TYPE, RatType, <<>>),
+    Bin1 = otc_l3_codec:encode_tlv(?GTPv1C_IEI_RAT_TYPE, RatType, <<>>),
     Opts = [{nsapi, 20, tv, 1},
             {extended_common_flags, 193, tlv, {4, n}},
             {uci, 194, tlv, 8},
@@ -1911,7 +1913,7 @@ encode_msg(ms_info_change_notification_request, #{rat_type := RatType} = Msg) ->
     OptBin = otc_l3_codec:encode_iei_list(Msg, Opts),
     <<Bin1/binary, OptBin/binary>>;
 encode_msg(ms_info_change_notification_response, #{cause := Cause} = Msg) ->
-    Bin1 = otc_l3_codec:encode_tv(?GTP_IEI_CAUSE, Cause, 1, <<>>),
+    Bin1 = otc_l3_codec:encode_tv(?GTPv1C_IEI_CAUSE, Cause, 1, <<>>),
     Opts = [{nsapi, 20, tv, 1},
             {ms_info_change_reporting_action, 181, tlv, 1},
             {csg_information_reporting_action, 195, tlv, {4, n}},

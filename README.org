@@ -77,7 +77,7 @@
 
 * Codecs
 
-| Name    | Spec                          | Encode | Decode | Production Tested (Decode/Encode) | Notes                                            |
+| Name    | Spec                          | Decode | Encode | Production Tested (Decode/Encode) | Notes                                            |
 |---------+-------------------------------+--------+--------+-----------------------------------+--------------------------------------------------|
 | M3UA    | IETF RFC 4666 September 2006  | X      | X      | D                                 |                                                  |
 | M2PA    | IETF RFC 4165 September 2005  | X      | X      | D                                 |                                                  |
@@ -87,71 +87,72 @@
 | NAS EPS | 3GPP TS 24.301 v16.8.0        | /      | /      |                                   | Messages are de-/encoded, but missing parameters |
 | NAS 5GS | 3GPP TS 24.501 v16.10.0       | /      | /      |                                   | Messages are de-/encoded, but missing parameters |
 | SGSAP   | 3GPP TS 29.118 v16.0.0        |        |        |                                   |                                                  |
-| GTP     | 3GPP TS 29.060 v17.3.0        | X      | X      |                                   | Messages are de-/encoded, but missing parameters |
+| GTPv1-C | 3GPP TS 29.060 v17.3.0        | X      |        |                                   | Messages are de-/encoded, but missing parameters |
+| GTPv2-C | 3GPP TS 29.274 v17.7.0        | X      |        |                                   | Messages are de-/encoded, but missing parameters |
 
 * Diameter interfaces
 
-| Spec              | Interfaces               | Notes                                |
-|-------------------+--------------------------+--------------------------------------|
-| 3GPP TS 29061     | Gi/Sgi                   |                                      |
-| 3GPP TS 29061     | Gmb                      |                                      |
-| 3GPP TS 29061     | SGmb                     |                                      |
-| 3GPP TS 29109     | Zh                       |                                      |
-| 3GPP TS 29109     | Zn                       |                                      |
-| 3GPP TS 29109     | Zpn                      |                                      |
-| 3GPP TS 29128     | T6a/T6b                  |                                      |
-| 3GPP TS 29140     | MM10                     |                                      |
-| 3GPP TS 29153     | Ns                       |                                      |
-| 3GPP TS 29154     | Nta                      |                                      |
-| 3GPP TS 29154     | Nt                       |                                      |
-| 3GPP TS 29172     | SLg                      |                                      |
-| 3GPP TS 29173     | SLh                      |                                      |
-| 3GPP TS 29209     | Gq                       |                                      |
-| 3GPP TS 29211     | Rx                       |                                      |
-| 3GPP TS 29212     | Gx                       |                                      |
-| 3GPP TS 29212     | Gxx                      |                                      |
-| 3GPP TS 29212     | S15                      |                                      |
-| 3GPP TS 29212     | Sd                       |                                      |
-| 3GPP TS 29212     | St                       |                                      |
-| 3GPP TS 29214     | Rx                       |                                      |
-| 3GPP TS 29215     | S9a                      |                                      |
-| 3GPP TS 29215     | S9a*                     |                                      |
-| 3GPP TS 29215     | S9                       |                                      |
-| 3GPP TS 29217     | Np                       |                                      |
-| 3GPP TS 29219     | Sy                       |                                      |
-| 3GPP TS 29229     | Cx                       |                                      |
-| 3GPP TS 29234     | Pr                       |                                      |
-| 3GPP TS 29234     | Wx                       |                                      |
-| 3GPP TS 29272     | S13/S13'                 |                                      |
-| 3GPP TS 29272     | S6a/S6d                  |                                      |
-| 3GPP TS 29272     | S7a/S7d                  |                                      |
-| 3GPP TS 29273     | S6b                      |                                      |
-| 3GPP TS 29273     | STa                      |                                      |
-| 3GPP TS 29273     | SWm                      |                                      |
-| 3GPP TS 29273     | SWx                      |                                      |
-| 3GPP TS 29283     | Diameter Data Management |                                      |
-| 3GPP TS 29329     | Sh                       |                                      |
-| 3GPP TS 29336     | S6m/S6n                  |                                      |
-| 3GPP TS 29336     | S6t                      |                                      |
-| 3GPP TS 29337     | T4                       |                                      |
-| 3GPP TS 29338     | S6c                      |                                      |
-| 3GPP TS 29338     | SGd/Gdd                  |                                      |
-| 3GPP TS 29344     | PC4a                     |                                      |
-| 3GPP TS 29345     | PC6/PC7                  |                                      |
-| 3GPP TS 29368     | Tsp                      |                                      |
-| 3GPP TS 29388     | V4                       |                                      |
-| 3GPP TS 29389     | V6                       |                                      |
-| 3GPP TS 29468     | MB2-C                    |                                      |
-| ETSI ES 283 026   | Rq                       |                                      |
-| ETSI ES 283 034   | e4                       | Circular dependency/does not compile |
-| ETSI ES 283 035   | e2                       | Circular dependency/does not compile |
-| ETSI ES 283 039-2 | GOCAP                    |                                      |
-| ETSI TS 183 017   | Gq                       |                                      |
-| ETSI TS 183 059-1 | e4                       |                                      |
-| ETSI TS 183 060   | Re                       | Circular dependency/does not compile |
-| ETSI TS 183 066   | a4                       | Circular dependency/does not compile |
-| ETSI TS 183 071   | Rr Delegated             |                                      |
-| ETSI TS 183 071   | Rr Request               |                                      |
+| Interfaces               | Spec              | Notes                                |
+|--------------------------+-------------------+--------------------------------------|
+| Gi/Sgi                   | 3GPP TS 29061     |                                      |
+| Gmb                      | 3GPP TS 29061     |                                      |
+| SGmb                     | 3GPP TS 29061     |                                      |
+| Zh                       | 3GPP TS 29109     |                                      |
+| Zn                       | 3GPP TS 29109     |                                      |
+| Zpn                      | 3GPP TS 29109     |                                      |
+| T6a/T6b                  | 3GPP TS 29128     |                                      |
+| MM10                     | 3GPP TS 29140     |                                      |
+| Ns                       | 3GPP TS 29153     |                                      |
+| Nta                      | 3GPP TS 29154     |                                      |
+| Nt                       | 3GPP TS 29154     |                                      |
+| SLg                      | 3GPP TS 29172     |                                      |
+| SLh                      | 3GPP TS 29173     |                                      |
+| Gq                       | 3GPP TS 29209     |                                      |
+| Rx                       | 3GPP TS 29211     |                                      |
+| Gx                       | 3GPP TS 29212     |                                      |
+| Gxx                      | 3GPP TS 29212     |                                      |
+| S15                      | 3GPP TS 29212     |                                      |
+| Sd                       | 3GPP TS 29212     |                                      |
+| St                       | 3GPP TS 29212     |                                      |
+| Rx                       | 3GPP TS 29214     |                                      |
+| S9a                      | 3GPP TS 29215     |                                      |
+| S9a*                     | 3GPP TS 29215     |                                      |
+| S9                       | 3GPP TS 29215     |                                      |
+| Np                       | 3GPP TS 29217     |                                      |
+| Sy                       | 3GPP TS 29219     |                                      |
+| Cx                       | 3GPP TS 29229     |                                      |
+| Pr                       | 3GPP TS 29234     |                                      |
+| Wx                       | 3GPP TS 29234     |                                      |
+| S13/S13'                 | 3GPP TS 29272     |                                      |
+| S6a/S6d                  | 3GPP TS 29272     |                                      |
+| S7a/S7d                  | 3GPP TS 29272     |                                      |
+| S6b                      | 3GPP TS 29273     |                                      |
+| STa                      | 3GPP TS 29273     |                                      |
+| SWm                      | 3GPP TS 29273     |                                      |
+| SWx                      | 3GPP TS 29273     |                                      |
+| Diameter Data Management | 3GPP TS 29283     |                                      |
+| Sh                       | 3GPP TS 29329     |                                      |
+| S6m/S6n                  | 3GPP TS 29336     |                                      |
+| S6t                      | 3GPP TS 29336     |                                      |
+| T4                       | 3GPP TS 29337     |                                      |
+| S6c                      | 3GPP TS 29338     |                                      |
+| SGd/Gdd                  | 3GPP TS 29338     |                                      |
+| PC4a                     | 3GPP TS 29344     |                                      |
+| PC6/PC7                  | 3GPP TS 29345     |                                      |
+| Tsp                      | 3GPP TS 29368     |                                      |
+| V4                       | 3GPP TS 29388     |                                      |
+| V6                       | 3GPP TS 29389     |                                      |
+| MB2-C                    | 3GPP TS 29468     |                                      |
+| Rq                       | ETSI ES 283 026   |                                      |
+| e4                       | ETSI ES 283 034   | Circular dependency/does not compile |
+| e2                       | ETSI ES 283 035   | Circular dependency/does not compile |
+| GOCAP                    | ETSI ES 283 039-2 |                                      |
+| Gq                       | ETSI TS 183 017   |                                      |
+| e4                       | ETSI TS 183 059-1 |                                      |
+| Re                       | ETSI TS 183 060   | Circular dependency/does not compile |
+| a4                       | ETSI TS 183 066   | Circular dependency/does not compile |
+| Rr Delegated             | ETSI TS 183 071   |                                      |
+| Rr Request               | ETSI TS 183 071   |                                      |
 
 * ASN.1
 

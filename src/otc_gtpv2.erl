@@ -18,6 +18,8 @@ spec() ->
 codec(Bin) when is_binary(Bin) ->
     decode(Bin);
 codec(Map) when is_map(Map) ->
+    encode(Map);
+codec({Map, <<>>}) when is_map(Map) ->
     encode(Map).
 
 next(_) ->
@@ -40,343 +42,343 @@ encode(Map) ->
     Len = byte_size(MsgBin),
     <<2:3, P:1, T:1, MP:1, 0:2, MT:8, Len:16, MsgFields/binary, MsgBin/binary>>.
 
-parse_message_type(?GTPv2_MSG_TYPE_ECHO_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_ECHO_REQUEST) ->
     echo_request;
-parse_message_type(?GTPv2_MSG_TYPE_ECHO_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_ECHO_RESPONSE) ->
     echo_response;
-parse_message_type(?GTPv2_MSG_TYPE_VERSION_NOT_SUPPORTED_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_VERSION_NOT_SUPPORTED_INDICATION) ->
     version_not_supported_indication;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_SESSION_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_SESSION_REQUEST) ->
     create_session_request;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_SESSION_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_SESSION_RESPONSE) ->
     create_session_response;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_SESSION_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_SESSION_REQUEST) ->
     delete_session_request;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_SESSION_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_SESSION_RESPONSE) ->
     delete_session_response;
-parse_message_type(?GTPv2_MSG_TYPE_MODIFY_BEARER_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MODIFY_BEARER_REQUEST) ->
     modify_bearer_request;
-parse_message_type(?GTPv2_MSG_TYPE_MODIFY_BEARER_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MODIFY_BEARER_RESPONSE) ->
     modify_bearer_response;
-parse_message_type(?GTPv2_MSG_TYPE_REMOTE_UE_REPORT_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_REMOTE_UE_REPORT_NOTIFICATION) ->
     remote_ue_report_notification;
-parse_message_type(?GTPv2_MSG_TYPE_REMOTE_UE_REPORT_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_REMOTE_UE_REPORT_ACKNOWLEDGE) ->
     remote_ue_report_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_CHANGE_NOTIFICATION_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CHANGE_NOTIFICATION_REQUEST) ->
     change_notification_request;
-parse_message_type(?GTPv2_MSG_TYPE_CHANGE_NOTIFICATION_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CHANGE_NOTIFICATION_RESPONSE) ->
     change_notification_response;
-parse_message_type(?GTPv2_MSG_TYPE_RESUME_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_RESUME_NOTIFICATION) ->
     resume_notification;
-parse_message_type(?GTPv2_MSG_TYPE_RESUME_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_RESUME_ACKNOWLEDGE) ->
     resume_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_MODIFY_BEARER_COMMAND) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MODIFY_BEARER_COMMAND) ->
     modify_bearer_command;
-parse_message_type(?GTPv2_MSG_TYPE_MODIFY_BEARER_FAILURE_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MODIFY_BEARER_FAILURE_INDICATION) ->
     modify_bearer_failure_indication;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_BEARER_COMMAND) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_BEARER_COMMAND) ->
     delete_bearer_command;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_BEARER_FAILURE_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_BEARER_FAILURE_INDICATION) ->
     delete_bearer_failure_indication;
-parse_message_type(?GTPv2_MSG_TYPE_BEARER_RESOURCE_COMMAND) ->
+parse_message_type(?GTPv2C_MSG_TYPE_BEARER_RESOURCE_COMMAND) ->
     bearer_resource_command;
-parse_message_type(?GTPv2_MSG_TYPE_BEARER_RESOURCE_FAILURE_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_BEARER_RESOURCE_FAILURE_INDICATION) ->
     bearer_resource_failure_indication;
-parse_message_type(?GTPv2_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_FAILURE_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_FAILURE_INDICATION) ->
     downlink_data_notification_failure_indication;
-parse_message_type(?GTPv2_MSG_TYPE_TRACE_SESSION_ACTIVATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_TRACE_SESSION_ACTIVATION) ->
     trace_session_activation;
-parse_message_type(?GTPv2_MSG_TYPE_TRACE_SESSION_DEACTIVATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_TRACE_SESSION_DEACTIVATION) ->
     trace_session_deactivation;
-parse_message_type(?GTPv2_MSG_TYPE_STOP_PAGING_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_STOP_PAGING_INDICATION) ->
     stop_paging_indication;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_BEARER_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_BEARER_REQUEST) ->
     create_bearer_request;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_BEARER_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_BEARER_RESPONSE) ->
     create_bearer_response;
-parse_message_type(?GTPv2_MSG_TYPE_UPDATE_BEARER_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UPDATE_BEARER_REQUEST) ->
     update_bearer_request;
-parse_message_type(?GTPv2_MSG_TYPE_UPDATE_BEARER_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UPDATE_BEARER_RESPONSE) ->
     update_bearer_response;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_BEARER_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_BEARER_REQUEST) ->
     delete_bearer_request;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_BEARER_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_BEARER_RESPONSE) ->
     delete_bearer_response;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_PDN_CONNECTION_SET_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_PDN_CONNECTION_SET_REQUEST) ->
     delete_pdn_connection_set_request;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_PDN_CONNECTION_SET_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_PDN_CONNECTION_SET_RESPONSE) ->
     delete_pdn_connection_set_response;
-parse_message_type(?GTPv2_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_NOTIFICATION) ->
     pgw_downlink_triggering_notification;
-parse_message_type(?GTPv2_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_ACKNOWLEDGE) ->
     pgw_downlink_triggering_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_IDENTIFICATION_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_IDENTIFICATION_REQUEST) ->
     identification_request;
-parse_message_type(?GTPv2_MSG_TYPE_IDENTIFICATION_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_IDENTIFICATION_RESPONSE) ->
     identification_response;
-parse_message_type(?GTPv2_MSG_TYPE_CONTEXT_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CONTEXT_REQUEST) ->
     context_request;
-parse_message_type(?GTPv2_MSG_TYPE_CONTEXT_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CONTEXT_RESPONSE) ->
     context_response;
-parse_message_type(?GTPv2_MSG_TYPE_CONTEXT_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CONTEXT_ACKNOWLEDGE) ->
     context_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_FORWARD_RELOCATION_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_REQUEST) ->
     forward_relocation_request;
-parse_message_type(?GTPv2_MSG_TYPE_FORWARD_RELOCATION_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_RESPONSE) ->
     forward_relocation_response;
-parse_message_type(?GTPv2_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_NOTIFICATION) ->
     forward_relocation_complete_notification;
-parse_message_type(?GTPv2_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE) ->
     forward_relocation_complete_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_FORWARD_ACCESS_CONTEXT_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_FORWARD_ACCESS_CONTEXT_NOTIFICATION) ->
     forward_access_context_notification;
-parse_message_type(?GTPv2_MSG_TYPE_FORWARD_ACCESS_CONTEXT_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_FORWARD_ACCESS_CONTEXT_ACKNOWLEDGE) ->
     forward_access_context_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_RELOCATION_CANCEL_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_RELOCATION_CANCEL_REQUEST) ->
     relocation_cancel_request;
-parse_message_type(?GTPv2_MSG_TYPE_RELOCATION_CANCEL_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_RELOCATION_CANCEL_RESPONSE) ->
     relocation_cancel_response;
-parse_message_type(?GTPv2_MSG_TYPE_CONFIGURATION_TRANSFER_TUNNEL) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CONFIGURATION_TRANSFER_TUNNEL) ->
     configuration_transfer_tunnel;
-parse_message_type(?GTPv2_MSG_TYPE_RAN_INFORMATION_RELAY) ->
+parse_message_type(?GTPv2C_MSG_TYPE_RAN_INFORMATION_RELAY) ->
     ran_information_relay;
-parse_message_type(?GTPv2_MSG_TYPE_DETACH_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DETACH_NOTIFICATION) ->
     detach_notification;
-parse_message_type(?GTPv2_MSG_TYPE_DETACH_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DETACH_ACKNOWLEDGE) ->
     detach_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_CS_PAGING_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CS_PAGING_INDICATION) ->
     cs_paging_indication;
-parse_message_type(?GTPv2_MSG_TYPE_ALERT_MME_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_ALERT_MME_NOTIFICATION) ->
     alert_mme_notification;
-parse_message_type(?GTPv2_MSG_TYPE_ALERT_MME_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_ALERT_MME_ACKNOWLEDGE) ->
     alert_mme_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_UE_ACTIVITY_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UE_ACTIVITY_NOTIFICATION) ->
     ue_activity_notification;
-parse_message_type(?GTPv2_MSG_TYPE_UE_ACTIVITY_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UE_ACTIVITY_ACKNOWLEDGE) ->
     ue_activity_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_ISR_STATUS_INDICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_ISR_STATUS_INDICATION) ->
     isr_status_indication;
-parse_message_type(?GTPv2_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST) ->
     ue_registration_query_request;
-parse_message_type(?GTPv2_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE) ->
     ue_registration_query_response;
-parse_message_type(?GTPv2_MSG_TYPE_SUSPEND_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_SUSPEND_NOTIFICATION) ->
     suspend_notification;
-parse_message_type(?GTPv2_MSG_TYPE_SUSPEND_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_SUSPEND_ACKNOWLEDGE) ->
     suspend_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_FORWARDING_TUNNEL_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_FORWARDING_TUNNEL_REQUEST) ->
     create_forwarding_tunnel_request;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_FORWARDING_TUNNEL_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_FORWARDING_TUNNEL_RESPONSE) ->
     create_forwarding_tunnel_response;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST) ->
     create_indirect_data_forwarding_tunnel_request;
-parse_message_type(?GTPv2_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE) ->
     create_indirect_data_forwarding_tunnel_response;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST) ->
     delete_indirect_data_forwarding_tunnel_request;
-parse_message_type(?GTPv2_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE) ->
     delete_indirect_data_forwarding_tunnel_response;
-parse_message_type(?GTPv2_MSG_TYPE_RELEASE_ACCESS_BEARERS_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_RELEASE_ACCESS_BEARERS_REQUEST) ->
     release_access_bearers_request;
-parse_message_type(?GTPv2_MSG_TYPE_RELEASE_ACCESS_BEARERS_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_RELEASE_ACCESS_BEARERS_RESPONSE) ->
     release_access_bearers_response;
-parse_message_type(?GTPv2_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION) ->
     downlink_data_notification;
-parse_message_type(?GTPv2_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_ACKNOWLEDGE) ->
     downlink_data_notification_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_PGW_RESTART_NOTIFICATION) ->
+parse_message_type(?GTPv2C_MSG_TYPE_PGW_RESTART_NOTIFICATION) ->
     pgw_restart_notification;
-parse_message_type(?GTPv2_MSG_TYPE_PGW_RESTART_NOTIFICATION_ACKNOWLEDGE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_PGW_RESTART_NOTIFICATION_ACKNOWLEDGE) ->
     pgw_restart_notification_acknowledge;
-parse_message_type(?GTPv2_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_REQUEST) ->
     update_pdn_connection_set_request;
-parse_message_type(?GTPv2_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_RESPONSE) ->
     update_pdn_connection_set_response;
-parse_message_type(?GTPv2_MSG_TYPE_MODIFY_ACCESS_BEARERS_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MODIFY_ACCESS_BEARERS_REQUEST) ->
     modify_access_bearers_request;
-parse_message_type(?GTPv2_MSG_TYPE_MODIFY_ACCESS_BEARERS_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MODIFY_ACCESS_BEARERS_RESPONSE) ->
     modify_access_bearers_response;
-parse_message_type(?GTPv2_MSG_TYPE_MBMS_SESSION_START_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MBMS_SESSION_START_REQUEST) ->
     mbms_session_start_request;
-parse_message_type(?GTPv2_MSG_TYPE_MBMS_SESSION_START_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MBMS_SESSION_START_RESPONSE) ->
     mbms_session_start_response;
-parse_message_type(?GTPv2_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST) ->
     mbms_session_update_request;
-parse_message_type(?GTPv2_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE) ->
     mbms_session_update_response;
-parse_message_type(?GTPv2_MSG_TYPE_MBMS_SESSION_STOP_REQUEST) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MBMS_SESSION_STOP_REQUEST) ->
     mbms_session_stop_request;
-parse_message_type(?GTPv2_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE) ->
+parse_message_type(?GTPv2C_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE) ->
     mbms_session_stop_response.
 
 compose_message_type(echo_request) ->
-    ?GTPv2_MSG_TYPE_ECHO_REQUEST;
+    ?GTPv2C_MSG_TYPE_ECHO_REQUEST;
 compose_message_type(echo_response) ->
-    ?GTPv2_MSG_TYPE_ECHO_RESPONSE;
+    ?GTPv2C_MSG_TYPE_ECHO_RESPONSE;
 compose_message_type(version_not_supported_indication) ->
-    ?GTPv2_MSG_TYPE_VERSION_NOT_SUPPORTED_INDICATION;
+    ?GTPv2C_MSG_TYPE_VERSION_NOT_SUPPORTED_INDICATION;
 compose_message_type(create_session_request) ->
-    ?GTPv2_MSG_TYPE_CREATE_SESSION_REQUEST;
+    ?GTPv2C_MSG_TYPE_CREATE_SESSION_REQUEST;
 compose_message_type(create_session_response) ->
-    ?GTPv2_MSG_TYPE_CREATE_SESSION_RESPONSE;
+    ?GTPv2C_MSG_TYPE_CREATE_SESSION_RESPONSE;
 compose_message_type(delete_session_request) ->
-    ?GTPv2_MSG_TYPE_DELETE_SESSION_REQUEST;
+    ?GTPv2C_MSG_TYPE_DELETE_SESSION_REQUEST;
 compose_message_type(delete_session_response) ->
-    ?GTPv2_MSG_TYPE_DELETE_SESSION_RESPONSE;
+    ?GTPv2C_MSG_TYPE_DELETE_SESSION_RESPONSE;
 compose_message_type(modify_bearer_request) ->
-    ?GTPv2_MSG_TYPE_MODIFY_BEARER_REQUEST;
+    ?GTPv2C_MSG_TYPE_MODIFY_BEARER_REQUEST;
 compose_message_type(modify_bearer_response) ->
-    ?GTPv2_MSG_TYPE_MODIFY_BEARER_RESPONSE;
+    ?GTPv2C_MSG_TYPE_MODIFY_BEARER_RESPONSE;
 compose_message_type(remote_ue_report_notification) ->
-    ?GTPv2_MSG_TYPE_REMOTE_UE_REPORT_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_REMOTE_UE_REPORT_NOTIFICATION;
 compose_message_type(remote_ue_report_acknowledge) ->
-    ?GTPv2_MSG_TYPE_REMOTE_UE_REPORT_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_REMOTE_UE_REPORT_ACKNOWLEDGE;
 compose_message_type(change_notification_request) ->
-    ?GTPv2_MSG_TYPE_CHANGE_NOTIFICATION_REQUEST;
+    ?GTPv2C_MSG_TYPE_CHANGE_NOTIFICATION_REQUEST;
 compose_message_type(change_notification_response) ->
-    ?GTPv2_MSG_TYPE_CHANGE_NOTIFICATION_RESPONSE;
+    ?GTPv2C_MSG_TYPE_CHANGE_NOTIFICATION_RESPONSE;
 compose_message_type(resume_notification) ->
-    ?GTPv2_MSG_TYPE_RESUME_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_RESUME_NOTIFICATION;
 compose_message_type(resume_acknowledge) ->
-    ?GTPv2_MSG_TYPE_RESUME_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_RESUME_ACKNOWLEDGE;
 compose_message_type(modify_bearer_command) ->
-    ?GTPv2_MSG_TYPE_MODIFY_BEARER_COMMAND;
+    ?GTPv2C_MSG_TYPE_MODIFY_BEARER_COMMAND;
 compose_message_type(modify_bearer_failure_indication) ->
-    ?GTPv2_MSG_TYPE_MODIFY_BEARER_FAILURE_INDICATION;
+    ?GTPv2C_MSG_TYPE_MODIFY_BEARER_FAILURE_INDICATION;
 compose_message_type(delete_bearer_command) ->
-    ?GTPv2_MSG_TYPE_DELETE_BEARER_COMMAND;
+    ?GTPv2C_MSG_TYPE_DELETE_BEARER_COMMAND;
 compose_message_type(delete_bearer_failure_indication) ->
-    ?GTPv2_MSG_TYPE_DELETE_BEARER_FAILURE_INDICATION;
+    ?GTPv2C_MSG_TYPE_DELETE_BEARER_FAILURE_INDICATION;
 compose_message_type(bearer_resource_command) ->
-    ?GTPv2_MSG_TYPE_BEARER_RESOURCE_COMMAND;
+    ?GTPv2C_MSG_TYPE_BEARER_RESOURCE_COMMAND;
 compose_message_type(bearer_resource_failure_indication) ->
-    ?GTPv2_MSG_TYPE_BEARER_RESOURCE_FAILURE_INDICATION;
+    ?GTPv2C_MSG_TYPE_BEARER_RESOURCE_FAILURE_INDICATION;
 compose_message_type(downlink_data_notification_failure_indication) ->
-    ?GTPv2_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_FAILURE_INDICATION;
+    ?GTPv2C_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_FAILURE_INDICATION;
 compose_message_type(trace_session_activation) ->
-    ?GTPv2_MSG_TYPE_TRACE_SESSION_ACTIVATION;
+    ?GTPv2C_MSG_TYPE_TRACE_SESSION_ACTIVATION;
 compose_message_type(trace_session_deactivation) ->
-    ?GTPv2_MSG_TYPE_TRACE_SESSION_DEACTIVATION;
+    ?GTPv2C_MSG_TYPE_TRACE_SESSION_DEACTIVATION;
 compose_message_type(stop_paging_indication) ->
-    ?GTPv2_MSG_TYPE_STOP_PAGING_INDICATION;
+    ?GTPv2C_MSG_TYPE_STOP_PAGING_INDICATION;
 compose_message_type(create_bearer_request) ->
-    ?GTPv2_MSG_TYPE_CREATE_BEARER_REQUEST;
+    ?GTPv2C_MSG_TYPE_CREATE_BEARER_REQUEST;
 compose_message_type(create_bearer_response) ->
-    ?GTPv2_MSG_TYPE_CREATE_BEARER_RESPONSE;
+    ?GTPv2C_MSG_TYPE_CREATE_BEARER_RESPONSE;
 compose_message_type(update_bearer_request) ->
-    ?GTPv2_MSG_TYPE_UPDATE_BEARER_REQUEST;
+    ?GTPv2C_MSG_TYPE_UPDATE_BEARER_REQUEST;
 compose_message_type(update_bearer_response) ->
-    ?GTPv2_MSG_TYPE_UPDATE_BEARER_RESPONSE;
+    ?GTPv2C_MSG_TYPE_UPDATE_BEARER_RESPONSE;
 compose_message_type(delete_bearer_request) ->
-    ?GTPv2_MSG_TYPE_DELETE_BEARER_REQUEST;
+    ?GTPv2C_MSG_TYPE_DELETE_BEARER_REQUEST;
 compose_message_type(delete_bearer_response) ->
-    ?GTPv2_MSG_TYPE_DELETE_BEARER_RESPONSE;
+    ?GTPv2C_MSG_TYPE_DELETE_BEARER_RESPONSE;
 compose_message_type(delete_pdn_connection_set_request) ->
-    ?GTPv2_MSG_TYPE_DELETE_PDN_CONNECTION_SET_REQUEST;
+    ?GTPv2C_MSG_TYPE_DELETE_PDN_CONNECTION_SET_REQUEST;
 compose_message_type(delete_pdn_connection_set_response) ->
-    ?GTPv2_MSG_TYPE_DELETE_PDN_CONNECTION_SET_RESPONSE;
+    ?GTPv2C_MSG_TYPE_DELETE_PDN_CONNECTION_SET_RESPONSE;
 compose_message_type(pgw_downlink_triggering_notification) ->
-    ?GTPv2_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_NOTIFICATION;
 compose_message_type(pgw_downlink_triggering_acknowledge) ->
-    ?GTPv2_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_PGW_DOWNLINK_TRIGGERING_ACKNOWLEDGE;
 compose_message_type(identification_request) ->
-    ?GTPv2_MSG_TYPE_IDENTIFICATION_REQUEST;
+    ?GTPv2C_MSG_TYPE_IDENTIFICATION_REQUEST;
 compose_message_type(identification_response) ->
-    ?GTPv2_MSG_TYPE_IDENTIFICATION_RESPONSE;
+    ?GTPv2C_MSG_TYPE_IDENTIFICATION_RESPONSE;
 compose_message_type(context_request) ->
-    ?GTPv2_MSG_TYPE_CONTEXT_REQUEST;
+    ?GTPv2C_MSG_TYPE_CONTEXT_REQUEST;
 compose_message_type(context_response) ->
-    ?GTPv2_MSG_TYPE_CONTEXT_RESPONSE;
+    ?GTPv2C_MSG_TYPE_CONTEXT_RESPONSE;
 compose_message_type(context_acknowledge) ->
-    ?GTPv2_MSG_TYPE_CONTEXT_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_CONTEXT_ACKNOWLEDGE;
 compose_message_type(forward_relocation_request) ->
-    ?GTPv2_MSG_TYPE_FORWARD_RELOCATION_REQUEST;
+    ?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_REQUEST;
 compose_message_type(forward_relocation_response) ->
-    ?GTPv2_MSG_TYPE_FORWARD_RELOCATION_RESPONSE;
+    ?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_RESPONSE;
 compose_message_type(forward_relocation_complete_notification) ->
-    ?GTPv2_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_NOTIFICATION;
 compose_message_type(forward_relocation_complete_acknowledge) ->
-    ?GTPv2_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_FORWARD_RELOCATION_COMPLETE_ACKNOWLEDGE;
 compose_message_type(forward_access_context_notification) ->
-    ?GTPv2_MSG_TYPE_FORWARD_ACCESS_CONTEXT_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_FORWARD_ACCESS_CONTEXT_NOTIFICATION;
 compose_message_type(forward_access_context_acknowledge) ->
-    ?GTPv2_MSG_TYPE_FORWARD_ACCESS_CONTEXT_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_FORWARD_ACCESS_CONTEXT_ACKNOWLEDGE;
 compose_message_type(relocation_cancel_request) ->
-    ?GTPv2_MSG_TYPE_RELOCATION_CANCEL_REQUEST;
+    ?GTPv2C_MSG_TYPE_RELOCATION_CANCEL_REQUEST;
 compose_message_type(relocation_cancel_response) ->
-    ?GTPv2_MSG_TYPE_RELOCATION_CANCEL_RESPONSE;
+    ?GTPv2C_MSG_TYPE_RELOCATION_CANCEL_RESPONSE;
 compose_message_type(configuration_transfer_tunnel) ->
-    ?GTPv2_MSG_TYPE_CONFIGURATION_TRANSFER_TUNNEL;
+    ?GTPv2C_MSG_TYPE_CONFIGURATION_TRANSFER_TUNNEL;
 compose_message_type(ran_information_relay) ->
-    ?GTPv2_MSG_TYPE_RAN_INFORMATION_RELAY;
+    ?GTPv2C_MSG_TYPE_RAN_INFORMATION_RELAY;
 compose_message_type(detach_notification) ->
-    ?GTPv2_MSG_TYPE_DETACH_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_DETACH_NOTIFICATION;
 compose_message_type(detach_acknowledge) ->
-    ?GTPv2_MSG_TYPE_DETACH_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_DETACH_ACKNOWLEDGE;
 compose_message_type(cs_paging_indication) ->
-    ?GTPv2_MSG_TYPE_CS_PAGING_INDICATION;
+    ?GTPv2C_MSG_TYPE_CS_PAGING_INDICATION;
 compose_message_type(alert_mme_notification) ->
-    ?GTPv2_MSG_TYPE_ALERT_MME_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_ALERT_MME_NOTIFICATION;
 compose_message_type(alert_mme_acknowledge) ->
-    ?GTPv2_MSG_TYPE_ALERT_MME_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_ALERT_MME_ACKNOWLEDGE;
 compose_message_type(ue_activity_notification) ->
-    ?GTPv2_MSG_TYPE_UE_ACTIVITY_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_UE_ACTIVITY_NOTIFICATION;
 compose_message_type(ue_activity_acknowledge) ->
-    ?GTPv2_MSG_TYPE_UE_ACTIVITY_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_UE_ACTIVITY_ACKNOWLEDGE;
 compose_message_type(isr_status_indication) ->
-    ?GTPv2_MSG_TYPE_ISR_STATUS_INDICATION;
+    ?GTPv2C_MSG_TYPE_ISR_STATUS_INDICATION;
 compose_message_type(ue_registration_query_request) ->
-    ?GTPv2_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST;
+    ?GTPv2C_MSG_TYPE_UE_REGISTRATION_QUERY_REQUEST;
 compose_message_type(ue_registration_query_response) ->
-    ?GTPv2_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE;
+    ?GTPv2C_MSG_TYPE_UE_REGISTRATION_QUERY_RESPONSE;
 compose_message_type(suspend_notification) ->
-    ?GTPv2_MSG_TYPE_SUSPEND_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_SUSPEND_NOTIFICATION;
 compose_message_type(suspend_acknowledge) ->
-    ?GTPv2_MSG_TYPE_SUSPEND_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_SUSPEND_ACKNOWLEDGE;
 compose_message_type(create_forwarding_tunnel_request) ->
-    ?GTPv2_MSG_TYPE_CREATE_FORWARDING_TUNNEL_REQUEST;
+    ?GTPv2C_MSG_TYPE_CREATE_FORWARDING_TUNNEL_REQUEST;
 compose_message_type(create_forwarding_tunnel_response) ->
-    ?GTPv2_MSG_TYPE_CREATE_FORWARDING_TUNNEL_RESPONSE;
+    ?GTPv2C_MSG_TYPE_CREATE_FORWARDING_TUNNEL_RESPONSE;
 compose_message_type(create_indirect_data_forwarding_tunnel_request) ->
-    ?GTPv2_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST;
+    ?GTPv2C_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST;
 compose_message_type(create_indirect_data_forwarding_tunnel_response) ->
-    ?GTPv2_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE;
+    ?GTPv2C_MSG_TYPE_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE;
 compose_message_type(delete_indirect_data_forwarding_tunnel_request) ->
-    ?GTPv2_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST;
+    ?GTPv2C_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_REQUEST;
 compose_message_type(delete_indirect_data_forwarding_tunnel_response) ->
-    ?GTPv2_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE;
+    ?GTPv2C_MSG_TYPE_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE;
 compose_message_type(release_access_bearers_request) ->
-    ?GTPv2_MSG_TYPE_RELEASE_ACCESS_BEARERS_REQUEST;
+    ?GTPv2C_MSG_TYPE_RELEASE_ACCESS_BEARERS_REQUEST;
 compose_message_type(release_access_bearers_response) ->
-    ?GTPv2_MSG_TYPE_RELEASE_ACCESS_BEARERS_RESPONSE;
+    ?GTPv2C_MSG_TYPE_RELEASE_ACCESS_BEARERS_RESPONSE;
 compose_message_type(downlink_data_notification) ->
-    ?GTPv2_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION;
 compose_message_type(downlink_data_notification_acknowledge) ->
-    ?GTPv2_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_DOWNLINK_DATA_NOTIFICATION_ACKNOWLEDGE;
 compose_message_type(pgw_restart_notification) ->
-    ?GTPv2_MSG_TYPE_PGW_RESTART_NOTIFICATION;
+    ?GTPv2C_MSG_TYPE_PGW_RESTART_NOTIFICATION;
 compose_message_type(pgw_restart_notification_acknowledge) ->
-    ?GTPv2_MSG_TYPE_PGW_RESTART_NOTIFICATION_ACKNOWLEDGE;
+    ?GTPv2C_MSG_TYPE_PGW_RESTART_NOTIFICATION_ACKNOWLEDGE;
 compose_message_type(update_pdn_connection_set_request) ->
-    ?GTPv2_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_REQUEST;
+    ?GTPv2C_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_REQUEST;
 compose_message_type(update_pdn_connection_set_response) ->
-    ?GTPv2_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_RESPONSE;
+    ?GTPv2C_MSG_TYPE_UPDATE_PDN_CONNECTION_SET_RESPONSE;
 compose_message_type(modify_access_bearers_request) ->
-    ?GTPv2_MSG_TYPE_MODIFY_ACCESS_BEARERS_REQUEST;
+    ?GTPv2C_MSG_TYPE_MODIFY_ACCESS_BEARERS_REQUEST;
 compose_message_type(modify_access_bearers_response) ->
-    ?GTPv2_MSG_TYPE_MODIFY_ACCESS_BEARERS_RESPONSE;
+    ?GTPv2C_MSG_TYPE_MODIFY_ACCESS_BEARERS_RESPONSE;
 compose_message_type(mbms_session_start_request) ->
-    ?GTPv2_MSG_TYPE_MBMS_SESSION_START_REQUEST;
+    ?GTPv2C_MSG_TYPE_MBMS_SESSION_START_REQUEST;
 compose_message_type(mbms_session_start_response) ->
-    ?GTPv2_MSG_TYPE_MBMS_SESSION_START_RESPONSE;
+    ?GTPv2C_MSG_TYPE_MBMS_SESSION_START_RESPONSE;
 compose_message_type(mbms_session_update_request) ->
-    ?GTPv2_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST;
+    ?GTPv2C_MSG_TYPE_MBMS_SESSION_UPDATE_REQUEST;
 compose_message_type(mbms_session_update_response) ->
-    ?GTPv2_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE;
+    ?GTPv2C_MSG_TYPE_MBMS_SESSION_UPDATE_RESPONSE;
 compose_message_type(mbms_session_stop_request) ->
-    ?GTPv2_MSG_TYPE_MBMS_SESSION_STOP_REQUEST;
+    ?GTPv2C_MSG_TYPE_MBMS_SESSION_STOP_REQUEST;
 compose_message_type(mbms_session_stop_response) ->
-    ?GTPv2_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE.
+    ?GTPv2C_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE.
 
 decode_msg_fields(P, T, M, GTP0) ->
     PB = case P of
@@ -420,607 +422,607 @@ encode_msg_fields(Map) ->
           end,
     {Indicators, Bin}.
 
-parse_iei(?GTPv2_IEI_IMSI) ->
+parse_iei(?GTPv2C_IEI_IMSI) ->
     imsi;
-parse_iei(?GTPv2_IEI_CAUSE) ->
+parse_iei(?GTPv2C_IEI_CAUSE) ->
     cause;
-parse_iei(?GTPv2_IEI_RECOVERY_RESTART_COUNTER) ->
+parse_iei(?GTPv2C_IEI_RECOVERY_RESTART_COUNTER) ->
     recovery_restart_counter;
-parse_iei(?GTPv2_IEI_STN_SR) ->
+parse_iei(?GTPv2C_IEI_STN_SR) ->
     stn_sr;
-parse_iei(?GTPv2_IEI_SRVCC_CAUSE) ->
+parse_iei(?GTPv2C_IEI_SRVCC_CAUSE) ->
     srvcc_cause;
-parse_iei(?GTPv2_IEI_APN) ->
+parse_iei(?GTPv2C_IEI_APN) ->
     apn;
-parse_iei(?GTPv2_IEI_AMBR) ->
+parse_iei(?GTPv2C_IEI_AMBR) ->
     ambr;
-parse_iei(?GTPv2_IEI_EPS_BEARER_ID) ->
+parse_iei(?GTPv2C_IEI_EPS_BEARER_ID) ->
     eps_bearer_id;
-parse_iei(?GTPv2_IEI_IP_ADDRESS) ->
+parse_iei(?GTPv2C_IEI_IP_ADDRESS) ->
     ip_address;
-parse_iei(?GTPv2_IEI_MEI) ->
+parse_iei(?GTPv2C_IEI_MEI) ->
     mei;
-parse_iei(?GTPv2_IEI_MSISDN) ->
+parse_iei(?GTPv2C_IEI_MSISDN) ->
     msisdn;
-parse_iei(?GTPv2_IEI_INDICATION) ->
+parse_iei(?GTPv2C_IEI_INDICATION) ->
     indication;
-parse_iei(?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS) ->
+parse_iei(?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS) ->
     protocol_configuration_options;
-parse_iei(?GTPv2_IEI_PDN_ADDRESS_ALLOCATION) ->
+parse_iei(?GTPv2C_IEI_PDN_ADDRESS_ALLOCATION) ->
     pdn_address_allocation;
-parse_iei(?GTPv2_IEI_BEARER_QOS) ->
+parse_iei(?GTPv2C_IEI_BEARER_QOS) ->
     bearer_qos;
-parse_iei(?GTPv2_IEI_FLOW_QOS) ->
+parse_iei(?GTPv2C_IEI_FLOW_QOS) ->
     flow_qos;
-parse_iei(?GTPv2_IEI_RAT_TYPE) ->
+parse_iei(?GTPv2C_IEI_RAT_TYPE) ->
     rat_type;
-parse_iei(?GTPv2_IEI_SERVING_NETWORK) ->
+parse_iei(?GTPv2C_IEI_SERVING_NETWORK) ->
     serving_network;
-parse_iei(?GTPv2_IEI_BEARER_TFT) ->
+parse_iei(?GTPv2C_IEI_BEARER_TFT) ->
     bearer_tft;
-parse_iei(?GTPv2_IEI_TRAFFIC_AGGREGATE_DESCRIPTION) ->
+parse_iei(?GTPv2C_IEI_TRAFFIC_AGGREGATE_DESCRIPTION) ->
     traffic_aggregate_description;
-parse_iei(?GTPv2_IEI_USER_LOCATION_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_USER_LOCATION_INFORMATION) ->
     user_location_information;
-parse_iei(?GTPv2_IEI_F_TEID) ->
+parse_iei(?GTPv2C_IEI_F_TEID) ->
     f_teid;
-parse_iei(?GTPv2_IEI_TMSI) ->
+parse_iei(?GTPv2C_IEI_TMSI) ->
     tmsi;
-parse_iei(?GTPv2_IEI_GLOBAL_CN_ID) ->
+parse_iei(?GTPv2C_IEI_GLOBAL_CN_ID) ->
     global_cn_id;
-parse_iei(?GTPv2_IEI_S103_PDN_DATA_FORWARDING_INFO) ->
+parse_iei(?GTPv2C_IEI_S103_PDN_DATA_FORWARDING_INFO) ->
     s103_pdn_data_forwarding_info;
-parse_iei(?GTPv2_IEI_S1_U_DATA_FORWARDING_INFO) ->
+parse_iei(?GTPv2C_IEI_S1_U_DATA_FORWARDING_INFO) ->
     s1_u_data_forwarding_info;
-parse_iei(?GTPv2_IEI_DELAY_VALUE) ->
+parse_iei(?GTPv2C_IEI_DELAY_VALUE) ->
     delay_value;
-parse_iei(?GTPv2_IEI_BEARER_CONTEXT) ->
+parse_iei(?GTPv2C_IEI_BEARER_CONTEXT) ->
     bearer_context;
-parse_iei(?GTPv2_IEI_CHARGING_ID) ->
+parse_iei(?GTPv2C_IEI_CHARGING_ID) ->
     charging_id;
-parse_iei(?GTPv2_IEI_CHARGING_CHARACTERISTICS) ->
+parse_iei(?GTPv2C_IEI_CHARGING_CHARACTERISTICS) ->
     charging_characteristics;
-parse_iei(?GTPv2_IEI_TRACE_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_TRACE_INFORMATION) ->
     trace_information;
-parse_iei(?GTPv2_IEI_BEARER_FLAGS) ->
+parse_iei(?GTPv2C_IEI_BEARER_FLAGS) ->
     bearer_flags;
-parse_iei(?GTPv2_IEI_PDN_TYPE) ->
+parse_iei(?GTPv2C_IEI_PDN_TYPE) ->
     pdn_type;
-parse_iei(?GTPv2_IEI_PROCEDURE_TRANSACTION_ID) ->
+parse_iei(?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID) ->
     procedure_transaction_id;
-parse_iei(?GTPv2_IEI_MM_CONTEXT_GSM_KEY_AND_TRIPLETS) ->
+parse_iei(?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_AND_TRIPLETS) ->
     mm_context_gsm_key_and_triplets;
-parse_iei(?GTPv2_IEI_MM_CONTEXT_UMTS_KEY_CIPHER_AND_QUINTUPLETS) ->
+parse_iei(?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_CIPHER_AND_QUINTUPLETS) ->
     mm_context_umts_key_cipher_and_quintuplets;
-parse_iei(?GTPv2_IEI_MM_CONTEXT_GSM_KEY_CIPHER_AND_QUINTUPLETS) ->
+parse_iei(?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_CIPHER_AND_QUINTUPLETS) ->
     mm_context_gsm_key_cipher_and_quintuplets;
-parse_iei(?GTPv2_IEI_MM_CONTEXT_UMTS_KEY_AND_QUINTUPLETS) ->
+parse_iei(?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_AND_QUINTUPLETS) ->
     mm_context_umts_key_and_quintuplets;
-parse_iei(?GTPv2_IEI_MM_CONTEXT_EPS_SECURITY_CONTEXT_QUADRUPLETS_AND_QUINTUPLETS) ->
+parse_iei(?GTPv2C_IEI_MM_CONTEXT_EPS_SECURITY_CONTEXT_QUADRUPLETS_AND_QUINTUPLETS) ->
     mm_context_eps_security_context_quadruplets_and_quintuplets;
-parse_iei(?GTPv2_IEI_MM_CONTEXT_UMTS_KEY_QUADRUPLETS_AND_QUINTUPLETS) ->
+parse_iei(?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_QUADRUPLETS_AND_QUINTUPLETS) ->
     mm_context_umts_key_quadruplets_and_quintuplets;
-parse_iei(?GTPv2_IEI_PDN_CONNECTION) ->
+parse_iei(?GTPv2C_IEI_PDN_CONNECTION) ->
     pdn_connection;
-parse_iei(?GTPv2_IEI_PDU_NUMBERS) ->
+parse_iei(?GTPv2C_IEI_PDU_NUMBERS) ->
     pdu_numbers;
-parse_iei(?GTPv2_IEI_P_TMSI) ->
+parse_iei(?GTPv2C_IEI_P_TMSI) ->
     p_tmsi;
-parse_iei(?GTPv2_IEI_P_TMSI_SIGNATURE) ->
+parse_iei(?GTPv2C_IEI_P_TMSI_SIGNATURE) ->
     p_tmsi_signature;
-parse_iei(?GTPv2_IEI_HOP_COUNTER) ->
+parse_iei(?GTPv2C_IEI_HOP_COUNTER) ->
     hop_counter;
-parse_iei(?GTPv2_IEI_UE_TIME_ZONE) ->
+parse_iei(?GTPv2C_IEI_UE_TIME_ZONE) ->
     ue_time_zone;
-parse_iei(?GTPv2_IEI_TRACE_REFERENCE) ->
+parse_iei(?GTPv2C_IEI_TRACE_REFERENCE) ->
     trace_reference;
-parse_iei(?GTPv2_IEI_COMPLETE_REQUEST_MESSAGE) ->
+parse_iei(?GTPv2C_IEI_COMPLETE_REQUEST_MESSAGE) ->
     complete_request_message;
-parse_iei(?GTPv2_IEI_GUTI) ->
+parse_iei(?GTPv2C_IEI_GUTI) ->
     guti;
-parse_iei(?GTPv2_IEI_F_CONTAINER) ->
+parse_iei(?GTPv2C_IEI_F_CONTAINER) ->
     f_container;
-parse_iei(?GTPv2_IEI_F_CAUSE) ->
+parse_iei(?GTPv2C_IEI_F_CAUSE) ->
     f_cause;
-parse_iei(?GTPv2_IEI_PLMN_ID) ->
+parse_iei(?GTPv2C_IEI_PLMN_ID) ->
     plmn_id;
-parse_iei(?GTPv2_IEI_TARGET_IDENTIFICATION) ->
+parse_iei(?GTPv2C_IEI_TARGET_IDENTIFICATION) ->
     target_identification;
-parse_iei(?GTPv2_IEI_PACKET_FLOW_ID) ->
+parse_iei(?GTPv2C_IEI_PACKET_FLOW_ID) ->
     packet_flow_id;
-parse_iei(?GTPv2_IEI_RAB_CONTEXT) ->
+parse_iei(?GTPv2C_IEI_RAB_CONTEXT) ->
     rab_context;
-parse_iei(?GTPv2_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO) ->
+parse_iei(?GTPv2C_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO) ->
     source_rnc_pdcp_context_info;
-parse_iei(?GTPv2_IEI_PORT_NUMBER) ->
+parse_iei(?GTPv2C_IEI_PORT_NUMBER) ->
     port_number;
-parse_iei(?GTPv2_IEI_APN_RESTRICTION) ->
+parse_iei(?GTPv2C_IEI_APN_RESTRICTION) ->
     apn_restriction;
-parse_iei(?GTPv2_IEI_SELECTION_MODE) ->
+parse_iei(?GTPv2C_IEI_SELECTION_MODE) ->
     selection_mode;
-parse_iei(?GTPv2_IEI_SOURCE_IDENTIFICATION) ->
+parse_iei(?GTPv2C_IEI_SOURCE_IDENTIFICATION) ->
     source_identification;
-parse_iei(?GTPv2_IEI_CHANGE_REPORTING_ACTION) ->
+parse_iei(?GTPv2C_IEI_CHANGE_REPORTING_ACTION) ->
     change_reporting_action;
-parse_iei(?GTPv2_IEI_FQ_CSID) ->
+parse_iei(?GTPv2C_IEI_FQ_CSID) ->
     fq_csid;
-parse_iei(?GTPv2_IEI_CHANNEL_NEEDED) ->
+parse_iei(?GTPv2C_IEI_CHANNEL_NEEDED) ->
     channel_needed;
-parse_iei(?GTPv2_IEI_EMLPP_PRIORITY) ->
+parse_iei(?GTPv2C_IEI_EMLPP_PRIORITY) ->
     emlpp_priority;
-parse_iei(?GTPv2_IEI_NODE_TYPE) ->
+parse_iei(?GTPv2C_IEI_NODE_TYPE) ->
     node_type;
-parse_iei(?GTPv2_IEI_FQDN) ->
+parse_iei(?GTPv2C_IEI_FQDN) ->
     fqdn;
-parse_iei(?GTPv2_IEI_TRANSACTION_IDENTIFIER) ->
+parse_iei(?GTPv2C_IEI_TRANSACTION_IDENTIFIER) ->
     transaction_identifier;
-parse_iei(?GTPv2_IEI_MBMS_SESSION_DURATION) ->
+parse_iei(?GTPv2C_IEI_MBMS_SESSION_DURATION) ->
     mbms_session_duration;
-parse_iei(?GTPv2_IEI_MBMS_SERVICE_AREA) ->
+parse_iei(?GTPv2C_IEI_MBMS_SERVICE_AREA) ->
     mbms_service_area;
-parse_iei(?GTPv2_IEI_MBMS_SESSION_IDENTIFIER) ->
+parse_iei(?GTPv2C_IEI_MBMS_SESSION_IDENTIFIER) ->
     mbms_session_identifier;
-parse_iei(?GTPv2_IEI_MBMS_FLOW_IDENTIFIER) ->
+parse_iei(?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER) ->
     mbms_flow_identifier;
-parse_iei(?GTPv2_IEI_MBMS_IP_MULTICAST_DISTRIBUTION) ->
+parse_iei(?GTPv2C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION) ->
     mbms_ip_multicast_distribution;
-parse_iei(?GTPv2_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE) ->
+parse_iei(?GTPv2C_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE) ->
     mbms_distribution_acknowledge;
-parse_iei(?GTPv2_IEI_RFSP_INDEX) ->
+parse_iei(?GTPv2C_IEI_RFSP_INDEX) ->
     rfsp_index;
-parse_iei(?GTPv2_IEI_USER_CSG_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_USER_CSG_INFORMATION) ->
     user_csg_information;
-parse_iei(?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION) ->
+parse_iei(?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION) ->
     csg_information_reporting_action;
-parse_iei(?GTPv2_IEI_CSG_ID) ->
+parse_iei(?GTPv2C_IEI_CSG_ID) ->
     csg_id;
-parse_iei(?GTPv2_IEI_CSG_MEMBERSHIP_INDICATION) ->
+parse_iei(?GTPv2C_IEI_CSG_MEMBERSHIP_INDICATION) ->
     csg_membership_indication;
-parse_iei(?GTPv2_IEI_SERVICE_INDICATOR) ->
+parse_iei(?GTPv2C_IEI_SERVICE_INDICATOR) ->
     service_indicator;
-parse_iei(?GTPv2_IEI_DETACH_TYPE) ->
+parse_iei(?GTPv2C_IEI_DETACH_TYPE) ->
     detach_type;
-parse_iei(?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME) ->
+parse_iei(?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME) ->
     local_distiguished_name;
-parse_iei(?GTPv2_IEI_NODE_FEATURES) ->
+parse_iei(?GTPv2C_IEI_NODE_FEATURES) ->
     node_features;
-parse_iei(?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER) ->
+parse_iei(?GTPv2C_IEI_MBMS_TIME_TO_DATA_TRANSFER) ->
     mbms_time_to_data_transfer;
-parse_iei(?GTPv2_IEI_THROTTLING) ->
+parse_iei(?GTPv2C_IEI_THROTTLING) ->
     throttling;
-parse_iei(?GTPv2_IEI_ALLOCATION_RETENTION_PRIORITY) ->
+parse_iei(?GTPv2C_IEI_ALLOCATION_RETENTION_PRIORITY) ->
     allocation_retention_priority;
-parse_iei(?GTPv2_IEI_EPC_TIMER) ->
+parse_iei(?GTPv2C_IEI_EPC_TIMER) ->
     epc_timer;
-parse_iei(?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION) ->
+parse_iei(?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION) ->
     signalling_priority_indication;
-parse_iei(?GTPv2_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY) ->
+parse_iei(?GTPv2C_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY) ->
     temporary_mobile_group_identity;
-parse_iei(?GTPv2_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC) ->
+parse_iei(?GTPv2C_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC) ->
     additional_mm_context_for_srvcc;
-parse_iei(?GTPv2_IEI_ADDITIONAL_FLAGS_FOR_SRVCC) ->
+parse_iei(?GTPv2C_IEI_ADDITIONAL_FLAGS_FOR_SRVCC) ->
     additional_flags_for_srvcc;
-parse_iei(?GTPv2_IEI_MDT_CONFIGURATION) ->
+parse_iei(?GTPv2C_IEI_MDT_CONFIGURATION) ->
     mdt_configuration;
-parse_iei(?GTPv2_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS) ->
+parse_iei(?GTPv2C_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS) ->
     additional_protocol_configuration_options;
-parse_iei(?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER) ->
+parse_iei(?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER) ->
     absolute_time_of_mbms_data_transfer;
-parse_iei(?GTPv2_IEI_HENB_INFORMATION_REPORTING) ->
+parse_iei(?GTPv2C_IEI_HENB_INFORMATION_REPORTING) ->
     henb_information_reporting;
-parse_iei(?GTPv2_IEI_IPV4_CONFIGURATION_PARAMETERS) ->
+parse_iei(?GTPv2C_IEI_IPV4_CONFIGURATION_PARAMETERS) ->
     ipv4_configuration_parameters;
-parse_iei(?GTPv2_IEI_CHANGE_TO_REPORT_FLAGS) ->
+parse_iei(?GTPv2C_IEI_CHANGE_TO_REPORT_FLAGS) ->
     change_to_report_flags;
-parse_iei(?GTPv2_IEI_ACTION_INDICATION) ->
+parse_iei(?GTPv2C_IEI_ACTION_INDICATION) ->
     action_indication;
-parse_iei(?GTPv2_IEI_TWAN_IDENTIFIER) ->
+parse_iei(?GTPv2C_IEI_TWAN_IDENTIFIER) ->
     twan_identifier;
-parse_iei(?GTPv2_IEI_ULI_TIMESTAMP) ->
+parse_iei(?GTPv2C_IEI_ULI_TIMESTAMP) ->
     uli_timestamp;
-parse_iei(?GTPv2_IEI_MBMS_FLAGS) ->
+parse_iei(?GTPv2C_IEI_MBMS_FLAGS) ->
     mbms_flags;
-parse_iei(?GTPv2_IEI_RAN_NAS_CAUSE) ->
+parse_iei(?GTPv2C_IEI_RAN_NAS_CAUSE) ->
     ran_nas_cause;
-parse_iei(?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY) ->
+parse_iei(?GTPv2C_IEI_CN_OPERATOR_SELECTION_ENTITY) ->
     cn_operator_selection_entity;
-parse_iei(?GTPv2_IEI_TRUSTED_WLAN_MODE_INDICATION) ->
+parse_iei(?GTPv2C_IEI_TRUSTED_WLAN_MODE_INDICATION) ->
     trusted_wlan_mode_indication;
-parse_iei(?GTPv2_IEI_NODE_NUMBER) ->
+parse_iei(?GTPv2C_IEI_NODE_NUMBER) ->
     node_number;
-parse_iei(?GTPv2_IEI_NODE_IDENTIFIER) ->
+parse_iei(?GTPv2C_IEI_NODE_IDENTIFIER) ->
     node_identifier;
-parse_iei(?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION) ->
+parse_iei(?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION) ->
     presence_reporting_area_action;
-parse_iei(?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION) ->
     presence_reporting_area_information;
-parse_iei(?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP) ->
+parse_iei(?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP) ->
     twan_identifier_timestamp;
-parse_iei(?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION) ->
     overload_control_information;
-parse_iei(?GTPv2_IEI_LOAD_CONTROL_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_LOAD_CONTROL_INFORMATION) ->
     load_control_information;
-parse_iei(?GTPv2_IEI_METRIC) ->
+parse_iei(?GTPv2C_IEI_METRIC) ->
     metric;
-parse_iei(?GTPv2_IEI_SEQUENCE_NUMBER) ->
+parse_iei(?GTPv2C_IEI_SEQUENCE_NUMBER) ->
     sequence_number;
-parse_iei(?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY) ->
+parse_iei(?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY) ->
     apn_and_relative_capacity;
-parse_iei(?GTPv2_IEI_WLAN_OFFLOADABILITY_INDICATION) ->
+parse_iei(?GTPv2C_IEI_WLAN_OFFLOADABILITY_INDICATION) ->
     wlan_offloadability_indication;
-parse_iei(?GTPv2_IEI_PAGING_AND_SERVICE_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_PAGING_AND_SERVICE_INFORMATION) ->
     paging_and_service_information;
-parse_iei(?GTPv2_IEI_INTEGER_NUMBER) ->
+parse_iei(?GTPv2C_IEI_INTEGER_NUMBER) ->
     integer_number;
-parse_iei(?GTPv2_IEI_MILLISECOND_TIME_STAMP) ->
+parse_iei(?GTPv2C_IEI_MILLISECOND_TIME_STAMP) ->
     millisecond_time_stamp;
-parse_iei(?GTPv2_IEI_MONITORING_EVENT_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_MONITORING_EVENT_INFORMATION) ->
     monitoring_event_information;
-parse_iei(?GTPv2_IEI_ECGI_LIST) ->
+parse_iei(?GTPv2C_IEI_ECGI_LIST) ->
     ecgi_list;
-parse_iei(?GTPv2_IEI_REMOTE_UE_CONTEXT) ->
+parse_iei(?GTPv2C_IEI_REMOTE_UE_CONTEXT) ->
     remote_ue_context;
-parse_iei(?GTPv2_IEI_REMOTE_USER_ID) ->
+parse_iei(?GTPv2C_IEI_REMOTE_USER_ID) ->
     remote_user_id;
-parse_iei(?GTPv2_IEI_REMOTE_UE_IP_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION) ->
     remote_ue_ip_information;
-parse_iei(?GTPv2_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION) ->
+parse_iei(?GTPv2C_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION) ->
     ciot_optimizations_support_indication;
-parse_iei(?GTPv2_IEI_SCEF_PDN_CONNECTION) ->
+parse_iei(?GTPv2C_IEI_SCEF_PDN_CONNECTION) ->
     scef_pdn_connection;
-parse_iei(?GTPv2_IEI_HEADER_COMPRESSION_CONFIGURATION) ->
+parse_iei(?GTPv2C_IEI_HEADER_COMPRESSION_CONFIGURATION) ->
     header_compression_configuration;
-parse_iei(?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS) ->
+parse_iei(?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS) ->
     extended_protocol_configuration_options;
-parse_iei(?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL) ->
+parse_iei(?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL) ->
     serving_plmn_rate_control;
-parse_iei(?GTPv2_IEI_COUNTER) ->
+parse_iei(?GTPv2C_IEI_COUNTER) ->
     counter;
-parse_iei(?GTPv2_IEI_MAPPED_UE_USAGE_TYPE) ->
+parse_iei(?GTPv2C_IEI_MAPPED_UE_USAGE_TYPE) ->
     mapped_ue_usage_type;
-parse_iei(?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT) ->
+parse_iei(?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT) ->
     secondary_rat_usage_data_report;
-parse_iei(?GTPv2_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS) ->
+parse_iei(?GTPv2C_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS) ->
     up_function_selection_indication_flags;
-parse_iei(?GTPv2_IEI_MAXIMUM_PACKET_LOSS_RATE) ->
+parse_iei(?GTPv2C_IEI_MAXIMUM_PACKET_LOSS_RATE) ->
     maximum_packet_loss_rate;
-parse_iei(?GTPv2_IEI_APN_RATE_CONTROL_STATUS) ->
+parse_iei(?GTPv2C_IEI_APN_RATE_CONTROL_STATUS) ->
     apn_rate_control_status;
-parse_iei(?GTPv2_IEI_EXTENDED_TRACE_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION) ->
     extended_trace_information;
-parse_iei(?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION) ->
+parse_iei(?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION) ->
     monitoring_event_extension_information;
-parse_iei(?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX) ->
+parse_iei(?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX) ->
     additional_rrm_policy_index;
-parse_iei(?GTPv2_IEI_V2X_CONTEXT) ->
+parse_iei(?GTPv2C_IEI_V2X_CONTEXT) ->
     v2x_context;
-parse_iei(?GTPv2_IEI_PC5_QOS_PARAMETERS) ->
+parse_iei(?GTPv2C_IEI_PC5_QOS_PARAMETERS) ->
     pc5_qos_parameters;
-parse_iei(?GTPv2_IEI_SERVICES_AUTHORIZED) ->
+parse_iei(?GTPv2C_IEI_SERVICES_AUTHORIZED) ->
     services_authorized;
-parse_iei(?GTPv2_IEI_BIT_RATE) ->
+parse_iei(?GTPv2C_IEI_BIT_RATE) ->
     bit_rate;
-parse_iei(?GTPv2_IEI_PC5_QOS_FLOW) ->
+parse_iei(?GTPv2C_IEI_PC5_QOS_FLOW) ->
     pc5_qos_flow;
-parse_iei(?GTPv2_IEI_SGI_PTP_TUNNEL_ADDRESS) ->
+parse_iei(?GTPv2C_IEI_SGI_PTP_TUNNEL_ADDRESS) ->
     sgi_ptp_tunnel_address;
-parse_iei(?GTPv2_IEI_PGW_CHANGE_INFO) ->
+parse_iei(?GTPv2C_IEI_PGW_CHANGE_INFO) ->
     pgw_change_info;
-parse_iei(?GTPv2_IEI_PGW_FQDN) ->
+parse_iei(?GTPv2C_IEI_PGW_FQDN) ->
     pgw_fqdn;
-parse_iei(?GTPv2_IEI_GROUP_ID) ->
+parse_iei(?GTPv2C_IEI_GROUP_ID) ->
     group_id;
-parse_iei(?GTPv2_IEI_PSCELL_ID) ->
+parse_iei(?GTPv2C_IEI_PSCELL_ID) ->
     pscell_id;
-parse_iei(?GTPv2_IEI_UP_SECURITY_POLICY) ->
+parse_iei(?GTPv2C_IEI_UP_SECURITY_POLICY) ->
     up_security_policy;
-parse_iei(?GTPv2_IEI_ALTERNATIVE_IMSI) ->
+parse_iei(?GTPv2C_IEI_ALTERNATIVE_IMSI) ->
     alternative_imsi;
-parse_iei(?GTPv2_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION) ->
+parse_iei(?GTPv2C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION) ->
     special_ie_type_for_ie_type_extension;
-parse_iei(?GTPv2_IEI_PRIVATE_EXTENSION) ->
+parse_iei(?GTPv2C_IEI_PRIVATE_EXTENSION) ->
     private_extension.
 
 compose_iei(imsi) ->
-    ?GTPv2_IEI_IMSI;
+    ?GTPv2C_IEI_IMSI;
 compose_iei(cause) ->
-    ?GTPv2_IEI_CAUSE;
+    ?GTPv2C_IEI_CAUSE;
 compose_iei(recovery_restart_counter) ->
-    ?GTPv2_IEI_RECOVERY_RESTART_COUNTER;
+    ?GTPv2C_IEI_RECOVERY_RESTART_COUNTER;
 compose_iei(stn_sr) ->
-    ?GTPv2_IEI_STN_SR;
+    ?GTPv2C_IEI_STN_SR;
 compose_iei(srvcc_cause) ->
-    ?GTPv2_IEI_SRVCC_CAUSE;
+    ?GTPv2C_IEI_SRVCC_CAUSE;
 compose_iei(apn) ->
-    ?GTPv2_IEI_APN;
+    ?GTPv2C_IEI_APN;
 compose_iei(ambr) ->
-    ?GTPv2_IEI_AMBR;
+    ?GTPv2C_IEI_AMBR;
 compose_iei(eps_bearer_id) ->
-    ?GTPv2_IEI_EPS_BEARER_ID;
+    ?GTPv2C_IEI_EPS_BEARER_ID;
 compose_iei(ip_address) ->
-    ?GTPv2_IEI_IP_ADDRESS;
+    ?GTPv2C_IEI_IP_ADDRESS;
 compose_iei(mei) ->
-    ?GTPv2_IEI_MEI;
+    ?GTPv2C_IEI_MEI;
 compose_iei(msisdn) ->
-    ?GTPv2_IEI_MSISDN;
+    ?GTPv2C_IEI_MSISDN;
 compose_iei(indication) ->
-    ?GTPv2_IEI_INDICATION;
+    ?GTPv2C_IEI_INDICATION;
 compose_iei(protocol_configuration_options) ->
-    ?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS;
+    ?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS;
 compose_iei(pdn_address_allocation) ->
-    ?GTPv2_IEI_PDN_ADDRESS_ALLOCATION;
+    ?GTPv2C_IEI_PDN_ADDRESS_ALLOCATION;
 compose_iei(bearer_qos) ->
-    ?GTPv2_IEI_BEARER_QOS;
+    ?GTPv2C_IEI_BEARER_QOS;
 compose_iei(flow_qos) ->
-    ?GTPv2_IEI_FLOW_QOS;
+    ?GTPv2C_IEI_FLOW_QOS;
 compose_iei(rat_type) ->
-    ?GTPv2_IEI_RAT_TYPE;
+    ?GTPv2C_IEI_RAT_TYPE;
 compose_iei(serving_network) ->
-    ?GTPv2_IEI_SERVING_NETWORK;
+    ?GTPv2C_IEI_SERVING_NETWORK;
 compose_iei(bearer_tft) ->
-    ?GTPv2_IEI_BEARER_TFT;
+    ?GTPv2C_IEI_BEARER_TFT;
 compose_iei(traffic_aggregate_description) ->
-    ?GTPv2_IEI_TRAFFIC_AGGREGATE_DESCRIPTION;
+    ?GTPv2C_IEI_TRAFFIC_AGGREGATE_DESCRIPTION;
 compose_iei(user_location_information) ->
-    ?GTPv2_IEI_USER_LOCATION_INFORMATION;
+    ?GTPv2C_IEI_USER_LOCATION_INFORMATION;
 compose_iei(f_teid) ->
-    ?GTPv2_IEI_F_TEID;
+    ?GTPv2C_IEI_F_TEID;
 compose_iei(tmsi) ->
-    ?GTPv2_IEI_TMSI;
+    ?GTPv2C_IEI_TMSI;
 compose_iei(global_cn_id) ->
-    ?GTPv2_IEI_GLOBAL_CN_ID;
+    ?GTPv2C_IEI_GLOBAL_CN_ID;
 compose_iei(s103_pdn_data_forwarding_info) ->
-    ?GTPv2_IEI_S103_PDN_DATA_FORWARDING_INFO;
+    ?GTPv2C_IEI_S103_PDN_DATA_FORWARDING_INFO;
 compose_iei(s1_u_data_forwarding_info) ->
-    ?GTPv2_IEI_S1_U_DATA_FORWARDING_INFO;
+    ?GTPv2C_IEI_S1_U_DATA_FORWARDING_INFO;
 compose_iei(delay_value) ->
-    ?GTPv2_IEI_DELAY_VALUE;
+    ?GTPv2C_IEI_DELAY_VALUE;
 compose_iei(bearer_context) ->
-    ?GTPv2_IEI_BEARER_CONTEXT;
+    ?GTPv2C_IEI_BEARER_CONTEXT;
 compose_iei(charging_id) ->
-    ?GTPv2_IEI_CHARGING_ID;
+    ?GTPv2C_IEI_CHARGING_ID;
 compose_iei(charging_characteristics) ->
-    ?GTPv2_IEI_CHARGING_CHARACTERISTICS;
+    ?GTPv2C_IEI_CHARGING_CHARACTERISTICS;
 compose_iei(trace_information) ->
-    ?GTPv2_IEI_TRACE_INFORMATION;
+    ?GTPv2C_IEI_TRACE_INFORMATION;
 compose_iei(bearer_flags) ->
-    ?GTPv2_IEI_BEARER_FLAGS;
+    ?GTPv2C_IEI_BEARER_FLAGS;
 compose_iei(pdn_type) ->
-    ?GTPv2_IEI_PDN_TYPE;
+    ?GTPv2C_IEI_PDN_TYPE;
 compose_iei(procedure_transaction_id) ->
-    ?GTPv2_IEI_PROCEDURE_TRANSACTION_ID;
+    ?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID;
 compose_iei(mm_context_gsm_key_and_triplets) ->
-    ?GTPv2_IEI_MM_CONTEXT_GSM_KEY_AND_TRIPLETS;
+    ?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_AND_TRIPLETS;
 compose_iei(mm_context_umts_key_cipher_and_quintuplets) ->
-    ?GTPv2_IEI_MM_CONTEXT_UMTS_KEY_CIPHER_AND_QUINTUPLETS;
+    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_CIPHER_AND_QUINTUPLETS;
 compose_iei(mm_context_gsm_key_cipher_and_quintuplets) ->
-    ?GTPv2_IEI_MM_CONTEXT_GSM_KEY_CIPHER_AND_QUINTUPLETS;
+    ?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_CIPHER_AND_QUINTUPLETS;
 compose_iei(mm_context_umts_key_and_quintuplets) ->
-    ?GTPv2_IEI_MM_CONTEXT_UMTS_KEY_AND_QUINTUPLETS;
+    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_AND_QUINTUPLETS;
 compose_iei(mm_context_eps_security_context_quadruplets_and_quintuplets) ->
-    ?GTPv2_IEI_MM_CONTEXT_EPS_SECURITY_CONTEXT_QUADRUPLETS_AND_QUINTUPLETS;
+    ?GTPv2C_IEI_MM_CONTEXT_EPS_SECURITY_CONTEXT_QUADRUPLETS_AND_QUINTUPLETS;
 compose_iei(mm_context_umts_key_quadruplets_and_quintuplets) ->
-    ?GTPv2_IEI_MM_CONTEXT_UMTS_KEY_QUADRUPLETS_AND_QUINTUPLETS;
+    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_QUADRUPLETS_AND_QUINTUPLETS;
 compose_iei(pdn_connection) ->
-    ?GTPv2_IEI_PDN_CONNECTION;
+    ?GTPv2C_IEI_PDN_CONNECTION;
 compose_iei(pdu_numbers) ->
-    ?GTPv2_IEI_PDU_NUMBERS;
+    ?GTPv2C_IEI_PDU_NUMBERS;
 compose_iei(p_tmsi) ->
-    ?GTPv2_IEI_P_TMSI;
+    ?GTPv2C_IEI_P_TMSI;
 compose_iei(p_tmsi_signature) ->
-    ?GTPv2_IEI_P_TMSI_SIGNATURE;
+    ?GTPv2C_IEI_P_TMSI_SIGNATURE;
 compose_iei(hop_counter) ->
-    ?GTPv2_IEI_HOP_COUNTER;
+    ?GTPv2C_IEI_HOP_COUNTER;
 compose_iei(ue_time_zone) ->
-    ?GTPv2_IEI_UE_TIME_ZONE;
+    ?GTPv2C_IEI_UE_TIME_ZONE;
 compose_iei(trace_reference) ->
-    ?GTPv2_IEI_TRACE_REFERENCE;
+    ?GTPv2C_IEI_TRACE_REFERENCE;
 compose_iei(complete_request_message) ->
-    ?GTPv2_IEI_COMPLETE_REQUEST_MESSAGE;
+    ?GTPv2C_IEI_COMPLETE_REQUEST_MESSAGE;
 compose_iei(guti) ->
-    ?GTPv2_IEI_GUTI;
+    ?GTPv2C_IEI_GUTI;
 compose_iei(f_container) ->
-    ?GTPv2_IEI_F_CONTAINER;
+    ?GTPv2C_IEI_F_CONTAINER;
 compose_iei(f_cause) ->
-    ?GTPv2_IEI_F_CAUSE;
+    ?GTPv2C_IEI_F_CAUSE;
 compose_iei(plmn_id) ->
-    ?GTPv2_IEI_PLMN_ID;
+    ?GTPv2C_IEI_PLMN_ID;
 compose_iei(target_identification) ->
-    ?GTPv2_IEI_TARGET_IDENTIFICATION;
+    ?GTPv2C_IEI_TARGET_IDENTIFICATION;
 compose_iei(packet_flow_id) ->
-    ?GTPv2_IEI_PACKET_FLOW_ID;
+    ?GTPv2C_IEI_PACKET_FLOW_ID;
 compose_iei(rab_context) ->
-    ?GTPv2_IEI_RAB_CONTEXT;
+    ?GTPv2C_IEI_RAB_CONTEXT;
 compose_iei(source_rnc_pdcp_context_info) ->
-    ?GTPv2_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO;
+    ?GTPv2C_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO;
 compose_iei(port_number) ->
-    ?GTPv2_IEI_PORT_NUMBER;
+    ?GTPv2C_IEI_PORT_NUMBER;
 compose_iei(apn_restriction) ->
-    ?GTPv2_IEI_APN_RESTRICTION;
+    ?GTPv2C_IEI_APN_RESTRICTION;
 compose_iei(selection_mode) ->
-    ?GTPv2_IEI_SELECTION_MODE;
+    ?GTPv2C_IEI_SELECTION_MODE;
 compose_iei(source_identification) ->
-    ?GTPv2_IEI_SOURCE_IDENTIFICATION;
+    ?GTPv2C_IEI_SOURCE_IDENTIFICATION;
 compose_iei(change_reporting_action) ->
-    ?GTPv2_IEI_CHANGE_REPORTING_ACTION;
+    ?GTPv2C_IEI_CHANGE_REPORTING_ACTION;
 compose_iei(fq_csid) ->
-    ?GTPv2_IEI_FQ_CSID;
+    ?GTPv2C_IEI_FQ_CSID;
 compose_iei(channel_needed) ->
-    ?GTPv2_IEI_CHANNEL_NEEDED;
+    ?GTPv2C_IEI_CHANNEL_NEEDED;
 compose_iei(emlpp_priority) ->
-    ?GTPv2_IEI_EMLPP_PRIORITY;
+    ?GTPv2C_IEI_EMLPP_PRIORITY;
 compose_iei(node_type) ->
-    ?GTPv2_IEI_NODE_TYPE;
+    ?GTPv2C_IEI_NODE_TYPE;
 compose_iei(fqdn) ->
-    ?GTPv2_IEI_FQDN;
+    ?GTPv2C_IEI_FQDN;
 compose_iei(transaction_identifier) ->
-    ?GTPv2_IEI_TRANSACTION_IDENTIFIER;
+    ?GTPv2C_IEI_TRANSACTION_IDENTIFIER;
 compose_iei(mbms_session_duration) ->
-    ?GTPv2_IEI_MBMS_SESSION_DURATION;
+    ?GTPv2C_IEI_MBMS_SESSION_DURATION;
 compose_iei(mbms_service_area) ->
-    ?GTPv2_IEI_MBMS_SERVICE_AREA;
+    ?GTPv2C_IEI_MBMS_SERVICE_AREA;
 compose_iei(mbms_session_identifier) ->
-    ?GTPv2_IEI_MBMS_SESSION_IDENTIFIER;
+    ?GTPv2C_IEI_MBMS_SESSION_IDENTIFIER;
 compose_iei(mbms_flow_identifier) ->
-    ?GTPv2_IEI_MBMS_FLOW_IDENTIFIER;
+    ?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER;
 compose_iei(mbms_ip_multicast_distribution) ->
-    ?GTPv2_IEI_MBMS_IP_MULTICAST_DISTRIBUTION;
+    ?GTPv2C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION;
 compose_iei(mbms_distribution_acknowledge) ->
-    ?GTPv2_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE;
+    ?GTPv2C_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE;
 compose_iei(rfsp_index) ->
-    ?GTPv2_IEI_RFSP_INDEX;
+    ?GTPv2C_IEI_RFSP_INDEX;
 compose_iei(user_csg_information) ->
-    ?GTPv2_IEI_USER_CSG_INFORMATION;
+    ?GTPv2C_IEI_USER_CSG_INFORMATION;
 compose_iei(csg_information_reporting_action) ->
-    ?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION;
+    ?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION;
 compose_iei(csg_id) ->
-    ?GTPv2_IEI_CSG_ID;
+    ?GTPv2C_IEI_CSG_ID;
 compose_iei(csg_membership_indication) ->
-    ?GTPv2_IEI_CSG_MEMBERSHIP_INDICATION;
+    ?GTPv2C_IEI_CSG_MEMBERSHIP_INDICATION;
 compose_iei(service_indicator) ->
-    ?GTPv2_IEI_SERVICE_INDICATOR;
+    ?GTPv2C_IEI_SERVICE_INDICATOR;
 compose_iei(detach_type) ->
-    ?GTPv2_IEI_DETACH_TYPE;
+    ?GTPv2C_IEI_DETACH_TYPE;
 compose_iei(local_distiguished_name) ->
-    ?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME;
+    ?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME;
 compose_iei(node_features) ->
-    ?GTPv2_IEI_NODE_FEATURES;
+    ?GTPv2C_IEI_NODE_FEATURES;
 compose_iei(mbms_time_to_data_transfer) ->
-    ?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER;
+    ?GTPv2C_IEI_MBMS_TIME_TO_DATA_TRANSFER;
 compose_iei(throttling) ->
-    ?GTPv2_IEI_THROTTLING;
+    ?GTPv2C_IEI_THROTTLING;
 compose_iei(allocation_retention_priority) ->
-    ?GTPv2_IEI_ALLOCATION_RETENTION_PRIORITY;
+    ?GTPv2C_IEI_ALLOCATION_RETENTION_PRIORITY;
 compose_iei(epc_timer) ->
-    ?GTPv2_IEI_EPC_TIMER;
+    ?GTPv2C_IEI_EPC_TIMER;
 compose_iei(signalling_priority_indication) ->
-    ?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION;
+    ?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION;
 compose_iei(temporary_mobile_group_identity) ->
-    ?GTPv2_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY;
+    ?GTPv2C_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY;
 compose_iei(additional_mm_context_for_srvcc) ->
-    ?GTPv2_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC;
+    ?GTPv2C_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC;
 compose_iei(additional_flags_for_srvcc) ->
-    ?GTPv2_IEI_ADDITIONAL_FLAGS_FOR_SRVCC;
+    ?GTPv2C_IEI_ADDITIONAL_FLAGS_FOR_SRVCC;
 compose_iei(mdt_configuration) ->
-    ?GTPv2_IEI_MDT_CONFIGURATION;
+    ?GTPv2C_IEI_MDT_CONFIGURATION;
 compose_iei(additional_protocol_configuration_options) ->
-    ?GTPv2_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS;
+    ?GTPv2C_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS;
 compose_iei(absolute_time_of_mbms_data_transfer) ->
-    ?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER;
+    ?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER;
 compose_iei(henb_information_reporting) ->
-    ?GTPv2_IEI_HENB_INFORMATION_REPORTING;
+    ?GTPv2C_IEI_HENB_INFORMATION_REPORTING;
 compose_iei(ipv4_configuration_parameters) ->
-    ?GTPv2_IEI_IPV4_CONFIGURATION_PARAMETERS;
+    ?GTPv2C_IEI_IPV4_CONFIGURATION_PARAMETERS;
 compose_iei(change_to_report_flags) ->
-    ?GTPv2_IEI_CHANGE_TO_REPORT_FLAGS;
+    ?GTPv2C_IEI_CHANGE_TO_REPORT_FLAGS;
 compose_iei(action_indication) ->
-    ?GTPv2_IEI_ACTION_INDICATION;
+    ?GTPv2C_IEI_ACTION_INDICATION;
 compose_iei(twan_identifier) ->
-    ?GTPv2_IEI_TWAN_IDENTIFIER;
+    ?GTPv2C_IEI_TWAN_IDENTIFIER;
 compose_iei(uli_timestamp) ->
-    ?GTPv2_IEI_ULI_TIMESTAMP;
+    ?GTPv2C_IEI_ULI_TIMESTAMP;
 compose_iei(mbms_flags) ->
-    ?GTPv2_IEI_MBMS_FLAGS;
+    ?GTPv2C_IEI_MBMS_FLAGS;
 compose_iei(ran_nas_cause) ->
-    ?GTPv2_IEI_RAN_NAS_CAUSE;
+    ?GTPv2C_IEI_RAN_NAS_CAUSE;
 compose_iei(cn_operator_selection_entity) ->
-    ?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY;
+    ?GTPv2C_IEI_CN_OPERATOR_SELECTION_ENTITY;
 compose_iei(trusted_wlan_mode_indication) ->
-    ?GTPv2_IEI_TRUSTED_WLAN_MODE_INDICATION;
+    ?GTPv2C_IEI_TRUSTED_WLAN_MODE_INDICATION;
 compose_iei(node_number) ->
-    ?GTPv2_IEI_NODE_NUMBER;
+    ?GTPv2C_IEI_NODE_NUMBER;
 compose_iei(node_identifier) ->
-    ?GTPv2_IEI_NODE_IDENTIFIER;
+    ?GTPv2C_IEI_NODE_IDENTIFIER;
 compose_iei(presence_reporting_area_action) ->
-    ?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION;
+    ?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION;
 compose_iei(presence_reporting_area_information) ->
-    ?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION;
+    ?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION;
 compose_iei(twan_identifier_timestamp) ->
-    ?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP;
+    ?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP;
 compose_iei(overload_control_information) ->
-    ?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION;
+    ?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION;
 compose_iei(load_control_information) ->
-    ?GTPv2_IEI_LOAD_CONTROL_INFORMATION;
+    ?GTPv2C_IEI_LOAD_CONTROL_INFORMATION;
 compose_iei(metric) ->
-    ?GTPv2_IEI_METRIC;
+    ?GTPv2C_IEI_METRIC;
 compose_iei(sequence_number) ->
-    ?GTPv2_IEI_SEQUENCE_NUMBER;
+    ?GTPv2C_IEI_SEQUENCE_NUMBER;
 compose_iei(apn_and_relative_capacity) ->
-    ?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY;
+    ?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY;
 compose_iei(wlan_offloadability_indication) ->
-    ?GTPv2_IEI_WLAN_OFFLOADABILITY_INDICATION;
+    ?GTPv2C_IEI_WLAN_OFFLOADABILITY_INDICATION;
 compose_iei(paging_and_service_information) ->
-    ?GTPv2_IEI_PAGING_AND_SERVICE_INFORMATION;
+    ?GTPv2C_IEI_PAGING_AND_SERVICE_INFORMATION;
 compose_iei(integer_number) ->
-    ?GTPv2_IEI_INTEGER_NUMBER;
+    ?GTPv2C_IEI_INTEGER_NUMBER;
 compose_iei(millisecond_time_stamp) ->
-    ?GTPv2_IEI_MILLISECOND_TIME_STAMP;
+    ?GTPv2C_IEI_MILLISECOND_TIME_STAMP;
 compose_iei(monitoring_event_information) ->
-    ?GTPv2_IEI_MONITORING_EVENT_INFORMATION;
+    ?GTPv2C_IEI_MONITORING_EVENT_INFORMATION;
 compose_iei(ecgi_list) ->
-    ?GTPv2_IEI_ECGI_LIST;
+    ?GTPv2C_IEI_ECGI_LIST;
 compose_iei(remote_ue_context) ->
-    ?GTPv2_IEI_REMOTE_UE_CONTEXT;
+    ?GTPv2C_IEI_REMOTE_UE_CONTEXT;
 compose_iei(remote_user_id) ->
-    ?GTPv2_IEI_REMOTE_USER_ID;
+    ?GTPv2C_IEI_REMOTE_USER_ID;
 compose_iei(remote_ue_ip_information) ->
-    ?GTPv2_IEI_REMOTE_UE_IP_INFORMATION;
+    ?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION;
 compose_iei(ciot_optimizations_support_indication) ->
-    ?GTPv2_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION;
+    ?GTPv2C_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION;
 compose_iei(scef_pdn_connection) ->
-    ?GTPv2_IEI_SCEF_PDN_CONNECTION;
+    ?GTPv2C_IEI_SCEF_PDN_CONNECTION;
 compose_iei(header_compression_configuration) ->
-    ?GTPv2_IEI_HEADER_COMPRESSION_CONFIGURATION;
+    ?GTPv2C_IEI_HEADER_COMPRESSION_CONFIGURATION;
 compose_iei(extended_protocol_configuration_options) ->
-    ?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS;
+    ?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS;
 compose_iei(serving_plmn_rate_control) ->
-    ?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL;
+    ?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL;
 compose_iei(counter) ->
-    ?GTPv2_IEI_COUNTER;
+    ?GTPv2C_IEI_COUNTER;
 compose_iei(mapped_ue_usage_type) ->
-    ?GTPv2_IEI_MAPPED_UE_USAGE_TYPE;
+    ?GTPv2C_IEI_MAPPED_UE_USAGE_TYPE;
 compose_iei(secondary_rat_usage_data_report) ->
-    ?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT;
+    ?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT;
 compose_iei(up_function_selection_indication_flags) ->
-    ?GTPv2_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS;
+    ?GTPv2C_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS;
 compose_iei(maximum_packet_loss_rate) ->
-    ?GTPv2_IEI_MAXIMUM_PACKET_LOSS_RATE;
+    ?GTPv2C_IEI_MAXIMUM_PACKET_LOSS_RATE;
 compose_iei(apn_rate_control_status) ->
-    ?GTPv2_IEI_APN_RATE_CONTROL_STATUS;
+    ?GTPv2C_IEI_APN_RATE_CONTROL_STATUS;
 compose_iei(extended_trace_information) ->
-    ?GTPv2_IEI_EXTENDED_TRACE_INFORMATION;
+    ?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION;
 compose_iei(monitoring_event_extension_information) ->
-    ?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION;
+    ?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION;
 compose_iei(additional_rrm_policy_index) ->
-    ?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX;
+    ?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX;
 compose_iei(v2x_context) ->
-    ?GTPv2_IEI_V2X_CONTEXT;
+    ?GTPv2C_IEI_V2X_CONTEXT;
 compose_iei(pc5_qos_parameters) ->
-    ?GTPv2_IEI_PC5_QOS_PARAMETERS;
+    ?GTPv2C_IEI_PC5_QOS_PARAMETERS;
 compose_iei(services_authorized) ->
-    ?GTPv2_IEI_SERVICES_AUTHORIZED;
+    ?GTPv2C_IEI_SERVICES_AUTHORIZED;
 compose_iei(bit_rate) ->
-    ?GTPv2_IEI_BIT_RATE;
+    ?GTPv2C_IEI_BIT_RATE;
 compose_iei(pc5_qos_flow) ->
-    ?GTPv2_IEI_PC5_QOS_FLOW;
+    ?GTPv2C_IEI_PC5_QOS_FLOW;
 compose_iei(sgi_ptp_tunnel_address) ->
-    ?GTPv2_IEI_SGI_PTP_TUNNEL_ADDRESS;
+    ?GTPv2C_IEI_SGI_PTP_TUNNEL_ADDRESS;
 compose_iei(pgw_change_info) ->
-    ?GTPv2_IEI_PGW_CHANGE_INFO;
+    ?GTPv2C_IEI_PGW_CHANGE_INFO;
 compose_iei(pgw_fqdn) ->
-    ?GTPv2_IEI_PGW_FQDN;
+    ?GTPv2C_IEI_PGW_FQDN;
 compose_iei(group_id) ->
-    ?GTPv2_IEI_GROUP_ID;
+    ?GTPv2C_IEI_GROUP_ID;
 compose_iei(pscell_id) ->
-    ?GTPv2_IEI_PSCELL_ID;
+    ?GTPv2C_IEI_PSCELL_ID;
 compose_iei(up_security_policy) ->
-    ?GTPv2_IEI_UP_SECURITY_POLICY;
+    ?GTPv2C_IEI_UP_SECURITY_POLICY;
 compose_iei(alternative_imsi) ->
-    ?GTPv2_IEI_ALTERNATIVE_IMSI;
+    ?GTPv2C_IEI_ALTERNATIVE_IMSI;
 compose_iei(special_ie_type_for_ie_type_extension) ->
-    ?GTPv2_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION;
+    ?GTPv2C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION;
 compose_iei(private_extension) ->
-    ?GTPv2_IEI_PRIVATE_EXTENSION.
+    ?GTPv2C_IEI_PRIVATE_EXTENSION.
 
 decode_parameter(imsi, V, _) ->
     %% ITU-T Rec E.212 TBCD digits
@@ -1203,28 +1205,28 @@ decode_parameter(flow_qos, V, _) ->
 decode_parameter(rat_type, V, _) ->
     <<RATType:8>> = V,
     case RATType of
-        ?GTPv2_RAT_TYPE_UTRAN -> utran;
-        ?GTPv2_RAT_TYPE_GERAN -> geran;
-        ?GTPv2_RAT_TYPE_WLAN -> wlan;
-        ?GTPv2_RAT_TYPE_GAN -> gan;
-        ?GTPv2_RAT_TYPE_HSPA_EVOLUTION -> hspa_evolution;
-        ?GTPv2_RAT_TYPE_EUTRAN_WB_EUTRAN -> eutran_wb_eutran;
-        ?GTPv2_RAT_TYPE_VIRTUAL -> virtual;
-        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT -> eutran_nb_iot;
-        ?GTPv2_RAT_TYPE_LTE_M -> lte_m;
-        ?GTPv2_RAT_TYPE_NR -> nr;
-        ?GTPv2_RAT_TYPE_WB_EUTRAN_LEO -> wb_eutran_leo;
-        ?GTPv2_RAT_TYPE_WB_EUTRAN_MEO -> wb_eutran_meo;
-        ?GTPv2_RAT_TYPE_WB_EUTRAN_GEO -> wb_eutran_geo;
-        ?GTPv2_RAT_TYPE_WB_EUTRAN_OTHERSAT -> wb_eutran_othersat;
-        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_LEO -> eutran_nb_iot_leo;
-        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_MEO -> eutran_nb_iot_meo;
-        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_GEO -> eutran_nb_iot_geo;
-        ?GTPv2_RAT_TYPE_EUTRAN_NB_IOT_OTHERSAT -> eutran_nb_iot_othersat;
-        ?GTPv2_RAT_TYPE_LTE_M_LEO -> lte_m_leo;
-        ?GTPv2_RAT_TYPE_LTE_M_MEO -> lte_m_meo;
-        ?GTPv2_RAT_TYPE_LTE_M_GEO -> lte_m_geo;
-        ?GTPv2_RAT_TYPE_LTE_M_OTHERSAT -> lte_m_othersat
+        ?GTPv2C_RAT_TYPE_UTRAN -> utran;
+        ?GTPv2C_RAT_TYPE_GERAN -> geran;
+        ?GTPv2C_RAT_TYPE_WLAN -> wlan;
+        ?GTPv2C_RAT_TYPE_GAN -> gan;
+        ?GTPv2C_RAT_TYPE_HSPA_EVOLUTION -> hspa_evolution;
+        ?GTPv2C_RAT_TYPE_EUTRAN_WB_EUTRAN -> eutran_wb_eutran;
+        ?GTPv2C_RAT_TYPE_VIRTUAL -> virtual;
+        ?GTPv2C_RAT_TYPE_EUTRAN_NB_IOT -> eutran_nb_iot;
+        ?GTPv2C_RAT_TYPE_LTE_M -> lte_m;
+        ?GTPv2C_RAT_TYPE_NR -> nr;
+        ?GTPv2C_RAT_TYPE_WB_EUTRAN_LEO -> wb_eutran_leo;
+        ?GTPv2C_RAT_TYPE_WB_EUTRAN_MEO -> wb_eutran_meo;
+        ?GTPv2C_RAT_TYPE_WB_EUTRAN_GEO -> wb_eutran_geo;
+        ?GTPv2C_RAT_TYPE_WB_EUTRAN_OTHERSAT -> wb_eutran_othersat;
+        ?GTPv2C_RAT_TYPE_EUTRAN_NB_IOT_LEO -> eutran_nb_iot_leo;
+        ?GTPv2C_RAT_TYPE_EUTRAN_NB_IOT_MEO -> eutran_nb_iot_meo;
+        ?GTPv2C_RAT_TYPE_EUTRAN_NB_IOT_GEO -> eutran_nb_iot_geo;
+        ?GTPv2C_RAT_TYPE_EUTRAN_NB_IOT_OTHERSAT -> eutran_nb_iot_othersat;
+        ?GTPv2C_RAT_TYPE_LTE_M_LEO -> lte_m_leo;
+        ?GTPv2C_RAT_TYPE_LTE_M_MEO -> lte_m_meo;
+        ?GTPv2C_RAT_TYPE_LTE_M_GEO -> lte_m_geo;
+        ?GTPv2C_RAT_TYPE_LTE_M_OTHERSAT -> lte_m_othersat
     end;
 decode_parameter(serving_network, V, _) ->
     decode_mcc_mnc(V);
@@ -3140,335 +3142,335 @@ maps_merge_all([]) ->
 maps_merge_all([H|T]) ->
     maps:merge(H, maps_merge_all(T)).
 
-parse_cause_type(?GTPv2_CAUSE_TYPE_LOCAL_DETACH) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_LOCAL_DETACH) ->
     local_detach;
-parse_cause_type(?GTPv2_CAUSE_TYPE_COMPLETE_DETACH) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_COMPLETE_DETACH) ->
     complete_detach;
-parse_cause_type(?GTPv2_CAUSE_TYPE_RAT_CHANGED_FROM_3GPP_TO_NON_3GPP) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_RAT_CHANGED_FROM_3GPP_TO_NON_3GPP) ->
     rat_changed_from_3gpp_to_non_3gpp;
-parse_cause_type(?GTPv2_CAUSE_TYPE_ISR_DEACTIVATION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_ISR_DEACTIVATION) ->
     isr_deactivation;
-parse_cause_type(?GTPv2_CAUSE_TYPE_ERROR_INDICATION_RECEIVED_FROM_RNCENODEBS4_SGSNMME) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_ERROR_INDICATION_RECEIVED_FROM_RNCENODEBS4_SGSNMME) ->
     error_indication_received_from_rncenodebs4_sgsnmme;
-parse_cause_type(?GTPv2_CAUSE_TYPE_IMSI_DETACH_ONLY) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_IMSI_DETACH_ONLY) ->
     imsi_detach_only;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REACTIVATION_REQUESTED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REACTIVATION_REQUESTED) ->
     reactivation_requested;
-parse_cause_type(?GTPv2_CAUSE_TYPE_PDN_RECONNECTION_TO_THIS_APN_DISALLOWED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_PDN_RECONNECTION_TO_THIS_APN_DISALLOWED) ->
     pdn_reconnection_to_this_apn_disallowed;
-parse_cause_type(?GTPv2_CAUSE_TYPE_ACCESS_CHANGED_FROM_NON_3GPP_TO_3GPP) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_ACCESS_CHANGED_FROM_NON_3GPP_TO_3GPP) ->
     access_changed_from_non_3gpp_to_3gpp;
-parse_cause_type(?GTPv2_CAUSE_TYPE_PDN_CONNECTION_INACTIVITY_TIMER_EXPIRES) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_PDN_CONNECTION_INACTIVITY_TIMER_EXPIRES) ->
     pdn_connection_inactivity_timer_expires;
-parse_cause_type(?GTPv2_CAUSE_TYPE_PGW_NOT_RESPONDING) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_PGW_NOT_RESPONDING) ->
     pgw_not_responding;
-parse_cause_type(?GTPv2_CAUSE_TYPE_NETWORK_FAILURE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_NETWORK_FAILURE) ->
     network_failure;
-parse_cause_type(?GTPv2_CAUSE_TYPE_QOS_PARAMETER_MISMATCH) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_QOS_PARAMETER_MISMATCH) ->
     qos_parameter_mismatch;
-parse_cause_type(?GTPv2_CAUSE_TYPE_EPS_TO_5GS_MOBILITY) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_EPS_TO_5GS_MOBILITY) ->
     eps_to_5gs_mobility;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REQUEST_ACCEPTED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REQUEST_ACCEPTED) ->
     request_accepted;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REQUEST_ACCEPTED_PARTIALLY) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REQUEST_ACCEPTED_PARTIALLY) ->
     request_accepted_partially;
-parse_cause_type(?GTPv2_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_NETWORK_PREFERENCE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_NETWORK_PREFERENCE) ->
     new_pdn_type_due_to_network_preference;
-parse_cause_type(?GTPv2_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_SINGLE_ADDRESS_BEARER_ONLY) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_SINGLE_ADDRESS_BEARER_ONLY) ->
     new_pdn_type_due_to_single_address_bearer_only;
-parse_cause_type(?GTPv2_CAUSE_TYPE_CONTEXT_NOT_FOUND) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_CONTEXT_NOT_FOUND) ->
     context_not_found;
-parse_cause_type(?GTPv2_CAUSE_TYPE_INVALID_MESSAGE_FORMAT) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_INVALID_MESSAGE_FORMAT) ->
     invalid_message_format;
-parse_cause_type(?GTPv2_CAUSE_TYPE_VERSION_NOT_SUPPORTED_BY_NEXT_PEER) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_VERSION_NOT_SUPPORTED_BY_NEXT_PEER) ->
     version_not_supported_by_next_peer;
-parse_cause_type(?GTPv2_CAUSE_TYPE_INVALID_LENGTH) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_INVALID_LENGTH) ->
     invalid_length;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SERVICE_NOT_SUPPORTED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SERVICE_NOT_SUPPORTED) ->
     service_not_supported;
-parse_cause_type(?GTPv2_CAUSE_TYPE_MANDATORY_IE_INCORRECT) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_MANDATORY_IE_INCORRECT) ->
     mandatory_ie_incorrect;
-parse_cause_type(?GTPv2_CAUSE_TYPE_MANDATORY_IE_MISSING) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_MANDATORY_IE_MISSING) ->
     mandatory_ie_missing;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SYSTEM_FAILURE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SYSTEM_FAILURE) ->
     system_failure;
-parse_cause_type(?GTPv2_CAUSE_TYPE_NO_RESOURCES_AVAILABLE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_NO_RESOURCES_AVAILABLE) ->
     no_resources_available;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TFT_OPERATION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TFT_OPERATION) ->
     semantic_error_in_the_tft_operation;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TFT_OPERATION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TFT_OPERATION) ->
     syntactic_error_in_the_tft_operation;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SEMANTIC_ERRORS_IN_PACKET_FILTERS) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SEMANTIC_ERRORS_IN_PACKET_FILTERS) ->
     semantic_errors_in_packet_filters;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SYNTACTIC_ERRORS_IN_PACKET_FILTERS) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SYNTACTIC_ERRORS_IN_PACKET_FILTERS) ->
     syntactic_errors_in_packet_filters;
-parse_cause_type(?GTPv2_CAUSE_TYPE_MISSING_OR_UNKNOWN_APN) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_MISSING_OR_UNKNOWN_APN) ->
     missing_or_unknown_apn;
-parse_cause_type(?GTPv2_CAUSE_TYPE_GRE_KEY_NOT_FOUND) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_GRE_KEY_NOT_FOUND) ->
     gre_key_not_found;
-parse_cause_type(?GTPv2_CAUSE_TYPE_RELOCATION_FAILURE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_RELOCATION_FAILURE) ->
     relocation_failure;
-parse_cause_type(?GTPv2_CAUSE_TYPE_DENIED_IN_RAT) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_DENIED_IN_RAT) ->
     denied_in_rat;
-parse_cause_type(?GTPv2_CAUSE_TYPE_PREFERRED_PDN_TYPE_NOT_SUPPORTED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_PREFERRED_PDN_TYPE_NOT_SUPPORTED) ->
     preferred_pdn_type_not_supported;
-parse_cause_type(?GTPv2_CAUSE_TYPE_ALL_DYNAMIC_ADDRESSES_ARE_OCCUPIED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_ALL_DYNAMIC_ADDRESSES_ARE_OCCUPIED) ->
     all_dynamic_addresses_are_occupied;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UE_CONTEXT_WITHOUT_TFT_ALREADY_ACTIVATED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UE_CONTEXT_WITHOUT_TFT_ALREADY_ACTIVATED) ->
     ue_context_without_tft_already_activated;
-parse_cause_type(?GTPv2_CAUSE_TYPE_PROTOCOL_TYPE_NOT_SUPPORTED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_PROTOCOL_TYPE_NOT_SUPPORTED) ->
     protocol_type_not_supported;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UE_NOT_RESPONDING) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UE_NOT_RESPONDING) ->
     ue_not_responding;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UE_REFUSES) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UE_REFUSES) ->
     ue_refuses;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SERVICE_DENIED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SERVICE_DENIED) ->
     service_denied;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UNABLE_TO_PAGE_UE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UNABLE_TO_PAGE_UE) ->
     unable_to_page_ue;
-parse_cause_type(?GTPv2_CAUSE_TYPE_NO_MEMORY_AVAILABLE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_NO_MEMORY_AVAILABLE) ->
     no_memory_available;
-parse_cause_type(?GTPv2_CAUSE_TYPE_USER_AUTHENTICATION_FAILED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_USER_AUTHENTICATION_FAILED) ->
     user_authentication_failed;
-parse_cause_type(?GTPv2_CAUSE_TYPE_APN_ACCESS_DENIED_NO_SUBSCRIPTION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_APN_ACCESS_DENIED_NO_SUBSCRIPTION) ->
     apn_access_denied_no_subscription;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REQUEST_REJECTED_REASON_NOT_SPECIFIED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REQUEST_REJECTED_REASON_NOT_SPECIFIED) ->
     request_rejected_reason_not_specified;
-parse_cause_type(?GTPv2_CAUSE_TYPE_P_TMSI_SIGNATURE_MISMATCH) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_P_TMSI_SIGNATURE_MISMATCH) ->
     p_tmsi_signature_mismatch;
-parse_cause_type(?GTPv2_CAUSE_TYPE_IMSIIMEI_NOT_KNOWN) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_IMSIIMEI_NOT_KNOWN) ->
     imsiimei_not_known;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TAD_OPERATION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TAD_OPERATION) ->
     semantic_error_in_the_tad_operation;
-parse_cause_type(?GTPv2_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TAD_OPERATION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TAD_OPERATION) ->
     syntactic_error_in_the_tad_operation;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REMOTE_PEER_NOT_RESPONDING) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REMOTE_PEER_NOT_RESPONDING) ->
     remote_peer_not_responding;
-parse_cause_type(?GTPv2_CAUSE_TYPE_COLLISION_WITH_NETWORK_INITIATED_REQUEST) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_COLLISION_WITH_NETWORK_INITIATED_REQUEST) ->
     collision_with_network_initiated_request;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UNABLE_TO_PAGE_UE_DUE_TO_SUSPENSION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UNABLE_TO_PAGE_UE_DUE_TO_SUSPENSION) ->
     unable_to_page_ue_due_to_suspension;
-parse_cause_type(?GTPv2_CAUSE_TYPE_CONDITIONAL_IE_MISSING) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_CONDITIONAL_IE_MISSING) ->
     conditional_ie_missing;
-parse_cause_type(?GTPv2_CAUSE_TYPE_APN_RESTRICTION_TYPE_INCOMPATIBLE_WITH_CURRENTLY_ACTIVE_PDN_CONNECTION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_APN_RESTRICTION_TYPE_INCOMPATIBLE_WITH_CURRENTLY_ACTIVE_PDN_CONNECTION) ->
     apn_restriction_type_incompatible_with_currently_active_pdn_connection;
-parse_cause_type(?GTPv2_CAUSE_TYPE_INVALID_OVERALL_LENGTH_OF_THE_TRIGGERED_RESPONSE_MESSAGE_AND_A_PIGGYBACKED_INITIAL_MESSAGE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_INVALID_OVERALL_LENGTH_OF_THE_TRIGGERED_RESPONSE_MESSAGE_AND_A_PIGGYBACKED_INITIAL_MESSAGE) ->
     invalid_overall_length_of_the_triggered_response_message_and_a_piggybacked_initial_message;
-parse_cause_type(?GTPv2_CAUSE_TYPE_DATA_FORWARDING_NOT_SUPPORTED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_DATA_FORWARDING_NOT_SUPPORTED) ->
     data_forwarding_not_supported;
-parse_cause_type(?GTPv2_CAUSE_TYPE_INVALID_REPLY_FROM_REMOTE_PEER) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_INVALID_REPLY_FROM_REMOTE_PEER) ->
     invalid_reply_from_remote_peer;
-parse_cause_type(?GTPv2_CAUSE_TYPE_FALLBACK_TO_GTPV1) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_FALLBACK_TO_GTPV1) ->
     fallback_to_gtpv1;
-parse_cause_type(?GTPv2_CAUSE_TYPE_INVALID_PEER) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_INVALID_PEER) ->
     invalid_peer;
-parse_cause_type(?GTPv2_CAUSE_TYPE_TEMPORARILY_REJECTED_DUE_TO_HANDOVERTAURAU_PROCEDURE_IN_PROGRESS) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_TEMPORARILY_REJECTED_DUE_TO_HANDOVERTAURAU_PROCEDURE_IN_PROGRESS) ->
     temporarily_rejected_due_to_handovertaurau_procedure_in_progress;
-parse_cause_type(?GTPv2_CAUSE_TYPE_MODIFICATIONS_NOT_LIMITED_TO_S1_U_BEARERS) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_MODIFICATIONS_NOT_LIMITED_TO_S1_U_BEARERS) ->
     modifications_not_limited_to_s1_u_bearers;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REQUEST_REJECTED_FOR_A_PMIPV6_REASON) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REQUEST_REJECTED_FOR_A_PMIPV6_REASON) ->
     request_rejected_for_a_pmipv6_reason;
-parse_cause_type(?GTPv2_CAUSE_TYPE_APN_CONGESTION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_APN_CONGESTION) ->
     apn_congestion;
-parse_cause_type(?GTPv2_CAUSE_TYPE_BEARER_HANDLING_NOT_SUPPORTED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_BEARER_HANDLING_NOT_SUPPORTED) ->
     bearer_handling_not_supported;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UE_ALREADY_RE_ATTACHED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UE_ALREADY_RE_ATTACHED) ->
     ue_already_re_attached;
-parse_cause_type(?GTPv2_CAUSE_TYPE_MULTIPLE_PDN_CONNECTIONS_FOR_A_GIVEN_APN_NOT_ALLOWED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_MULTIPLE_PDN_CONNECTIONS_FOR_A_GIVEN_APN_NOT_ALLOWED) ->
     multiple_pdn_connections_for_a_given_apn_not_allowed;
-parse_cause_type(?GTPv2_CAUSE_TYPE_TARGET_ACCESS_RESTRICTED_FOR_THE_SUBSCRIBER) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_TARGET_ACCESS_RESTRICTED_FOR_THE_SUBSCRIBER) ->
     target_access_restricted_for_the_subscriber;
-parse_cause_type(?GTPv2_CAUSE_TYPE_MMESGSN_REFUSES_DUE_TO_VPLMN_POLICY) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_MMESGSN_REFUSES_DUE_TO_VPLMN_POLICY) ->
     mmesgsn_refuses_due_to_vplmn_policy;
-parse_cause_type(?GTPv2_CAUSE_TYPE_GTP_C_ENTITY_CONGESTION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_GTP_C_ENTITY_CONGESTION) ->
     gtp_c_entity_congestion;
-parse_cause_type(?GTPv2_CAUSE_TYPE_LATE_OVERLAPPING_REQUEST) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_LATE_OVERLAPPING_REQUEST) ->
     late_overlapping_request;
-parse_cause_type(?GTPv2_CAUSE_TYPE_TIMED_OUT_REQUEST) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_TIMED_OUT_REQUEST) ->
     timed_out_request;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UE_IS_TEMPORARILY_NOT_REACHABLE_DUE_TO_POWER_SAVING) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UE_IS_TEMPORARILY_NOT_REACHABLE_DUE_TO_POWER_SAVING) ->
     ue_is_temporarily_not_reachable_due_to_power_saving;
-parse_cause_type(?GTPv2_CAUSE_TYPE_RELOCATION_FAILURE_DUE_TO_NAS_MESSAGE_REDIRECTION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_RELOCATION_FAILURE_DUE_TO_NAS_MESSAGE_REDIRECTION) ->
     relocation_failure_due_to_nas_message_redirection;
-parse_cause_type(?GTPv2_CAUSE_TYPE_UE_NOT_AUTHORISED_BY_OCS_OR_EXTERNAL_AAA_SERVER) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_UE_NOT_AUTHORISED_BY_OCS_OR_EXTERNAL_AAA_SERVER) ->
     ue_not_authorised_by_ocs_or_external_aaa_server;
-parse_cause_type(?GTPv2_CAUSE_TYPE_MULTIPLE_ACCESSES_TO_A_PDN_CONNECTION_NOT_ALLOWED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_MULTIPLE_ACCESSES_TO_A_PDN_CONNECTION_NOT_ALLOWED) ->
     multiple_accesses_to_a_pdn_connection_not_allowed;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REQUEST_REJECTED_DUE_TO_UE_CAPABILITY) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REQUEST_REJECTED_DUE_TO_UE_CAPABILITY) ->
     request_rejected_due_to_ue_capability;
-parse_cause_type(?GTPv2_CAUSE_TYPE_S1_U_PATH_FAILURE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_S1_U_PATH_FAILURE) ->
     s1_u_path_failure;
-parse_cause_type(?GTPv2_CAUSE_TYPE_5GC_NOT_ALLOWED) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_5GC_NOT_ALLOWED) ->
     '5gc_not_allowed';
-parse_cause_type(?GTPv2_CAUSE_TYPE_PGW_MISMATCH_WITH_NETWORK_SLICE_SUBSCRIBED_BY_THE_UE) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_PGW_MISMATCH_WITH_NETWORK_SLICE_SUBSCRIBED_BY_THE_UE) ->
     pgw_mismatch_with_network_slice_subscribed_by_the_ue;
-parse_cause_type(?GTPv2_CAUSE_TYPE_REJECTION_DUE_TO_PAGING_RESTRICTION) ->
+parse_cause_type(?GTPv2C_CAUSE_TYPE_REJECTION_DUE_TO_PAGING_RESTRICTION) ->
     rejection_due_to_paging_restriction.
 
 compose_cause_type(local_detach) ->
-    ?GTPv2_CAUSE_TYPE_LOCAL_DETACH;
+    ?GTPv2C_CAUSE_TYPE_LOCAL_DETACH;
 compose_cause_type(complete_detach) ->
-    ?GTPv2_CAUSE_TYPE_COMPLETE_DETACH;
+    ?GTPv2C_CAUSE_TYPE_COMPLETE_DETACH;
 compose_cause_type(rat_changed_from_3gpp_to_non_3gpp) ->
-    ?GTPv2_CAUSE_TYPE_RAT_CHANGED_FROM_3GPP_TO_NON_3GPP;
+    ?GTPv2C_CAUSE_TYPE_RAT_CHANGED_FROM_3GPP_TO_NON_3GPP;
 compose_cause_type(isr_deactivation) ->
-    ?GTPv2_CAUSE_TYPE_ISR_DEACTIVATION;
+    ?GTPv2C_CAUSE_TYPE_ISR_DEACTIVATION;
 compose_cause_type(error_indication_received_from_rncenodebs4_sgsnmme) ->
-    ?GTPv2_CAUSE_TYPE_ERROR_INDICATION_RECEIVED_FROM_RNCENODEBS4_SGSNMME;
+    ?GTPv2C_CAUSE_TYPE_ERROR_INDICATION_RECEIVED_FROM_RNCENODEBS4_SGSNMME;
 compose_cause_type(imsi_detach_only) ->
-    ?GTPv2_CAUSE_TYPE_IMSI_DETACH_ONLY;
+    ?GTPv2C_CAUSE_TYPE_IMSI_DETACH_ONLY;
 compose_cause_type(reactivation_requested) ->
-    ?GTPv2_CAUSE_TYPE_REACTIVATION_REQUESTED;
+    ?GTPv2C_CAUSE_TYPE_REACTIVATION_REQUESTED;
 compose_cause_type(pdn_reconnection_to_this_apn_disallowed) ->
-    ?GTPv2_CAUSE_TYPE_PDN_RECONNECTION_TO_THIS_APN_DISALLOWED;
+    ?GTPv2C_CAUSE_TYPE_PDN_RECONNECTION_TO_THIS_APN_DISALLOWED;
 compose_cause_type(access_changed_from_non_3gpp_to_3gpp) ->
-    ?GTPv2_CAUSE_TYPE_ACCESS_CHANGED_FROM_NON_3GPP_TO_3GPP;
+    ?GTPv2C_CAUSE_TYPE_ACCESS_CHANGED_FROM_NON_3GPP_TO_3GPP;
 compose_cause_type(pdn_connection_inactivity_timer_expires) ->
-    ?GTPv2_CAUSE_TYPE_PDN_CONNECTION_INACTIVITY_TIMER_EXPIRES;
+    ?GTPv2C_CAUSE_TYPE_PDN_CONNECTION_INACTIVITY_TIMER_EXPIRES;
 compose_cause_type(pgw_not_responding) ->
-    ?GTPv2_CAUSE_TYPE_PGW_NOT_RESPONDING;
+    ?GTPv2C_CAUSE_TYPE_PGW_NOT_RESPONDING;
 compose_cause_type(network_failure) ->
-    ?GTPv2_CAUSE_TYPE_NETWORK_FAILURE;
+    ?GTPv2C_CAUSE_TYPE_NETWORK_FAILURE;
 compose_cause_type(qos_parameter_mismatch) ->
-    ?GTPv2_CAUSE_TYPE_QOS_PARAMETER_MISMATCH;
+    ?GTPv2C_CAUSE_TYPE_QOS_PARAMETER_MISMATCH;
 compose_cause_type(eps_to_5gs_mobility) ->
-    ?GTPv2_CAUSE_TYPE_EPS_TO_5GS_MOBILITY;
+    ?GTPv2C_CAUSE_TYPE_EPS_TO_5GS_MOBILITY;
 compose_cause_type(request_accepted) ->
-    ?GTPv2_CAUSE_TYPE_REQUEST_ACCEPTED;
+    ?GTPv2C_CAUSE_TYPE_REQUEST_ACCEPTED;
 compose_cause_type(request_accepted_partially) ->
-    ?GTPv2_CAUSE_TYPE_REQUEST_ACCEPTED_PARTIALLY;
+    ?GTPv2C_CAUSE_TYPE_REQUEST_ACCEPTED_PARTIALLY;
 compose_cause_type(new_pdn_type_due_to_network_preference) ->
-    ?GTPv2_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_NETWORK_PREFERENCE;
+    ?GTPv2C_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_NETWORK_PREFERENCE;
 compose_cause_type(new_pdn_type_due_to_single_address_bearer_only) ->
-    ?GTPv2_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_SINGLE_ADDRESS_BEARER_ONLY;
+    ?GTPv2C_CAUSE_TYPE_NEW_PDN_TYPE_DUE_TO_SINGLE_ADDRESS_BEARER_ONLY;
 compose_cause_type(context_not_found) ->
-    ?GTPv2_CAUSE_TYPE_CONTEXT_NOT_FOUND;
+    ?GTPv2C_CAUSE_TYPE_CONTEXT_NOT_FOUND;
 compose_cause_type(invalid_message_format) ->
-    ?GTPv2_CAUSE_TYPE_INVALID_MESSAGE_FORMAT;
+    ?GTPv2C_CAUSE_TYPE_INVALID_MESSAGE_FORMAT;
 compose_cause_type(version_not_supported_by_next_peer) ->
-    ?GTPv2_CAUSE_TYPE_VERSION_NOT_SUPPORTED_BY_NEXT_PEER;
+    ?GTPv2C_CAUSE_TYPE_VERSION_NOT_SUPPORTED_BY_NEXT_PEER;
 compose_cause_type(invalid_length) ->
-    ?GTPv2_CAUSE_TYPE_INVALID_LENGTH;
+    ?GTPv2C_CAUSE_TYPE_INVALID_LENGTH;
 compose_cause_type(service_not_supported) ->
-    ?GTPv2_CAUSE_TYPE_SERVICE_NOT_SUPPORTED;
+    ?GTPv2C_CAUSE_TYPE_SERVICE_NOT_SUPPORTED;
 compose_cause_type(mandatory_ie_incorrect) ->
-    ?GTPv2_CAUSE_TYPE_MANDATORY_IE_INCORRECT;
+    ?GTPv2C_CAUSE_TYPE_MANDATORY_IE_INCORRECT;
 compose_cause_type(mandatory_ie_missing) ->
-    ?GTPv2_CAUSE_TYPE_MANDATORY_IE_MISSING;
+    ?GTPv2C_CAUSE_TYPE_MANDATORY_IE_MISSING;
 compose_cause_type(system_failure) ->
-    ?GTPv2_CAUSE_TYPE_SYSTEM_FAILURE;
+    ?GTPv2C_CAUSE_TYPE_SYSTEM_FAILURE;
 compose_cause_type(no_resources_available) ->
-    ?GTPv2_CAUSE_TYPE_NO_RESOURCES_AVAILABLE;
+    ?GTPv2C_CAUSE_TYPE_NO_RESOURCES_AVAILABLE;
 compose_cause_type(semantic_error_in_the_tft_operation) ->
-    ?GTPv2_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TFT_OPERATION;
+    ?GTPv2C_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TFT_OPERATION;
 compose_cause_type(syntactic_error_in_the_tft_operation) ->
-    ?GTPv2_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TFT_OPERATION;
+    ?GTPv2C_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TFT_OPERATION;
 compose_cause_type(semantic_errors_in_packet_filters) ->
-    ?GTPv2_CAUSE_TYPE_SEMANTIC_ERRORS_IN_PACKET_FILTERS;
+    ?GTPv2C_CAUSE_TYPE_SEMANTIC_ERRORS_IN_PACKET_FILTERS;
 compose_cause_type(syntactic_errors_in_packet_filters) ->
-    ?GTPv2_CAUSE_TYPE_SYNTACTIC_ERRORS_IN_PACKET_FILTERS;
+    ?GTPv2C_CAUSE_TYPE_SYNTACTIC_ERRORS_IN_PACKET_FILTERS;
 compose_cause_type(missing_or_unknown_apn) ->
-    ?GTPv2_CAUSE_TYPE_MISSING_OR_UNKNOWN_APN;
+    ?GTPv2C_CAUSE_TYPE_MISSING_OR_UNKNOWN_APN;
 compose_cause_type(gre_key_not_found) ->
-    ?GTPv2_CAUSE_TYPE_GRE_KEY_NOT_FOUND;
+    ?GTPv2C_CAUSE_TYPE_GRE_KEY_NOT_FOUND;
 compose_cause_type(relocation_failure) ->
-    ?GTPv2_CAUSE_TYPE_RELOCATION_FAILURE;
+    ?GTPv2C_CAUSE_TYPE_RELOCATION_FAILURE;
 compose_cause_type(denied_in_rat) ->
-    ?GTPv2_CAUSE_TYPE_DENIED_IN_RAT;
+    ?GTPv2C_CAUSE_TYPE_DENIED_IN_RAT;
 compose_cause_type(preferred_pdn_type_not_supported) ->
-    ?GTPv2_CAUSE_TYPE_PREFERRED_PDN_TYPE_NOT_SUPPORTED;
+    ?GTPv2C_CAUSE_TYPE_PREFERRED_PDN_TYPE_NOT_SUPPORTED;
 compose_cause_type(all_dynamic_addresses_are_occupied) ->
-    ?GTPv2_CAUSE_TYPE_ALL_DYNAMIC_ADDRESSES_ARE_OCCUPIED;
+    ?GTPv2C_CAUSE_TYPE_ALL_DYNAMIC_ADDRESSES_ARE_OCCUPIED;
 compose_cause_type(ue_context_without_tft_already_activated) ->
-    ?GTPv2_CAUSE_TYPE_UE_CONTEXT_WITHOUT_TFT_ALREADY_ACTIVATED;
+    ?GTPv2C_CAUSE_TYPE_UE_CONTEXT_WITHOUT_TFT_ALREADY_ACTIVATED;
 compose_cause_type(protocol_type_not_supported) ->
-    ?GTPv2_CAUSE_TYPE_PROTOCOL_TYPE_NOT_SUPPORTED;
+    ?GTPv2C_CAUSE_TYPE_PROTOCOL_TYPE_NOT_SUPPORTED;
 compose_cause_type(ue_not_responding) ->
-    ?GTPv2_CAUSE_TYPE_UE_NOT_RESPONDING;
+    ?GTPv2C_CAUSE_TYPE_UE_NOT_RESPONDING;
 compose_cause_type(ue_refuses) ->
-    ?GTPv2_CAUSE_TYPE_UE_REFUSES;
+    ?GTPv2C_CAUSE_TYPE_UE_REFUSES;
 compose_cause_type(service_denied) ->
-    ?GTPv2_CAUSE_TYPE_SERVICE_DENIED;
+    ?GTPv2C_CAUSE_TYPE_SERVICE_DENIED;
 compose_cause_type(unable_to_page_ue) ->
-    ?GTPv2_CAUSE_TYPE_UNABLE_TO_PAGE_UE;
+    ?GTPv2C_CAUSE_TYPE_UNABLE_TO_PAGE_UE;
 compose_cause_type(no_memory_available) ->
-    ?GTPv2_CAUSE_TYPE_NO_MEMORY_AVAILABLE;
+    ?GTPv2C_CAUSE_TYPE_NO_MEMORY_AVAILABLE;
 compose_cause_type(user_authentication_failed) ->
-    ?GTPv2_CAUSE_TYPE_USER_AUTHENTICATION_FAILED;
+    ?GTPv2C_CAUSE_TYPE_USER_AUTHENTICATION_FAILED;
 compose_cause_type(apn_access_denied_no_subscription) ->
-    ?GTPv2_CAUSE_TYPE_APN_ACCESS_DENIED_NO_SUBSCRIPTION;
+    ?GTPv2C_CAUSE_TYPE_APN_ACCESS_DENIED_NO_SUBSCRIPTION;
 compose_cause_type(request_rejected_reason_not_specified) ->
-    ?GTPv2_CAUSE_TYPE_REQUEST_REJECTED_REASON_NOT_SPECIFIED;
+    ?GTPv2C_CAUSE_TYPE_REQUEST_REJECTED_REASON_NOT_SPECIFIED;
 compose_cause_type(p_tmsi_signature_mismatch) ->
-    ?GTPv2_CAUSE_TYPE_P_TMSI_SIGNATURE_MISMATCH;
+    ?GTPv2C_CAUSE_TYPE_P_TMSI_SIGNATURE_MISMATCH;
 compose_cause_type(imsiimei_not_known) ->
-    ?GTPv2_CAUSE_TYPE_IMSIIMEI_NOT_KNOWN;
+    ?GTPv2C_CAUSE_TYPE_IMSIIMEI_NOT_KNOWN;
 compose_cause_type(semantic_error_in_the_tad_operation) ->
-    ?GTPv2_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TAD_OPERATION;
+    ?GTPv2C_CAUSE_TYPE_SEMANTIC_ERROR_IN_THE_TAD_OPERATION;
 compose_cause_type(syntactic_error_in_the_tad_operation) ->
-    ?GTPv2_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TAD_OPERATION;
+    ?GTPv2C_CAUSE_TYPE_SYNTACTIC_ERROR_IN_THE_TAD_OPERATION;
 compose_cause_type(remote_peer_not_responding) ->
-    ?GTPv2_CAUSE_TYPE_REMOTE_PEER_NOT_RESPONDING;
+    ?GTPv2C_CAUSE_TYPE_REMOTE_PEER_NOT_RESPONDING;
 compose_cause_type(collision_with_network_initiated_request) ->
-    ?GTPv2_CAUSE_TYPE_COLLISION_WITH_NETWORK_INITIATED_REQUEST;
+    ?GTPv2C_CAUSE_TYPE_COLLISION_WITH_NETWORK_INITIATED_REQUEST;
 compose_cause_type(unable_to_page_ue_due_to_suspension) ->
-    ?GTPv2_CAUSE_TYPE_UNABLE_TO_PAGE_UE_DUE_TO_SUSPENSION;
+    ?GTPv2C_CAUSE_TYPE_UNABLE_TO_PAGE_UE_DUE_TO_SUSPENSION;
 compose_cause_type(conditional_ie_missing) ->
-    ?GTPv2_CAUSE_TYPE_CONDITIONAL_IE_MISSING;
+    ?GTPv2C_CAUSE_TYPE_CONDITIONAL_IE_MISSING;
 compose_cause_type(apn_restriction_type_incompatible_with_currently_active_pdn_connection) ->
-    ?GTPv2_CAUSE_TYPE_APN_RESTRICTION_TYPE_INCOMPATIBLE_WITH_CURRENTLY_ACTIVE_PDN_CONNECTION;
+    ?GTPv2C_CAUSE_TYPE_APN_RESTRICTION_TYPE_INCOMPATIBLE_WITH_CURRENTLY_ACTIVE_PDN_CONNECTION;
 compose_cause_type(invalid_overall_length_of_the_triggered_response_message_and_a_piggybacked_initial_message) ->
-    ?GTPv2_CAUSE_TYPE_INVALID_OVERALL_LENGTH_OF_THE_TRIGGERED_RESPONSE_MESSAGE_AND_A_PIGGYBACKED_INITIAL_MESSAGE;
+    ?GTPv2C_CAUSE_TYPE_INVALID_OVERALL_LENGTH_OF_THE_TRIGGERED_RESPONSE_MESSAGE_AND_A_PIGGYBACKED_INITIAL_MESSAGE;
 compose_cause_type(data_forwarding_not_supported) ->
-    ?GTPv2_CAUSE_TYPE_DATA_FORWARDING_NOT_SUPPORTED;
+    ?GTPv2C_CAUSE_TYPE_DATA_FORWARDING_NOT_SUPPORTED;
 compose_cause_type(invalid_reply_from_remote_peer) ->
-    ?GTPv2_CAUSE_TYPE_INVALID_REPLY_FROM_REMOTE_PEER;
+    ?GTPv2C_CAUSE_TYPE_INVALID_REPLY_FROM_REMOTE_PEER;
 compose_cause_type(fallback_to_gtpv1) ->
-    ?GTPv2_CAUSE_TYPE_FALLBACK_TO_GTPV1;
+    ?GTPv2C_CAUSE_TYPE_FALLBACK_TO_GTPV1;
 compose_cause_type(invalid_peer) ->
-    ?GTPv2_CAUSE_TYPE_INVALID_PEER;
+    ?GTPv2C_CAUSE_TYPE_INVALID_PEER;
 compose_cause_type(temporarily_rejected_due_to_handovertaurau_procedure_in_progress) ->
-    ?GTPv2_CAUSE_TYPE_TEMPORARILY_REJECTED_DUE_TO_HANDOVERTAURAU_PROCEDURE_IN_PROGRESS;
+    ?GTPv2C_CAUSE_TYPE_TEMPORARILY_REJECTED_DUE_TO_HANDOVERTAURAU_PROCEDURE_IN_PROGRESS;
 compose_cause_type(modifications_not_limited_to_s1_u_bearers) ->
-    ?GTPv2_CAUSE_TYPE_MODIFICATIONS_NOT_LIMITED_TO_S1_U_BEARERS;
+    ?GTPv2C_CAUSE_TYPE_MODIFICATIONS_NOT_LIMITED_TO_S1_U_BEARERS;
 compose_cause_type(request_rejected_for_a_pmipv6_reason) ->
-    ?GTPv2_CAUSE_TYPE_REQUEST_REJECTED_FOR_A_PMIPV6_REASON;
+    ?GTPv2C_CAUSE_TYPE_REQUEST_REJECTED_FOR_A_PMIPV6_REASON;
 compose_cause_type(apn_congestion) ->
-    ?GTPv2_CAUSE_TYPE_APN_CONGESTION;
+    ?GTPv2C_CAUSE_TYPE_APN_CONGESTION;
 compose_cause_type(bearer_handling_not_supported) ->
-    ?GTPv2_CAUSE_TYPE_BEARER_HANDLING_NOT_SUPPORTED;
+    ?GTPv2C_CAUSE_TYPE_BEARER_HANDLING_NOT_SUPPORTED;
 compose_cause_type(ue_already_re_attached) ->
-    ?GTPv2_CAUSE_TYPE_UE_ALREADY_RE_ATTACHED;
+    ?GTPv2C_CAUSE_TYPE_UE_ALREADY_RE_ATTACHED;
 compose_cause_type(multiple_pdn_connections_for_a_given_apn_not_allowed) ->
-    ?GTPv2_CAUSE_TYPE_MULTIPLE_PDN_CONNECTIONS_FOR_A_GIVEN_APN_NOT_ALLOWED;
+    ?GTPv2C_CAUSE_TYPE_MULTIPLE_PDN_CONNECTIONS_FOR_A_GIVEN_APN_NOT_ALLOWED;
 compose_cause_type(target_access_restricted_for_the_subscriber) ->
-    ?GTPv2_CAUSE_TYPE_TARGET_ACCESS_RESTRICTED_FOR_THE_SUBSCRIBER;
+    ?GTPv2C_CAUSE_TYPE_TARGET_ACCESS_RESTRICTED_FOR_THE_SUBSCRIBER;
 compose_cause_type(mmesgsn_refuses_due_to_vplmn_policy) ->
-    ?GTPv2_CAUSE_TYPE_MMESGSN_REFUSES_DUE_TO_VPLMN_POLICY;
+    ?GTPv2C_CAUSE_TYPE_MMESGSN_REFUSES_DUE_TO_VPLMN_POLICY;
 compose_cause_type(gtp_c_entity_congestion) ->
-    ?GTPv2_CAUSE_TYPE_GTP_C_ENTITY_CONGESTION;
+    ?GTPv2C_CAUSE_TYPE_GTP_C_ENTITY_CONGESTION;
 compose_cause_type(late_overlapping_request) ->
-    ?GTPv2_CAUSE_TYPE_LATE_OVERLAPPING_REQUEST;
+    ?GTPv2C_CAUSE_TYPE_LATE_OVERLAPPING_REQUEST;
 compose_cause_type(timed_out_request) ->
-    ?GTPv2_CAUSE_TYPE_TIMED_OUT_REQUEST;
+    ?GTPv2C_CAUSE_TYPE_TIMED_OUT_REQUEST;
 compose_cause_type(ue_is_temporarily_not_reachable_due_to_power_saving) ->
-    ?GTPv2_CAUSE_TYPE_UE_IS_TEMPORARILY_NOT_REACHABLE_DUE_TO_POWER_SAVING;
+    ?GTPv2C_CAUSE_TYPE_UE_IS_TEMPORARILY_NOT_REACHABLE_DUE_TO_POWER_SAVING;
 compose_cause_type(relocation_failure_due_to_nas_message_redirection) ->
-    ?GTPv2_CAUSE_TYPE_RELOCATION_FAILURE_DUE_TO_NAS_MESSAGE_REDIRECTION;
+    ?GTPv2C_CAUSE_TYPE_RELOCATION_FAILURE_DUE_TO_NAS_MESSAGE_REDIRECTION;
 compose_cause_type(ue_not_authorised_by_ocs_or_external_aaa_server) ->
-    ?GTPv2_CAUSE_TYPE_UE_NOT_AUTHORISED_BY_OCS_OR_EXTERNAL_AAA_SERVER;
+    ?GTPv2C_CAUSE_TYPE_UE_NOT_AUTHORISED_BY_OCS_OR_EXTERNAL_AAA_SERVER;
 compose_cause_type(multiple_accesses_to_a_pdn_connection_not_allowed) ->
-    ?GTPv2_CAUSE_TYPE_MULTIPLE_ACCESSES_TO_A_PDN_CONNECTION_NOT_ALLOWED;
+    ?GTPv2C_CAUSE_TYPE_MULTIPLE_ACCESSES_TO_A_PDN_CONNECTION_NOT_ALLOWED;
 compose_cause_type(request_rejected_due_to_ue_capability) ->
-    ?GTPv2_CAUSE_TYPE_REQUEST_REJECTED_DUE_TO_UE_CAPABILITY;
+    ?GTPv2C_CAUSE_TYPE_REQUEST_REJECTED_DUE_TO_UE_CAPABILITY;
 compose_cause_type(s1_u_path_failure) ->
-    ?GTPv2_CAUSE_TYPE_S1_U_PATH_FAILURE;
+    ?GTPv2C_CAUSE_TYPE_S1_U_PATH_FAILURE;
 compose_cause_type('5gc_not_allowed') ->
-    ?GTPv2_CAUSE_TYPE_5GC_NOT_ALLOWED;
+    ?GTPv2C_CAUSE_TYPE_5GC_NOT_ALLOWED;
 compose_cause_type(pgw_mismatch_with_network_slice_subscribed_by_the_ue) ->
-    ?GTPv2_CAUSE_TYPE_PGW_MISMATCH_WITH_NETWORK_SLICE_SUBSCRIBED_BY_THE_UE;
+    ?GTPv2C_CAUSE_TYPE_PGW_MISMATCH_WITH_NETWORK_SLICE_SUBSCRIBED_BY_THE_UE;
 compose_cause_type(rejection_due_to_paging_restriction) ->
-    ?GTPv2_CAUSE_TYPE_REJECTION_DUE_TO_PAGING_RESTRICTION.
+    ?GTPv2C_CAUSE_TYPE_REJECTION_DUE_TO_PAGING_RESTRICTION.
 
 decode_tliv(<<254:8, Len:16, _Spare:4, Instance:4, Type:16, Bin0/binary>>) ->
     <<Data:Len/binary, Rest/binary>> = Bin0,
@@ -3508,7 +3510,7 @@ tlivtake(_Type, _Instance, [], _Acc) ->
     false;
 tlivtake(Type, Instance, [H|T], Acc) ->
     %% {name, {type, instance}, mandatory|optional}
-    %% {mm_context, {?GTPv2_IEI_MM_CONTEXT, 0}, mandatory},
+    %% {mm_context, {?GTPv2C_IEI_MM_CONTEXT, 0}, mandatory},
     case element(2, H) of
         {Types, Instance} when is_list(Types) ->
             case lists:member(Type, Types) of
@@ -3524,16 +3526,16 @@ tlivtake(Type, Instance, [H|T], Acc) ->
     end.
 
 decode_msg(echo_request, Bin0) ->
-    Fields = [{recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
-              {sending_node_features, {?GTPv2_IEI_NODE_FEATURES, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
+              {sending_node_features, {?GTPv2C_IEI_NODE_FEATURES, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => path_management
         };
 decode_msg(echo_response, Bin0) ->
-    Fields = [{recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
-              {sending_node_features, {?GTPv2_IEI_NODE_FEATURES, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
+              {sending_node_features, {?GTPv2C_IEI_NODE_FEATURES, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => path_management
         };
@@ -3543,1559 +3545,1559 @@ decode_msg(version_not_supported, Bin0) ->
     Msg#{message_group => path_management
         };
 decode_msg(create_session_request, Bin0) ->
-    BearerContextCreated = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                            {tft, {?GTPv2_IEI_BEARER_TFT, 0}, optional},
-                            {s1u_enodeb_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                            {s4u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-                            {s5s8u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 2}, conditional},
-                            {s5s8u_pgw_f_teid, {?GTPv2_IEI_F_TEID, 3}, conditional},
-                            {s12_rnc_f_teid, {?GTPv2_IEI_F_TEID, 4}, conditional_optional},
-                            {s2bu_epdg_f_teid, {?GTPv2_IEI_F_TEID, 5}, conditional},
-                            {s2au_twan_f_teid, {?GTPv2_IEI_F_TEID, 6}, conditional},
-                            {bearer_level_qos, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
-                            {s11u_mme_f_teid, {?GTPv2_IEI_F_TEID, 7}, conditional_optional}
+    BearerContextCreated = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {tft, {?GTPv2C_IEI_BEARER_TFT, 0}, optional},
+                            {s1u_enodeb_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                            {s4u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                            {s5s8u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional},
+                            {s5s8u_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 3}, conditional},
+                            {s12_rnc_f_teid, {?GTPv2C_IEI_F_TEID, 4}, conditional_optional},
+                            {s2bu_epdg_f_teid, {?GTPv2C_IEI_F_TEID, 5}, conditional},
+                            {s2au_twan_f_teid, {?GTPv2C_IEI_F_TEID, 6}, conditional},
+                            {bearer_level_qos, {?GTPv2C_IEI_BEARER_QOS, 0}, mandatory},
+                            {s11u_mme_f_teid, {?GTPv2C_IEI_F_TEID, 7}, conditional_optional}
                            ],
-    BearerContextRemoved = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                            {s4u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional}
+    BearerContextRemoved = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {s4u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional}
                            ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    RemoteUEContextConnected = [{remote_user_id, {?GTPv2_IEI_REMOTE_USER_ID, 0}, mandatory},
-                                {remote_ue_ip_information, {?GTPv2_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
+    RemoteUEContextConnected = [{remote_user_id, {?GTPv2C_IEI_REMOTE_USER_ID, 0}, mandatory},
+                                {remote_ue_ip_information, {?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
                                ],
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {msisdn, {?GTPv2_IEI_MSISDN, 0}, conditional},
-              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
-              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional},
-              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, mandatory},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
-              {pgw_s5s8_address, {?GTPv2_IEI_F_TEID, 1}, conditional},
-              {apn, {?GTPv2_IEI_APN, 0}, mandatory},
-              {selection_mode, {?GTPv2_IEI_SELECTION_MODE, 0}, conditional},
-              {pdn_type, {?GTPv2_IEI_PDN_TYPE, 0}, conditional},
-              {pdn_address_allocation, {?GTPv2_IEI_PDN_ADDRESS_ALLOCATION, 0}, conditional},
-              {maximum_apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
-              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, conditional},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-              {trusted_wlan_mode_indication, {?GTPv2_IEI_TRUSTED_WLAN_MODE_INDICATION, 0}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {bearer_contexts_to_be_created, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContextCreated},
-              {bearer_contexts_to_be_removed, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
-              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
-              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional},
-              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional},
-              {charging_characteristics, {?GTPv2_IEI_CHARGING_CHARACTERISTICS, 0}, conditional},
-              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
-              {epdg_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 2}, optional},
-              {twan_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 3}, optional},
-              {signalling_priority_indication, {?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional},
-              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional},
-              {additional_protocol_config_opts, {?GTPv2_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {henb_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-              {henb_udp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional},
-              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 2}, conditional},
-              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional},
-              {epdg_ip_address, {?GTPv2_IEI_IP_ADDRESS, 3}, optional},
-              {cn_operator_selection_entity, {?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY, 0}, conditional},
-              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
-              {origination_time_stamp, {?GTPv2_IEI_MILLISECOND_TIME_STAMP, 0}, conditional},
-              {maximum_wait_time, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional},
-              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional},
-              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
-              {remote_ue_context_connected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 0}, conditional, RemoteUEContextConnected},
-              {tgpp_aaa_server_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, optional},
-              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional},
-              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional},
-              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 2}, conditional},
-              {mapped_ue_usage_type, {?GTPv2_IEI_MAPPED_UE_USAGE_TYPE, 0}, conditional},
-              {uli_for_sgw, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 1}, conditional},
-              {sgw_u_node_name, {?GTPv2_IEI_FQDN, 0}, conditional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional},
-              {up_function_selection_indication_flags, {?GTPv2_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS, 0}, conditional},
-              {apn_rate_control_status, {?GTPv2_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {msisdn, {?GTPv2C_IEI_MSISDN, 0}, conditional},
+              {mei, {?GTPv2C_IEI_MEI, 0}, conditional},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {serving_network, {?GTPv2C_IEI_SERVING_NETWORK, 0}, conditional},
+              {rat_type, {?GTPv2C_IEI_RAT_TYPE, 0}, mandatory},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
+              {pgw_s5s8_address, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+              {apn, {?GTPv2C_IEI_APN, 0}, mandatory},
+              {selection_mode, {?GTPv2C_IEI_SELECTION_MODE, 0}, conditional},
+              {pdn_type, {?GTPv2C_IEI_PDN_TYPE, 0}, conditional},
+              {pdn_address_allocation, {?GTPv2C_IEI_PDN_ADDRESS_ALLOCATION, 0}, conditional},
+              {maximum_apn_restriction, {?GTPv2C_IEI_APN_RESTRICTION, 0}, conditional},
+              {apn_ambr, {?GTPv2C_IEI_AMBR, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+              {trusted_wlan_mode_indication, {?GTPv2C_IEI_TRUSTED_WLAN_MODE_INDICATION, 0}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {bearer_contexts_to_be_created, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContextCreated},
+              {bearer_contexts_to_be_removed, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
+              {trace_information, {?GTPv2C_IEI_TRACE_INFORMATION, 0}, conditional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2C_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2C_IEI_FQ_CSID, 3}, conditional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional},
+              {user_csg_information, {?GTPv2C_IEI_USER_CSG_INFORMATION, 0}, conditional},
+              {charging_characteristics, {?GTPv2C_IEI_CHARGING_CHARACTERISTICS, 0}, conditional},
+              {mmes4_sgsn_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgw_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {epdg_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 2}, optional},
+              {twan_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 3}, optional},
+              {signalling_priority_indication, {?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional},
+              {ue_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {ue_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional},
+              {additional_protocol_config_opts, {?GTPv2C_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {henb_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+              {henb_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional},
+              {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 2}, conditional},
+              {twan_identifier, {?GTPv2C_IEI_TWAN_IDENTIFIER, 0}, conditional},
+              {epdg_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 3}, optional},
+              {cn_operator_selection_entity, {?GTPv2C_IEI_CN_OPERATOR_SELECTION_ENTITY, 0}, conditional},
+              {presence_reporting_area_information, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {twanepdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
+              {origination_time_stamp, {?GTPv2C_IEI_MILLISECOND_TIME_STAMP, 0}, conditional},
+              {maximum_wait_time, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, conditional},
+              {wlan_location_information, {?GTPv2C_IEI_TWAN_IDENTIFIER, 1}, conditional},
+              {wlan_location_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional},
+              {remote_ue_context_connected, {?GTPv2C_IEI_REMOTE_UE_CONTEXT, 0}, conditional, RemoteUEContextConnected},
+              {tgpp_aaa_server_identifier, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, optional},
+              {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {serving_plmn_rate_control, {?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional},
+              {mo_exception_data_counter, {?GTPv2C_IEI_COUNTER, 0}, conditional},
+              {ue_tcp_port, {?GTPv2C_IEI_PORT_NUMBER, 2}, conditional},
+              {mapped_ue_usage_type, {?GTPv2C_IEI_MAPPED_UE_USAGE_TYPE, 0}, conditional},
+              {uli_for_sgw, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 1}, conditional},
+              {sgw_u_node_name, {?GTPv2C_IEI_FQDN, 0}, conditional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional},
+              {up_function_selection_indication_flags, {?GTPv2C_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS, 0}, conditional},
+              {apn_rate_control_status, {?GTPv2C_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(create_session_response, Bin0) ->
-    BearerContextRemoved = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                            {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory}
+    BearerContextRemoved = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory}
                            ],
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {apns_and_relative_capacity, {?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {apns_and_relative_capacity, {?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2_IEI_PGW_FQDN, 0}, conditional},
-                     {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-                     {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_PGW_FQDN, 1}, conditional},
-                     {group_id, {?GTPv2_IEI_GROUP_ID, 0}, optional}
+    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2C_IEI_PGW_FQDN, 0}, conditional},
+                     {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+                     {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_PGW_FQDN, 1}, conditional},
+                     {group_id, {?GTPv2C_IEI_GROUP_ID, 0}, optional}
                     ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
-              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional},
-              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {pgw_s5s8s2as2b_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-              {pdn_address_allocation, {?GTPv2_IEI_PDN_ADDRESS_ALLOCATION, 0}, conditional},
-              {apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
-              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, conditional},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {bearer_contexts_created, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory},
-              {bearer_contexts_marked_for_removal, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {charging_gateway_name, {?GTPv2_IEI_FQDN, 0}, conditional},
-              {charging_gateway_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {pgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
-              {pgw_back_off_time, {?GTPv2_IEI_EPC_TIMER, 0}, optional},
-              {additional_protocol_config_opts, {?GTPv2_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {trusted_wlan_ipv4_parameters, {?GTPv2_IEI_IPV4_CONFIGURATION_PARAMETERS, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional},
-              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional, LCI},
-              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional, LCI},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
-              {pdn_connection_charging_id, {?GTPv2_IEI_CHARGING_ID, 0}, conditional},
-              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {pgw_node_name, {?GTPv2_IEI_FQDN, 1}, conditional},
-              {sgi_ptp_tunnel_address, {?GTPv2_IEI_SGI_PTP_TUNNEL_ADDRESS, 0}, conditional},
-              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional, PGWChangeInfo},
-              {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_FQDN, 3}, optional},
-              {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, optional},
-              {up_security_policy, {?GTPv2_IEI_UP_SECURITY_POLICY, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {change_reporting_action, {?GTPv2C_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional},
+              {henb_information_reporting, {?GTPv2C_IEI_HENB_INFORMATION_REPORTING, 0}, conditional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {pgw_s5s8s2as2b_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+              {pdn_address_allocation, {?GTPv2C_IEI_PDN_ADDRESS_ALLOCATION, 0}, conditional},
+              {apn_restriction, {?GTPv2C_IEI_APN_RESTRICTION, 0}, conditional},
+              {apn_ambr, {?GTPv2C_IEI_AMBR, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {bearer_contexts_created, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {bearer_contexts_marked_for_removal, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {charging_gateway_name, {?GTPv2C_IEI_FQDN, 0}, conditional},
+              {charging_gateway_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {sgw_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {pgw_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {pgw_back_off_time, {?GTPv2C_IEI_EPC_TIMER, 0}, optional},
+              {additional_protocol_config_opts, {?GTPv2C_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {trusted_wlan_ipv4_parameters, {?GTPv2C_IEI_IPV4_CONFIGURATION_PARAMETERS, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional},
+              {pgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional, LCI},
+              {pgws_apn_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional, LCI},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional},
+              {pdn_connection_charging_id, {?GTPv2C_IEI_CHARGING_ID, 0}, conditional},
+              {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {pgw_node_name, {?GTPv2C_IEI_FQDN, 1}, conditional},
+              {sgi_ptp_tunnel_address, {?GTPv2C_IEI_SGI_PTP_TUNNEL_ADDRESS, 0}, conditional},
+              {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional, PGWChangeInfo},
+              {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_FQDN, 3}, optional},
+              {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, optional},
+              {up_security_policy, {?GTPv2C_IEI_UP_SECURITY_POLICY, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(create_bearer_request, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {tft, {?GTPv2_IEI_BEARER_TFT, 0}, mandatory},
-                     {s1u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                     {s5s8u_pgw_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-                     {s12_sgw_f_teid, {?GTPv2_IEI_F_TEID, 2}, conditional},
-                     {s4u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 3}, conditional},
-                     {s2bu_pgw_f_teid, {?GTPv2_IEI_F_TEID, 4}, conditional},
-                     {s2au_pgw_f_teid, {?GTPv2_IEI_F_TEID, 5}, conditional},
-                     {bearer_level_qos, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
-                     {charging_id, {?GTPv2_IEI_CHARGING_ID, 0}, conditional_optional},
-                     {bearer_flags, {?GTPv2_IEI_BEARER_FLAGS, 0}, optional},
-                     {protocol_configuration_options, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
-                     {extended_protocol_configuration_options, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
-                     {maximum_packet_loss_rate, {?GTPv2_IEI_MAXIMUM_PACKET_LOSS_RATE, 0}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {tft, {?GTPv2C_IEI_BEARER_TFT, 0}, mandatory},
+                     {s1u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                     {s5s8u_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                     {s12_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional},
+                     {s4u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 3}, conditional},
+                     {s2bu_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 4}, conditional},
+                     {s2au_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 5}, conditional},
+                     {bearer_level_qos, {?GTPv2C_IEI_BEARER_QOS, 0}, mandatory},
+                     {charging_id, {?GTPv2C_IEI_CHARGING_ID, 0}, conditional_optional},
+                     {bearer_flags, {?GTPv2C_IEI_BEARER_FLAGS, 0}, optional},
+                     {protocol_configuration_options, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+                     {extended_protocol_configuration_options, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+                     {maximum_packet_loss_rate, {?GTPv2C_IEI_MAXIMUM_PACKET_LOSS_RATE, 0}, conditional_optional}
                     ],
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {apns_and_relative_capacity, {?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {apns_and_relative_capacity, {?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2_IEI_PGW_FQDN, 0}, optional},
-                     {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, optional},
-                     {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_PGW_FQDN, 1}, optional},
-                     {new_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-                     {new_sgwc_ip_address, {?GTPv2_IEI_IP_ADDRESS, 2}, optional},
-                     {pgw_csmf_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-                     {group_id, {?GTPv2_IEI_GROUP_ID, 0}, conditional},
-                     {pgw_control_plane_ip_address, {?GTPv2_IEI_IP_ADDRESS, 2}, conditional},
-                     {new_group_id, {?GTPv2_IEI_GROUP_ID, 1}, optional}
+    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2C_IEI_PGW_FQDN, 0}, optional},
+                     {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, optional},
+                     {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_PGW_FQDN, 1}, optional},
+                     {new_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+                     {new_sgwc_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 2}, optional},
+                     {pgw_csmf_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+                     {group_id, {?GTPv2C_IEI_GROUP_ID, 0}, conditional},
+                     {pgw_control_plane_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 2}, conditional},
+                     {new_group_id, {?GTPv2C_IEI_GROUP_ID, 1}, optional}
                     ],
-    Fields = [{procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
-              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
-              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
-              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
-              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
-              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{procedure_transaction_id, {?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+              {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {change_reporting_action, {?GTPv2C_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {henb_information_reporting, {?GTPv2C_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+              {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
+              {pgws_apn_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(create_bearer_response, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-                     {s1u_enodeb_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                     {s1u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-                     {s5s8u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 2}, conditional},
-                     {s5s8u_pgw_f_teid, {?GTPv2_IEI_F_TEID, 3}, conditional},
-                     {s12_rnc_f_teid, {?GTPv2_IEI_F_TEID, 4}, conditional},
-                     {s12_sgw_f_teid, {?GTPv2_IEI_F_TEID, 5}, conditional},
-                     {s4u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 6}, conditional},
-                     {s4u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 7}, conditional},
-                     {s2bu_epdg_f_teid, {?GTPv2_IEI_F_TEID, 8}, conditional},
-                     {s2bu_pgw_f_teid, {?GTPv2_IEI_F_TEID, 9}, conditional},
-                     {s2au_twan_f_teid, {?GTPv2_IEI_F_TEID, 10}, conditional},
-                     {s2au_pgw_f_teid, {?GTPv2_IEI_F_TEID, 11}, conditional},
-                     {protocol_configuration_options, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-                     {ran_nas_cause, {?GTPv2_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
-                     {extended_protocol_configuration_options, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+                     {s1u_enodeb_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                     {s1u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                     {s5s8u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional},
+                     {s5s8u_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 3}, conditional},
+                     {s12_rnc_f_teid, {?GTPv2C_IEI_F_TEID, 4}, conditional},
+                     {s12_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 5}, conditional},
+                     {s4u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 6}, conditional},
+                     {s4u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 7}, conditional},
+                     {s2bu_epdg_f_teid, {?GTPv2C_IEI_F_TEID, 8}, conditional},
+                     {s2bu_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 9}, conditional},
+                     {s2au_twan_f_teid, {?GTPv2C_IEI_F_TEID, 10}, conditional},
+                     {s2au_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 11}, conditional},
+                     {protocol_configuration_options, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+                     {ran_nas_cause, {?GTPv2C_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
+                     {extended_protocol_configuration_options, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional}
                     ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
-              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
-              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
-              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
-              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
-              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
-              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2C_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2C_IEI_FQ_CSID, 3}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2C_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {presence_reporting_area_information, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {twanepdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
+              {wlan_location_information, {?GTPv2C_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(bearer_resource_command, Bin0) ->
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, mandatory},
-              {flow_qos, {?GTPv2_IEI_FLOW_QOS, 0}, conditional},
-              {traffic_aggregate_description, {?GTPv2_IEI_TRAFFIC_AGGREGATE_DESCRIPTION, 0}, conditional},
-              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional},
-              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, optional},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, optional},
-              {eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 1}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {s4_u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {s12_rnc_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
-              {signalling_priority_indication, {?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional_optional},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 2}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+              {procedure_transaction_id, {?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID, 0}, mandatory},
+              {flow_qos, {?GTPv2C_IEI_FLOW_QOS, 0}, conditional},
+              {traffic_aggregate_description, {?GTPv2C_IEI_TRAFFIC_AGGREGATE_DESCRIPTION, 0}, conditional},
+              {rat_type, {?GTPv2C_IEI_RAT_TYPE, 0}, conditional},
+              {serving_network, {?GTPv2C_IEI_SERVING_NETWORK, 0}, optional},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, optional},
+              {eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 1}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {s4_u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {s12_rnc_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+              {signalling_priority_indication, {?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, optional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(bearer_resource_failure_indication, Bin0) ->
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, mandatory},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+              {procedure_transaction_id, {?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID, 0}, mandatory},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(modify_bearer_request, Bin0) ->
-    BearerContextModified = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                             {s1_enodeb_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                             {s5s8u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-                             {s12_rnc_f_teid, {?GTPv2_IEI_F_TEID, 2}, conditional},
-                             {s4u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 3}, conditional},
-                             {s11u_mme_f_teid, {?GTPv2_IEI_F_TEID, 4}, conditional_optional}
+    BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                             {s1_enodeb_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                             {s5s8u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                             {s12_rnc_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional},
+                             {s4u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 3}, conditional},
+                             {s11u_mme_f_teid, {?GTPv2C_IEI_F_TEID, 4}, conditional_optional}
                             ],
-    BearerContextRemoved = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory}
+    BearerContextRemoved = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory}
                            ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{mei, {?GTPv2_IEI_MEI, 0}, conditional},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
-              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
-              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, conditional},
-              {delay_downlink_packet_notification_request, {?GTPv2_IEI_DELAY_VALUE, 0}, conditional},
-              {bearer_contexts_to_be_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
-              {bearer_contexts_to_be_removed, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
-              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional_optional},
-              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
-              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
-              {henb_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {henb_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
-              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 2}, conditional_optional},
-              {cn_operator_selection_entity, {?GTPv2_IEI_CN_OPERATOR_SELECTION_ENTITY, 0}, conditional_optional},
-              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {epdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
-              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
-              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional_optional},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, optional},
-              {uli_for_sgw, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 1}, conditional_optional},
-              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
-              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{mei, {?GTPv2C_IEI_MEI, 0}, conditional},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {serving_network, {?GTPv2C_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {rat_type, {?GTPv2C_IEI_RAT_TYPE, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {apn_ambr, {?GTPv2C_IEI_AMBR, 0}, conditional},
+              {delay_downlink_packet_notification_request, {?GTPv2C_IEI_DELAY_VALUE, 0}, conditional},
+              {bearer_contexts_to_be_modified, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
+              {bearer_contexts_to_be_removed, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {user_csg_information, {?GTPv2C_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional_optional},
+              {ue_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgw_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {henb_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {henb_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 2}, conditional_optional},
+              {cn_operator_selection_entity, {?GTPv2C_IEI_CN_OPERATOR_SELECTION_ENTITY, 0}, conditional_optional},
+              {presence_reporting_area_information, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {epdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
+              {serving_plmn_rate_control, {?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
+              {mo_exception_data_counter, {?GTPv2C_IEI_COUNTER, 0}, conditional_optional},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, optional},
+              {uli_for_sgw, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 1}, conditional_optional},
+              {wlan_location_information, {?GTPv2C_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(modify_bearer_response, Bin0) ->
-    BearerContextModified = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                             {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-                             {s1u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                             {s12_sgw_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-                             {s4U_sgw_f_teid, {?GTPv2_IEI_F_TEID, 2}, conditional},
-                             {charging_id, {?GTPv2_IEI_CHARGING_ID, 0}, conditional},
-                             {bearer_flags, {?GTPv2_IEI_BEARER_FLAGS, 0}, conditional_optional},
-                             {s11u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 3}, conditional}
+    BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                             {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+                             {s1u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                             {s12_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                             {s4U_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional},
+                             {charging_id, {?GTPv2C_IEI_CHARGING_ID, 0}, conditional},
+                             {bearer_flags, {?GTPv2C_IEI_BEARER_FLAGS, 0}, conditional_optional},
+                             {s11u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 3}, conditional}
                             ],
-    BearerContextRemoved = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                            {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory}
+    BearerContextRemoved = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory}
                            ],
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {apns_and_relative_capacity, {?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {apns_and_relative_capacity, {?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2_IEI_PGW_FQDN, 0}, conditional},
-                     {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-                     {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_PGW_FQDN, 1}, conditional},
-                     {group_id, {?GTPv2_IEI_GROUP_ID, 0}, optional}
+    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2C_IEI_PGW_FQDN, 0}, conditional},
+                     {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+                     {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_PGW_FQDN, 1}, conditional},
+                     {group_id, {?GTPv2C_IEI_GROUP_ID, 0}, optional}
                     ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {msisdn, {?GTPv2_IEI_MSISDN, 0}, conditional},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-              {apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {bearer_contexts_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
-              {bearer_contexts_marked_for_removal, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
-              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
-              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
-              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
-              {charging_gateway_name, {?GTPv2_IEI_FQDN, 0}, conditional},
-              {charging_gateway_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {sgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {pgw_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
-              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
-              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {pdn_connection_charging_id, {?GTPv2_IEI_CHARGING_ID, 0}, conditional_optional},
-              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {msisdn, {?GTPv2C_IEI_MSISDN, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+              {apn_restriction, {?GTPv2C_IEI_APN_RESTRICTION, 0}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {bearer_contexts_modified, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
+              {bearer_contexts_marked_for_removal, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
+              {change_reporting_action, {?GTPv2C_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {henb_information_reporting, {?GTPv2C_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+              {charging_gateway_name, {?GTPv2C_IEI_FQDN, 0}, conditional},
+              {charging_gateway_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {sgw_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {pgw_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 1}, optional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
+              {pgws_apn_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {pdn_connection_charging_id, {?GTPv2C_IEI_CHARGING_ID, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_session_request, Bin0) ->
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, conditional},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {uli_timestamp, {?GTPv2_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
-              {rannas_release_cause, {?GTPv2_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
-              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
-              {twan_identifier_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
-              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
-              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
-              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
-              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {originating_node, {?GTPv2C_IEI_NODE_TYPE, 0}, conditional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli_timestamp, {?GTPv2C_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
+              {rannas_release_cause, {?GTPv2C_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2C_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {twan_identifier_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {twanepdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
+              {wlan_location_information, {?GTPv2C_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_bearer_request, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory}
                     ],
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {apns_and_relative_capacity, {?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {apns_and_relative_capacity, {?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2_IEI_PGW_FQDN, 0}, optional},
-                     {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, optional},
-                     {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_PGW_FQDN, 1}, optional},
-                     {new_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-                     {new_sgwc_ip_address, {?GTPv2_IEI_IP_ADDRESS, 3}, optional},
-                     {pgw_csmf_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-                     {group_id, {?GTPv2_IEI_GROUP_ID, 0}, conditional},
-                     {pgw_control_plane_ip_address, {?GTPv2_IEI_IP_ADDRESS, 2}, conditional},
-                     {new_group_id, {?GTPv2_IEI_GROUP_ID, 1}, optional}
+    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2C_IEI_PGW_FQDN, 0}, optional},
+                     {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, optional},
+                     {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_PGW_FQDN, 1}, optional},
+                     {new_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+                     {new_sgwc_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 3}, optional},
+                     {pgw_csmf_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+                     {group_id, {?GTPv2C_IEI_GROUP_ID, 0}, conditional},
+                     {pgw_control_plane_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 2}, conditional},
+                     {new_group_id, {?GTPv2C_IEI_GROUP_ID, 1}, optional}
                     ],
-    Fields = [{linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-              {eps_bearer_ids, {?GTPv2_IEI_EPS_BEARER_ID, 1}, conditional},
-              {failed_bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, optional, BearerContext},
-              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {cause, {?GTPv2_IEI_CAUSE, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
-              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {apn_rate_control_status, {?GTPv2_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional_optional},
-              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+              {eps_bearer_ids, {?GTPv2C_IEI_EPS_BEARER_ID, 1}, conditional},
+              {failed_bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, optional, BearerContext},
+              {procedure_transaction_id, {?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {cause, {?GTPv2C_IEI_CAUSE, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
+              {pgws_apn_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {apn_rate_control_status, {?GTPv2C_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional_optional},
+              {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_session_response, Bin0) ->
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {apns_and_relative_capacity, {?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {apns_and_relative_capacity, {?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
-              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {extended_protocol_config_opts, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-              {apn_rate_control_status, {?GTPv2_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
+              {pgws_apn_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {apn_rate_control_status, {?GTPv2C_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_bearer_response, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-                     {protocol_configuration_options, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-                     {ran_nas_cause, {?GTPv2_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
-                     {extended_protocol_configuration_options, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+                     {protocol_configuration_options, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+                     {ran_nas_cause, {?GTPv2C_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
+                     {extended_protocol_configuration_options, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional}
                     ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional, BearerContext},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
-              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
-              {uli_timestamp, {?GTPv2_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
-              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
-              {twan_identifier_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
-              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
-              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
-              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+              {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional, BearerContext},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2C_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2C_IEI_FQ_CSID, 3}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {uli_timestamp, {?GTPv2C_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2C_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {twan_identifier_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {twanepdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
+              {wlan_location_information, {?GTPv2C_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(downlink_data_notification, Bin0) ->
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, conditional_optional},
-              {eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
-              {allocation_retention_priority, {?GTPv2_IEI_ALLOCATION_RETENTION_PRIORITY, 0}, conditional_optional},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, optional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
-              {paging_and_service_information, {?GTPv2_IEI_PAGING_AND_SERVICE_INFORMATION, 0}, conditional_optional},
-              {dl_data_packets_size, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, conditional_optional},
+              {eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {allocation_retention_priority, {?GTPv2C_IEI_ALLOCATION_RETENTION_PRIORITY, 0}, conditional_optional},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional_optional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, optional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
+              {paging_and_service_information, {?GTPv2C_IEI_PAGING_AND_SERVICE_INFORMATION, 0}, conditional_optional},
+              {dl_data_packets_size, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(downlink_data_notification_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {data_notification_delay, {?GTPv2_IEI_DELAY_VALUE, 0}, conditional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {dl_low_priority_traffic_throttling, {?GTPv2_IEI_THROTTLING, 0}, optional},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
-              {dl_buffering_duration, {?GTPv2_IEI_EPC_TIMER, 0}, conditional_optional},
-              {dl_buffering_suggested_packet_count, {?GTPv2_IEI_INTEGER_NUMBER, 0}, optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {data_notification_delay, {?GTPv2C_IEI_DELAY_VALUE, 0}, conditional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {dl_low_priority_traffic_throttling, {?GTPv2C_IEI_THROTTLING, 0}, optional},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional_optional},
+              {dl_buffering_duration, {?GTPv2C_IEI_EPC_TIMER, 0}, conditional_optional},
+              {dl_buffering_suggested_packet_count, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(downlink_data_notification_failure_indication, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {originating_node, {?GTPv2C_IEI_NODE_TYPE, 0}, conditional_optional},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_indirect_data_forwarding_tunnel_request, Bin0) ->
-    Fields = [{private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_indirect_data_forwarding_tunnel_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(modify_bearer_command, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {bearer_level_qos, {?GTPv2_IEI_BEARER_QOS, 0}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {bearer_level_qos, {?GTPv2C_IEI_BEARER_QOS, 0}, conditional_optional}
                     ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{apn_ambr, {?GTPv2_IEI_AMBR, 0}, mandatory},
-              {bearer_context, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{apn_ambr, {?GTPv2C_IEI_AMBR, 0}, mandatory},
+              {bearer_context, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {twanepdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(modify_bearer_failure_indication, Bin0) ->
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(update_bearer_request, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {tft, {?GTPv2_IEI_BEARER_TFT, 0}, conditional},
-                     {bearer_level_qos, {?GTPv2_IEI_BEARER_QOS, 0}, conditional},
-                     {bearer_flags, {?GTPv2_IEI_BEARER_FLAGS, 0}, optional},
-                     {protocol_configuration_options, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-                     {additional_protocol_configuration_options, {?GTPv2_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-                     {extended_protocol_configuration_options, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-                     {maximum_packet_loss_rate, {?GTPv2_IEI_MAXIMUM_PACKET_LOSS_RATE, 0}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {tft, {?GTPv2C_IEI_BEARER_TFT, 0}, conditional},
+                     {bearer_level_qos, {?GTPv2C_IEI_BEARER_QOS, 0}, conditional},
+                     {bearer_flags, {?GTPv2C_IEI_BEARER_FLAGS, 0}, optional},
+                     {protocol_configuration_options, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+                     {additional_protocol_configuration_options, {?GTPv2C_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+                     {extended_protocol_configuration_options, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+                     {maximum_packet_loss_rate, {?GTPv2C_IEI_MAXIMUM_PACKET_LOSS_RATE, 0}, conditional_optional}
                     ],
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {apns_and_relative_capacity, {?GTPv2_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {apns_and_relative_capacity, {?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY, 0}, conditional_optional}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2_IEI_PGW_FQDN, 0}, optional},
-                     {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, optional},
-                     {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_PGW_FQDN, 1}, optional},
-                     {new_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-                     {new_sgwc_ip_address, {?GTPv2_IEI_IP_ADDRESS, 3}, optional},
-                     {pgw_csmf_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-                     {group_id, {?GTPv2_IEI_GROUP_ID, 0}, conditional},
-                     {pgw_control_plane_ip_address, {?GTPv2_IEI_IP_ADDRESS, 2}, conditional},
-                     {new_group_id, {?GTPv2_IEI_GROUP_ID, 1}, optional}
+    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2C_IEI_PGW_FQDN, 0}, optional},
+                     {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, optional},
+                     {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_PGW_FQDN, 1}, optional},
+                     {new_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+                     {new_sgwc_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 3}, optional},
+                     {pgw_csmf_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+                     {group_id, {?GTPv2C_IEI_GROUP_ID, 0}, conditional},
+                     {pgw_control_plane_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 2}, conditional},
+                     {new_group_id, {?GTPv2C_IEI_GROUP_ID, 1}, optional}
                     ],
-    Fields = [{bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {procedure_transaction_id, {?GTPv2_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {apn_ambr, {?GTPv2_IEI_AMBR, 0}, mandatory},
-              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
-              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
-              {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
-              {pgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
-              {pgws_apn_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {procedure_transaction_id, {?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID, 0}, conditional},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
+              {apn_ambr, {?GTPv2C_IEI_AMBR, 0}, mandatory},
+              {change_reporting_action, {?GTPv2C_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {henb_information_reporting, {?GTPv2C_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {pgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, conditional_optional, LCI},
+              {pgws_apn_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 1}, conditional_optional, LCI},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 2}, optional, LCI},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(update_bearer_response, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-                     {s4u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                     {s12_rnc_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-                     {protocol_configuration_options, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-                     {ran_nas_cause, {?GTPv2_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
-                     {extended_protocol_configuration_options, {?GTPv2_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+                     {s4u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                     {s12_rnc_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                     {protocol_configuration_options, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+                     {ran_nas_cause, {?GTPv2C_IEI_RAN_NAS_CAUSE, 0}, conditional_optional},
+                     {extended_protocol_configuration_options, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional}
                     ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {protocol_config_opts, {?GTPv2_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
-              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
-              {twan_identifier, {?GTPv2_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
-              {mmes4_sgsns_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
-              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {twanepdgs_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
-              {wlan_location_information, {?GTPv2_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
-              {wlan_location_timestamp, {?GTPv2_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
-              {ue_local_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {ue_udp_port, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
-              {nbifom_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-              {ue_tcp_port, {?GTPv2_IEI_PORT_NUMBER, 1}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {epdg_fq_csid, {?GTPv2C_IEI_FQ_CSID, 2}, conditional},
+              {twan_fq_csid, {?GTPv2C_IEI_FQ_CSID, 3}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {twan_identifier, {?GTPv2C_IEI_TWAN_IDENTIFIER, 0}, conditional_optional},
+              {mmes4_sgsns_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {presence_reporting_area_information, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {twanepdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
+              {wlan_location_information, {?GTPv2C_IEI_TWAN_IDENTIFIER, 1}, conditional_optional},
+              {wlan_location_timestamp, {?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP, 1}, conditional_optional},
+              {ue_local_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {ue_udp_port, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+              {ue_tcp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_bearer_command, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {bearer_flags, {?GTPv2_IEI_BEARER_FLAGS, 0}, conditional_optional},
-                     {ran_nas_cause, {?GTPv2_IEI_RAN_NAS_CAUSE, 0}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {bearer_flags, {?GTPv2C_IEI_BEARER_FLAGS, 0}, conditional_optional},
+                     {ran_nas_cause, {?GTPv2C_IEI_RAN_NAS_CAUSE, 0}, conditional_optional}
                     ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
-              {uli_timestamp, {?GTPv2_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional_optional},
+              {uli_timestamp, {?GTPv2C_IEI_ULI_TIMESTAMP, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(delete_bearer_failure_indication, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory}
                     ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory},
-           {apns, {?GTPv2_IEI_APN, 0}, conditional_optional}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory},
+           {apns, {?GTPv2C_IEI_APN, 0}, conditional_optional}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {bearer_context, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {pgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {bearer_context, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(create_indirect_data_forwarding_tunnel_request, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {enodeb_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-                     {sgw_upf_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 1}, conditional_optional},
-                     {sgsn_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 2}, conditional_optional},
-                     {rnc_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 3}, conditional_optional},
-                     {enodeb_f_teid_for_ul_data_forwarding, {?GTPv2_IEI_F_TEID, 4}, optional},
-                     {sgw_f_teid_for_ul_data_forwarding, {?GTPv2_IEI_F_TEID, 5}, optional},
-                     {mme_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 6}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {enodeb_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+                     {sgw_upf_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 1}, conditional_optional},
+                     {sgsn_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 2}, conditional_optional},
+                     {rnc_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 3}, conditional_optional},
+                     {enodeb_f_teid_for_ul_data_forwarding, {?GTPv2C_IEI_F_TEID, 4}, optional},
+                     {sgw_f_teid_for_ul_data_forwarding, {?GTPv2C_IEI_F_TEID, 5}, optional},
+                     {mme_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 6}, conditional_optional}
                     ],
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2C_IEI_MEI, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(create_indirect_data_forwarding_tunnel_response, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-                     {s1u_sgw_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                     {s12_sgw_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 1}, conditional},
-                     {s4u_sgw_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 2}, conditional},
-                     {sgw_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 3}, conditional},
-                     {s1u_sgw_f_teid_for_ul_data_forwarding, {?GTPv2_IEI_F_TEID, 4}, optional},
-                     {sgw_f_teid_for_ul_data_forwarding, {?GTPv2_IEI_F_TEID, 5}, optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+                     {s1u_sgw_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                     {s12_sgw_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                     {s4u_sgw_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 2}, conditional},
+                     {sgw_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 3}, conditional},
+                     {s1u_sgw_f_teid_for_ul_data_forwarding, {?GTPv2C_IEI_F_TEID, 4}, optional},
+                     {sgw_f_teid_for_ul_data_forwarding, {?GTPv2C_IEI_F_TEID, 5}, optional}
                     ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(release_access_bearers_request, Bin0) ->
-    Fields = [{list_of_rabs, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{list_of_rabs, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+              {originating_node, {?GTPv2C_IEI_NODE_TYPE, 0}, conditional_optional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(release_access_bearers_response, Bin0) ->
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(stop_paging_indication, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(modify_access_bearers_request, Bin0) ->
-    BearerContextModified = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                             {s1u_enodeb_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                             {s11u_mme_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional_optional}
+    BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                             {s1u_enodeb_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                             {s11u_mme_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional_optional}
                             ],
-    BearerContextRemoved = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory}
+    BearerContextRemoved = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory}
                            ],
-    Fields = [{indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {delay_downlink_packet_notification_request, {?GTPv2_IEI_DELAY_VALUE, 0}, conditional},
-              {bearer_contexts_to_be_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
-              {bearer_contexts_to_be_removed, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {delay_downlink_packet_notification_request, {?GTPv2C_IEI_DELAY_VALUE, 0}, conditional},
+              {bearer_contexts_to_be_modified, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
+              {bearer_contexts_to_be_removed, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(modify_access_bearers_response, Bin0) ->
-    BearerContextModified = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                             {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-                             {s1u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                             {s11u_sgw_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional}
+    BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                             {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+                             {s1u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                             {s11u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional}
                             ],
-    BearerContextRemoved = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                            {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory}
+    BearerContextRemoved = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory}
                            ],
-    LCI = [{load_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {load_metric, {?GTPv2_IEI_METRIC, 0}, mandatory}
+    LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {load_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory}
           ],
-    OCI = [{overload_control_sequence_number, {?GTPv2_IEI_SEQUENCE_NUMBER, 0}, mandatory},
-           {overload_reduction_metric, {?GTPv2_IEI_METRIC, 0}, mandatory},
-           {period_of_validity, {?GTPv2_IEI_EPC_TIMER, 0}, mandatory}
+    OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
+           {overload_reduction_metric, {?GTPv2C_IEI_METRIC, 0}, mandatory},
+           {period_of_validity, {?GTPv2C_IEI_EPC_TIMER, 0}, mandatory}
           ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {bearer_contexts_modified, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
-              {bearer_contexts_marked_for_removal, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {sgws_node_level_load_control_information, {?GTPv2_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
-              {sgws_overload_control_information, {?GTPv2_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {bearer_contexts_modified, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional, BearerContextModified},
+              {bearer_contexts_marked_for_removal, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
+              {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(remote_ue_report_notification, Bin0) ->
-    RemoteUEContextConnected = [{remote_user_id, {?GTPv2_IEI_REMOTE_USER_ID, 0}, mandatory},
-                                {remote_ue_ip_information, {?GTPv2_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
+    RemoteUEContextConnected = [{remote_user_id, {?GTPv2C_IEI_REMOTE_USER_ID, 0}, mandatory},
+                                {remote_ue_ip_information, {?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
                                ],
-    RemoteUEContextDisconnected = [{remote_user_id, {?GTPv2_IEI_REMOTE_USER_ID, 0}, mandatory}
+    RemoteUEContextDisconnected = [{remote_user_id, {?GTPv2C_IEI_REMOTE_USER_ID, 0}, mandatory}
                                   ],
-    Fields = [{remote_ue_context_connected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 0}, conditional, RemoteUEContextConnected},
-              {remote_ue_context_disconnected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 1}, conditional, RemoteUEContextDisconnected},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{remote_ue_context_connected, {?GTPv2C_IEI_REMOTE_UE_CONTEXT, 0}, conditional, RemoteUEContextConnected},
+              {remote_ue_context_disconnected, {?GTPv2C_IEI_REMOTE_UE_CONTEXT, 1}, conditional, RemoteUEContextDisconnected},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(remote_ue_report_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => tunnel_management
         };
 decode_msg(forward_relocation_request, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {tft, {?GTPv2_IEI_BEARER_TFT, 0}, conditional},
-                     {sgw_s1s4s12_ip_address_and_teid_for_user_plane, {?GTPv2_IEI_F_TEID, 0}, mandatory},
-                     {pgw_s5s8_ip_address_and_teid_for_user_plane, {?GTPv2_IEI_F_TEID, 1}, conditional_optional},
-                     {bearer_level_qos, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
-                     {bss_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-                     {transaction_identifier, {?GTPv2_IEI_TRANSACTION_IDENTIFIER, 0}, conditional},
-                     {bearer_flags, {?GTPv2_IEI_BEARER_FLAGS, 0}, conditional_optional},
-                     {sgw_s11_ip_address_and_teid_for_user_plane, {?GTPv2_IEI_F_TEID, 2}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {tft, {?GTPv2C_IEI_BEARER_TFT, 0}, conditional},
+                     {sgw_s1s4s12_ip_address_and_teid_for_user_plane, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
+                     {pgw_s5s8_ip_address_and_teid_for_user_plane, {?GTPv2C_IEI_F_TEID, 1}, conditional_optional},
+                     {bearer_level_qos, {?GTPv2C_IEI_BEARER_QOS, 0}, mandatory},
+                     {bss_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+                     {transaction_identifier, {?GTPv2C_IEI_TRANSACTION_IDENTIFIER, 0}, conditional},
+                     {bearer_flags, {?GTPv2C_IEI_BEARER_FLAGS, 0}, conditional_optional},
+                     {sgw_s11_ip_address_and_teid_for_user_plane, {?GTPv2C_IEI_F_TEID, 2}, conditional_optional}
                     ],
-    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2_IEI_PGW_FQDN, 0}, conditional_optional},
-                     {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-                     {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_PGW_FQDN, 1}, conditional_optional}
+    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2C_IEI_PGW_FQDN, 0}, conditional_optional},
+                     {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+                     {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_PGW_FQDN, 1}, conditional_optional}
                     ],
-    RemoteUEContextConnected = [{remote_user_id, {?GTPv2_IEI_REMOTE_USER_ID, 0}, mandatory},
-                                {remote_ue_ip_information, {?GTPv2_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
+    RemoteUEContextConnected = [{remote_user_id, {?GTPv2C_IEI_REMOTE_USER_ID, 0}, mandatory},
+                                {remote_ue_ip_information, {?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
                                ],
-    EPSPDNConnections = [{apn, {?GTPv2_IEI_APN, 0}, mandatory},
-                         {apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
-                         {selection_mode, {?GTPv2_IEI_SELECTION_MODE, 0}, conditional_optional},
-                         {ipv4_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-                         {ipv6_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-                         {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                         {pgw_s5s8_ip_address_for_control_plane_or_pmip, {?GTPv2_IEI_F_TEID, 0}, mandatory},
-                         {pgw_node_name, {?GTPv2_IEI_FQDN, 0}, conditional_optional},
-                         {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional, BearerContext},
-                         {apn_ambr, {?GTPv2_IEI_AMBR, 0}, mandatory},
-                         {charging_characteristics, {?GTPv2_IEI_CHARGING_CHARACTERISTICS, 0}, conditional},
-                         {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
-                         {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
-                         {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
-                         {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-                         {signalling_priority_indication, {?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional_optional},
-                         {change_to_report_flags, {?GTPv2_IEI_CHANGE_TO_REPORT_FLAGS, 0}, conditional_optional},
-                         {local_home_network_id, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
-                         {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
-                         {wlan_offloadability_indication, {?GTPv2_IEI_WLAN_OFFLOADABILITY_INDICATION, 0}, conditional_optional},
-                         {remote_ue_context_connected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 0}, conditional_optional, RemoteUEContextConnected},
-                         {pdn_type, {?GTPv2_IEI_PDN_TYPE, 0}, conditional_optional},
-                         {header_compression_configuration, {?GTPv2_IEI_HEADER_COMPRESSION_CONFIGURATION, 0}, conditional_optional},
-                         {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
-                         {up_security_policy, {?GTPv2_IEI_UP_SECURITY_POLICY, 0}, conditional_optional}
+    EPSPDNConnections = [{apn, {?GTPv2C_IEI_APN, 0}, mandatory},
+                         {apn_restriction, {?GTPv2C_IEI_APN_RESTRICTION, 0}, conditional},
+                         {selection_mode, {?GTPv2C_IEI_SELECTION_MODE, 0}, conditional_optional},
+                         {ipv4_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+                         {ipv6_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+                         {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                         {pgw_s5s8_ip_address_for_control_plane_or_pmip, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
+                         {pgw_node_name, {?GTPv2C_IEI_FQDN, 0}, conditional_optional},
+                         {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional, BearerContext},
+                         {apn_ambr, {?GTPv2C_IEI_AMBR, 0}, mandatory},
+                         {charging_characteristics, {?GTPv2C_IEI_CHARGING_CHARACTERISTICS, 0}, conditional},
+                         {change_reporting_action, {?GTPv2C_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+                         {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+                         {henb_information_reporting, {?GTPv2C_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+                         {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+                         {signalling_priority_indication, {?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional_optional},
+                         {change_to_report_flags, {?GTPv2C_IEI_CHANGE_TO_REPORT_FLAGS, 0}, conditional_optional},
+                         {local_home_network_id, {?GTPv2C_IEI_FQDN, 1}, conditional_optional},
+                         {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+                         {wlan_offloadability_indication, {?GTPv2C_IEI_WLAN_OFFLOADABILITY_INDICATION, 0}, conditional_optional},
+                         {remote_ue_context_connected, {?GTPv2C_IEI_REMOTE_UE_CONTEXT, 0}, conditional_optional, RemoteUEContextConnected},
+                         {pdn_type, {?GTPv2C_IEI_PDN_TYPE, 0}, conditional_optional},
+                         {header_compression_configuration, {?GTPv2C_IEI_HEADER_COMPRESSION_CONFIGURATION, 0}, conditional_optional},
+                         {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
+                         {up_security_policy, {?GTPv2C_IEI_UP_SECURITY_POLICY, 0}, conditional_optional}
                         ],
-    UESCEFPDNConnections = [{apn, {?GTPv2_IEI_APN, 0}, mandatory},
-                            {default_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                            {scef_id, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, mandatory}
+    UESCEFPDNConnections = [{apn, {?GTPv2C_IEI_APN, 0}, mandatory},
+                            {default_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {scef_id, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, mandatory}
                            ],
-    PC5QoSParameters = [{pc5_qos_flows, {?GTPv2_IEI_PC5_QOS_FLOW, 0}, mandatory},
-                        {pc5_link_aggregated_bit_rates, {?GTPv2_IEI_BIT_RATE, 0}, optional}
+    PC5QoSParameters = [{pc5_qos_flows, {?GTPv2C_IEI_PC5_QOS_FLOW, 0}, mandatory},
+                        {pc5_link_aggregated_bit_rates, {?GTPv2C_IEI_BIT_RATE, 0}, optional}
                        ],
-    SubscribedV2XInformation = [{lte_v2x_services_authorized, {?GTPv2_IEI_SERVICES_AUTHORIZED, 0}, conditional},
-                                {nr_v2x_services_authorized, {?GTPv2_IEI_SERVICES_AUTHORIZED, 1}, conditional},
-                                {lte_ue_sidelink_ambr, {?GTPv2_IEI_BIT_RATE, 0}, conditional},
-                                {nr_ue_sidelink_ambr, {?GTPv2_IEI_BIT_RATE, 1}, conditonal},
-                                {pc5_qos_parameters, {?GTPv2_IEI_PC5_QOS_PARAMETERS, 0}, conditional, PC5QoSParameters}
+    SubscribedV2XInformation = [{lte_v2x_services_authorized, {?GTPv2C_IEI_SERVICES_AUTHORIZED, 0}, conditional},
+                                {nr_v2x_services_authorized, {?GTPv2C_IEI_SERVICES_AUTHORIZED, 1}, conditional},
+                                {lte_ue_sidelink_ambr, {?GTPv2C_IEI_BIT_RATE, 0}, conditional},
+                                {nr_ue_sidelink_ambr, {?GTPv2C_IEI_BIT_RATE, 1}, conditonal},
+                                {pc5_qos_parameters, {?GTPv2C_IEI_PC5_QOS_PARAMETERS, 0}, conditional, PC5QoSParameters}
                                ],
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
-              {mmesgsnamf_ue_eps_pdn_connections, {?GTPv2_IEI_PDN_CONNECTION, 0}, conditional, EPSPDNConnections},
-              {sgw_s11s4_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-              {sgw_node_name, {?GTPv2_IEI_FQDN, 0}, conditional},
-              {mmesgsnamf_ue_mm_context, {?GTPv2_IEI_MM_CONTEXTS, 0}, mandatory},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
-              {utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 1}, conditional},
-              {bss_container, {?GTPv2_IEI_F_CONTAINER, 2}, conditional},
-              {target_identification, {?GTPv2_IEI_TARGET_IDENTIFICATION, 0}, conditional},
-              {hrpd_access_node_s101_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {iws_1x_s102_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-              {s1_ap_cause, {?GTPv2_IEI_F_CAUSE, 0}, conditional},
-              {ranap_cause, {?GTPv2_IEI_F_CAUSE, 1}, conditional},
-              {bssgp_cause, {?GTPv2_IEI_F_CAUSE, 2}, conditional},
-              {source_identification, {?GTPv2_IEI_SOURCE_IDENTIFICATION, 0}, conditional},
-              {selected_plmn_id, {?GTPv2_IEI_PLMN_ID, 0}, conditional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional},
-              {subscribed_rfsp_index, {?GTPv2_IEI_RFSP_INDEX, 0}, conditional_optional},
-              {rfsp_index_in_use, {?GTPv2_IEI_RFSP_INDEX, 1}, conditional_optional},
-              {csg_id, {?GTPv2_IEI_CSG_ID, 0}, conditional_optional},
-              {csg_membership_indication, {?GTPv2_IEI_CSG_MEMBERSHIP_INDICATION, 0}, conditional_optional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {serving_network, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
-              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {additional_mm_context_for_srvcc, {?GTPv2_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC, 0}, conditional_optional},
-              {additional_flags_for_srvcc, {?GTPv2_IEI_ADDITIONAL_FLAGS_FOR_SRVCC, 0}, conditional_optional},
-              {stn_sr, {?GTPv2_IEI_STN_SR, 0}, conditional_optional},
-              {c_msisdn, {?GTPv2_IEI_MSISDN, 0}, conditional_optional},
-              {mdt_configuration, {?GTPv2_IEI_MDT_CONFIGURATION, 0}, conditional_optional},
-              {sgsn_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
-              {mme_node_name, {?GTPv2_IEI_FQDN, 2}, conditional_optional},
-              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
-              {monitoring_event_information, {?GTPv2_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
-              {monitoring_event_extension_information, {?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
-              {ue_usage_type, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
-              {mmesgsn_ue_scef_pdn_connections, {?GTPv2_IEI_SCEF_PDN_CONNECTION, 0}, conditional_optional, UESCEFPDNConnections},
-              {msisdn, {?GTPv2_IEI_MSISDN, 1}, conditional_optional},
-              {source_udp_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
-              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
-              {extended_trace_information, {?GTPv2_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
-              {subscribed_additional_rrm_policy_index, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 0}, conditional_optional},
-              {additional_rrm_policy_index_in_use, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 1}, conditional_optional},
-              {subscribed_v2x_information, {?GTPv2_IEI_V2X_CONTEXT, 0}, conditional_optional, SubscribedV2XInformation},
-              {iwk_scef_id_for_monitoring_event, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
-              {alternative_imsi, {?GTPv2_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
+              {mmesgsnamf_ue_eps_pdn_connections, {?GTPv2C_IEI_PDN_CONNECTION, 0}, conditional, EPSPDNConnections},
+              {sgw_s11s4_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+              {sgw_node_name, {?GTPv2C_IEI_FQDN, 0}, conditional},
+              {mmesgsnamf_ue_mm_context, {?GTPv2C_IEI_MM_CONTEXTS, 0}, mandatory},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {e_utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional},
+              {utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 1}, conditional},
+              {bss_container, {?GTPv2C_IEI_F_CONTAINER, 2}, conditional},
+              {target_identification, {?GTPv2C_IEI_TARGET_IDENTIFICATION, 0}, conditional},
+              {hrpd_access_node_s101_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {iws_1x_s102_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+              {s1_ap_cause, {?GTPv2C_IEI_F_CAUSE, 0}, conditional},
+              {ranap_cause, {?GTPv2C_IEI_F_CAUSE, 1}, conditional},
+              {bssgp_cause, {?GTPv2C_IEI_F_CAUSE, 2}, conditional},
+              {source_identification, {?GTPv2C_IEI_SOURCE_IDENTIFICATION, 0}, conditional},
+              {selected_plmn_id, {?GTPv2C_IEI_PLMN_ID, 0}, conditional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {trace_information, {?GTPv2C_IEI_TRACE_INFORMATION, 0}, conditional},
+              {subscribed_rfsp_index, {?GTPv2C_IEI_RFSP_INDEX, 0}, conditional_optional},
+              {rfsp_index_in_use, {?GTPv2C_IEI_RFSP_INDEX, 1}, conditional_optional},
+              {csg_id, {?GTPv2C_IEI_CSG_ID, 0}, conditional_optional},
+              {csg_membership_indication, {?GTPv2C_IEI_CSG_MEMBERSHIP_INDICATION, 0}, conditional_optional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {serving_network, {?GTPv2C_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {additional_mm_context_for_srvcc, {?GTPv2C_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC, 0}, conditional_optional},
+              {additional_flags_for_srvcc, {?GTPv2C_IEI_ADDITIONAL_FLAGS_FOR_SRVCC, 0}, conditional_optional},
+              {stn_sr, {?GTPv2C_IEI_STN_SR, 0}, conditional_optional},
+              {c_msisdn, {?GTPv2C_IEI_MSISDN, 0}, conditional_optional},
+              {mdt_configuration, {?GTPv2C_IEI_MDT_CONFIGURATION, 0}, conditional_optional},
+              {sgsn_node_name, {?GTPv2C_IEI_FQDN, 1}, conditional_optional},
+              {mme_node_name, {?GTPv2C_IEI_FQDN, 2}, conditional_optional},
+              {user_csg_information, {?GTPv2C_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_information, {?GTPv2C_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_extension_information, {?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
+              {ue_usage_type, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {mmesgsn_ue_scef_pdn_connections, {?GTPv2C_IEI_SCEF_PDN_CONNECTION, 0}, conditional_optional, UESCEFPDNConnections},
+              {msisdn, {?GTPv2C_IEI_MSISDN, 1}, conditional_optional},
+              {source_udp_port_number, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {serving_plmn_rate_control, {?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
+              {extended_trace_information, {?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
+              {subscribed_additional_rrm_policy_index, {?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX, 0}, conditional_optional},
+              {additional_rrm_policy_index_in_use, {?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX, 1}, conditional_optional},
+              {subscribed_v2x_information, {?GTPv2C_IEI_V2X_CONTEXT, 0}, conditional_optional, SubscribedV2XInformation},
+              {iwk_scef_id_for_monitoring_event, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
+              {alternative_imsi, {?GTPv2C_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(forward_relocation_response, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional},
-                     {packet_flow_id, {?GTPv2_IEI_PACKET_FLOW_ID, 0}, conditional},
-                     {enodeb_gnodeb_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                     {enodeb_f_teid_for_ul_data_forwarding, {?GTPv2_IEI_F_TEID, 1}, optional},
-                     {sgw_upf_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 2}, conditional_optional},
-                     {rnc_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 3}, conditional},
-                     {sgsn_f_teid_for_dl_data_forwarding, {?GTPv2_IEI_F_TEID, 4}, conditional},
-                     {sgw_f_teid_for_ul_data_forwarding, {?GTPv2_IEI_F_TEID, 5}, optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
+                     {packet_flow_id, {?GTPv2C_IEI_PACKET_FLOW_ID, 0}, conditional},
+                     {enodeb_gnodeb_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                     {enodeb_f_teid_for_ul_data_forwarding, {?GTPv2C_IEI_F_TEID, 1}, optional},
+                     {sgw_upf_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 2}, conditional_optional},
+                     {rnc_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 3}, conditional},
+                     {sgsn_f_teid_for_dl_data_forwarding, {?GTPv2C_IEI_F_TEID, 4}, conditional},
+                     {sgw_f_teid_for_ul_data_forwarding, {?GTPv2C_IEI_F_TEID, 5}, optional}
                     ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {list_of_set_up_bearers, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional, BearerContext},
-              {list_of_set_up_rabs, {?GTPv2_IEI_BEARER_CONTEXT, 1}, conditional, BearerContext},
-              {list_of_set_up_pfcs, {?GTPv2_IEI_BEARER_CONTEXT, 2}, optional, BearerContext},
-              {s1_ap_cause, {?GTPv2_IEI_F_CAUSE, 0}, conditional},
-              {ranap_cause, {?GTPv2_IEI_F_CAUSE, 1}, conditional},
-              {bssgp_cause, {?GTPv2_IEI_F_CAUSE, 2}, conditional},
-              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
-              {utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 1}, conditional},
-              {bss_container, {?GTPv2_IEI_F_CONTAINER, 2}, conditional},
-              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {sgsn_node_name, {?GTPv2_IEI_FQDN, 0}, conditional_optional},
-              {mme_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
-              {sgsn_number, {?GTPv2_IEI_NODE_NUMBER, 0}, conditional_optional},
-              {sgsn_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, optional},
-              {mme_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 1}, optional},
-              {mme_number_for_mt_sms, {?GTPv2_IEI_NODE_NUMBER, 1}, conditional_optional},
-              {sgsn_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 2}, conditional_optional},
-              {mme_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 3}, conditional_optional},
-              {list_of_set_up_bearers_for_scef_pdn_connections, {?GTPv2_IEI_BEARER_CONTEXT, 3}, conditional_optional, BearerContext},
-              {vsrvcc_rejected_cause, {?GTPv2_IEI_SRVCC_CAUSE, 0}, conditional_optional},
-              {msc_number, {?GTPv2_IEI_NODE_NUMBER, 2}, optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {list_of_set_up_bearers, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional, BearerContext},
+              {list_of_set_up_rabs, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContext},
+              {list_of_set_up_pfcs, {?GTPv2C_IEI_BEARER_CONTEXT, 2}, optional, BearerContext},
+              {s1_ap_cause, {?GTPv2C_IEI_F_CAUSE, 0}, conditional},
+              {ranap_cause, {?GTPv2C_IEI_F_CAUSE, 1}, conditional},
+              {bssgp_cause, {?GTPv2C_IEI_F_CAUSE, 2}, conditional},
+              {e_utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional},
+              {utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 1}, conditional},
+              {bss_container, {?GTPv2C_IEI_F_CONTAINER, 2}, conditional},
+              {mmes4_sgsn_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgsn_node_name, {?GTPv2C_IEI_FQDN, 0}, conditional_optional},
+              {mme_node_name, {?GTPv2C_IEI_FQDN, 1}, conditional_optional},
+              {sgsn_number, {?GTPv2C_IEI_NODE_NUMBER, 0}, conditional_optional},
+              {sgsn_identifier, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, optional},
+              {mme_identifier, {?GTPv2C_IEI_NODE_IDENTIFIER, 1}, optional},
+              {mme_number_for_mt_sms, {?GTPv2C_IEI_NODE_NUMBER, 1}, conditional_optional},
+              {sgsn_identifier_for_mt_sms, {?GTPv2C_IEI_NODE_IDENTIFIER, 2}, conditional_optional},
+              {mme_identifier_for_mt_sms, {?GTPv2C_IEI_NODE_IDENTIFIER, 3}, conditional_optional},
+              {list_of_set_up_bearers_for_scef_pdn_connections, {?GTPv2C_IEI_BEARER_CONTEXT, 3}, conditional_optional, BearerContext},
+              {vsrvcc_rejected_cause, {?GTPv2C_IEI_SRVCC_CAUSE, 0}, conditional_optional},
+              {msc_number, {?GTPv2C_IEI_NODE_NUMBER, 2}, optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(forward_relocation_complete_notification, Bin0) ->
-    Fields = [{indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(forward_relocation_complete_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {secondary_rat_usage_data_report_from_ng_ran, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 1}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {secondary_rat_usage_data_report_from_ng_ran, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 1}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(context_request, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {guti, {?GTPv2_IEI_GUTI, 0}, conditional},
-              {rai, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
-              {p_tmsi, {?GTPv2_IEI_P_TMSI, 0}, conditional},
-              {p_tmsi_signature, {?GTPv2_IEI_P_TMSI_SIGNATURE, 0}, conditional},
-              {complete_tau_request_message, {?GTPv2_IEI_COMPLETE_REQUEST_MESSAGE, 0}, conditional},
-              {s3s16s10n26_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {udp_source_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional},
-              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional},
-              {indication, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {hop_counter, {?GTPv2_IEI_HOP_COUNTER, 0}, optional},
-              {target_plmn_id, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
-              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {sgsn_node_name, {?GTPv2_IEI_FQDN, 0}, conditional_optional},
-              {mme_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
-              {sgsn_number, {?GTPv2_IEI_NODE_NUMBER, 0}, optional},
-              {sgsn_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, optional},
-              {mme_identifier, {?GTPv2_IEI_NODE_IDENTIFIER, 1}, optional},
-              {ciot_optimizations_support_indication, {?GTPv2_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {guti, {?GTPv2C_IEI_GUTI, 0}, conditional},
+              {rai, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {p_tmsi, {?GTPv2C_IEI_P_TMSI, 0}, conditional},
+              {p_tmsi_signature, {?GTPv2C_IEI_P_TMSI_SIGNATURE, 0}, conditional},
+              {complete_tau_request_message, {?GTPv2C_IEI_COMPLETE_REQUEST_MESSAGE, 0}, conditional},
+              {s3s16s10n26_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {udp_source_port_number, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional},
+              {rat_type, {?GTPv2C_IEI_RAT_TYPE, 0}, conditional},
+              {indication, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {hop_counter, {?GTPv2C_IEI_HOP_COUNTER, 0}, optional},
+              {target_plmn_id, {?GTPv2C_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {sgsn_node_name, {?GTPv2C_IEI_FQDN, 0}, conditional_optional},
+              {mme_node_name, {?GTPv2C_IEI_FQDN, 1}, conditional_optional},
+              {sgsn_number, {?GTPv2C_IEI_NODE_NUMBER, 0}, optional},
+              {sgsn_identifier, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, optional},
+              {mme_identifier, {?GTPv2C_IEI_NODE_IDENTIFIER, 1}, optional},
+              {ciot_optimizations_support_indication, {?GTPv2C_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(context_response, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {tft, {?GTPv2_IEI_BEARER_TFT, 0}, conditional},
-                     {sgw_s1s4s12s11_ip_address_and_teid_for_user_plane, {?GTPv2_IEI_F_TEID, 0}, conditional},
-                     {pgw_s5s8_ip_address_and_teid_for_user_plane, {?GTPv2_IEI_F_TEID, 1}, conditional_optional},
-                     {bearer_level_qos, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
-                     {bss_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional_optional},
-                     {transaction_identifier, {?GTPv2_IEI_TRANSACTION_IDENTIFIER, 0}, conditional},
-                     {sgw_s11_ip_address_and_teid_for_user_plane, {?GTPv2_IEI_F_TEID, 2}, conditional_optional}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {tft, {?GTPv2C_IEI_BEARER_TFT, 0}, conditional},
+                     {sgw_s1s4s12s11_ip_address_and_teid_for_user_plane, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                     {pgw_s5s8_ip_address_and_teid_for_user_plane, {?GTPv2C_IEI_F_TEID, 1}, conditional_optional},
+                     {bearer_level_qos, {?GTPv2C_IEI_BEARER_QOS, 0}, mandatory},
+                     {bss_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
+                     {transaction_identifier, {?GTPv2C_IEI_TRANSACTION_IDENTIFIER, 0}, conditional},
+                     {sgw_s11_ip_address_and_teid_for_user_plane, {?GTPv2C_IEI_F_TEID, 2}, conditional_optional}
                     ],
-    RemoteUEContextConnected = [{remote_user_id, {?GTPv2_IEI_REMOTE_USER_ID, 0}, mandatory},
-                                {remote_ue_ip_information, {?GTPv2_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
+    RemoteUEContextConnected = [{remote_user_id, {?GTPv2C_IEI_REMOTE_USER_ID, 0}, mandatory},
+                                {remote_ue_ip_information, {?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION, 0}, mandatory}
                                ],
-    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2_IEI_PGW_FQDN, 0}, conditional_optional},
-                     {alternative_pgw_csmf_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-                     {alternative_pgw_csmf_fqdn, {?GTPv2_IEI_PGW_FQDN, 1}, conditional_optional}
+    PGWChangeInfo = [{pgw_set_fqdn, {?GTPv2C_IEI_PGW_FQDN, 0}, conditional_optional},
+                     {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+                     {alternative_pgw_csmf_fqdn, {?GTPv2C_IEI_PGW_FQDN, 1}, conditional_optional}
                     ],
-    EPSPDNConnections = [{apn, {?GTPv2_IEI_APN, 0}, mandatory},
-                         {apn_restriction, {?GTPv2_IEI_APN_RESTRICTION, 0}, conditional},
-                         {selection_mode, {?GTPv2_IEI_SELECTION_MODE, 0}, conditional_optional},
-                         {ipv4_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-                         {ipv6_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-                         {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                         {pgw_s5s8_ip_address_for_control_plane_or_pmip, {?GTPv2_IEI_F_TEID, 0}, mandatory},
-                         {pgw_node_name, {?GTPv2_IEI_FQDN, 0}, conditional_optional},
-                         {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
-                         {apn_ambr, {?GTPv2_IEI_AMBR, 0}, mandatory},
-                         {charging_characteristics, {?GTPv2_IEI_CHARGING_CHARACTERISTICS, 0}, conditional},
-                         {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
-                         {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
-                         {henb_information_reporting, {?GTPv2_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
-                         {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-                         {signalling_priority_indication, {?GTPv2_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional_optional},
-                         {change_to_report_flags, {?GTPv2_IEI_CHANGE_TO_REPORT_FLAGS, 0}, conditional_optional},
-                         {local_home_network_id, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
-                         {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
-                         {wlan_offloadability_indication, {?GTPv2_IEI_WLAN_OFFLOADABILITY_INDICATION, 0}, conditional_optional},
-                         {remote_ue_context_connected, {?GTPv2_IEI_REMOTE_UE_CONTEXT, 0}, conditional_optional, RemoteUEContextConnected},
-                         {pdn_type, {?GTPv2_IEI_PDN_TYPE, 0}, conditional_optional},
-                         {header_compression_configuration, {?GTPv2_IEI_HEADER_COMPRESSION_CONFIGURATION, 0}, conditional_optional},
-                         {pgw_change_info, {?GTPv2_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
-                         {up_security_policy, {?GTPv2_IEI_UP_SECURITY_POLICY, 0}, conditional_optional}
+    EPSPDNConnections = [{apn, {?GTPv2C_IEI_APN, 0}, mandatory},
+                         {apn_restriction, {?GTPv2C_IEI_APN_RESTRICTION, 0}, conditional},
+                         {selection_mode, {?GTPv2C_IEI_SELECTION_MODE, 0}, conditional_optional},
+                         {ipv4_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+                         {ipv6_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+                         {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                         {pgw_s5s8_ip_address_for_control_plane_or_pmip, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
+                         {pgw_node_name, {?GTPv2C_IEI_FQDN, 0}, conditional_optional},
+                         {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
+                         {apn_ambr, {?GTPv2C_IEI_AMBR, 0}, mandatory},
+                         {charging_characteristics, {?GTPv2C_IEI_CHARGING_CHARACTERISTICS, 0}, conditional},
+                         {change_reporting_action, {?GTPv2C_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+                         {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+                         {henb_information_reporting, {?GTPv2C_IEI_HENB_INFORMATION_REPORTING, 0}, conditional_optional},
+                         {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+                         {signalling_priority_indication, {?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION, 0}, conditional_optional},
+                         {change_to_report_flags, {?GTPv2C_IEI_CHANGE_TO_REPORT_FLAGS, 0}, conditional_optional},
+                         {local_home_network_id, {?GTPv2C_IEI_FQDN, 1}, conditional_optional},
+                         {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+                         {wlan_offloadability_indication, {?GTPv2C_IEI_WLAN_OFFLOADABILITY_INDICATION, 0}, conditional_optional},
+                         {remote_ue_context_connected, {?GTPv2C_IEI_REMOTE_UE_CONTEXT, 0}, conditional_optional, RemoteUEContextConnected},
+                         {pdn_type, {?GTPv2C_IEI_PDN_TYPE, 0}, conditional_optional},
+                         {header_compression_configuration, {?GTPv2C_IEI_HEADER_COMPRESSION_CONFIGURATION, 0}, conditional_optional},
+                         {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
+                         {up_security_policy, {?GTPv2C_IEI_UP_SECURITY_POLICY, 0}, conditional_optional}
                         ],
-    UESCEFPDNConnections = [{apn, {?GTPv2_IEI_APN, 0}, mandatory},
-                            {default_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                            {scef_id, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, mandatory}
+    UESCEFPDNConnections = [{apn, {?GTPv2C_IEI_APN, 0}, mandatory},
+                            {default_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {scef_id, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, mandatory}
                            ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {mmesgsnamf_ue_mm_context, {?GTPv2_IEI_MM_CONTEXTS, 0}, conditional},
-              {mmesgsnamf_ue_eps_pdn_connections, {?GTPv2_IEI_PDN_CONNECTION, 0}, conditional, EPSPDNConnections},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {sgw_s11s4_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-              {sgw_node_name, {?GTPv2_IEI_FQDN, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional},
-              {hrpd_access_node_s101_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {iws_1x_s102_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, conditional},
-              {subscribed_rfsp_index, {?GTPv2_IEI_RFSP_INDEX, 0}, conditional_optional},
-              {rfsp_index_in_use, {?GTPv2_IEI_RFSP_INDEX, 1}, conditional_optional},
-              {ue_time_zone, {?GTPv2_IEI_UE_TIME_ZONE, 0}, conditional_optional},
-              {mmes4_sgsn_ldn, {?GTPv2_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
-              {mdt_configuration, {?GTPv2_IEI_MDT_CONFIGURATION, 0}, conditional_optional},
-              {sgsn_node_name, {?GTPv2_IEI_FQDN, 1}, conditional_optional},
-              {mme_node_name, {?GTPv2_IEI_FQDN, 2}, conditional_optional},
-              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
-              {monitoring_event_information, {?GTPv2_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
-              {monitoring_event_extension_information, {?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
-              {ue_usage_type, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
-              {mmesgsn_ue_scef_pdn_connections, {?GTPv2_IEI_SCEF_PDN_CONNECTION, 0}, conditional, UESCEFPDNConnections},
-              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, conditional_optional},
-              {serving_plmn_rate_control, {?GTPv2_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
-              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional_optional},
-              {remaining_running_service_gap_timer, {?GTPv2_IEI_INTEGER_NUMBER, 1}, conditional_optional},
-              {extended_trace_information, {?GTPv2_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
-              {subscribed_additional_rrm_policy_index, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 0}, conditional_optional},
-              {additional_rrm_policy_index_in_use, {?GTPv2_IEI_ADDITIONAL_RRM_POLICY_INDEX, 1}, conditional_optional},
-              {iwk_scef_id_for_monitoring_event, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
-              {alternative_imsi, {?GTPv2_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {mmesgsnamf_ue_mm_context, {?GTPv2C_IEI_MM_CONTEXTS, 0}, conditional},
+              {mmesgsnamf_ue_eps_pdn_connections, {?GTPv2C_IEI_PDN_CONNECTION, 0}, conditional, EPSPDNConnections},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {sgw_s11s4_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+              {sgw_node_name, {?GTPv2C_IEI_FQDN, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {trace_information, {?GTPv2C_IEI_TRACE_INFORMATION, 0}, conditional},
+              {hrpd_access_node_s101_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {iws_1x_s102_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, conditional},
+              {subscribed_rfsp_index, {?GTPv2C_IEI_RFSP_INDEX, 0}, conditional_optional},
+              {rfsp_index_in_use, {?GTPv2C_IEI_RFSP_INDEX, 1}, conditional_optional},
+              {ue_time_zone, {?GTPv2C_IEI_UE_TIME_ZONE, 0}, conditional_optional},
+              {mmes4_sgsn_ldn, {?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME, 0}, optional},
+              {mdt_configuration, {?GTPv2C_IEI_MDT_CONFIGURATION, 0}, conditional_optional},
+              {sgsn_node_name, {?GTPv2C_IEI_FQDN, 1}, conditional_optional},
+              {mme_node_name, {?GTPv2C_IEI_FQDN, 2}, conditional_optional},
+              {user_csg_information, {?GTPv2C_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_information, {?GTPv2C_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_extension_information, {?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
+              {ue_usage_type, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {mmesgsn_ue_scef_pdn_connections, {?GTPv2C_IEI_SCEF_PDN_CONNECTION, 0}, conditional, UESCEFPDNConnections},
+              {rat_type, {?GTPv2C_IEI_RAT_TYPE, 0}, conditional_optional},
+              {serving_plmn_rate_control, {?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL, 0}, conditional_optional},
+              {mo_exception_data_counter, {?GTPv2C_IEI_COUNTER, 0}, conditional_optional},
+              {remaining_running_service_gap_timer, {?GTPv2C_IEI_INTEGER_NUMBER, 1}, conditional_optional},
+              {extended_trace_information, {?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
+              {subscribed_additional_rrm_policy_index, {?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX, 0}, conditional_optional},
+              {additional_rrm_policy_index_in_use, {?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX, 1}, conditional_optional},
+              {iwk_scef_id_for_monitoring_event, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
+              {alternative_imsi, {?GTPv2C_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(context_acknowledge, Bin0) ->
-    BearerContext = [{eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, mandatory},
-                     {forwarding_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory}
+    BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                     {forwarding_f_teid, {?GTPv2C_IEI_F_TEID, 0}, mandatory}
                     ],
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional},
-              {forwarding_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-              {bearer_contexts, {?GTPv2_IEI_BEARER_CONTEXT, 0}, conditional_optional, BearerContext},
-              {sgsn_number, {?GTPv2_IEI_NODE_NUMBER, 0}, conditional_optional},
-              {mme_number_for_mt_sms, {?GTPv2_IEI_NODE_NUMBER, 1}, conditional_optional},
-              {sgsn_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
-              {mme_identifier_for_mt_sms, {?GTPv2_IEI_NODE_IDENTIFIER, 1}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
+              {forwarding_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+              {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, conditional_optional, BearerContext},
+              {sgsn_number, {?GTPv2C_IEI_NODE_NUMBER, 0}, conditional_optional},
+              {mme_number_for_mt_sms, {?GTPv2C_IEI_NODE_NUMBER, 1}, conditional_optional},
+              {sgsn_identifier_for_mt_sms, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
+              {mme_identifier_for_mt_sms, {?GTPv2C_IEI_NODE_IDENTIFIER, 1}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(identification_request, Bin0) ->
-    Fields = [{guti, {?GTPv2_IEI_GUTI, 0}, conditional},
-              {rai, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
-              {p_tmsi, {?GTPv2_IEI_P_TMSI, 0}, conditional},
-              {p_tmsi_signature, {?GTPv2_IEI_P_TMSI_SIGNATURE, 0}, conditional},
-              {complete_attach_request_message, {?GTPv2_IEI_COMPLETE_REQUEST_MESSAGE, 0}, conditional},
-              {address, {?GTPv2_IEI_IP_ADDRESS, 0}, optional},
-              {udp_source_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional},
-              {hop_counter, {?GTPv2_IEI_HOP_COUNTER, 0}, optional},
-              {target_plmn_id, {?GTPv2_IEI_SERVING_NETWORK, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{guti, {?GTPv2C_IEI_GUTI, 0}, conditional},
+              {rai, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {p_tmsi, {?GTPv2C_IEI_P_TMSI, 0}, conditional},
+              {p_tmsi_signature, {?GTPv2C_IEI_P_TMSI_SIGNATURE, 0}, conditional},
+              {complete_attach_request_message, {?GTPv2C_IEI_COMPLETE_REQUEST_MESSAGE, 0}, conditional},
+              {address, {?GTPv2C_IEI_IP_ADDRESS, 0}, optional},
+              {udp_source_port_number, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional},
+              {hop_counter, {?GTPv2C_IEI_HOP_COUNTER, 0}, optional},
+              {target_plmn_id, {?GTPv2C_IEI_SERVING_NETWORK, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(identification_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {mmesgsn_ue_mm_context, {?GTPv2_IEI_MM_CONTEXTS, 0}, conditional},
-              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, conditional_optional},
-              {ue_usage_type, {?GTPv2_IEI_INTEGER_NUMBER, 0}, conditional_optional},
-              {monitoring_event_information, {?GTPv2_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
-              {monitoring_event_extension_information, {?GTPv2_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
-              {extended_trace_information, {?GTPv2_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {mmesgsn_ue_mm_context, {?GTPv2C_IEI_MM_CONTEXTS, 0}, conditional},
+              {trace_information, {?GTPv2C_IEI_TRACE_INFORMATION, 0}, conditional_optional},
+              {ue_usage_type, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, conditional_optional},
+              {monitoring_event_information, {?GTPv2C_IEI_MONITORING_EVENT_INFORMATION, 0}, conditional_optional},
+              {monitoring_event_extension_information, {?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
+              {extended_trace_information, {?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(forward_access_context_notification, Bin0) ->
-    Fields = [{rab_contexts, {?GTPv2_IEI_RAB_CONTEXT, 0}, conditional},
-              {source_rnc_pdcp_context_info, {?GTPv2_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO, 0}, conditional},
-              {pdu_numbers, {?GTPv2_IEI_PDU_NUMBERS, 0}, conditional},
-              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 0}, conditional},
-              {e_utran_transparent_container, {?GTPv2_IEI_F_CONTAINER, 1}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{rab_contexts, {?GTPv2C_IEI_RAB_CONTEXT, 0}, conditional},
+              {source_rnc_pdcp_context_info, {?GTPv2C_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO, 0}, conditional},
+              {pdu_numbers, {?GTPv2C_IEI_PDU_NUMBERS, 0}, conditional},
+              {e_utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional},
+              {e_utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 1}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(forward_access_context_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(detach_notification, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {detach_type, {?GTPv2_IEI_DETACH_TYPE, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {detach_type, {?GTPv2C_IEI_DETACH_TYPE, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(detach_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(change_notification_request, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {rat_type, {?GTPv2_IEI_RAT_TYPE, 0}, mandatory},
-              {uli, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
-              {user_csg_information, {?GTPv2_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
-              {pgw_s5s8_gtp_c_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {lbi, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
-              {presence_reporting_area_information, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
-              {mo_exception_data_counter, {?GTPv2_IEI_COUNTER, 0}, conditional_optional},
-              {secondary_rat_usage_data_report, {?GTPv2_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
-              {pscell_id, {?GTPv2_IEI_PSCELL_ID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2C_IEI_MEI, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {rat_type, {?GTPv2C_IEI_RAT_TYPE, 0}, mandatory},
+              {uli, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {user_csg_information, {?GTPv2C_IEI_USER_CSG_INFORMATION, 0}, conditional_optional},
+              {pgw_s5s8_gtp_c_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {lbi, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {presence_reporting_area_information, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION, 0}, conditional_optional},
+              {mo_exception_data_counter, {?GTPv2C_IEI_COUNTER, 0}, conditional_optional},
+              {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
+              {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(change_notification_response, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
-              {cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {change_reporting_action, {?GTPv2_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
-              {csg_information_reporting_action, {?GTPv2_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
-              {presence_reporting_area_action, {?GTPv2_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2C_IEI_MEI, 0}, conditional},
+              {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {change_reporting_action, {?GTPv2C_IEI_CHANGE_REPORTING_ACTION, 0}, conditional},
+              {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
+              {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(relocation_cancel_request, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {mei, {?GTPv2_IEI_MEI, 0}, conditional},
-              {indication_flags, {?GTPv2_IEI_INDICATION, 0}, conditional_optional},
-              {ranap_cause, {?GTPv2_IEI_F_CAUSE, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {mei, {?GTPv2C_IEI_MEI, 0}, conditional},
+              {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
+              {ranap_cause, {?GTPv2C_IEI_F_CAUSE, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(relocation_cancel_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(configuration_transfer_tunnel, Bin0) ->
-    Fields = [{son_container, {?GTPv2_IEI_F_CONTAINER, 0}, mandatory},
-              {target_node_id, {?GTPv2_IEI_TARGET_IDENTIFICATION, 0}, mandatory},
-              {connected_target_enodeb_id, {?GTPv2_IEI_TARGET_IDENTIFICATION, 1}, conditional_optional}],
+    Fields = [{son_container, {?GTPv2C_IEI_F_CONTAINER, 0}, mandatory},
+              {target_node_id, {?GTPv2C_IEI_TARGET_IDENTIFICATION, 0}, mandatory},
+              {connected_target_enodeb_id, {?GTPv2C_IEI_TARGET_IDENTIFICATION, 1}, conditional_optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(ran_information_relay, Bin0) ->
-    Fields = [{bss_container, {?GTPv2_IEI_F_CONTAINER, 0}, mandatory},
-              {rim_routing_address, {?GTPv2_IEI_TARGET_IDENTIFICATION, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{bss_container, {?GTPv2C_IEI_F_CONTAINER, 0}, mandatory},
+              {rim_routing_address, {?GTPv2C_IEI_TARGET_IDENTIFICATION, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(isr_status_indication, Bin0) ->
-    Fields = [{action_indication, {?GTPv2_IEI_ACTION_INDICATION, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{action_indication, {?GTPv2C_IEI_ACTION_INDICATION, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(ue_registration_query_request, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(ue_registration_query_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
-              {selected_core_network_operator_identifier, {?GTPv2_IEI_PLMN_ID, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
+              {selected_core_network_operator_identifier, {?GTPv2C_IEI_PLMN_ID, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mobility_management
         };
 decode_msg(suspend_notification, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {rai, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
-              {p_tmsi, {?GTPv2_IEI_P_TMSI, 0}, conditional},
-              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
-              {address, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional_optional},
-              {udp_source_port_number, {?GTPv2_IEI_PORT_NUMBER, 0}, conditional_optional},
-              {hop_counter, {?GTPv2_IEI_HOP_COUNTER, 0}, optional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {rai, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, conditional},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {p_tmsi, {?GTPv2C_IEI_P_TMSI, 0}, conditional},
+              {originating_node, {?GTPv2C_IEI_NODE_TYPE, 0}, conditional_optional},
+              {address, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional_optional},
+              {udp_source_port_number, {?GTPv2C_IEI_PORT_NUMBER, 0}, conditional_optional},
+              {hop_counter, {?GTPv2C_IEI_HOP_COUNTER, 0}, optional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(suspend_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(resume_notification, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
-              {linked_eps_bearer_id, {?GTPv2_IEI_EPS_BEARER_ID, 0}, conditional_optional},
-              {originating_node, {?GTPv2_IEI_NODE_TYPE, 0}, conditional_optional},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
+              {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional_optional},
+              {originating_node, {?GTPv2C_IEI_NODE_TYPE, 0}, conditional_optional},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(resume_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(cs_paging_indication, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
-              {vlr_name, {?GTPv2_IEI_FQDN, 0}, mandatory},
-              {tmsi, {?GTPv2_IEI_TMSI, 0}, optional},
-              {location_area_identifier, {?GTPv2_IEI_USER_LOCATION_INFORMATION, 0}, optional},
-              {global_cn_id, {?GTPv2_IEI_GLOBAL_CN_ID, 0}, optional},
-              {channel_needed, {?GTPv2_IEI_CHANNEL_NEEDED, 0}, optional},
-              {emlpp_priority, {?GTPv2_IEI_EMLPP_PRIORITY, 0}, optional},
-              {service_indicator, {?GTPv2_IEI_SERVICE_INDICATOR, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
+              {vlr_name, {?GTPv2C_IEI_FQDN, 0}, mandatory},
+              {tmsi, {?GTPv2C_IEI_TMSI, 0}, optional},
+              {location_area_identifier, {?GTPv2C_IEI_USER_LOCATION_INFORMATION, 0}, optional},
+              {global_cn_id, {?GTPv2C_IEI_GLOBAL_CN_ID, 0}, optional},
+              {channel_needed, {?GTPv2C_IEI_CHANNEL_NEEDED, 0}, optional},
+              {emlpp_priority, {?GTPv2C_IEI_EMLPP_PRIORITY, 0}, optional},
+              {service_indicator, {?GTPv2C_IEI_SERVICE_INDICATOR, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(alert_mme_notification, Bin0) ->
-    Fields = [{private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(alert_mme_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(ue_activity_notification, Bin0) ->
-    Fields = [{private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(ue_activity_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => cs_fallback_and_srvcc_related
         };
 decode_msg(create_forwarding_tunnel_request, Bin0) ->
-    Fields = [{s103_pdn_data_forwarding_info, {?GTPv2_IEI_S103_PDN_DATA_FORWARDING_INFO, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{s103_pdn_data_forwarding_info, {?GTPv2C_IEI_S103_PDN_DATA_FORWARDING_INFO, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => non_3gpp_access_related
         };
 decode_msg(create_forwarding_tunnel_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {s1_u_data_forwarding_info, {?GTPv2_IEI_S1_U_DATA_FORWARDING_INFO, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {s1_u_data_forwarding_info, {?GTPv2C_IEI_S1_U_DATA_FORWARDING_INFO, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => non_3gpp_access_related
         };
 decode_msg(delete_pdn_connection_set_request, Bin0) ->
-    Fields = [{mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 2}, conditional},
-              {epdg_fq_csid, {?GTPv2_IEI_FQ_CSID, 3}, conditional},
-              {twan_fq_csid, {?GTPv2_IEI_FQ_CSID, 4}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 2}, conditional},
+              {epdg_fq_csid, {?GTPv2C_IEI_FQ_CSID, 3}, conditional},
+              {twan_fq_csid, {?GTPv2C_IEI_FQ_CSID, 4}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(delete_pdn_connection_set_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(update_pdn_connection_set_request, Bin0) ->
-    Fields = [{mme_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {sgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 1}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(update_pdn_connection_set_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {pgw_fq_csid, {?GTPv2_IEI_FQ_CSID, 0}, conditional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(pgw_restart_notification, Bin0) ->
-    Fields = [{pgw_s5s8_ip_address, {?GTPv2_IEI_IP_ADDRESS, 0}, mandatory},
-              {sgw_s11s4_ip_address, {?GTPv2_IEI_IP_ADDRESS, 1}, mandatory},
-              {cause, {?GTPv2_IEI_CAUSE, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{pgw_s5s8_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, mandatory},
+              {sgw_s11s4_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, mandatory},
+              {cause, {?GTPv2C_IEI_CAUSE, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(pgw_restart_notification_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(pgw_downlink_triggering_notification, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, mandatory},
-              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {pgw_s5_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
+              {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {pgw_s5_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(pgw_downlink_triggering_acknowledge, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {mmes4_sgsn_identifier, {?GTPv2_IEI_IP_ADDRESS, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => restoration_and_recovery
         };
 decode_msg(trace_session_activation, Bin0) ->
-    Fields = [{imsi, {?GTPv2_IEI_IMSI, 0}, conditional},
-              {trace_information, {?GTPv2_IEI_TRACE_INFORMATION, 0}, mandatory},
-              {mei, {?GTPv2_IEI_MEI, 0}, conditional}],
+    Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
+              {trace_information, {?GTPv2C_IEI_TRACE_INFORMATION, 0}, mandatory},
+              {mei, {?GTPv2C_IEI_MEI, 0}, conditional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => trace_management
         };
 decode_msg(trace_session_deactivation, Bin0) ->
-    Fields = [{trace_reference, {?GTPv2_IEI_TRACE_REFERENCE, 0}, mandatory}],
+    Fields = [{trace_reference, {?GTPv2C_IEI_TRACE_REFERENCE, 0}, mandatory}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => trace_management
         };
 decode_msg(mbms_session_start_request, Bin0) ->
-    Fields = [{sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
-              {tmgi, {?GTPv2_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY, 0}, mandatory},
-              {mbms_session_duration, {?GTPv2_IEI_MBMS_SESSION_DURATION, 0}, mandatory},
-              {mbms_service_area, {?GTPv2_IEI_MBMS_SERVICE_AREA, 0}, mandatory},
-              {mbms_session_identifier, {?GTPv2_IEI_MBMS_SESSION_IDENTIFIER, 0}, conditional},
-              {mbms_flow_identifier, {?GTPv2_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
-              {qos_profile, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
-              {mbms_ip_multicast_distribution, {?GTPv2_IEI_MBMS_IP_MULTICAST_DISTRIBUTION, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {mbms_time_to_data_transfer, {?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER, 0}, conditional_optional},
-              {mbms_data_transfer, {?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
-              {mbms_flags, {?GTPv2_IEI_MBMS_FLAGS, 0}, conditional_optional},
-              {mbms_alternative_ip_multicast_distribution, {?GTPv2_IEI_MBMS_IP_MULTICAST_DISTRIBUTION, 1}, conditional_optional},
-              {mbms_cell_list, {?GTPv2_IEI_ECGI_LIST, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
+              {tmgi, {?GTPv2C_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY, 0}, mandatory},
+              {mbms_session_duration, {?GTPv2C_IEI_MBMS_SESSION_DURATION, 0}, mandatory},
+              {mbms_service_area, {?GTPv2C_IEI_MBMS_SERVICE_AREA, 0}, mandatory},
+              {mbms_session_identifier, {?GTPv2C_IEI_MBMS_SESSION_IDENTIFIER, 0}, conditional},
+              {mbms_flow_identifier, {?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
+              {qos_profile, {?GTPv2C_IEI_BEARER_QOS, 0}, mandatory},
+              {mbms_ip_multicast_distribution, {?GTPv2C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {mbms_time_to_data_transfer, {?GTPv2C_IEI_MBMS_TIME_TO_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_data_transfer, {?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_flags, {?GTPv2C_IEI_MBMS_FLAGS, 0}, conditional_optional},
+              {mbms_alternative_ip_multicast_distribution, {?GTPv2C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION, 1}, conditional_optional},
+              {mbms_cell_list, {?GTPv2C_IEI_ECGI_LIST, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mbms
         };
 decode_msg(mbms_session_start_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, mandatory},
-              {mbms_distribution_acknowledge, {?GTPv2_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE, 0}, conditional},
-              {sn_u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 1}, conditional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
+              {mbms_distribution_acknowledge, {?GTPv2C_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE, 0}, conditional},
+              {sn_u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mbms
         };
 decode_msg(mbms_session_update_request, Bin0) ->
-    Fields = [{mbms_service_area, {?GTPv2_IEI_MBMS_SERVICE_AREA, 0}, conditional},
-              {tmgi, {?GTPv2_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY, 0}, mandatory},
-              {sender_f_teid, {?GTPv2_IEI_F_TEID, 0}, optional},
-              {mbms_session_duration, {?GTPv2_IEI_MBMS_SESSION_DURATION, 0}, mandatory},
-              {qos_profile, {?GTPv2_IEI_BEARER_QOS, 0}, mandatory},
-              {mbms_session_identifier, {?GTPv2_IEI_MBMS_SESSION_IDENTIFIER, 0}, conditional},
-              {mbms_flow_identifier, {?GTPv2_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
-              {mbms_time_to_data_transfer, {?GTPv2_IEI_MBMS_TIME_TO_DATA_TRANSFER, 0}, conditional_optional},
-              {mbms_data_transfer, {?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
-              {mbms_cell_list, {?GTPv2_IEI_ECGI_LIST, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{mbms_service_area, {?GTPv2C_IEI_MBMS_SERVICE_AREA, 0}, conditional},
+              {tmgi, {?GTPv2C_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY, 0}, mandatory},
+              {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, optional},
+              {mbms_session_duration, {?GTPv2C_IEI_MBMS_SESSION_DURATION, 0}, mandatory},
+              {qos_profile, {?GTPv2C_IEI_BEARER_QOS, 0}, mandatory},
+              {mbms_session_identifier, {?GTPv2C_IEI_MBMS_SESSION_IDENTIFIER, 0}, conditional},
+              {mbms_flow_identifier, {?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
+              {mbms_time_to_data_transfer, {?GTPv2C_IEI_MBMS_TIME_TO_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_data_transfer, {?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_cell_list, {?GTPv2C_IEI_ECGI_LIST, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mbms
         };
 decode_msg(mbms_session_update_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {mbms_distribution_acknowledge, {?GTPv2_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE, 0}, conditional},
-              {sn_u_sgsn_f_teid, {?GTPv2_IEI_F_TEID, 0}, conditional},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {mbms_distribution_acknowledge, {?GTPv2C_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE, 0}, conditional},
+              {sn_u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mbms
         };
 decode_msg(mbms_session_stop_request, Bin0) ->
-    Fields = [{mbms_flow_identifier, {?GTPv2_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
-              {mbms_data_transfer, {?GTPv2_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
-              {mbms_flags, {?GTPv2_IEI_MBMS_FLAGS, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{mbms_flow_identifier, {?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
+              {mbms_data_transfer, {?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
+              {mbms_flags, {?GTPv2C_IEI_MBMS_FLAGS, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mbms
         };
 decode_msg(mbms_session_stop_response, Bin0) ->
-    Fields = [{cause, {?GTPv2_IEI_CAUSE, 0}, mandatory},
-              {recovery, {?GTPv2_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
-              {private_extension, {?GTPv2_IEI_PRIVATE_EXTENSION, vs}, optional}],
+    Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+              {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
+              {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mbms
         }.
