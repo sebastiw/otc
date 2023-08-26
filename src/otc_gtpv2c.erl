@@ -1,8 +1,8 @@
--module(otc_gtpv2).
+-module(otc_gtpv2c).
 -behaviour(otc_codec).
 
 -include_lib("kernel/include/logger.hrl").
--include("include/gtpv2.hrl").
+-include("include/gtpv2c.hrl").
 -include("include/l3.hrl").
 
 -export([spec/0,

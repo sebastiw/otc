@@ -1,7 +1,7 @@
--module(otc_gtp).
+-module(otc_gtpv1c).
 -behaviour(otc_codec).
 
--include("include/gtp.hrl").
+-include("include/gtpv1c.hrl").
 -include("include/l3.hrl").
 
 -export([spec/0,
