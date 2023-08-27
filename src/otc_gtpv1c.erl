@@ -24,15 +24,14 @@ codec({Map, <<>>}) ->
 next(_) ->
     '$stop'.
 
-decode(<<1:3, 1:1, _:1, E:1, S:1, PN:1, MT:8, Len:16, TEID:32, Rest0/binary>>) ->
-    <<GTP0:Len/binary, Rest1/binary>> = Rest0,
+decode(<<1:3, 1:1, _:1, E:1, S:1, PN:1, MT:8, Len:16, TEID:32, GTP0:Len/binary>>) ->
     MessageType = parse_message_type(MT),
     {MsgFields, GTP1} = decode_msg_fields(E, S, PN, GTP0),
     Msg0 = decode_msg(MessageType, GTP1),
     Msg1 = maps:merge(Msg0, MsgFields),
     Msg2 = Msg1#{message_type => MessageType,
                  teid => TEID},
-    {Msg2, Rest1}.
+    Msg2.
 
 encode(Map) ->
     #{message_type := MessageType,
@@ -367,7 +366,7 @@ encode_msg_fields(Map) ->
 
 parse_extension_headers(1, Rest0) ->
     parse_next_extension_headers(Rest0, #{});
-parse_extension_headers(0, Rest0) ->
+parse_extension_headers(0, <<_:8, Rest0/binary>>) ->
     {#{}, Rest0}.
 
 parse_next_extension_headers(<<2#0000_0000:8, Rest0/binary>>, Acc) ->
