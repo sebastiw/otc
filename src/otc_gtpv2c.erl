@@ -12,6 +12,21 @@
          encode/1
         ]).
 
+%% Used in GTPv1-C
+-export([tbcd_decode/1,
+         decode_mcc_mnc/1,
+         bin_to_ip_addr/1,
+         decode_apn/1,
+         decode_pco/1,
+         decode_rai/1,
+         decode_sai/1,
+         decode_cgi/1,
+         decode_csg_id/1,
+         decode_plmn_id/1,
+         decode_timezone/1,
+         decode_imeisv/1
+        ]).
+
 spec() ->
     "3GPP TS 29.274 v17.7.0".
 
@@ -1026,7 +1041,7 @@ compose_iei(private_extension) ->
 
 decode_parameter(imsi, V, _) ->
     %% ITU-T Rec E.212 TBCD digits
-    tcbd_decode(V);
+    tbcd_decode(V);
 decode_parameter(cause, V, _) ->
     <<C:8, _S:5, PCE:1, BCE:1, CS:1, Rest0/binary>> = V,
     Is = case C >= 16 andalso C =< 63 of
@@ -1065,24 +1080,9 @@ decode_parameter(eps_bearer_id, V, _) ->
 decode_parameter(ip_address, V, _) ->
     bin_to_ip_addr(V);
 decode_parameter(mei, V, _) ->
-    %% The ME Identity field contains either the IMEI or the IMEISV as
-    %% defined in clause 6.2 of 3GPP TS 23.003 [2]. It is encoded as
-    %% specified in clause 7.7.53 of 3GPP TS 29.060 [4], beginning
-    %% with octet 4 of Figure 7.7.53.1.
-    %% The IMEI(SV) digits are encoded using BCD coding where IMEI is
-    %% 15 BCD digits and IMEISV is 16 BCD digits. For IMEI, bits 5 to
-    %% 8 of the last octet shall be filled with an end mark coded as
-    %% '1111'.
-    IMEISV = tcbd_decode(V),
-    case length(IMEISV) of
-        15 ->
-            #{imei => IMEISV};
-        16 ->
-            {IMEI, SV} = lists:split(15, IMEISV),
-            #{imei => IMEI, sv => SV}
-    end;
+    decode_imeisv(V);
 decode_parameter(msisdn, V, _) ->
-    tcbd_decode(V);
+    tbcd_decode(V);
 decode_parameter(indication, V0, _) ->
     V = <<V0/binary, 0:(80-bit_size(V0))>>,
     <<DAF:1, DTF:1, HI:1, DFI:1, OI:1, ISRSI:1, ISRAI:1, SGWCI:1,
@@ -1641,48 +1641,7 @@ decode_parameter(hop_counter, V, _) ->
     <<HopCounter:8/binary>> = V,
     HopCounter;
 decode_parameter(ue_time_zone, V, _) ->
-    <<TZa:4, S:1, TZb:3,
-      _:6, DaylightSavingTime:2>> = V,
-    DST = case DaylightSavingTime of
-              0 -> no_adjustment;
-              1 -> plus_one_hour;
-              2 -> plus_two_hours
-          end,
-    %% 3GPP TS 23.040
-    %%
-    %% The Time Zone indicates the difference, expressed in quarters
-    %% of an hour, between the local time and GMT. In the first of the
-    %% two semi‑octets, the first bit (bit 3 of the seventh octet of
-    %% the TP‑Service‑Centre‑Time‑Stamp field) represents the
-    %% algebraic sign of this difference (0: positive, 1: negative).
-    %%
-    %% ..Semi-octet as the representation given in 3GPP TS 24.008 [12]
-    %% under "called BCD number"..
-    %%
-    %% E.g.
-    %%
-    %% 3GPP-MS-TimeZone: 8001
-    %% Timezone: GMT + 2 hours 0 minutes
-    %% .... ..01 = Adjustment: +1 hour adjustment for Daylight Saving Time (1)
-    %% 01 is DST (+1 hour), as defined in 29.274
-    %% 0x80 = 1000 0000
-    %% as it is BCD, swap "semi-octets"
-    %% 0000 1000
-    %% 1st bit is the + - indicator (0 = +, 1 = -)
-    %% so after BCD decode,  it is dec 8 here, 8 / 4 (quarters) =  2 hours
-    %%
-    %% 3GPP-MS-TimeZone: 2300
-    %% Timezone: GMT + 8 hours 0 minutes
-    %% .... ..00 = Adjustment: No adjustment (0)
-    %% 0x23 = 0010 0011
-    %% 0011 0010 = BCD 32
-    %% 32 / 4 = 8 hours
-    Tz = case S of
-             1 -> -1 * (TZb * 10 + TZa);
-             0 ->       TZb * 10 + TZa
-         end,
-    #{time_zone => Tz*15,
-      daylight_saving_time => DST};
+    decode_timezone(V);
 decode_parameter(trace_reference, V, _) ->
     %% TraceId defined in 3GPP TS 32.422
     <<MCCMNCBin:3/binary, TraceId:3/binary>> = V,
@@ -1723,24 +1682,13 @@ decode_parameter(f_cause, V, _) ->
         4 -> #{miscellaneous_cause => CauseValue}
     end;
 decode_parameter(plmn_id, V, _) ->
-    %% Different MCC/MNC encoding than rest of the protocol
-    <<MCC2:4/big, MCC1:4/big,
-      MNC1:4/big, MCC3:4/big,
-      MNC3:4/big, MNC2:4/big>> = V,
-    MCC = [MCC1+$0, MCC2+$0, MCC3+$0],
-    MNC = case MNC1 of
-              2#1111 ->
-                  [MNC2+$0, MNC3+$0];
-              _ ->
-                  [MNC1+$0, MNC2+$0, MNC3+$0]
-          end,
-    #{mcc => MCC, mnc => MNC};
+    decode_plmn_id(V);
 decode_parameter(target_identification, V, _) ->
     <<TargetType:8, TargetID/binary>> = V,
     case TargetType of
         0 ->
             %% RNC-ID
-            <<RAIBin:7/binary, RNCID:2, ERNCID/binary>> = TargetID,
+            <<RAIBin:7/binary, RNCID:2/binary, ERNCID/binary>> = TargetID,
             RAI = decode_rai(RAIBin),
             RAI#{rnc_id => RNCID,
                  extended_rnc_id => ERNCID};
@@ -2674,7 +2622,7 @@ decode_parameter(up_security_policy, V, _) ->
     end;
 decode_parameter(alternative_imsi, V, _) ->
     %% ITU-T Rec E.212 TBCD digits
-    tcbd_decode(V);
+    tbcd_decode(V);
 decode_parameter(_, V, _) ->
     V.
 
@@ -2777,8 +2725,9 @@ common_mm_context(DRXI, NHI, SAMBRI, UAMBRI, OSCI, R2) ->
                        <<UplinkSubscribedUEAMBR:32,
                          DownlinkSubscribedUEAMBR:32,
                          Rp0/binary>> = R,
-                       {#{uplink_subscribed_ue_ambr => UplinkSubscribedUEAMBR,
-                          downlink_subscribed_ue_ambr => DownlinkSubscribedUEAMBR}, Rp0}
+                       {#{subscribed_ue_ambr => #{uplink => UplinkSubscribedUEAMBR,
+                                                  downlink => DownlinkSubscribedUEAMBR}},
+                        Rp0}
                end,
     {SAMBR, R5} = maybe_decode(SAMBRI, SAMBRFun, R4, #{}),
 
@@ -2786,8 +2735,9 @@ common_mm_context(DRXI, NHI, SAMBRI, UAMBRI, OSCI, R2) ->
                        <<UplinkUsedUEAMBR:32,
                          DownlinkUsedUEAMBR:32,
                          Rp0/binary>> = R,
-                       {#{uplink_used_ue_ambr => UplinkUsedUEAMBR,
-                          downlink_used_ue_ambr => DownlinkUsedUEAMBR}, Rp0}
+                       {#{used_ue_ambr => #{uplink => UplinkUsedUEAMBR,
+                                            downlink => DownlinkUsedUEAMBR}},
+                        Rp0}
                end,
     {UAMBR, R6} = maybe_decode(UAMBRI, UAMBRFun, R5, #{}),
 
@@ -2869,13 +2819,13 @@ decode_cgi(V) ->
             cell_identity => CI}.
 
 decode_sai(V) ->
-    <<MCCMNCBin:3/binary, LAC:16, SAC:2/binary>> = V,
+    <<MCCMNCBin:3/binary, LAC:16, SAC:16>> = V,
     MCCMNC = decode_mcc_mnc(MCCMNCBin),
     MCCMNC#{location_area_code => LAC,
             service_area_code => SAC}.
 
 decode_rai(V) ->
-    <<MCCMNCBin:3/binary, LAC:16, RAC:16>> = V,
+    <<MCCMNCBin:3/binary, LAC:16, RAC:8, _/binary>> = V,
     MCCMNC = decode_mcc_mnc(MCCMNCBin),
     MCCMNC#{location_area_code => LAC,
             routing_area_code => RAC}.
@@ -2913,6 +2863,82 @@ decode_extended_macro_enodeb_id(V) ->
 decode_csg_id(CSGIDBin) ->
     <<_:5, CSGID:27>> = CSGIDBin,
     CSGID.
+
+decode_plmn_id(V) ->
+    %% Different MCC/MNC encoding than rest of the protocol
+    <<MCC2:4/big, MCC1:4/big,
+      MNC1:4/big, MCC3:4/big,
+      MNC3:4/big, MNC2:4/big>> = V,
+    MCC = [MCC1+$0, MCC2+$0, MCC3+$0],
+    MNC = case MNC1 of
+              2#1111 ->
+                  [MNC2+$0, MNC3+$0];
+              _ ->
+                  [MNC1+$0, MNC2+$0, MNC3+$0]
+          end,
+    #{mcc => MCC, mnc => MNC}.
+
+decode_timezone(V) ->
+    <<TZa:4, S:1, TZb:3,
+      _:6, DaylightSavingTime:2>> = V,
+    DST = case DaylightSavingTime of
+              0 -> no_adjustment;
+              1 -> plus_one_hour;
+              2 -> plus_two_hours
+          end,
+    %% 3GPP TS 23.040
+    %%
+    %% The Time Zone indicates the difference, expressed in quarters
+    %% of an hour, between the local time and GMT. In the first of the
+    %% two semi‑octets, the first bit (bit 3 of the seventh octet of
+    %% the TP‑Service‑Centre‑Time‑Stamp field) represents the
+    %% algebraic sign of this difference (0: positive, 1: negative).
+    %%
+    %% ..Semi-octet as the representation given in 3GPP TS 24.008 [12]
+    %% under "called BCD number"..
+    %%
+    %% E.g.
+    %%
+    %% 3GPP-MS-TimeZone: 8001
+    %% Timezone: GMT + 2 hours 0 minutes
+    %% .... ..01 = Adjustment: +1 hour adjustment for Daylight Saving Time (1)
+    %% 01 is DST (+1 hour), as defined in 29.274
+    %% 0x80 = 1000 0000
+    %% as it is BCD, swap "semi-octets"
+    %% 0000 1000
+    %% 1st bit is the + - indicator (0 = +, 1 = -)
+    %% so after BCD decode,  it is dec 8 here, 8 / 4 (quarters) =  2 hours
+    %%
+    %% 3GPP-MS-TimeZone: 2300
+    %% Timezone: GMT + 8 hours 0 minutes
+    %% .... ..00 = Adjustment: No adjustment (0)
+    %% 0x23 = 0010 0011
+    %% 0011 0010 = BCD 32
+    %% 32 / 4 = 8 hours
+    Tz = case S of
+             1 -> -1 * (TZb * 10 + TZa);
+             0 ->       TZb * 10 + TZa
+         end,
+    #{time_zone => Tz*15,
+      daylight_saving_time => DST}.
+
+decode_imeisv(V) ->
+    %% The ME Identity field contains either the IMEI or the IMEISV as
+    %% defined in clause 6.2 of 3GPP TS 23.003 [2]. It is encoded as
+    %% specified in clause 7.7.53 of 3GPP TS 29.060 [4], beginning
+    %% with octet 4 of Figure 7.7.53.1.
+    %% The IMEI(SV) digits are encoded using BCD coding where IMEI is
+    %% 15 BCD digits and IMEISV is 16 BCD digits. For IMEI, bits 5 to
+    %% 8 of the last octet shall be filled with an end mark coded as
+    %% '1111'.
+    IMEISV = tbcd_decode(V),
+    case length(IMEISV) of
+        15 ->
+            #{imei => IMEISV};
+        16 ->
+            {IMEI, SV} = lists:split(15, IMEISV),
+            #{imei => IMEI, sv => SV}
+    end.
 
 datetime_from_epoch(Seconds) ->
     Epoch = calendar:datetime_to_gregorian_seconds({{1900, 1, 1}, {0, 0, 0}}),
@@ -2978,12 +3004,12 @@ decode_allocation_retention_priority(V) ->
     <<_:1, PCI:1, PL:4, _:1, PVI:1>> = V,
     #{priority_level => PL,
       pre_emption_capability => case PCI of
-                                    0 -> false;
-                                    1 -> true
+                                    0 -> true;
+                                    1 -> false
                                 end,
       pre_emption_vulnerability => case PVI of
-                                       0 -> false;
-                                       1 -> true
+                                       0 -> true;
+                                       1 -> false
                                    end}.
 
 decode_qos(V) ->
@@ -3018,15 +3044,17 @@ decode_tft_packet_filter_content(<<>>, Acc) ->
     Acc;
 decode_tft_packet_filter_content(<<2#0001_0000:8, R0/binary>>, Acc) ->
     %% IPv4 remote address type
-    <<IPv4:4/binary, R1/binary>> = R0,
+    <<IPv4:4/binary, IPv4Mask:4/binary, R1/binary>> = R0,
     Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{ipv4 => bin_to_ip_addr(IPv4)},
+    V = Rem#{ipv4 => bin_to_ip_addr(IPv4),
+             mask => bin_to_ip_addr(IPv4Mask)},
     decode_tft_packet_filter_content(R1, Acc#{remote => V});
 decode_tft_packet_filter_content(<<2#0001_0001:8, R0/binary>>, Acc) ->
     %% IPv4 local address type
-    <<IPv4:4/binary, R1/binary>> = R0,
+    <<IPv4:4/binary, IPv4Mask:4/binary, R1/binary>> = R0,
     Loc = maps:get(local, Acc, #{}),
-    V = Loc#{ipv4 => bin_to_ip_addr(IPv4)},
+    V = Loc#{ipv4 => bin_to_ip_addr(IPv4),
+             mask => bin_to_ip_addr(IPv4Mask)},
     decode_tft_packet_filter_content(R1, Acc#{local => V});
 decode_tft_packet_filter_content(<<2#0010_0000:8, R0/binary>>, Acc) ->
     %% IPv6 remote address type
@@ -3488,7 +3516,7 @@ decode_tliv_list(<<>>, List, Acc) ->
         [] ->
             {Acc, <<>>};
         T ->
-            {error, {missing_mandatory_tlivs, T}}
+            throw({error, {missing_mandatory_tlivs, T}})
     end;
 decode_tliv_list(Bin, [], Acc) ->
     {Acc, Bin};
@@ -3636,6 +3664,19 @@ decode_msg(create_session_request, Bin0) ->
     Msg#{message_group => tunnel_management
         };
 decode_msg(create_session_response, Bin0) ->
+    BearerContextCreated = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
+                            {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
+                            {s1u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
+                            {s4u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
+                            {s5s8u_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional},
+                            {s12_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 3}, conditional},
+                            {s2bu_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 4}, conditional},
+                            {s2au_pgw_f_teid, {?GTPv2C_IEI_F_TEID, 5}, conditional},
+                            {bearer_level_qos, {?GTPv2C_IEI_BEARER_QOS, 0}, conditional},
+                            {charging_id, {?GTPv2C_IEI_CHARGING_ID, 0}, conditional_optional},
+                            {bearer_flags, {?GTPv2C_IEI_BEARER_FLAGS, 0}, optional},
+                            {s11u_sgw_f_teid, {?GTPv2C_IEI_F_TEID, 6}, conditional}
+                           ],
     BearerContextRemoved = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
                             {cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory}
                            ],
@@ -3664,7 +3705,7 @@ decode_msg(create_session_response, Bin0) ->
               {apn_ambr, {?GTPv2C_IEI_AMBR, 0}, conditional},
               {linked_eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
               {protocol_config_opts, {?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional},
-              {bearer_contexts_created, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory},
+              {bearer_contexts_created, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContextCreated},
               {bearer_contexts_marked_for_removal, {?GTPv2C_IEI_BEARER_CONTEXT, 1}, conditional, BearerContextRemoved},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
               {charging_gateway_name, {?GTPv2C_IEI_FQDN, 0}, conditional},
@@ -5102,12 +5143,12 @@ decode_msg(mbms_session_stop_response, Bin0) ->
     Msg#{message_group => mbms
         }.
 
-tcbd_decode(<<>>) ->
+tbcd_decode(<<>>) ->
     [];
-tcbd_decode(<<2#1111:4, A:4>>) ->
+tbcd_decode(<<2#1111:4, A:4>>) ->
     [tbcd_decode_num(A)];
-tcbd_decode(<<B:4, A:4, Rest/binary>>) ->
-    [tbcd_decode_num(A), tbcd_decode_num(B) | tcbd_decode(Rest)].
+tbcd_decode(<<B:4, A:4, Rest/binary>>) ->
+    [tbcd_decode_num(A), tbcd_decode_num(B) | tbcd_decode(Rest)].
 
 tbcd_decode_num(2#0000) -> $0;
 tbcd_decode_num(2#0001) -> $1;

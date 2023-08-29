@@ -20,6 +20,7 @@
 |     10 | Sequence Number (2 nd Octet)                  |
 |     11 | Sequence Number (2 nd Octet)                  |
 |     12 | EPC Message Priority 2) | Spare               |
+
 NOTE 0: (*) This bit is a spare bit. It shall be sent as "0". The receiver shall not evaluate this bit.
 NOTE 1: 1) This field shall only be evaluated when indicated by the T flag set to 1.
 NOTE 2: 2) This field shall only be evaluated when indicated by the MP flag set to 1.

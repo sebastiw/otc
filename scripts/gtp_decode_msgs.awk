@@ -111,7 +111,7 @@ $3 !~ /^[[:space:]]*$/ && $4 !~ /.*(Spare|Reserved).*/ && active && inside_iei {
     iei_types[iei_ref]=iei_type
     iei_lengths[iei_ref]=len(iei_length)
     iei_length_types[iei_ref]=iei_length_type
-    printf("-define(GTP_IEI_%s, %s).\n", toupper(iei_name), iei_code)
+    printf("-define(GTPv1C_IEI_%s, %s).\n", toupper(iei_name), iei_code)
 }
 active && !inside_messages {
     next;
@@ -128,7 +128,7 @@ active && !inside_messages {
 /\|--/ && inside_messages {
     active=1
     FS="|"
-    printf("decode_msg(%s, Bin0) ->\n", header)
+    printf("decode_msg(%s, IEIs) ->\n", header)
     fields=sprintf("               message_group => %s,\n", msg_type)
     next
 }
@@ -143,12 +143,12 @@ active && !inside_messages {
     optionals=substr(optionals, 1, length(optionals)-1)
     fields=trim(fields)
     fields=substr(fields, 1, length(fields)-1)
-    printf("    Opts = [%s],\n", optionals)
-    printf("    {Optionals, _Unknown} = otc_l3_codec:decode_iei_list(Bin%d, Opts),\n", bin_ctr)
+    printf("    Fields = [%s],\n", optionals)
+    printf("    Msg = decode_msg_fields(Fields, IEIs),\n")
     if(fields == "") {
-        printf("    Optionals;\n")
+        printf("    Msg;\n")
     } else {
-        printf("    Optionals#{%s\n              };\n", fields)
+        printf("    Msg#{%s};\n", fields)
     }
     # Reset
     optionals=""
@@ -158,34 +158,13 @@ active && !inside_messages {
 }
 
 # Optional variables
-$3 ~ /(Optional|Extendable)/ && inside_messages {
+$3 ~ /(Mandatory|Optional|Conditional)/ && inside_messages {
     iei_ref=trim($4)
     iei_name=iei_names[iei_ref]
     iei_code=iei_codes[iei_ref]
     iei_type=tag(iei_types[iei_ref])
     iei_length=iei_lengths[iei_ref]
     iei_instance=tolower(trim($5))
-    optional=sprintf("\n            {%s, {%s, %s}, %s},", iei_name, iei_code, iei_instance, iei_length)
+    optional=sprintf("\n              {%s, %s, %s},", atom($2), iei_name, atom($3))
     optionals=optionals optional
-}
-
-# Mandatory variables
-$3 ~ /Mandatory/ && inside_messages {
-    iei_ref=trim($4)
-    iei_name=iei_names[iei_ref]
-    bin_ctr++
-    iei_type=tolower(iei_types[iei_ref])
-    iei_length_type=iei_length_types[iei_ref]
-    if(iei_type != "tlv" && iei_length_type == "Fixed") {
-        maybe_len=", "iei_lengths[iei_ref]
-    }
-    if(substr(iei_type, 1, 1) == "t") {
-        maybe_tag="?GTP_IEI_"toupper(iei_name)", "
-    }
-    parse_man=sprintf("    {%s%s, Bin%s} = otc_l3_codec:decode_%s(Bin%d%s),\n",
-                      maybe_tag, atom_to_var(iei_name), bin_ctr, iei_type, bin_ctr-1, maybe_len)
-    maybe_tag=""
-    maybe_len=""
-    parse_man_s=parse_man_s parse_man
-    fields=fields sprintf("               %s => %s,\n", iei_name, atom_to_var(iei_name))
 }
