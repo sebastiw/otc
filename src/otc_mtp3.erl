@@ -40,7 +40,7 @@ decode(<<NI:2/big, NU:2/big, SI:4/big, RL0:32/little, Rest/binary>>) ->
                 national_use_spare => NU,
                 service_indicator => ServiceInd,
                 signalling_link_selection => SLS,
-                origin_point_code => OPC,
+                originating_point_code => OPC,
                 destination_point_code => DPC
                },
     case Msg of
@@ -54,7 +54,7 @@ encode({Map, PDU}) when byte_size(PDU) > 0 ->
     encode(Map#{payload => PDU});
 encode(#{network_indicator := NetworkInd, service_indicator := ServiceInd} = Msg) ->
     #{signalling_link_selection := SLS,
-      origin_point_code := OPC,
+      originating_point_code := OPC,
       destination_point_code := DPC
      } = Msg,
     NI = compose_network_indicator(NetworkInd),
