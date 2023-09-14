@@ -17,7 +17,7 @@
 |      7 | Tunnel Endpoint Identifier (3 rd Octet) |
 |      8 | Tunnel Endpoint Identifier (4 th Octet) |
 |      9 | Sequence Number (1 st Octet) 1) 4)      |
-|     10 | Sequence Number (2 nd Octet)1) 4)       |
+|     10 | Sequence Number (2 nd Octet) 1) 4)      |
 |     11 | N-PDU Number 2) 4)                      |
 |     12 | Next Extension Header Type 3) 4         |
 
@@ -194,6 +194,151 @@ NOTE: The value of this field is 0 if no other Extension header follows.
 |                254 | End Marker                                                                              | 3GPP TS 29.281 |       | X     |      |
 |                255 | G-PDU                                                                                   | 3GPP TS 29.281 |       | X     |      |
 
+** 7.7 Information Elements
+
+| IE Type Value | Format | Information Element                                               | Reference | Length Type | Number of Octets |
+|---------------+--------+-------------------------------------------------------------------+-----------+-------------+------------------|
+|             0 | TV     | Reserved.                                                         |           |             |                  |
+|             1 | TV     | Cause                                                             |     7.7.1 | Fixed       |                1 |
+|             2 | TV     | IMSI                                                              |     7.7.2 | Fixed       |                8 |
+|             3 | TV     | RAI                                                               |     7.7.3 | Fixed       |                6 |
+|             4 | TV     | TLLI                                                              |     7.7.4 | Fixed       |                4 |
+|             5 | TV     | P-TMSI                                                            |     7.7.5 | Fixed       |                4 |
+|           6-7 |        | Spare                                                             |           |             |                  |
+|             8 | TV     | Reordering Required                                               |     7.7.6 | Fixed       |                1 |
+|             9 | TV     | Authentication Triplet                                            |     7.7.7 | Fixed       |               28 |
+|            10 |        | Spare                                                             |           |             |                  |
+|            11 | TV     | MAP Cause                                                         |     7.7.8 | Fixed       |                1 |
+|            12 | TV     | P-TMSI Signature                                                  |     7.7.9 | Fixed       |                3 |
+|            13 | TV     | MS Validated                                                      |    7.7.10 | Fixed       |                1 |
+|            14 | TV     | Recovery                                                          |    7.7.11 | Fixed       |                1 |
+|            15 | TV     | Selection Mode                                                    |    7.7.12 | Fixed       |                1 |
+|            16 | TV     | Tunnel Endpoint Identifier Data I                                 |    7.7.13 | Fixed       |                4 |
+|            17 | TV     | Tunnel Endpoint Identifier Control Plane                          |    7.7.14 | Fixed       |                4 |
+|            18 | TV     | Tunnel Endpoint Identifier Data II                                |    7.7.15 | Fixed       |                5 |
+|            19 | TV     | Teardown Ind                                                      |    7.7.16 | Fixed       |                1 |
+|            20 | TV     | NSAPI                                                             |    7.7.17 | Fixed       |                1 |
+|            21 | TV     | RANAP Cause                                                       |    7.7.18 | Fixed       |                1 |
+|            22 | TV     | RAB Context                                                       |    7.7.19 | Fixed       |                9 |
+|            23 | TV     | Radio Priority SMS                                                |    7.7.20 | Fixed       |                1 |
+|            24 | TV     | Radio Priority                                                    |    7.7.21 | Fixed       |                1 |
+|            25 | TV     | Packet Flow Id                                                    |    7.7.22 | Fixed       |                2 |
+|            26 | TV     | Charging Characteristics                                          |    7.7.23 | Fixed       |                2 |
+|            27 | TV     | Trace Reference                                                   |    7.7.24 | Fixed       |                2 |
+|            28 | TV     | Trace Type                                                        |    7.7.25 | Fixed       |                2 |
+|            29 | TV     | MS Not Reachable Reason                                           |   7.7.25A | Fixed       |                1 |
+|        30-116 | TV     | Reserved. (No TV types can now be allocated)                      |           |             |                  |
+|       117-126 |        | Reserved for the GPRS charging protocol (see GTP' in 3GPP TS 32.295 [33]) |           |             |                  |
+|           127 | TV     | Charging ID                                                       |    7.7.26 | Fixed       |                4 |
+|           128 | TLV    | End User Address                                                  |    7.7.27 | Variable    |              6-n |
+|           129 | TLV    | MM Context                                                        |    7.7.28 | Variable    |             14-n |
+|           130 | TLV    | PDP Context                                                       |    7.7.29 | Variable    |              7-n |
+|           131 | TLV    | Access Point Name                                                 |    7.7.30 | Variable    |              4-n |
+|           132 | TLV    | Protocol Configuration Options                                    |    7.7.31 | Variable    |              4-n |
+|           133 | TLV    | GSN Address                                                       |    7.7.32 | Variable    |              4-n |
+|           134 | TLV    | MSISDN                                                            |    7.7.33 | Variable    |              4-n |
+|           135 | TLV    | Quality of Service Profile                                        |    7.7.34 | Variable    |              5-n |
+|           136 | TLV    | Authentication Quintuplet                                         |    7.7.35 | Variable    |             21-n |
+|           137 | TLV    | Traffic Flow Template                                             |    7.7.36 | Variable    |              4-n |
+|           138 | TLV    | Target Identification                                             |    7.7.37 | Variable    |             11-n |
+|           139 | TLV    | UTRAN Transparent Container                                       |    7.7.38 | Variable    |              4-n |
+|           140 | TLV    | RAB Setup Information                                             |    7.7.39 | Variable    |              4-n |
+|           141 | TLV    | Extension Header Type List                                        |    7.7.40 | Variable    |              3-n |
+|           142 | TLV    | Trigger Id                                                        |    7.7.41 | Variable    |              4-n |
+|           143 | TLV    | OMC Identity                                                      |    7.7.42 | Variable    |              4-n |
+|           144 | TLV    | RAN Transparent Container                                         |    7.7.43 | Variable    |              4-n |
+|           145 | TLV    | PDP Context Prioritization                                        |    7.7.45 | Fixed       |                0 |
+|           146 | TLV    | Additional RAB Setup Information                                  |   7.7.45A | Variable    |              4-n |
+|           147 | TLV    | SGSN Number                                                       |    7.7.47 | Variable    |              4-n |
+|           148 | TLV    | Common Flags                                                      |    7.7.48 | Fixed       |                1 |
+|           149 | TLV    | APN Restriction                                                   |    7.7.49 | Fixed       |                1 |
+|           150 | TLV    | Radio Priority LCS                                                |   7.7.25B | Fixed       |                1 |
+|           151 | TLV    | RAT Type                                                          |    7.7.50 | Fixed       |                1 |
+|           152 | TLV    | User Location Information                                         |    7.7.51 | Variable    |              5-n |
+|           153 | TLV    | MS Time Zone                                                      |    7.7.52 | Fixed       |                1 |
+|           154 | TLV    | IMEI(SV)                                                          |    7.7.53 | Fixed       |                8 |
+|           155 | TLV    | CAMEL Charging Information Container                              |    7.7.54 | Variable    |              4-n |
+|           156 | TLV    | MBMS UE Context                                                   |    7.7.55 | Variable    |             13-n |
+|           157 | TLV    | TMGI                                                              |    7.7.56 | Fixed       |                6 |
+|           158 | TLV    | RIM Routing Address                                               |    7.7.57 | Variable    |              4-n |
+|           159 | TLV    | MBMS Protocol Configuration Options                               |    7.7.58 | Variable    |              4-n |
+|           160 | TLV    | MBMS Service Area                                                 |    7.7.60 | Variable    |              4-n |
+|           161 | TLV    | Source RNC PDCP context info                                      |    7.7.61 | Variable    |              4-n |
+|           162 | TLV    | Additional Trace Info                                             |    7.7.62 | Fixed       |                9 |
+|           163 | TLV    | Hop Counter                                                       |    7.7.63 | Fixed       |                1 |
+|           164 | TLV    | Selected PLMN ID                                                  |    7.7.64 | Fixed       |                3 |
+|           165 | TLV    | MBMS Session Identifier                                           |    7.7.65 | Fixed       |                1 |
+|           166 | TLV    | MBMS 2G/3G Indicator                                              |    7.7.66 | Fixed       |                1 |
+|           167 | TLV    | Enhanced NSAPI                                                    |    7.7.67 | Fixed       |                1 |
+|           168 | TLV    | MBMS Session Duration                                             |    7.7.59 | Fixed       |                3 |
+|           169 | TLV    | Additional MBMS Trace Info                                        |    7.7.68 | Fixed       |                8 |
+|           170 | TLV    | MBMS Session Repetition Number                                    |    7.7.69 | Fixed       |                1 |
+|           171 | TLV    | MBMS Time To Data Transfer                                        |    7.7.70 | Fixed       |                1 |
+|           172 |        | Reserved (NOTE 1)                                                 |           |             |                  |
+|           173 | TLV    | BSS Container                                                     |    7.7.72 | Variable    |              4-n |
+|           174 | TLV    | Cell Identification                                               |    7.7.73 | Fixed       |               17 |
+|           175 | TLV    | PDU Numbers                                                       |    7.7.74 | Fixed       |                9 |
+|           176 | TLV    | BSSGP Cause                                                       |    7.7.75 | Fixed       |                1 |
+|           177 | TLV    | Required MBMS bearer capabilities                                 |    7.7.76 | Variable    |              4-n |
+|           178 | TLV    | RIM Routing Address Discriminator                                 |    7.7.77 | Fixed       |                1 |
+|           179 | TLV    | List of set-up PFCs                                               |    7.7.78 | Variable    |              4-n |
+|           180 | TLV    | PS Handover XID Parameters                                        |    7.7.79 | Variable    |              6-n |
+|           181 | TLV    | MS Info Change Reporting Action                                   |    7.7.80 | Fixed       |                1 |
+|           182 | TLV    | Direct Tunnel Flags                                               |    7.7.81 | Variable    |              4-n |
+|           183 | TLV    | Correlation-ID                                                    |    7.7.82 | Fixed       |                1 |
+|           184 | TLV    | Bearer Control Mode                                               |    7.7.83 | Fixed       |                1 |
+|           185 | TLV    | MBMS Flow Identifier                                              |    7.7.84 | Variable    |              4-n |
+|           186 | TLV    | MBMS IP Multicast Distribution                                    |    7.7.85 | Variable    |              9-n |
+|           187 | TLV    | MBMS Distribution Acknowledgement                                 |    7.7.86 | Fixed       |                1 |
+|           188 | TLV    | Reliable INTER RAT HANDOVER INFO                                  |    7.7.87 | Fixed       |                1 |
+|           189 | TLV    | RFSP Index                                                        |    7.7.88 | Fixed       |                2 |
+|           190 | TLV    | FQDN                                                              |    7.7.90 | Variable    |              4-n |
+|           191 | TLV    | Evolved Allocation/Retention Priority I                           |    7.7.91 | Fixed       |                1 |
+|           192 | TLV    | Evolved Allocation/Retention Priority II                          |    7.7.92 | Fixed       |                2 |
+|           193 | TLV    | Extended Common Flags                                             |    7.7.93 | Variable    |              4-n |
+|           194 | TLV    | UCI                                                               |    7.7.94 | Fixed       |                8 |
+|           195 | TLV    | CSG Information Reporting Action                                  |    7.7.95 | Variable    |              4-n |
+|           196 | TLV    | CSG ID                                                            |    7.7.96 | Fixed       |                4 |
+|           197 | TLV    | CMI                                                               |    7.7.97 | Fixed       |                1 |
+|           198 | TLV    | AMBR                                                              |    7.7.98 | Fixed       |                8 |
+|           199 | TLV    | UE Network Capability                                             |    7.7.99 | Variable    |              4-n |
+|           200 | TLV    | UE-AMBR                                                           |   7.7.100 | Variable    |             11-n |
+|           201 | TLV    | APN-AMBR with NSAPI                                               |   7.7.101 | Fixed       |                9 |
+|           202 | TLV    | GGSN Back-Off Time                                                |   7.7.102 | Extendable  |                1 |
+|           203 | TLV    | Signalling Priority Indication                                    |   7.7.103 | Extendable  |                1 |
+|           204 | TLV    | Signalling Priority Indication with NSAPI                         |   7.7.104 | Extendable  |                2 |
+|           205 | TLV    | Higher bitrates than 16 Mbps flag                                 |   7.7.105 | Fixed       |                1 |
+|           206 |        | Reserved (NOTE1)                                                  |           |             |                  |
+|           207 | TLV    | Additional MM context for SRVCC                                   |   7.7.107 | Extendable  |              5-n |
+|           208 | TLV    | Additional flags for SRVCC                                        |   7.7.108 | Extendable  |                1 |
+|           209 | TLV    | STN-SR                                                            |   7.7.109 | Variable    |              5-n |
+|           210 | TLV    | C-MSISDN                                                          |   7.7.110 | Variable    |              4-n |
+|           211 | TLV    | Extended RANAP Cause                                              |   7.7.111 | Extendable  |                2 |
+|           212 | TLV    | eNodeB ID                                                         |   7.7.112 | Variable    |             5-13 |
+|           213 | TLV    | Selection Mode with NSAPI                                         |   7.7.113 | Fixed       |                2 |
+|           214 | TLV    | ULI Timestamp                                                     |   7.7.114 | Extendable  |                4 |
+|           215 | TLV    | LHN-ID with NSAPI                                                 |   7.7.115 | Variable    |              5-n |
+|           216 | TLV    | CN Operator Selection Entity                                      |   7.7.116 | Extendable  |                1 |
+|           217 | TLV    | UE Usage Type                                                     |   7.7.117 | Variable    |              4-n |
+|           218 | TLV    | Extended Common Flags II                                          |   7.7.118 | Extendable  |                1 |
+|           219 | TLV    | Node Identifier                                                   |   7.7.119 | Variable    |              4-n |
+|           220 | TLV    | CIoT Optimizations Support Indication                             |   7.7.120 | Extendable  |                1 |
+|           221 | TLV    | SCEF PDN Connection                                               |   7.7.121 | Extendable  |              5-n |
+|           222 | TLV    | IOV_updates counter                                               |   7.7.122 | Fixed       |                1 |
+|           223 | TLV    | Mapped UE Usage Type                                              |   7.7.123 | Extendable  |                2 |
+|           224 | TLV    | UP Function Selection Indication Flags                            |   7.7.124 | Extendable  |                1 |
+|       225-239 | TLV    | Spare. For future use.                                            |           |             |                  |
+|       230-237 |        | Reserved for the GTPv1-U protocol as specified in 3GPP TS 29.281 [41]) |           |             |                  |
+|           238 | TLV    | Special IE type for IE Type Extension                             |    7.7.0A | Variable    |              6-n |
+|       239-250 |        | Reserved for the GPRS charging protocol (see GTP' in 3GPP TS 32.295 [33]) |           |             |                  |
+|           251 | TLV    | Charging Gateway Address                                          |    7.7.44 | Fixed       |             4-16 |
+|       252-254 |        | Reserved for the GPRS charging protocol (see GTP' in 3GPP TS 32.295 [33]) |           |             |                  |
+|           255 | TLV    | Private Extension                                                 |    7.7.46 | Variable    |              6-n |
+|     256-65535 | TLV    | Spare. For future use.                                            |           |             |                  |
+|---------------+--------+-------------------------------------------------------------------+-----------+-------------+------------------|
+|           133 | TLV    | GTP-U Peer Address                                                |       8.4 | Fixed       |             4-16 |
+|            aa | TLV    | Recovery Time Stamp                                               |       8.7 | Variable    |              8-n |
+
 ** 7.2 Path Management Messages
 
 *** 7.2.1 Echo Request
@@ -211,6 +356,9 @@ NOTE: The value of this field is 0 if no other Extension header follows.
 
 *** 7.2.3 Version Not Supported
 
+| Information element        | Presence requirement | Reference |
+|----------------------------+----------------------+-----------|
+
 *** 7.2.4 Supported Extension Headers Notification
 
 | Information element        | Presence requirement | Reference |
@@ -221,119 +369,120 @@ NOTE: The value of this field is 0 if no other Extension header follows.
 
 *** 7.3.1 Create PDP Context Request
 
-| Information element                         | Presence requirement | Reference |
-|---------------------------------------------+----------------------+-----------|
-| IMSI                                        | Conditional          |     7.7.2 |
-| Routeing Area Identity (RAI)                | Optional             |     7.7.3 |
-| Recovery                                    | Optional             |    7.7.11 |
-| Selection mode                              | Conditional          |    7.7.12 |
-| Tunnel Endpoint Identifier Data I           | Mandatory            |    7.7.13 |
-| Tunnel Endpoint Identifier Control Plane    | Conditional          |    7.7.14 |
-| NSAPI                                       | Mandatory            |    7.7.17 |
-| Linked NSAPI                                | Conditional          |    7.7.17 |
-| Charging Characteristics                    | Conditional          |    7.7.23 |
-| Trace Reference                             | Optional             |    7.7.24 |
-| Trace Type                                  | Optional             |    7.7.25 |
-| End User Address                            | Conditional          |    7.7.27 |
-| Access Point Name                           | Conditional          |    7.7.30 |
-| Protocol Configuration Options              | Optional             |    7.7.31 |
-| SGSN Address for signalling Mandatory GSN   | Address              |    7.7.32 |
-| SGSN Address for user traffic Mandatory GSN | Address              |    7.7.32 |
-| MSISDN                                      | Conditional          |    7.7.33 |
-| Quality of Service Profile                  | Mandatory            |    7.7.34 |
-| TFT                                         | Conditional          |    7.7.36 |
-| Trigger Id                                  | Optional             |    7.7.41 |
-| OMC Identity                                | Optional             |    7.7.42 |
-| Common Flags                                | Optional             |    7.7.48 |
-| APN Restriction                             | Optional             |    7.7.49 |
-| RAT Type                                    | Optional             |    7.7.50 |
-| User Location Information                   | Optional             |    7.7.51 |
-| MS Time Zone                                | Optional             |    7.7.52 |
-| IMEI(SV)                                    | Conditional          |    7.7.53 |
-| CAMEL Charging Information Container        | Optional             |    7.7.54 |
-| Additional Trace Info                       | Optional             |    7.7.62 |
-| Correlation-ID                              | Optional             |    7.7.82 |
-| Evolved Allocation/Retention Priority I     | Optional             |    7.7.91 |
-| Extended Common Flags                       | Optional             |    7.7.93 |
-| User CSG Information                        | Optional             |    7.7.94 |
-| APN-AMBR                                    | Optional             |    7.7.98 |
-| Signalling Priority Indication              | Optional             |   7.7.103 |
-| CN Operator Selection Entity                | Optional             |   7.7.116 |
-| Mapped UE Usage Type                        | Optional             |   7.7.123 |
-| UP Function Selection Indication Flags      | Optional             |   7.7.124 |
-| Private Extension                           | Optional             |    7.7.46 |
+| Information element                      | Presence requirement | Reference |
+|------------------------------------------+----------------------+-----------|
+| IMSI                                     | Conditional          |     7.7.2 |
+| Routeing Area Identity                   | Optional             |     7.7.3 |
+| Recovery                                 | Optional             |    7.7.11 |
+| Selection mode                           | Conditional          |    7.7.12 |
+| Tunnel Endpoint Identifier Data I        | Mandatory            |    7.7.13 |
+| Tunnel Endpoint Identifier Control Plane | Conditional          |    7.7.14 |
+| NSAPI                                    | Mandatory            |    7.7.17 |
+| Linked NSAPI                             | Conditional          |    7.7.17 |
+| Charging Characteristics                 | Conditional          |    7.7.23 |
+| Trace Reference                          | Optional             |    7.7.24 |
+| Trace Type                               | Optional             |    7.7.25 |
+| End User Address                         | Conditional          |    7.7.27 |
+| Access Point Name                        | Conditional          |    7.7.30 |
+| Protocol Configuration Options           | Optional             |    7.7.31 |
+| SGSN Address for signalling              | Mandatory            |    7.7.32 |
+| SGSN Address for user traffic            | Mandatory            |    7.7.32 |
+| MSISDN                                   | Conditional          |    7.7.33 |
+| Quality of Service Profile               | Mandatory            |    7.7.34 |
+| TFT                                      | Conditional          |    7.7.36 |
+| Trigger Id                               | Optional             |    7.7.41 |
+| OMC Identity                             | Optional             |    7.7.42 |
+| Common Flags                             | Optional             |    7.7.48 |
+| APN Restriction                          | Optional             |    7.7.49 |
+| RAT Type                                 | Optional             |    7.7.50 |
+| User Location Information                | Optional             |    7.7.51 |
+| MS Time Zone                             | Optional             |    7.7.52 |
+| IMEI(SV)                                 | Conditional          |    7.7.53 |
+| CAMEL Charging Information Container     | Optional             |    7.7.54 |
+| Additional Trace Info                    | Optional             |    7.7.62 |
+| Correlation-ID                           | Optional             |    7.7.82 |
+| Evolved Allocation/Retention Priority I  | Optional             |    7.7.91 |
+| Extended Common Flags                    | Optional             |    7.7.93 |
+| User CSG Information                     | Optional             |    7.7.94 |
+| APN-AMBR                                 | Optional             |    7.7.98 |
+| Signalling Priority Indication           | Optional             |   7.7.103 |
+| CN Operator Selection Entity             | Optional             |   7.7.116 |
+| Mapped UE Usage Type                     | Optional             |   7.7.123 |
+| UP Function Selection Indication Flags   | Optional             |   7.7.124 |
+| Private Extension                        | Optional             |    7.7.46 |
 
 *** 7.3.2 Create PDP Context Response
 
-| Information element                                        | Presence requirement | Reference |
-|------------------------------------------------------------+----------------------+-----------|
-| Cause                                                      | Mandatory            |     7.7.1 |
-| Reordering required                                        | Conditional          |     7.7.6 |
-| Recovery                                                   | Optional             |    7.7.11 |
-| Tunnel Endpoint Identifier Data I                          | Conditional          |    7.7.13 |
-| Tunnel Endpoint Identifier Control Plane                   | Conditional          |    7.7.14 |
-| NSAPI                                                      | Optional             |    7.7.17 |
-| Charging ID                                                | Conditional          |    7.7.26 |
-| End User Address                                           | Conditional          |    7.7.27 |
-| Protocol Configuration Options                             | Optional             |    7.7.31 |
-| GGSN Address for Control Plane Conditional GSN             | Address              |    7.7.32 |
-| GGSN Address for user traffic Conditional GSN              | Address              |    7.7.32 |
-| Alternative GGSN Address for Control Plane Conditional GSN | Address              |    7.7.32 |
-| Alternative GGSN Address for user traffic Conditional GSN  | Address              |    7.7.32 |
-| Quality of Service Profile                                 | Conditional          |    7.7.34 |
-| Charging Gateway Address                                   | Optional             |    7.7.44 |
-| Alternative Charging Gateway Address                       | Optional             |    7.7.44 |
-| Common Flags                                               | Optional             |    7.7.48 |
-| APN Restriction                                            | Optional             |    7.7.49 |
-| MS Info Change Reporting Action                            | Optional             |    7.7.80 |
-| Bearer Control Mode                                        | Optional             |    7.7.83 |
-| Evolved Allocation/Retention Priority I                    | Optional             |    7.7.91 |
-| Extended Common Flag                                       | Optional             |    7.7.93 |
-| CSG Information Reporting Action                           | Optional             |    7.7.95 |
-| APN-AMBR                                                   | Optional             |    7.7.98 |
-| GGSN Back-Off Time                                         | Optional             |   7.7.102 |
-| Extended Common Flags II                                   | Optional             |   7.7.118 |
-| Private Extension                                          | Optional             |    7.7.46 |
+| Information element                        | Presence requirement | Reference |
+|--------------------------------------------+----------------------+-----------|
+| Cause                                      | Mandatory            |     7.7.1 |
+| Reordering required                        | Conditional          |     7.7.6 |
+| Recovery                                   | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Data I          | Conditional          |    7.7.13 |
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| NSAPI                                      | Optional             |    7.7.17 |
+| Charging ID                                | Conditional          |    7.7.26 |
+| End User Address                           | Conditional          |    7.7.27 |
+| Protocol Configuration Options             | Optional             |    7.7.31 |
+| GGSN Address for Control Plane             | Conditional          |    7.7.32 |
+| GGSN Address for user traffic              | Conditional          |    7.7.32 |
+| Alternative GGSN Address for Control Plane | Conditional          |    7.7.32 |
+| Alternative GGSN Address for user traffic  | Conditional          |    7.7.32 |
+| Quality of Service Profile                 | Conditional          |    7.7.34 |
+| Charging Gateway Address                   | Optional             |    7.7.44 |
+| Alternative Charging Gateway Address       | Optional             |    7.7.44 |
+| Common Flags                               | Optional             |    7.7.48 |
+| APN Restriction                            | Optional             |    7.7.49 |
+| MS Info Change Reporting Action            | Optional             |    7.7.80 |
+| Bearer Control Mode                        | Optional             |    7.7.83 |
+| Evolved Allocation/Retention Priority I    | Optional             |    7.7.91 |
+| Extended Common Flag                       | Optional             |    7.7.93 |
+| CSG Information Reporting Action           | Optional             |    7.7.95 |
+| APN-AMBR                                   | Optional             |    7.7.98 |
+| GGSN Back-Off Time                         | Optional             |   7.7.102 |
+| Extended Common Flags II                   | Optional             |   7.7.118 |
+| Private Extension                          | Optional             |    7.7.46 |
 
 *** 7.3.3 Update PDP Context Request
 
-From SGSN:
+**** 7.3.3 Update PDP Context Request SGSN
 
-| Information element                                        | Presence requirement | Reference |
-|------------------------------------------------------------+----------------------+-----------|
-| IMSI                                                       | Optional             |     7.7.2 |
-| Routeing Area Identity (RAI)                               | Optional             |     7.7.3 |
-| Recovery                                                   | Optional             |    7.7.11 |
-| Tunnel Endpoint Identifier Data I                          | Mandatory            |    7.7.13 |
-| Tunnel Endpoint Identifier Control Plane                   | Conditional          |    7.7.14 |
-| NSAPI                                                      | Mandatory            |    7.7.17 |
-| Trace Reference                                            | Optional             |    7.7.24 |
-| Trace Type                                                 | Optional             |    7.7.25 |
-| Protocol Configuration Options                             | Optional             |    7.7.31 |
-| SGSN Address for Control Plane Mandatory GSN               | Address              |    7.7.32 |
-| SGSN Address for User Traffic Mandatory GSN                | Address              |    7.7.32 |
-| Alternative SGSN Address for Control Plane Conditional GSN | Address              |    7.7.32 |
-| Alternative SGSN Address for User Traffic Conditional GSN  | Address              |    7.7.32 |
-| Quality of Service Profile                                 | Mandatory            |    7.7.34 |
-| TFT                                                        | Optional             |    7.7.36 |
-| Trigger Id                                                 | Optional             |    7.7.41 |
-| OMC Identity                                               | Optional             |    7.7.42 |
-| Common Flags                                               | Optional             |    7.7.48 |
-| RAT Type                                                   | Optional             |    7.7.50 |
-| User Location Information                                  | Optional             |    7.7.51 |
-| MS Time Zone                                               | Optional             |    7.7.52 |
-| Additonal Trace Info                                       | Optional             |    7.7.62 |
-| Direct Tunnel Flags                                        | Optional             |    7.7.81 |
-| Evolved Allocation/Retention Priority I                    | Optional             |    7.7.91 |
-| Extended Common Flags                                      | Optional             |    7.7.93 |
-| User CSG Information                                       | Optional             |    7.7.94 |
-| APN-AMBR                                                   | Optional             |    7.7.98 |
-| Signalling Priority Indication                             | Optional             |   7.7.103 |
-| CN Operator Selection Entity                               | Optional             |   7.7.116 |
-| IMEI(SV)                                                   | Optional             |    7.7.53 |
-| Private Extension                                          | Optional             |    7.7.46 |
+| Information element                        | Presence requirement | Reference |
+|--------------------------------------------+----------------------+-----------|
+| IMSI                                       | Optional             |     7.7.2 |
+| Routeing Area Identity                     | Optional             |     7.7.3 |
+| Recovery                                   | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Data I          | Mandatory            |    7.7.13 |
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| NSAPI                                      | Mandatory            |    7.7.17 |
+| Trace Reference                            | Optional             |    7.7.24 |
+| Trace Type                                 | Optional             |    7.7.25 |
+| Protocol Configuration Options             | Optional             |    7.7.31 |
+| SGSN Address for Control Plane             | Mandatory            |    7.7.32 |
+| SGSN Address for User Traffic              | Mandatory            |    7.7.32 |
+| Alternative SGSN Address for Control Plane | Conditional          |    7.7.32 |
+| Alternative SGSN Address for User Traffic  | Conditional          |    7.7.32 |
+| Quality of Service Profile                 | Mandatory            |    7.7.34 |
+| TFT                                        | Optional             |    7.7.36 |
+| Trigger Id                                 | Optional             |    7.7.41 |
+| OMC Identity                               | Optional             |    7.7.42 |
+| Common Flags                               | Optional             |    7.7.48 |
+| RAT Type                                   | Optional             |    7.7.50 |
+| User Location Information                  | Optional             |    7.7.51 |
+| MS Time Zone                               | Optional             |    7.7.52 |
+| Additonal Trace Info                       | Optional             |    7.7.62 |
+| Direct Tunnel Flags                        | Optional             |    7.7.81 |
+| Evolved Allocation/Retention Priority I    | Optional             |    7.7.91 |
+| Extended Common Flags                      | Optional             |    7.7.93 |
+| User CSG Information                       | Optional             |    7.7.94 |
+| APN-AMBR                                   | Optional             |    7.7.98 |
+| Signalling Priority Indication             | Optional             |   7.7.103 |
+| CN Operator Selection Entity               | Optional             |   7.7.116 |
+| IMEI(SV)                                   | Optional             |    7.7.53 |
+| Private Extension                          | Optional             |    7.7.46 |
 
-From GGSN:
+**** 7.3.3 Update PDP Context Request GGSN
+
 | Information element                     | Presence requirement | Reference |
 |-----------------------------------------+----------------------+-----------|
 | IMSI                                    | Optional             |     7.7.2 |
@@ -356,46 +505,48 @@ From GGSN:
 
 *** 7.3.4 Update PDP Context Response
 
-From SGSN:
+**** 7.3.4 Update PDP Context Response SGSN
+
+| Information element                      | Presence requirement | Reference |
+|------------------------------------------+----------------------+-----------|
+| Cause                                    | Mandatory            |     7.7.1 |
+| Recovery                                 | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Data I        | Optional             |    7.7.13 |
+| Protocol Configuration Options           | Optional             |    7.7.31 |
+| SGSN Address for User Traffic            | Optional             |    7.7.32 |
+| Quality of Service Profile               | Conditional          |    7.7.34 |
+| User Location Information                | Optional             |    7.7.51 |
+| MS Time Zone                             | Optional             |    7.7.52 |
+| Direct Tunnel Flags                      | Optional             |    7.7.81 |
+| Evolved Allocation/Retention  Priority I | Optional             |    7.7.91 |
+| APN-AMBR                                 | Optional             |    7.7.98 |
+| Private Extension                        | Optional             |    7.7.46 |
+
+**** 7.3.4 Update PDP Context Response GGSN
+
 | Information element                        | Presence requirement | Reference |
 |--------------------------------------------+----------------------+-----------|
 | Cause                                      | Mandatory            |     7.7.1 |
 | Recovery                                   | Optional             |    7.7.11 |
-| Tunnel Endpoint Identifier Data I          | Optional             |    7.7.13 |
+| Tunnel Endpoint Identifier Data I          | Conditional          |    7.7.13 |
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| Charging ID                                | Conditional          |    7.7.26 |
 | Protocol Configuration Options             | Optional             |    7.7.31 |
-| SGSN Address for User Traffic Optional GSN | Address              |    7.7.32 |
+| GGSN Address for Control Plane             | Conditional          |    7.7.32 |
+| GGSN Address for User Traffic              | Conditional          |    7.7.32 |
+| Alternative GGSN Address for Control Plane | Conditional          |    7.7.32 |
+| Alternative GGSN Address for User Traffic  | Conditional          |    7.7.32 |
 | Quality of Service Profile                 | Conditional          |    7.7.34 |
-| User Location Information                  | Optional             |    7.7.51 |
-| MS Time Zone                               | Optional             |    7.7.52 |
-| Direct Tunnel Flags                        | Optional             |    7.7.81 |
-| Evolved Allocation/Retention  Priority I   | Optional             |    7.7.91 |
+| Charging Gateway Address                   | Optional             |    7.7.44 |
+| Alternative Charging Gateway Address       | Optional             |    7.7.44 |
+| Common Flags                               | Optional             |    7.7.48 |
+| APN Restriction                            | Optional             |    7.7.49 |
+| Bearer Control Mode                        | Optional             |    7.7.83 |
+| MS Info Change Reporting Action            | Optional             |    7.7.80 |
+| Evolved Allocation/Retention Priority I    | Optional             |    7.7.91 |
+| CSG Information Reporting Action           | Optional             |    7.7.95 |
 | APN-AMBR                                   | Optional             |    7.7.98 |
 | Private Extension                          | Optional             |    7.7.46 |
-
-From GGSN:
-| Information element                                        | Presence requirement | Reference |
-|------------------------------------------------------------+----------------------+-----------|
-| Cause                                                      | Mandatory            |     7.7.1 |
-| Recovery                                                   | Optional             |    7.7.11 |
-| Tunnel Endpoint Identifier Data I                          | Conditional          |    7.7.13 |
-| Tunnel Endpoint Identifier Control Plane                   | Conditional          |    7.7.14 |
-| Charging ID                                                | Conditional          |    7.7.26 |
-| Protocol Configuration Options                             | Optional             |    7.7.31 |
-| GGSN Address for Control Plane Conditional GSN             | Address              |    7.7.32 |
-| GGSN Address for User Traffic Conditional GSN              | Address              |    7.7.32 |
-| Alternative GGSN Address for Control Plane Conditional GSN | Address              |    7.7.32 |
-| Alternative GGSN Address for User Traffic Conditional GSN  | Address              |    7.7.32 |
-| Quality of Service Profile                                 | Conditional          |    7.7.34 |
-| Charging Gateway Address                                   | Optional             |    7.7.44 |
-| Alternative Charging Gateway Address                       | Optional             |    7.7.44 |
-| Common Flags                                               | Optional             |    7.7.48 |
-| APN Restriction                                            | Optional             |    7.7.49 |
-| Bearer Control Mode                                        | Optional             |    7.7.83 |
-| MS Info Change Reporting Action                            | Optional             |    7.7.80 |
-| Evolved Allocation/Retention Priority I                    | Optional             |    7.7.91 |
-| CSG Information Reporting Action                           | Optional             |    7.7.95 |
-| APN-AMBR                                                   | Optional             |    7.7.98 |
-| Private Extension                                          | Optional             |    7.7.46 |
 
 *** 7.3.5 Delete PDP Context Request
 
@@ -423,8 +574,15 @@ From GGSN:
 | Private Extension              | Optional             |    7.7.46 |
 
 *** 7.3.7 Error Indication
-
 Specified in 3GPP TS 29.281
+
+| Information element               | Presence requirement | Reference |
+|-----------------------------------+----------------------+-----------|
+| Tunnel Endpoint Identifier Data I | Mandatory            |    7.7.13 |
+| GTP-U Peer Address                | Mandatory            |       8.4 |
+| Recovery Time Stamp               | Optional             |       8.7 |
+| Private Extension                 | Optional             |    7.7.46 |
+
 
 *** 7.3.8 PDU Notification Request
 
@@ -539,7 +697,7 @@ Specified in 3GPP TS 29.281
 
 | Information element            | Presence requirement | Reference |
 |--------------------------------+----------------------+-----------|
-| Routeing Area Identity (RAI)   | Mandatory            |     7.7.3 |
+| Routeing Area Identity         | Mandatory            |     7.7.3 |
 | Packet TMSI                    | Mandatory            |     7.7.5 |
 | P-TMSI Signature               | Conditional          |     7.7.9 |
 | SGSN Address for Control Plane | Optional             |    7.7.32 |
@@ -562,7 +720,7 @@ Specified in 3GPP TS 29.281
 | Information element                        | Presence requirement | Reference |
 |--------------------------------------------+----------------------+-----------|
 | IMSI                                       | Conditional          |     7.7.2 |
-| Routeing Area Identity (RAI)               | Mandatory            |     7.7.3 |
+| Routeing Area Identity                     | Mandatory            |     7.7.3 |
 | Temporary Logical Link Identifier (TLLI)   | Conditional          |     7.7.4 |
 | Packet TMSI (P-TMSI)                       | Conditional          |     7.7.5 |
 | P-TMSI Signature                           | Conditional          |     7.7.9 |
@@ -615,14 +773,14 @@ Specified in 3GPP TS 29.281
 
 *** 7.5.5 SGSN Context Acknowledge
 
-| Information element                | Presence requirement |          Reference |
-|------------------------------------+----------------------+--------------------|
-| Cause                              | Mandatory            |              7.7.1 |
-| Tunnel Endpoint Identifier Data II | Conditional          |             7.7.15 |
-| SGSN Address for user traffic      | Conditional          | GSN Address 7.7.32 |
-| SGSN Number                        | Optional             |             7.7.47 |
-| Node Identifier                    | Optional             |            7.7.119 |
-| Private Extension                  | Optional             |             7.7.46 |
+| Information element                | Presence requirement | Reference |
+|------------------------------------+----------------------+-----------|
+| Cause                              | Mandatory            |     7.7.1 |
+| Tunnel Endpoint Identifier Data II | Conditional          |    7.7.15 |
+| SGSN Address for user traffic      | Conditional          |    7.7.32 |
+| SGSN Number                        | Optional             |    7.7.47 |
+| Node Identifier                    | Optional             |   7.7.119 |
+| Private Extension                  | Optional             |    7.7.46 |
 
 *** 7.5.6 Forward Relocation Request
 
@@ -812,80 +970,80 @@ Specified in 3GPP TS 29.281
 
 **** 7.5A.1.5 Create MBMS Context Request
 
-| Information element                      | Presence requirement |          Reference |
-|------------------------------------------+----------------------+--------------------|
-| IMSI                                     | Conditional          |              7.7.2 |
-| Routeing Area Identity (RAI)             | Mandatory            |              7.7.3 |
-| Recovery                                 | Optional             |             7.7.11 |
-| Selection mode                           | Conditional          |             7.7.12 |
-| Tunnel Endpoint Identifier Control Plane | Conditional          |             7.7.14 |
-| Trace Reference                          | Optional             |             7.7.24 |
-| Trace Type                               | Optional             |             7.7.25 |
-| End User Address                         | Mandatory            |             7.7.27 |
-| Access Point Name                        | Mandatory            |             7.7.30 |
-| SGSN Address for signalling              | Mandatory            | GSN Address 7.7.32 |
-| MSISDN                                   | Conditional          |             7.7.33 |
-| Trigger Id                               | Optional             |             7.7.41 |
-| OMC Identity                             | Optional             |             7.7.42 |
-| RAT Type                                 | Optional             |             7.7.50 |
-| User Location Information                | Optional             |             7.7.51 |
-| MS Time Zone                             | Optional             |             7.7.52 |
-| IMEI(SV)                                 | Optional             |             7.7.53 |
-| MBMS Protocol Configuration Options      | Optional             |             7.7.58 |
-| Additonal Trace Info                     | Optional             |             7.7.62 |
-| Enhanced NSAPI                           | Mandatory            |             7.7.67 |
-| Additional MBMS Trace Info               | Optional             |             7.7.68 |
-| Private Extension                        | Optional             |             7.7.46 |
+| Information element                      | Presence requirement | Reference |
+|------------------------------------------+----------------------+-----------|
+| IMSI                                     | Conditional          |     7.7.2 |
+| Routeing Area Identity                   | Mandatory            |     7.7.3 |
+| Recovery                                 | Optional             |    7.7.11 |
+| Selection mode                           | Conditional          |    7.7.12 |
+| Tunnel Endpoint Identifier Control Plane | Conditional          |    7.7.14 |
+| Trace Reference                          | Optional             |    7.7.24 |
+| Trace Type                               | Optional             |    7.7.25 |
+| End User Address                         | Mandatory            |    7.7.27 |
+| Access Point Name                        | Mandatory            |    7.7.30 |
+| SGSN Address for signalling              | Mandatory            |    7.7.32 |
+| MSISDN                                   | Conditional          |    7.7.33 |
+| Trigger Id                               | Optional             |    7.7.41 |
+| OMC Identity                             | Optional             |    7.7.42 |
+| RAT Type                                 | Optional             |    7.7.50 |
+| User Location Information                | Optional             |    7.7.51 |
+| MS Time Zone                             | Optional             |    7.7.52 |
+| IMEI(SV)                                 | Optional             |    7.7.53 |
+| MBMS Protocol Configuration Options      | Optional             |    7.7.58 |
+| Additonal Trace Info                     | Optional             |    7.7.62 |
+| Enhanced NSAPI                           | Mandatory            |    7.7.67 |
+| Additional MBMS Trace Info               | Optional             |    7.7.68 |
+| Private Extension                        | Optional             |    7.7.46 |
 
 **** 7.5A.1.6 Create MBMS Context Response
 
-| Information element                        | Presence requirement |          Reference |
-|--------------------------------------------+----------------------+--------------------|
-| Cause                                      | Mandatory            |              7.7.1 |
-| Recovery                                   | Optional             |             7.7.11 |
-| Tunnel Endpoint Identifier Control Plane   | Conditional          |             7.7.14 |
-| Charging ID                                | Conditional          |             7.7.26 |
-| GGSN Address for Control Plane             | Conditional          | GSN Address 7.7.32 |
-| Alternative GGSN Address for Control Plane | Conditional          | GSN Address 7.7.32 |
-| Charging Gateway Address                   | Optional             |             7.7.44 |
-| Alternative Charging Gateway Address       | Optional             |             7.7.44 |
-| MBMS Protocol Configuration Options        | Optional             |             7.7.58 |
-| Private Extension                          | Optional             |             7.7.46 |
+| Information element                        | Presence requirement | Reference |
+|--------------------------------------------+----------------------+-----------|
+| Cause                                      | Mandatory            |     7.7.1 |
+| Recovery                                   | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| Charging ID                                | Conditional          |    7.7.26 |
+| GGSN Address for Control Plane             | Conditional          |    7.7.32 |
+| Alternative GGSN Address for Control Plane | Conditional          |    7.7.32 |
+| Charging Gateway Address                   | Optional             |    7.7.44 |
+| Alternative Charging Gateway Address       | Optional             |    7.7.44 |
+| MBMS Protocol Configuration Options        | Optional             |    7.7.58 |
+| Private Extension                          | Optional             |    7.7.46 |
 
 **** 7.5A.1.7 Update MBMS Context Request
 
-| Information element                        | Presence requirement |          Reference |
-|--------------------------------------------+----------------------+--------------------|
-| Routeing Area Identity (RAI)               | Mandatory            |              7.7.3 |
-| Recovery                                   | Optional             |             7.7.11 |
-| Tunnel Endpoint Identifier Control Plane   | Conditional          |             7.7.14 |
-| Trace Reference                            | Optional             |             7.7.24 |
-| Trace Type                                 | Optional             |             7.7.25 |
-| SGSN Address for Control Plane             | Mandatory            | GSN Address 7.7.32 |
-| Alternative SGSN Address for Control Plane | Conditional          | GSN Address 7.7.32 |
-| Trigger Id                                 | Optional             |             7.7.41 |
-| OMC Identity                               | Optional             |             7.7.42 |
-| RAT Type                                   | Optional             |             7.7.50 |
-| User Location Information                  | Optional             |             7.7.51 |
-| MS Time Zone                               | Optional             |             7.7.52 |
-| Additional Trace Info                      | Optional             |             7.7.62 |
-| Enhanced NSAPI                             | Mandatory            |             7.7.67 |
-| Additional MBMS Trace Info                 | Optional             |             7.7.68 |
-| Private Extension                          | Optional             |             7.7.46 |
+| Information element                        | Presence requirement | Reference |
+|--------------------------------------------+----------------------+-----------|
+| Routeing Area Identity                     | Mandatory            |     7.7.3 |
+| Recovery                                   | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| Trace Reference                            | Optional             |    7.7.24 |
+| Trace Type                                 | Optional             |    7.7.25 |
+| SGSN Address for Control Plane             | Mandatory            |    7.7.32 |
+| Alternative SGSN Address for Control Plane | Conditional          |    7.7.32 |
+| Trigger Id                                 | Optional             |    7.7.41 |
+| OMC Identity                               | Optional             |    7.7.42 |
+| RAT Type                                   | Optional             |    7.7.50 |
+| User Location Information                  | Optional             |    7.7.51 |
+| MS Time Zone                               | Optional             |    7.7.52 |
+| Additional Trace Info                      | Optional             |    7.7.62 |
+| Enhanced NSAPI                             | Mandatory            |    7.7.67 |
+| Additional MBMS Trace Info                 | Optional             |    7.7.68 |
+| Private Extension                          | Optional             |    7.7.46 |
 
 **** 7.5A.1.8 Update MBMS Context Response
 
-| Information element                        | Presence requirement |          Reference |
-|--------------------------------------------+----------------------+--------------------|
-| Cause                                      | Mandatory            |              7.7.1 |
-| Recovery                                   | Optional             |             7.7.11 |
-| Tunnel Endpoint Identifier Control Plane   | Conditional          |             7.7.14 |
-| Charging ID                                | Conditional          |             7.7.26 |
-| GGSN Address for Control Plane             | Conditional          | GSN Address 7.7.32 |
-| Alternative GGSN Address for Control Plane | Conditional          | GSN Address 7.7.32 |
-| Charging Gateway Address                   | Optional             |             7.7.44 |
-| Alternative Charging Gateway Address       | Optional             |             7.7.44 |
-| Private Extension                          | Optional             |             7.7.46 |
+| Information element                        | Presence requirement | Reference |
+|--------------------------------------------+----------------------+-----------|
+| Cause                                      | Mandatory            |     7.7.1 |
+| Recovery                                   | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| Charging ID                                | Conditional          |    7.7.26 |
+| GGSN Address for Control Plane             | Conditional          |    7.7.32 |
+| Alternative GGSN Address for Control Plane | Conditional          |    7.7.32 |
+| Charging Gateway Address                   | Optional             |    7.7.44 |
+| Alternative Charging Gateway Address       | Optional             |    7.7.44 |
+| Private Extension                          | Optional             |    7.7.46 |
 
 **** 7.5A.1.9 Delete MBMS Context Request
 
@@ -911,25 +1069,25 @@ Specified in 3GPP TS 29.281
 
 **** 7.5A.2.1 MBMS Registration Request
 
-| Information element                        | Presence requirement |          Reference |
-|--------------------------------------------+----------------------+--------------------|
-| Tunnel Endpoint Identifier Control Plane   | Conditional          |             7.7.14 |
-| End User Address                           | Mandatory            |             7.7.27 |
-| Access Point Name                          | Mandatory            |             7.7.30 |
-| SGSN Address for Control Plane             | Conditional          | GSN Address 7.7.32 |
-| Alternative SGSN Address for Control Plane | Optional             | GSN Address 7.7.32 |
-| Private Extension                          | Optional             |             7.7.46 |
+| Information element                        | Presence requirement | Reference |
+|--------------------------------------------+----------------------+-----------|
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| End User Address                           | Mandatory            |    7.7.27 |
+| Access Point Name                          | Mandatory            |    7.7.30 |
+| SGSN Address for Control Plane             | Conditional          |    7.7.32 |
+| Alternative SGSN Address for Control Plane | Optional             |    7.7.32 |
+| Private Extension                          | Optional             |    7.7.46 |
 
 **** 7.5A.2.2 MBMS Registration Response
 
-| Information element                      | Presence requirement |          Reference |
-|------------------------------------------+----------------------+--------------------|
-| Cause                                    | Mandatory            |              7.7.1 |
-| Tunnel Endpoint Identifier Control Plane | Conditional          |             7.7.14 |
-| GGSN Address for Control Plane           | Conditional          | GSN Address 7.7.32 |
-| Temporary Mobile Group Identity (TMGI)   | Conditional          |             7.7.56 |
-| Required MBMS bearer capabilities        | Conditional          |             7.7.76 |
-| Private Extension                        | Optional             |             7.7.46 |
+| Information element                      | Presence requirement | Reference |
+|------------------------------------------+----------------------+-----------|
+| Cause                                    | Mandatory            |     7.7.1 |
+| Tunnel Endpoint Identifier Control Plane | Conditional          |    7.7.14 |
+| GGSN Address for Control Plane           | Conditional          |    7.7.32 |
+| Temporary Mobile Group Identity (TMGI)   | Conditional          |    7.7.56 |
+| Required MBMS bearer capabilities        | Conditional          |    7.7.76 |
+| Private Extension                        | Optional             |    7.7.46 |
 
 **** 7.5A.2.3 MBMS De-registration Request
 
@@ -948,40 +1106,40 @@ Specified in 3GPP TS 29.281
 
 **** 7.5A.2.5 MBMS Session Start Request
 
-| Information element                        | Presence requirement |          Reference |
-|--------------------------------------------+----------------------+--------------------|
-| Recovery                                   | Optional             |             7.7.11 |
-| Tunnel Endpoint Identifier Control Plane   | Conditional          |             7.7.14 |
-| End User Address                           | Mandatory            |             7.7.27 |
-| Access Point Name                          | Mandatory            |             7.7.30 |
-| GGSN Address for Control Plane             | Conditional          | GSN Address 7.7.32 |
-| Alternative GGSN Address for Control Plane | Optional             | GSN Address 7.7.32 |
-| Quality of Service Profile                 | Mandatory            |             7.7.34 |
-| Common Flags                               | Mandatory            |             7.7.48 |
-| Temporary Mobile Group Identity (TMGI)     | Mandatory            |             7.7.56 |
-| MBMS Service Area                          | Mandatory            |             7.7.60 |
-| MBMS Session Identifier                    | Optional             |             7.7.65 |
-| MBMS 2G/3G Indicator                       | Mandatory            |             7.7.66 |
-| MBMS Session Duration                      | Mandatory            |             7.7.59 |
-| MBMS Session Repetition Number             | Optional             |             7.7.69 |
-| MBMS Time To Data Transfer                 | Mandatory            |             7.7.70 |
-| MBMS Flow Identifier                       | Optional             |             7.7.84 |
-| MBMS IP Multicast Distribution             | Optional             |             7.7.85 |
-| Private Extension                          | Optional             |             7.7.46 |
+| Information element                        | Presence requirement | Reference |
+|--------------------------------------------+----------------------+-----------|
+| Recovery                                   | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Control Plane   | Conditional          |    7.7.14 |
+| End User Address                           | Mandatory            |    7.7.27 |
+| Access Point Name                          | Mandatory            |    7.7.30 |
+| GGSN Address for Control Plane             | Conditional          |    7.7.32 |
+| Alternative GGSN Address for Control Plane | Optional             |    7.7.32 |
+| Quality of Service Profile                 | Mandatory            |    7.7.34 |
+| Common Flags                               | Mandatory            |    7.7.48 |
+| Temporary Mobile Group Identity (TMGI)     | Mandatory            |    7.7.56 |
+| MBMS Service Area                          | Mandatory            |    7.7.60 |
+| MBMS Session Identifier                    | Optional             |    7.7.65 |
+| MBMS 2G/3G Indicator                       | Mandatory            |    7.7.66 |
+| MBMS Session Duration                      | Mandatory            |    7.7.59 |
+| MBMS Session Repetition Number             | Optional             |    7.7.69 |
+| MBMS Time To Data Transfer                 | Mandatory            |    7.7.70 |
+| MBMS Flow Identifier                       | Optional             |    7.7.84 |
+| MBMS IP Multicast Distribution             | Optional             |    7.7.85 |
+| Private Extension                          | Optional             |    7.7.46 |
 
 **** 7.5A.2.6 MBMS Session Start Response
 
-| Information element                       | Presence requirement |          Reference |
-|-------------------------------------------+----------------------+--------------------|
-| Cause                                     | Mandatory            |              7.7.1 |
-| Recovery                                  | Optional             |             7.7.11 |
-| Tunnel Endpoint Identifier Data I         | Conditional          |             7.7.13 |
-| Tunnel Endpoint Identifier Control Plane  | Conditional          |             7.7.14 |
-| SGSN Address for Control Plane            | Conditional          | GSN Address 7.7.32 |
-| SGSN Address for user traffic             | Conditional          | GSN Address 7.7.32 |
-| Alternative SGSN Address for user traffic | Optional             | GSN Address 7.7.32 |
-| MBMS Distribution Acknowledgement         | Optional             |             7.7.86 |
-| Private Extension                         | Optional             |             7.7.46 |
+| Information element                       | Presence requirement | Reference |
+|-------------------------------------------+----------------------+-----------|
+| Cause                                     | Mandatory            |     7.7.1 |
+| Recovery                                  | Optional             |    7.7.11 |
+| Tunnel Endpoint Identifier Data I         | Conditional          |    7.7.13 |
+| Tunnel Endpoint Identifier Control Plane  | Conditional          |    7.7.14 |
+| SGSN Address for Control Plane            | Conditional          |    7.7.32 |
+| SGSN Address for user traffic             | Conditional          |    7.7.32 |
+| Alternative SGSN Address for user traffic | Optional             |    7.7.32 |
+| MBMS Distribution Acknowledgement         | Optional             |    7.7.86 |
+| Private Extension                         | Optional             |    7.7.46 |
 
 **** 7.5A.2.7 MBMS Session Stop Request
 
@@ -1001,30 +1159,30 @@ Specified in 3GPP TS 29.281
 
 **** 7.5A.2.9 MBMS Session Update Request
 
-| Information element                      | Presence requirement |          Reference |
-|------------------------------------------+----------------------+--------------------|
-| Tunnel Endpoint Identifier Control Plane | Optional             |             7.7.14 |
-| End User Address                         | Mandatory            |             7.7.27 |
-| Access Point Name                        | Mandatory            |             7.7.30 |
-| GGSN Address for Control Plane           | Optional             | GSN Address 7.7.32 |
-| Temporary Mobile Group Identity (TMGI)   | Mandatory            |             7.7.56 |
-| MBMS Session Duration                    | Mandatory            |             7.7.59 |
-| MBMS Service Area                        | Mandatory            |             7.7.60 |
-| MBMS Session Identifier                  | Optional             |             7.7.65 |
-| MBMS Session Repetition Number           | Optional             |             7.7.69 |
-| MBMS Flow Identifier                     | Optional             |             7.7.84 |
-| Private Extension                        | Optional             |             7.7.46 |
+| Information element                      | Presence requirement | Reference |
+|------------------------------------------+----------------------+-----------|
+| Tunnel Endpoint Identifier Control Plane | Optional             |    7.7.14 |
+| End User Address                         | Mandatory            |    7.7.27 |
+| Access Point Name                        | Mandatory            |    7.7.30 |
+| GGSN Address for Control Plane           | Optional             |    7.7.32 |
+| Temporary Mobile Group Identity (TMGI)   | Mandatory            |    7.7.56 |
+| MBMS Session Duration                    | Mandatory            |    7.7.59 |
+| MBMS Service Area                        | Mandatory            |    7.7.60 |
+| MBMS Session Identifier                  | Optional             |    7.7.65 |
+| MBMS Session Repetition Number           | Optional             |    7.7.69 |
+| MBMS Flow Identifier                     | Optional             |    7.7.84 |
+| Private Extension                        | Optional             |    7.7.46 |
 
 **** 7.5A.2.10 MBMS Session Update Response
 
-| Information element                      | Presence requirement |          Reference |
-|------------------------------------------+----------------------+--------------------|
-| Cause                                    | Mandatory            |              7.7.1 |
-| Tunnel Endpoint Identifier Data I        | Optional             |             7.7.13 |
-| Tunnel Endpoint Identifier Control Plane | Optional             |             7.7.14 |
-| SGSN Address for Data I                  | Optional             | GSN Address 7.7.32 |
-| SGSN Address for Control Plane           | Optional             | GSN Address 7.7.32 |
-| Private Extension                        | Optional             |             7.7.46 |
+| Information element                      | Presence requirement | Reference |
+|------------------------------------------+----------------------+-----------|
+| Cause                                    | Mandatory            |     7.7.1 |
+| Tunnel Endpoint Identifier Data I        | Optional             |    7.7.13 |
+| Tunnel Endpoint Identifier Control Plane | Optional             |    7.7.14 |
+| SGSN Address for Data I                  | Optional             |    7.7.32 |
+| SGSN Address for Control Plane           | Optional             |    7.7.32 |
+| Private Extension                        | Optional             |    7.7.46 |
 
 *** 7.5B.1 MS Info Change Reporting Messages
 
