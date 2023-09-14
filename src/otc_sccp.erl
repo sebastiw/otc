@@ -1322,9 +1322,8 @@ decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                  %% numbering plan and encoding scheme
                  <<TT:8/big, NP:4, ES:4, GT0/binary>> = Bin2,
                  GT1 = decode_gt_part(ES, GT0),
-                 #{translation_type => TT,
-                   numbering_plan => NP,
-                   address => GT1};
+                 GT1#{translation_type => TT,
+                      numbering_plan => NP};
              2#0100 ->
                  %% global title includes translation type,
                  %% numbering plan, encoding scheme and nature
@@ -1413,10 +1412,15 @@ encode_address(#{routing_indicator := RoutingInd} = Address) ->
                            GT1 = encode_gt_part(GlobalTitle),
                            {2#0010, <<TT:8/big, GT1/binary>>};
                        #{odd_even_indicator := OE,
-                         nature_of_address_indicator := NI
+                         nature_of_address_indicator := NI,
+                         address := GT0
                         } ->
-                           GT1 = encode_gt_part(GlobalTitle),
-                           {2#0001, <<OE:1, NI:7, GT1/binary>>};
+                           OEI = case OE of
+                                     even -> 0;
+                                     odd -> 1
+                                 end,
+                           GT1 = encode_bcd(GT0),
+                           {2#0001, <<OEI:1, NI:7, GT1/binary>>};
                        _ ->
                            {2#0000, <<>>}
                    end,
@@ -1456,7 +1460,7 @@ parse_ssn(?SCCP_SSN_GSM_UMTS_RANAP) -> ranap;
 parse_ssn(?SCCP_SSN_GSM_UMTS_RNSAP) -> rnsap;
 parse_ssn(?SCCP_SSN_GSM_UMTS_GMLC) -> gmlc;
 parse_ssn(?SCCP_SSN_GSM_UMTS_CAP) -> cap;
-parse_ssn(?SCCP_SSN_GSM_UMTS_SCF) -> scf;
+parse_ssn(?SCCP_SSN_GSM_UMTS_GSMSCF) -> gsmSCF;
 parse_ssn(?SCCP_SSN_GSM_UMTS_SIWF) -> siwf;
 parse_ssn(?SCCP_SSN_GSM_UMTS_SGSN) -> sgsn;
 parse_ssn(?SCCP_SSN_GSM_UMTS_GGSN) -> ggsn;
@@ -1490,7 +1494,7 @@ compose_ssn(ranap) -> ?SCCP_SSN_GSM_UMTS_RANAP;
 compose_ssn(rnsap) -> ?SCCP_SSN_GSM_UMTS_RNSAP;
 compose_ssn(gmlc) -> ?SCCP_SSN_GSM_UMTS_GMLC;
 compose_ssn(cap) -> ?SCCP_SSN_GSM_UMTS_CAP;
-compose_ssn(scf) -> ?SCCP_SSN_GSM_UMTS_SCF;
+compose_ssn(gsmSCF) -> ?SCCP_SSN_GSM_UMTS_GSMSCF;
 compose_ssn(siwf) -> ?SCCP_SSN_GSM_UMTS_SIWF;
 compose_ssn(sgsn) -> ?SCCP_SSN_GSM_UMTS_SGSN;
 compose_ssn(ggsn) -> ?SCCP_SSN_GSM_UMTS_GGSN;
