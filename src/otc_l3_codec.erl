@@ -8,12 +8,20 @@
          compose_protocol_discriminator/1
         ]).
 -export([decode_v/2,
+         decode_t/1,
+         decode_tv/2,
          decode_lv/1,
+         decode_tlv/1,
          decode_lve/1,
+         decode_tlve/1,
          decode_iei_list/2,
          encode_v/3,
+         encode_t/2,
+         encode_tv/4,
          encode_lv/2,
+         encode_tlv/3,
          encode_lve/2,
+         encode_tlve/3,
          encode_iei_list/2
         ]).
 
@@ -70,9 +78,9 @@ compose_protocol_discriminator('5gs_mobility_management_messages') -> ?L3_EPD_5G
 compose_protocol_discriminator({undefined, PD}) -> PD.
 
 -spec decode_v(binary(), iei_length()) -> {integer() | binary(), bitstring()}.
-decode_v(<<V:4/big, Rest/bitstring>>, half) ->
+decode_v(<<V:4/big, Rest/bitstring>>, half) -> %% Type 1
     {V, Rest};
-decode_v(Bin, L) when is_integer(L) ->
+decode_v(Bin, L) when is_integer(L) -> %% Type 3
     <<V:L/binary, Rest/binary>> = Bin,
     {V, Rest};
 decode_v(Bin, {_, n}) ->
@@ -87,8 +95,34 @@ encode_v(V, {MinLen, n}, Acc) when is_integer(MinLen) ->
     L = get_length(V, {MinLen, n}, 0),
     <<V:L/binary, Acc/binary>>.
 
+-spec decode_tv(binary(), iei_length()) -> {integer(), binary(), binary()}.
+decode_tv(<<T:4/big, V:4/big, Rest/binary>>, half) -> %% Type 1
+    {T, V, Rest};
+decode_tv(Bin, L) when is_integer(L) -> %% Type 3
+    <<T:8/big, V:L/binary, Rest/binary>> = Bin,
+    {T, V, Rest};
+decode_tv(<<T:8/big, Bin/binary>>, {_, n}) ->
+    {T, Bin, <<>>}.
+
+-spec encode_tv(integer(), integer() | binary(), iei_length(), binary()) -> binary().
+encode_tv(T, V, half, Acc) ->
+    <<T:4/big, V:4/big, Acc/bitstring>>;
+encode_tv(T, V, L, Acc) when is_integer(L) ->
+    <<T:8/big, V:L/binary, Acc/binary>>;
+encode_tv(T, V, {MinLen, n}, Acc) when is_integer(MinLen) ->
+    L = get_length(V, {MinLen, n}, 0),
+    <<T:8/big, V:L/binary, Acc/binary>>.
+
+-spec decode_t(binary()) -> {integer(), binary()}.
+decode_t(<<T:8/big, Rest/binary>>) -> %% Type 2
+    {T, Rest}.
+
+-spec encode_t(integer(), binary()) -> binary().
+encode_t(T, Acc) ->
+    <<T:8/big, Acc/binary>>.
+
 -spec decode_lv(binary()) -> {binary(), binary()}.
-decode_lv(<<L:8/big, Bin/bitstring>>) ->
+decode_lv(<<L:8/big, Bin/bitstring>>) -> %% Type 4
     <<V:L/binary, Rest/binary>> = Bin,
     {V, Rest}.
 
@@ -102,8 +136,23 @@ encode_lv(Value, L0, Acc) ->
     Length = get_length(Value, L0, 1),
     <<Length:8/big, Value:Length/binary, Acc/bitstring>>.
 
+-spec decode_tlv(binary()) -> {integer(), binary(), binary()}.
+decode_tlv(<<T:8/big, L:8/big, Bin/bitstring>>) -> %% Type 4
+    <<V:L/binary, Rest/binary>> = Bin,
+    {T, V, Rest}.
+
+-spec encode_tlv(integer(), binary(), binary()) -> binary().
+encode_tlv(Tag, Value, Acc) ->
+    L = byte_size(Value),
+    encode_tlv(Tag, Value, L+1, Acc).
+
+-spec encode_tlv(integer(), binary(), iei_length(), binary()) -> binary().
+encode_tlv(Tag, Value, L0, Acc) ->
+    Length = get_length(Value, L0, 1),
+    <<Tag:8/big, Length:8/big, Value:Length/binary, Acc/bitstring>>.
+
 -spec decode_lve(binary()) -> {binary(), binary()}.
-decode_lve(<<L:16/big, Bin/bitstring>>) ->
+decode_lve(<<L:16/big, Bin/bitstring>>) -> %% Type 6
     <<V:L/binary, Rest/binary>> = Bin,
     {V, Rest}.
 
@@ -117,6 +166,20 @@ encode_lve(Value, L0, Acc) ->
     Length = get_length(Value, L0, 2),
     <<Length:16/big, Value:Length/binary, Acc/bitstring>>.
 
+-spec decode_tlve(binary()) -> {integer(), binary(), binary()}.
+decode_tlve(<<T:8/big, L:16/big, Bin/bitstring>>) -> %% Type 6
+    <<V:L/binary, Rest/binary>> = Bin,
+    {T, V, Rest}.
+
+-spec encode_tlve(integer(), binary(), binary()) -> binary().
+encode_tlve(Tag, Value, Acc) ->
+    L = byte_size(Value),
+    encode_tlve(Tag, Value, L+2, Acc).
+
+-spec encode_tlve(integer(), binary(), iei_length(), binary()) -> binary().
+encode_tlve(Tag, Value, L0, Acc) ->
+    Length = get_length(Value, L0, 2),
+    <<Tag:8/big, Length:16/big, Value:Length/binary, Acc/bitstring>>.
 
 -spec decode_iei_list(binary(), iei_list()) -> {Decoded :: map(), Remaining :: bitstring()}.
 decode_iei_list(Bin, Opts) ->
