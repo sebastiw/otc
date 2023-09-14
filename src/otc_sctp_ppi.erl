@@ -20,8 +20,8 @@ codec(PPI) when is_integer(PPI) ->
 codec(PPI) when is_atom(PPI) ->
     encode(PPI).
 
-decode(?PPI_M3UA) -> m3ua;
-decode(?PPI_M2PA) -> m2pa.
+decode(?SCTP_PPI_M3UA) -> m3ua;
+decode(?SCTP_PPI_M2PA) -> m2pa.
 
-encode(m3ua) -> ?PPI_M3UA;
-encode(m2pa) -> ?PPI_M2PA.
+encode(m3ua) -> ?SCTP_PPI_M3UA;
+encode(m2pa) -> ?SCTP_PPI_M2PA.

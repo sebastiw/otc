@@ -10,20 +10,17 @@
          encode_point_code/1]).
 
 -include("include/m3ua.hrl").
+-include("include/mtp3.hrl").
 
 spec() ->
     "IETF RFC 4666 September 2006".
 
 codec(Bin) when is_binary(Bin) ->
-    case decode(Bin) of
-        #{protocol_data := #{user_protocol_data := UPD} = _PD} = Msg ->
-            {Msg, UPD};
-        Msg ->
-            Msg
-    end;
+    decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
-
+    encode({Map, <<>>});
+codec({Map, PDU}) when is_map(Map), is_binary(PDU) ->
+    encode({Map, PDU}).
 
 -type subproto() :: sccp | tup | isup | broadband_isup |
                     satellite_isup |
@@ -54,9 +51,18 @@ decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) -
     ValLen = Len - 8,                 % Remove version, reserved, mc, mt, length
     <<Bin:ValLen/binary>> = Remain,
     {ok, Msg} = decode_msg(MC, MT, Bin),
-    Msg#{message_type => MT,
-         message_class => MC}.
+    case Msg#{message_type => MT, message_class => MC} of
+        #{protocol_data := PD} = Msg2 ->
+            {UPD, PD2} = maps:take(user_protocol_data, PD),
+            {Msg2#{protocol_data => PD2}, UPD};
+        Msg2 ->
+            Msg2
+    end.
 
+encode({#{protocol_data := PD} = Msg, UDP}) ->
+    encode(Msg#{protocol_data => PD#{user_protocol_data => UDP}});
+encode({Msg, _UDP}) ->
+    encode(Msg);
 encode(#{message_type := MessageType, message_class := MessageClass} = Msg) ->
     MC = compose_message_class(MessageClass),
     MT = compose_message_type(MessageClass, MessageType),
@@ -477,7 +483,7 @@ decode_parameter({protocol_data = Name, _, _, SM}, <<PDH:12/binary, UPD/binary>>
     PD = #{originating_point_code => OPC,
            destination_point_code => DPC,
            service_indicator => parse_user_identity(SI),
-           network_indicator => NI,
+           network_indicator => parse_network_indicator(NI),
            message_priority => MP,
            signalling_link_selection => SLS,
            user_protocol_data => UPD
@@ -644,13 +650,15 @@ encode_parameter(routing_context, RC) ->
 encode_parameter(protocol_data, V) ->
    #{originating_point_code := OPC,
      destination_point_code := DPC,
-     service_indicator := SI,
-     network_indicator := NI,
+     service_indicator := ServiceInd,
+     network_indicator := NetworkInd,
      message_priority := MP,
      signalling_link_selection := SLS,
      user_protocol_data := UPD
     } = V,
-    PDH = <<OPC:4/binary, DPC:4/binary, (compose_user_identity(SI)):8/big, NI:8/big, MP:8/big, SLS:8/big>>,
+    SI = compose_user_identity(ServiceInd),
+    NI = compose_network_indicator(NetworkInd),
+    PDH = <<OPC:4/binary, DPC:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>>,
     <<PDH:12/binary, UPD/binary>>;
 encode_parameter(correlation_id, CI) ->
     <<CI:32/big>>;
@@ -817,6 +825,19 @@ compose_user_identity(User) ->
         bearer_independent_call_control -> 13;
         {reserved, R} -> R
     end.
+
+parse_network_indicator(?MTP3_NETIND_INTERNATIONAL) -> international;
+parse_network_indicator(?MTP3_NETIND_INTERNATIONAL_SPARE) -> international_spare;
+parse_network_indicator(?MTP3_NETIND_NATIONAL) -> national;
+parse_network_indicator(?MTP3_NETIND_NATIONAL_SPARE) -> national_spare;
+parse_network_indicator(R) ->  {reserved, R}.
+
+compose_network_indicator(international) -> ?MTP3_NETIND_INTERNATIONAL;
+compose_network_indicator(international_spare) -> ?MTP3_NETIND_INTERNATIONAL_SPARE;
+compose_network_indicator(national) -> ?MTP3_NETIND_NATIONAL;
+compose_network_indicator(national_spare) -> ?MTP3_NETIND_NATIONAL_SPARE;
+compose_network_indicator({reserved, R}) -> R.
+
 
 -spec decode_point_code({binary(), binary()}) -> [itu_point_code() | ansi_point_code()].
 decode_point_code({<<Mask:8/big>>, <<PCbin:24/big>>}) ->

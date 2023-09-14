@@ -13,7 +13,9 @@ spec() ->
 codec(Bin) when is_binary(Bin) ->
     decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
+    encode({Map, <<>>});
+codec({Map, PDU}) when is_map(Map), is_binary(PDU) ->
+    encode({Map, PDU}).
 
 next(_) -> {ok, nas_eps}.
 
@@ -23,11 +25,11 @@ decode(<<PTI:1/binary, MT:8/big, OIE/binary>>) ->
     Msg#{procedure_transaction_identity => PTI,
          message_type => MsgType}.
 
-encode(#{message_type := MsgType} = Msg) ->
+encode({#{message_type := MsgType} = Msg, PDU}) ->
     Bin = encode_esm_msg(MsgType, Msg),
     MT = otc_nas_eps:compose_msg_type(MsgType),
     PTI = maps:get(procedure_transaction_identity, Msg),
-    <<PTI:1/binary, MT:8/big, Bin/binary>>.
+    <<PTI:1/binary, MT:8/big, Bin/binary, PDU/binary>>.
 
 decode_esm_msg(activate_dedicated_eps_bearer_context_accept, Bin0) ->
     Opts = [{protocol_configuration_options, 16#27, tlv, {3, 253}},

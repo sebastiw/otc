@@ -46,7 +46,7 @@ empty_begin_no_user_info_test() ->
     NewBin = otc_tcap:encode(Val),
     ?assertEqual(Bin, NewBin).
 
-end_returnResultLast_with_component_test() ->
+end_returnResult_with_component_test() ->
     Dialogue = <<16#61,16#17,
                  16#a1,16#09,16#06,16#07,16#04,16#00,16#00,16#01,
                  16#00,16#14,16#02,16#a2,16#03,16#02,16#01,16#00,
@@ -60,7 +60,7 @@ end_returnResultLast_with_component_test() ->
             16#26,16#28,16#24,16#06,16#07,16#00,16#11,16#86,
             16#05,16#01,16#01,16#01,16#a0,16#19,Dialogue/binary,
             Components/binary>>,
-    EndComponent = #{component_type => returnResultLast,
+    EndComponent = #{component_type => returnResult,
                      invokeId => 0,
                      opcode => {local, 45},
                      result => MAPBin
@@ -77,6 +77,6 @@ end_returnResultLast_with_component_test() ->
             components => [EndComponent],
             type => 'end'},
     Val = otc_tcap:decode(Bin),
-    ?assertEqual(Exp, Val),
-    NewBin = otc_tcap:encode(Val),
+    ?assertEqual({Exp, Bin}, Val),
+    NewBin = otc_tcap:encode(element(1, Val)),
     ?assertEqual(Bin, NewBin).

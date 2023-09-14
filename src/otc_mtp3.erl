@@ -14,15 +14,11 @@ spec() ->
     "ITU-T Q.704 (07/96) July 1996".
 
 codec(Bin) when is_binary(Bin) ->
-    case decode(Bin) of
-        #{payload := D} = Msg
-          when is_binary(D) ->
-            {maps:without([payload], Msg), D};
-        Msg ->
-            Msg
-    end;
+    decode(Bin);
 codec(Map) when is_map(Map) ->
-    encode(Map).
+    encode(Map);
+codec({Map, PDU}) when is_map(Map) ->
+    encode({Map, PDU}).
 
 -type subproto() :: sccp | tup | isup |
                     dup_call | dup_reg | mtp_test |
@@ -39,18 +35,26 @@ decode(<<NI:2/big, NU:2/big, SI:4/big, RL0:32/little, Rest/binary>>) ->
     %% Routing Label is in reverse byte order
     RL = <<RL0:32/big>>,
     <<SLS:4/big, OPC:14/big, DPC:14/big>> = RL,
-    Msg = decode_msg(ServiceInd, Rest),
-    Msg#{network_indicator => NetworkInd,
-         national_use_spare => NU,
-         service_indicator => ServiceInd,
-         signalling_link_selection => SLS,
-         origin_point_code => OPC,
-         destination_point_code => DPC
-        }.
+    Msg0 = decode_msg(ServiceInd, Rest),
+    Msg = Msg0#{network_indicator => NetworkInd,
+                national_use_spare => NU,
+                service_indicator => ServiceInd,
+                signalling_link_selection => SLS,
+                originating_point_code => OPC,
+                destination_point_code => DPC
+               },
+    case Msg of
+        #{payload := D} when is_binary(D) ->
+            {maps:without([payload], Msg), D};
+        _ ->
+            Msg
+    end.
 
+encode({Map, PDU}) when byte_size(PDU) > 0 ->
+    encode(Map#{payload => PDU});
 encode(#{network_indicator := NetworkInd, service_indicator := ServiceInd} = Msg) ->
     #{signalling_link_selection := SLS,
-      origin_point_code := OPC,
+      originating_point_code := OPC,
       destination_point_code := DPC
      } = Msg,
     NI = compose_network_indicator(NetworkInd),

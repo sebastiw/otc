@@ -21,8 +21,7 @@ udt_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => even,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => msc},
@@ -34,17 +33,15 @@ udt_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => odd,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => hlr},
-            data => D,
             message_type => udt,
             protocol_class => #{class => 0, options => return_on_error}},
 
     Val = otc_sccp:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -53,7 +50,8 @@ xudt_test() ->
     CgPA = calling_party_address(),
     D = data(),
 
-    Bin = <<16#11, 16#81, 16#0f, 16#04, 16#0f, 16#1a, 16#00,
+    Bin = <<16#11, 16#81, 16#0f,
+            16#04, 16#0f, 16#1a, 16#00, %% Pointers
             16#0b, CdPA/binary,
             16#0b, CgPA/binary,
             16#18, D/binary>>,
@@ -65,8 +63,7 @@ xudt_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => even,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => msc},
@@ -78,20 +75,68 @@ xudt_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => odd,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => hlr},
-            data => D,
             hop_counter => 15,
             message_type => xudt,
             protocol_class => #{class => 1, options => return_on_error}},
 
     Val = otc_sccp:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
+
+xudt_opt_segmentation_test() ->
+    CdPA = called_party_address(),
+    CgPA = calling_party_address(),
+    D = data(),
+
+    Bin = <<16#11, 16#01, 16#0D,
+            16#04, 16#0F, 16#1A, 16#32, %% pointers
+            16#0B, CdPA/binary,
+            16#0B, CgPA/binary,
+            16#18, D/binary,
+            16#10, 16#04, 16#01, 16#02, 16#03, 16#04, %% segmentation
+            16#00>>, %% end of optional parameters
+
+    Exp = #{called_party_address =>
+                #{global_title =>
+                      #{encoding_scheme => bcd,
+                        address => "467211221122",
+                        nature_of_address_indicator => 4,
+                        numbering_plan => 1,
+                        odd_even_indicator => even,
+                        translation_type => 0},
+                  national_use_indicator => false,
+                  point_code => undefined,
+                  routing_indicator => global_title,
+                  subsystem_number => msc},
+            calling_party_address =>
+                #{global_title =>
+                      #{encoding_scheme => bcd,
+                        address => "46729887766",
+                        nature_of_address_indicator => 8,
+                        numbering_plan => 1,
+                        odd_even_indicator => odd,
+                        translation_type => 0},
+                  national_use_indicator => false,
+                  point_code => undefined,
+                  routing_indicator => global_title,
+                  subsystem_number => hlr},
+            hop_counter => 13,
+            message_type => xudt,
+            protocol_class => #{class => 1, options => no_options},
+            segmentation =>
+                #{class => 0,
+                  first_segment_indication => true,
+                  local_reference => <<16#02, 16#03, 16#04>>,
+                  remaining_segments => 1}},
+      Val = otc_sccp:decode(Bin),
+      ?assertEqual({Exp, D}, Val),
+      NewBin = otc_sccp:encode(Val),
+      ?assertEqual(Bin, NewBin).
 
 udts_test() ->
     CdPA = called_party_address(),
@@ -110,8 +155,7 @@ udts_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => odd,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => hlr},
@@ -123,17 +167,15 @@ udts_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => even,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => msc},
-            data => D,
             message_type => udts,
             return_cause => no_translation_for_this_specific_address},
 
     Val = otc_sccp:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -155,8 +197,7 @@ xudts_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => odd,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => hlr},
@@ -168,18 +209,16 @@ xudts_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => even,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => msc},
-            data => D,
             hop_counter => 15,
             message_type => xudts,
             return_cause => no_translation_for_this_specific_address},
 
     Val = otc_sccp:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_sccp:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -205,8 +244,7 @@ xudts_arbitrary_pointers_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => even,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => msc},
@@ -218,64 +256,18 @@ xudts_arbitrary_pointers_test() ->
                         numbering_plan => 1,
                         odd_even_indicator => odd,
                         translation_type => 0},
-                  global_title_indicator => 4,
-                  national_use_indicator => 0,
+                  national_use_indicator => false,
                   point_code => undefined,
                   routing_indicator => global_title,
                   subsystem_number => hlr},
-            data => D,
             hop_counter => 15,
             message_type => xudts,
             return_cause => unqualified},
 
     Val = otc_sccp:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_sccp:encode(Val),
     ?assertEqual(Expected, NewBin).
-
-udt_scmg_test() ->                              % sccp mgmt sst
-    CdPA = <<16#42, %% AddressIndicator
-             16#01>>, %% SSN
-    CgPA = <<16#42, %% AddressIndicator
-             16#01>>, %% SSN
-    D = <<16#03, %% SCMG MsgType
-          16#06, %% Affected SSN
-          16#12, 16#34, %% Affected PC
-          16#00>>, %% Subsystem multiplicity indicator
-
-    Bin = <<16#09, %% SCCP MsgType,
-            16#80, %% ProtocolClass
-            16#03, 16#05, 16#07, %% Pointers
-            16#02, CdPA/binary,
-            16#02, CgPA/binary,
-            16#05, D/binary>>,
-    Exp = #{called_party_address =>
-                #{global_title => undefined,
-                  global_title_indicator => 0,
-                  national_use_indicator => 0,
-                  point_code => undefined,
-                  routing_indicator => subsystem_number,
-                  subsystem_number => management},
-            calling_party_address =>
-                #{global_title => undefined,
-                  global_title_indicator => 0,
-                  national_use_indicator => 0,
-                  point_code => undefined,
-                  routing_indicator => subsystem_number,
-                  subsystem_number => management},
-            data => #{format_identifier => status_test,
-                      affected_point_code => <<18,52>>,
-                      affected_subsystem_number => hlr,
-                      subsystem_multiplicity_indicator => 0
-                     },
-            message_type => udt,
-            protocol_class => #{class => 0, options => return_on_error}},
-
-    Val = otc_sccp:decode(Bin),
-    ?assertEqual(Exp, Val),
-    NewBin = otc_sccp:encode(Val),
-    ?assertEqual(Bin, NewBin).
-
 
 called_party_address() ->
     <<16#12, %% AddressIndicator

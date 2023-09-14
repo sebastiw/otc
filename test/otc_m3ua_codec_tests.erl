@@ -99,11 +99,10 @@ m3ua_tm_data_tcap_empty_begin_test() ->
                   network_indicator => 3,
                   originating_point_code => <<0,0,5,4>>,
                   service_indicator => sccp,
-                  signalling_link_selection => 8,
-                  user_protocol_data => D
+                  signalling_link_selection => 8
                  }},
     Val = otc_m3ua:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_m3ua:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -132,11 +131,10 @@ m3ua_tm_data_tcap_empty_continue_test() ->
                   network_indicator => 3,
                   originating_point_code => <<0,0,53,167>>,
                   service_indicator => sccp,
-                  signalling_link_selection => 196,
-                  user_protocol_data => D
+                  signalling_link_selection => 196
                  }},
     Val = otc_m3ua:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_m3ua:encode(Val),
     ?assertEqual(Bin, NewBin).
 
@@ -160,10 +158,9 @@ m3ua_tm_data_tcap_abort_test() ->
                   network_indicator => 3,
                   originating_point_code => <<0,0,53,167>>,
                   service_indicator => sccp,
-                  signalling_link_selection => 238,
-                  user_protocol_data => D
+                  signalling_link_selection => 238
                  }},
     Val = otc_m3ua:decode(Bin),
-    ?assertEqual(Exp, Val),
+    ?assertEqual({Exp, D}, Val),
     NewBin = otc_m3ua:encode(Val),
     ?assertEqual(Bin, NewBin).

@@ -8,7 +8,7 @@ mgmt_xco_test() ->
     Exp = #{destination_point_code => 6777,
             national_use_spare => 0,
             network_indicator => national_spare,
-            origin_point_code => 12355,
+            originating_point_code => 12355,
             payload =>
                 #{forward_sequence_number => 1792,
                   message_type => extended_changeover_order},
@@ -24,7 +24,7 @@ mgmt_cbd_test() ->
     Exp = #{destination_point_code => 6777,
             national_use_spare => 0,
             network_indicator => national_spare,
-            origin_point_code => 12355,
+            originating_point_code => 12355,
             payload =>
                 #{changeback_code => 10,
                   message_type => changeback_declaration},
@@ -41,7 +41,7 @@ maint_sltm_test() ->
     Exp = #{destination_point_code => 6777,
             national_use_spare => 0,
             network_indicator => national_spare,
-            origin_point_code => 12355,
+            originating_point_code => 12355,
             payload =>
                 #{test_pattern => TP,
                   message_type => signalling_link_test},
@@ -58,7 +58,7 @@ maint_slta_test() ->
     Exp = #{destination_point_code => 12355,
             national_use_spare => 0,
             network_indicator => national_spare,
-            origin_point_code => 6777,
+            originating_point_code => 6777,
             payload =>
                 #{test_pattern => TP,
                   message_type => signalling_link_test_ack},
