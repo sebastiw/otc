@@ -250,9 +250,9 @@ decode_msg(asptm, aspia_ack, Bin) ->
     decode_parameters(Bin, AllowedParameters);
 decode_msg(mgmt, err, Bin) ->
     AllowedParameters = [{error_code, 16#000c, mandatory, single},
-                         {routing_context, 16#0006, mandatory, single},
-                         {network_appearance, 16#0200, mandatory, single},
-                         {affected_point_code, 16#0012, mandatory, single},
+                         {routing_context, 16#0006, conditional, single},
+                         {network_appearance, 16#0200, conditional, single},
+                         {affected_point_code, 16#0012, conditional, single},
                          {diagnostic_information, 16#0007, optional, single}
                         ],
     decode_parameters(Bin, AllowedParameters);
@@ -382,9 +382,9 @@ encode_msg(asptm, aspia_ack, Msg) ->
     encode_parameters(Msg, AllowedParameters);
 encode_msg(mgmt, err, Msg) ->
     AllowedParameters = [{error_code, 16#000c, mandatory, single},
-                         {routing_context, 16#0006, mandatory, single},
-                         {network_appearance, 16#0200, mandatory, single},
-                         {affected_point_code, 16#0012, mandatory, single},
+                         {routing_context, 16#0006, conditional, single},
+                         {network_appearance, 16#0200, conditional, single},
+                         {affected_point_code, 16#0012, conditional, single},
                          {diagnostic_information, 16#0007, optional, single}
                         ],
     encode_parameters(Msg, AllowedParameters);

@@ -42,6 +42,16 @@ m3ua_aspsm_aspup_ack_test() ->
     NewBin = otc_m3ua:encode(Val),
     ?assertEqual(Bin, NewBin).
 
+m3ua_mgmt_err_test() ->
+    Bin = binary:decode_hex(<<"0100000000000010000c00080000000d">>),
+    Exp = #{message_class => mgmt,
+            message_type => err,
+            error_code => refused_management_blocking},
+    Val = otc_m3ua:decode(Bin),
+    ?assertEqual(Exp, Val),
+    NewBin = otc_m3ua:encode(Val),
+    ?assertEqual(Bin, NewBin).
+
 m3ua_mgmt_ntfy_test() ->
     Bin = <<16#01,16#00,16#00,16#01,16#00,16#00,16#00,16#10,
             16#00,16#0d,16#00,16#08,16#00,16#01,16#00,16#02>>,
