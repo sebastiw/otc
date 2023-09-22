@@ -34,7 +34,7 @@
 
 %% Supported protocols ---------------------------------------------------------
 
--type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | tcap | map | nas_eps | nas_eps_emm | nas_eps_esm | gtpv1c | gtpv2c.
+-type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | sccp_mgmt | tcap | map | nas_eps | nas_eps_emm | nas_eps_esm | gtpv1c | gtpv2c.
 
 next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
 %% next({sctp, V}) -> otc_sctp:next(V);
