@@ -146,7 +146,7 @@ next({Proto, _Header}, #{stop_after := Proto}) ->
 next({Proto, Header}, _) ->
     next({Proto, Header}).
 
--spec otc:encapsulate(packet()) -> data().
+-spec otc:encapsulate(header() | packet()) -> data().
 encapsulate(#{protocol := Proto} = Pdu) ->
     ?MODULE:Proto(Pdu);
 encapsulate(Pdus) when is_list(Pdus) ->
@@ -162,7 +162,7 @@ encapsulate({Proto, Data}) when is_atom(Proto) ->
 encapsulate(Data) when is_binary(Data) ->
     Data.
 
--spec otc:encode(packet()) -> {ok, data()} | {error, term()}.
+-spec otc:encode(header() | packet()) -> {ok, data()} | {error, term()}.
 encode(#{protocol := Proto} = Pdu) ->
     enc_safe(Proto, Pdu);
 encode(Pdus) when is_list(Pdus) ->
