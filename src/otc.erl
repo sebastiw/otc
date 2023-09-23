@@ -147,34 +147,43 @@ next({Proto, Header}, _) ->
     next({Proto, Header}).
 
 -spec otc:encapsulate(packet()) -> data().
-encapsulate(Pdu) ->
-    enc(unsafe, Pdu).
-
--spec otc:encode(packet()) -> data() | {error, term()}.
-encode(Pdu) ->
-    enc(safe, Pdu).
-
-enc(T, #{protocol := Proto} = Pdu) ->
-    enc(T, Proto, Pdu);
-enc(T, Pdus) when is_list(Pdus) ->
-    enc(T, {Pdus, <<>>});
-enc(T, {Pdus, Payload}) when is_list(Pdus), is_binary(Payload) ->
+encapsulate(#{protocol := Proto} = Pdu) ->
+    ?MODULE:Proto(Pdu);
+encapsulate(Pdus) when is_list(Pdus) ->
+    encapsulate({Pdus, <<>>});
+encapsulate({Pdus, Payload}) when is_list(Pdus), is_binary(Payload) ->
     lists:foldr(fun (P, Acc) ->
-                        enc(T, {P, Acc})
+                        encapsulate({P, Acc})
                 end, Payload, Pdus);
-enc(T, {#{protocol := Proto} = Pdu, Payload}) ->
-    enc(T, Proto, {Pdu, Payload});
-enc(T, {Proto, Data}) when is_atom(Proto) ->
-    enc(T, Proto, Data);
-enc(_, Data) when is_binary(Data) ->
+encapsulate({#{protocol := Proto} = Pdu, Payload}) ->
+    ?MODULE:Proto({Pdu, Payload});
+encapsulate({Proto, Data}) when is_atom(Proto) ->
+    ?MODULE:Proto(Data);
+encapsulate(Data) when is_binary(Data) ->
     Data.
 
-enc(unsafe, Proto, Pdu) ->
-    ?MODULE:Proto(Pdu);
-enc(safe, Proto, Pdu) ->
+-spec otc:encode(packet()) -> {ok, data()} | {error, term()}.
+encode(#{protocol := Proto} = Pdu) ->
+    enc_safe(Proto, Pdu);
+encode(Pdus) when is_list(Pdus) ->
+    encode({Pdus, <<>>});
+encode({Pdus, Payload}) when is_list(Pdus), is_binary(Payload) ->
+    lists:foldr(fun (P, {ok, Acc}) ->
+                        encode({P, Acc});
+                    (_, {error, _} = Err) ->
+                        Err
+                end, {ok, Payload}, Pdus);
+encode({#{protocol := Proto} = Pdu, Payload}) ->
+    enc_safe(Proto, {Pdu, Payload});
+encode({Proto, Data}) when is_atom(Proto) ->
+    enc_safe(Proto, Data);
+encode(Data) when is_binary(Data) ->
+    {ok, Data}.
+
+enc_safe(Proto, Pdu) ->
     try ?MODULE:Proto(Pdu) of
         B when is_binary(B) ->
-            B
+            {ok, B}
     catch E:R:S ->
             ?LOG_ERROR(#{E => R, stack => S}),
             {error, {Proto, Pdu}}

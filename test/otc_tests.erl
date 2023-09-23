@@ -8,7 +8,7 @@ decode_m3ua_no_payload_test() ->
     Msg = otc:decode(m3ua, Bin),
     ?assertMatch({ok, [#{protocol := m3ua}]}, Msg),
     NewBin = otc:encode(element(2, Msg)),
-    ?assertEqual(Bin, NewBin).
+    ?assertEqual({ok, Bin}, NewBin).
 
 decode_m3ua_sccp_payload_test() ->
     TcapBin = <<16#62,16#26,16#48,16#04,
@@ -87,7 +87,7 @@ decode_m3ua_sccp_payload_test() ->
     Msg = otc:decode(m3ua, M3uaBin),
     ?assertMatch({ok, [M3ua, Sccp, Tcap]}, Msg),
     NewBin = otc:encode({[M3ua, Sccp], TcapBin}),
-    ?assertEqual(M3uaBin, NewBin).
+    ?assertEqual({ok, M3uaBin}, NewBin).
 
 udt_scmg_test() ->
     CdPA = <<16#42, %% AddressIndicator
@@ -128,7 +128,7 @@ udt_scmg_test() ->
     Val = otc:decode(sccp, SccpBin),
     ?assertEqual({ok, [Sccp, ScMg]}, Val),
     NewBin = otc:encode([Sccp, ScMg]),
-    ?assertEqual(SccpBin, NewBin).
+    ?assertEqual({ok, SccpBin}, NewBin).
 
 
 decode_nas_eps_pdn_connectivity_reject_test() ->
@@ -152,4 +152,4 @@ decode_nas_eps_pdn_connectivity_reject_test() ->
     Msg = otc:decode(nas_eps, Bin),
     ?assertMatch({ok, [Map1, Map2, Map3, Map4]}, Msg),
     NewBin = otc:encode(element(2, Msg)),
-    ?assertEqual(Bin, NewBin).
+    ?assertEqual({ok, Bin}, NewBin).
