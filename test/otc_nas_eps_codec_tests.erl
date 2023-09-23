@@ -26,8 +26,8 @@ plain_attach_request_test_() ->
 
     [?_assertEqual({ok, [Map1, Map2]}, otc:decode(nas_eps, Bin)),
      ?_assertEqual({ok, [Map3, Map4]}, otc:decode(nas_eps, maps:get(esm_message_container, Map2))),
-     ?_assertEqual(maps:get(esm_message_container, Map2), otc:encode([Map3, Map4])),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2]))
+     ?_assertEqual({ok, maps:get(esm_message_container, Map2)}, otc:encode([Map3, Map4])),
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2]))
     ].
 
 integrity_attach_request_test_() ->
@@ -80,8 +80,8 @@ integrity_attach_request_test_() ->
              request_type => 1},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
      ?_assertEqual({ok, [Map5, Map6]}, otc:decode(nas_eps, maps:get(esm_message_container, Map4))),
-     ?_assertEqual(Bin2, otc:encode([Map5, Map6])),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin2}, otc:encode([Map5, Map6])),
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 plain_authentication_request_test_() ->
@@ -98,7 +98,7 @@ plain_authentication_request_test_() ->
              authentication_parameter_autn_eps_challenge =>
                  hexstream_to_binary(<<"0aa0a855812680002863ebdc835cec7c">>)},
     [?_assertEqual({ok, [Map1, Map2]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2]))
     ].
 
 plain_authentication_response_test_() ->
@@ -117,7 +117,7 @@ plain_authentication_response_test_() ->
                  <<55,63,77,205,178,231,118,155>>,
              message_type => authentication_response},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 security_mode_command_test_() ->
@@ -137,7 +137,7 @@ security_mode_command_test_() ->
              replayed_ue_security_capabilities => hexstream_to_binary(<<"f070c04070">>),
              selected_nas_security_algorithms => <<1>>},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 security_mode_complete_test_() ->
@@ -155,7 +155,7 @@ security_mode_complete_test_() ->
     Map4 = #{protocol => nas_eps_emm,
              message_type => security_mode_complete},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 esm_information_request_test_() ->
@@ -173,7 +173,7 @@ esm_information_request_test_() ->
              message_type => esm_information_request,
              procedure_transaction_identity => <<"3">>},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 esm_information_response_test_() ->
@@ -192,7 +192,7 @@ esm_information_response_test_() ->
              message_type => esm_information_response,
              procedure_transaction_identity => <<"3">>},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 attach_accept_test_() ->
@@ -253,8 +253,8 @@ attach_accept_test_() ->
              transaction_identifier => <<0>>},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
      ?_assertEqual({ok, [Map5, Map6]}, otc:decode(nas_eps, Bin3)),
-     ?_assertEqual(Bin3, otc:encode([Map5, Map6])),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin3}, otc:encode([Map5, Map6])),
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 activate_default_eps_bearer_context_accept_test_() ->
@@ -282,8 +282,8 @@ activate_default_eps_bearer_context_accept_test_() ->
              procedure_transaction_identity => <<0>>},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
      ?_assertEqual({ok, [Map5, Map6]}, otc:decode(nas_eps, Bin3)),
-     ?_assertEqual(Bin3, otc:encode([Map5, Map6])),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin3}, otc:encode([Map5, Map6])),
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 pdn_connectivity_request_test_() ->
@@ -309,7 +309,7 @@ pdn_connectivity_request_test_() ->
                    13,0,0,3,0,0,1,0,0,12,0,0,10,0,0,5,0,0,16,0>>,
              request_type => 1},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 pdn_connectivity_reject_test_() ->
@@ -329,7 +329,7 @@ pdn_connectivity_reject_test_() ->
              message_type => pdn_connectivity_reject,
              procedure_transaction_identity => <<"4">>},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2, Map3, Map4]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 service_request_test_() ->
@@ -342,7 +342,7 @@ service_request_test_() ->
              message_authentication_code_short => <<"ÉR">>,
              message_type => service_request},
     [?_assertEqual({ok, [Map1, Map2]}, otc:decode(nas_eps, Bin)),
-     ?_assertEqual(Bin, otc:encode([Map1, Map2]))
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2]))
     ].
 
 invalid_message_test() ->
