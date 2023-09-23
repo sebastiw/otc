@@ -106,7 +106,7 @@ m3ua_tm_data_tcap_empty_begin_test() ->
             protocol_data =>
                 #{destination_point_code => <<0,0,53,167>>,
                   message_priority => 0,
-                  network_indicator => 3,
+                  network_indicator => national_spare,
                   originating_point_code => <<0,0,5,4>>,
                   service_indicator => sccp,
                   signalling_link_selection => 8
@@ -138,7 +138,7 @@ m3ua_tm_data_tcap_empty_continue_test() ->
             protocol_data =>
                 #{destination_point_code => <<0,0,5,4>>,
                   message_priority => 0,
-                  network_indicator => 3,
+                  network_indicator => national_spare,
                   originating_point_code => <<0,0,53,167>>,
                   service_indicator => sccp,
                   signalling_link_selection => 196
@@ -165,7 +165,7 @@ m3ua_tm_data_tcap_abort_test() ->
             protocol_data =>
                 #{destination_point_code => <<0,0,5,4>>,
                   message_priority => 0,
-                  network_indicator => 3,
+                  network_indicator => national_spare,
                   originating_point_code => <<0,0,53,167>>,
                   service_indicator => sccp,
                   signalling_link_selection => 238
