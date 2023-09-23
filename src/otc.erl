@@ -81,7 +81,7 @@ gtpv2c(D) -> otc_gtpv2c:codec(D).
 -type header() :: map().
 -type headers() :: [header()].
 -type packet() :: headers() | Decoded :: {headers(), data()} | Decapsulated :: [header() | binary()].
--type payload() :: header() | headers() | {header() | headers(), data()} | {protocol(), header() | {header(), data}} | data().
+-type payload() :: header() | headers() | {header() | headers(), data()} | {protocol(), header() | {header(), data()}} | data().
 
 -spec otc:decapsulate(protocol(), data()) -> packet().
 -spec otc:decapsulate(protocol(), data(), options()) -> packet().
