@@ -665,12 +665,12 @@ decode_ieis(<<?GTPv1C_IEI_PDP_CONTEXT:8, L:16, Value:L/binary, Rest/binary>>) ->
       GAUTLen:8, GAUT:GAUTLen/binary,
       APNLen:8, APN:APNLen/binary,
       _:4, TI:12,
-      E/binary>> = Value,
+      Ex/binary>> = Value,
     PDPAddr = case EA of
                   0 ->
                       pdp_address(PTO, PTN, PAddr);
                   1 ->
-                      <<EPTN:8, EPALen:8, EPAddr:EPALen/binary>> = E,
+                      <<EPTN:8, EPALen:8, EPAddr:EPALen/binary>> = Ex,
                       P = pdp_address(PTO, PTN, PAddr),
                       E = pdp_address(PTO, EPTN, EPAddr),
                       maps:merge(P, E)
@@ -1013,15 +1013,15 @@ decode_ieis(<<?GTPv1C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION:8, L:16, Value:L/binary
       HCInd:8>> = Value,
     DAddress = case {DAddrType, DAddrLen} of
                    {0, 4} ->
-                       #{ipv4 => otc_gtpv2c:bin_to_ip_address(DAddr)};
+                       #{ipv4 => otc_gtpv2c:bin_to_ip_addr(DAddr)};
                    {1, 16} ->
-                       #{ipv6 => otc_gtpv2c:bin_to_ip_address(DAddr)}
+                       #{ipv6 => otc_gtpv2c:bin_to_ip_addr(DAddr)}
                end,
     SAddress = case {SAddrType, SAddrLen} of
                    {0, 4} ->
-                       #{ipv4 => otc_gtpv2c:bin_to_ip_address(SAddr)};
+                       #{ipv4 => otc_gtpv2c:bin_to_ip_addr(SAddr)};
                    {1, 16} ->
-                       #{ipv6 => otc_gtpv2c:bin_to_ip_address(SAddr)}
+                       #{ipv6 => otc_gtpv2c:bin_to_ip_addr(SAddr)}
                end,
     MultiDist = #{common_tunnel_endpoint_identifier_data => CData,
                   distribution_address => DAddress,
@@ -1076,7 +1076,7 @@ decode_ieis(<<?GTPv1C_IEI_UCI:8, L:16, Value0:L/binary, Rest/binary>>) when L >=
       AccessMode:2, _:5, CMI:1>> = Value,
     MCCMNC = otc_gtpv2c:decode_mcc_mnc(MCCMNCBin),
     CSGID = otc_gtpv2c:decode_csg_id(CSGIDBin),
-    Base = maps:merge(MCCMNC, CSGID),
+    Base = MCCMNC#{csg_id => CSGID},
     UCI = Base#{access_mode => case AccessMode of
                                    0 -> closed;
                                    1 -> hybrid
@@ -1228,7 +1228,7 @@ decode_ieis(<<?GTPv1C_IEI_ENODEB_ID:8, L:16, Value:L/binary, Rest/binary>>) ->
     [{enodeb_id, ENodeBID}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_SELECTION_MODE_WITH_NSAPI:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 2 ->
     <<Value:2/binary, _/binary>> = Value0,
-    <<_:4, NSAPI:4, _:7, SLV:1>> = Value,
+    <<_:4, NSAPI:4, _:6, SLV:2>> = Value,
     Mode = #{nsapi => NSAPI,
              selection_mode => case SLV of
                                    0 -> verified;
@@ -1298,11 +1298,11 @@ decode_ieis(<<?GTPv1C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION:8, L:16, Value:L
     [{special_ie_type_for_ie_type_extension, Ext}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_CHARGING_GATEWAY_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 16 ->
     <<Value:16/binary, _/binary>> = Value0,
-    IP = #{ipv6 => otc_gtpv2c:bin_to_ip_address(Value)},
+    IP = #{ipv6 => otc_gtpv2c:bin_to_ip_addr(Value)},
     [{charging_gateway_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_CHARGING_GATEWAY_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 4 ->
     <<Value:4/binary, _/binary>> = Value0,
-    IP = #{ipv4 => otc_gtpv2c:bin_to_ip_address(Value)},
+    IP = #{ipv4 => otc_gtpv2c:bin_to_ip_addr(Value)},
     [{charging_gateway_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_PRIVATE_EXTENSION:8, L:16, Value:L/binary, Rest/binary>>) ->
     %% The Extension Identifier is a value defined in the Private
@@ -1314,11 +1314,11 @@ decode_ieis(<<?GTPv1C_IEI_PRIVATE_EXTENSION:8, L:16, Value:L/binary, Rest/binary
     [{private_extension, Ext}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_GTP_U_PEER_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 16 ->
     <<Value:16/binary, _/binary>> = Value0,
-    IP = #{ipv6 => otc_gtpv2c:bin_to_ip_address(Value)},
+    IP = #{ipv6 => otc_gtpv2c:bin_to_ip_addr(Value)},
     [{gtp_u_peer_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_GTP_U_PEER_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 4 ->
     <<Value:4/binary, _/binary>> = Value0,
-    IP = #{ipv4 => otc_gtpv2c:bin_to_ip_address(Value)},
+    IP = #{ipv4 => otc_gtpv2c:bin_to_ip_addr(Value)},
     [{gtp_u_peer_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_RECOVERY_TIME_STAMP:8, L:16, Value:L/binary, Rest/binary>>) ->
     <<Seconds:32, Fractions:32, _/binary>> = Value,
@@ -2202,7 +2202,20 @@ parse_pdp_address_type(ietf, 16#8D) ->
 pdp_address(Org, Type, <<>>) ->
     Organization = parse_pdp_address_org(Org),
     PDPType = parse_pdp_address_type(Organization, Type),
-    PDPType;
+    Address = case PDPType of
+                  ppp ->
+                      #{ppp => undefined};
+                  non_ip ->
+                      #{non_ip => undefined};
+                  ipv4 ->
+                      #{ipv4 => undefined};
+                  ipv6 ->
+                      #{ipv6 => undefined};
+                  ipv4v6 ->
+                      #{ipv4 => undefined,
+                        ipv6 => undefined}
+              end,
+    Address;
 pdp_address(Org, Type, Addr) ->
     Organization = parse_pdp_address_org(Org),
     PDPType = parse_pdp_address_type(Organization, Type),
@@ -2257,4 +2270,4 @@ decode_address(Bin) ->
     #{extension_indicator => ExtI,
       nature_of_address => NoA,
       numbering_plan => NP,
-      address => otc_gtpv2c:decode_tbcd(Addr)}.
+      address => otc_gtpv2c:tbcd_decode(Addr)}.

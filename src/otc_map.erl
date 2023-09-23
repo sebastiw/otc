@@ -71,14 +71,9 @@ encode(Map) ->
                         {'ArgumentType', Arg, argument}
                 end,
     O = undefined, %% no options
-    case ('MAP-Protocol':'getenc_Supported-MAP-Operations'(OpCode))(T, V, O) of
-        {R, _} ->
-            C#{opcode => OpCode,
-               K => iolist_to_binary(R)};
-        R ->
-            C#{opcode => OpCode,
-               K => iolist_to_binary(R)}
-    end.
+    {R, _} = ('MAP-Protocol':'getenc_Supported-MAP-Operations'(OpCode))(T, V, O),
+    C#{opcode => OpCode,
+       K => iolist_to_binary(R)}.
 
 parse_application_context(?'networkLocUpContext-v1') -> 'networkLocUpContext-v1';
 parse_application_context(?'networkLocUpContext-v2') -> 'networkLocUpContext-v2';

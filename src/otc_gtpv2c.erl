@@ -1386,7 +1386,7 @@ decode_parameter(s1_u_data_forwarding_info, V, _) ->
       sgw_address => SGWAddr,
       sgw_s1u_teid => Teid};
 decode_parameter(delay_value, V, _) ->
-    <<Multiples:8/binary>> = V,
+    <<Multiples:8, _/binary>> = V,
     50*Multiples;
 decode_parameter(bearer_context, V, Opts) ->
     %% Bearer Context Grouped Type
@@ -2293,14 +2293,14 @@ decode_parameter(presence_reporting_area_action, V, _) ->
       _:3, ExtendedMacroENBNum:5,
       ExtendedMacroENBs:(6*ExtendedMacroENBNum)/binary>> = R2,
     Action#{flag => case INAPRA of 0 -> active; 1 -> inactive end,
-            tais => [decode_tai(T) || <<T:5>> <= TAIs],
-            rais => [decode_rai(R) || <<R:7>> <= RAIs],
-            macro_enbs => [decode_macro_enodeb_id(M) || <<M:6>> <= MacroENBs],
-            home_enbs => [decode_macro_enodeb_id(H) || <<H:6>> <= HomeENBs],
-            ecgis => [decode_ecgi(E) || <<E:7>> <= ECGIs],
-            sais => [decode_sai(S) || <<S:7>> <= SAIs],
-            cgis => [decode_cgi(C) || <<C:7>> <= CGIs],
-            extended_macro_enbs => [decode_extended_macro_enodeb_id(Ex) || <<Ex:6>> <= ExtendedMacroENBs]};
+            tais => [decode_tai(T) || <<T:5/binary>> <= TAIs],
+            rais => [decode_rai(R) || <<R:7/binary>> <= RAIs],
+            macro_enbs => [decode_macro_enodeb_id(M) || <<M:6/binary>> <= MacroENBs],
+            home_enbs => [decode_macro_enodeb_id(H) || <<H:6/binary>> <= HomeENBs],
+            ecgis => [decode_ecgi(E) || <<E:7/binary>> <= ECGIs],
+            sais => [decode_sai(S) || <<S:7/binary>> <= SAIs],
+            cgis => [decode_cgi(C) || <<C:7/binary>> <= CGIs],
+            extended_macro_enbs => [decode_extended_macro_enodeb_id(Ex) || <<Ex:6/binary>> <= ExtendedMacroENBs]};
 decode_parameter(presence_reporting_area_information, V, _) ->
     <<PRAI:3/binary,
       _:4, INAPRA:1, APRA:1, OPRA:1, IPRA:1,
@@ -2380,7 +2380,7 @@ decode_parameter(monitoring_event_information, V, _) ->
 decode_parameter(ecgi_list, V, _) ->
     <<_ECGINum:2/binary,
       R0/binary>> = V,
-    [decode_ecgi(E) || <<E:7>> <= R0];
+    [decode_ecgi(E) || <<E:7/binary>> <= R0];
 decode_parameter(remote_ue_context, V, Opts) ->
     %% Remote UE Context Grouped Type
     {RemoteUEContext, _} = decode_tliv_list(V, Opts),
