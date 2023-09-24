@@ -1,0 +1,58 @@
+
+NO_ASN1 = false =/= os:getenv("NO_ASN1", false),
+NO_DIA = false =/= os:getenv("NO_DIA", false),
+
+io:format("Compile ASN1s: ~p~n", [NO_ASN1]),
+io:format("Compile DIA: ~p~n", [NO_DIA]),
+
+Remove_from_provider_hooks =
+    fun(Key, Config0) ->
+            case lists:keytake(provider_hooks, 1, Config0) of
+                {value, {provider_hooks, Hooks0}, Config1} ->
+                    Hooks = [{K, [C || {_, {T, _}} = C <- Hs, Key =/= T]}
+                             || {K, Hs} <- Hooks0],
+                    [{provider_hooks, Hooks}|Config1];
+                false ->
+                    Config0
+            end
+    end,
+
+Remove_from_plugins =
+    fun(Key, Config0) ->
+            case lists:keytake(plugins, 1, Config0) of
+                {value, {plugins, Plugins0}, Config1} ->
+                    Plugins = lists:keydelete(Key, 1, Plugins0),
+                    [{plugins, Plugins}|Config1];
+                false ->
+                    Config0
+            end
+    end,
+
+Remove_asn1_config =
+    fun(Config0) ->
+            Config1 = Remove_from_plugins(provider_asn1, Config0),
+            Config2 = Remove_from_provider_hooks(asn, Config1),
+            Config2
+    end,
+
+Remove_dia_config =
+    fun(Config0) ->
+            Config1 = Remove_from_plugins(rebar3_diameter_compiler, Config0),
+            Config1
+    end,
+
+C0 = case NO_ASN1 of
+         false ->
+             CONFIG;
+         _ ->
+             Remove_asn1_config(CONFIG)
+     end,
+
+C1 = case NO_DIA of
+         false ->
+             C0;
+         _ ->
+             Remove_dia_config(C0)
+     end,
+
+C1.
