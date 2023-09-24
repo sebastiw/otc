@@ -44,7 +44,8 @@ create_pdp_context_request_test() ->
             tunnel_endpoint_identifier_data_i => binary:decode_hex(<<"001578aa">>),
             tunnel_endpoint_identifier_control_plane => 3157859433,
             nsapi => 5,
-            end_user_address => ipv4,
+            end_user_address =>
+                #{ipv4 => undefined},
             access_point_name => "internet",
             protocol_configuration_options =>
                 [#{id => 32801,
