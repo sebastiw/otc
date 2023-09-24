@@ -102,8 +102,12 @@ decapsulate_next('$stop', Data, Headers, _Opts) ->
 decapsulate_next(Proto, Data, Headers, #{stop_after := Proto}) ->
     lists:reverse([Data|Headers]);
 decapsulate_next(Proto, Data, Headers, Opts) ->
-    {Header, Payload} = ?MODULE:Proto(Data),
-    decapsulate_next(next({Proto, Header}, Opts), Payload, [Header|Headers], Opts).
+    case ?MODULE:Proto(Data) of
+        {Header, Payload} ->
+            decapsulate_next(next({Proto, Header}, Opts), Payload, [Header|Headers], Opts);
+        Header when is_map(Header) ->
+            lists:reverse([Header#{protocol => Proto}|Headers])
+    end.
 
 %% -spec otc:decode(data()) ->
 %%           {ok, packet()} |
