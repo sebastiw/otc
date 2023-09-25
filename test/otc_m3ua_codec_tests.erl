@@ -86,7 +86,7 @@ m3ua_asptm_aspac_ack_test() ->
     NewBin = otc_m3ua:encode(Val),
     ?assertEqual(Bin, NewBin).
 
-m3ua_tm_data_tcap_empty_begin_test() ->
+m3ua_transfer_data_tcap_empty_begin_test() ->
     D = <<16#11,16#80,16#0f,16#39,16#03,16#0e,16#00,16#0b,
           16#12,16#08,16#00,16#11,16#04,16#64,16#77,16#77,
           16#77,16#77,16#07,16#28,16#62,16#26,16#48,16#04,
@@ -101,7 +101,7 @@ m3ua_tm_data_tcap_empty_begin_test() ->
             16#02,16#10,16#00,16#58,16#00,16#00,16#05,16#04,
             16#00,16#00,16#35,16#a7,16#03,16#03,16#00,16#08,
             D/binary>>,
-    Exp = #{message_class => tm,
+    Exp = #{message_class => transfer,
             message_type => data,
             protocol_data =>
                 #{destination_point_code => <<0,0,53,167>>,
@@ -116,7 +116,7 @@ m3ua_tm_data_tcap_empty_begin_test() ->
     NewBin = otc_m3ua:encode(Val),
     ?assertEqual(Bin, NewBin).
 
-m3ua_tm_data_tcap_empty_continue_test() ->
+m3ua_transfer_data_tcap_empty_continue_test() ->
     D = <<16#09,16#81,16#03,16#0e,16#19,16#0b,16#12,16#08,
           16#00,16#11,16#04,16#64,16#77,16#77,16#77,16#77,
           16#07,16#0b,16#12,16#08,16#00,16#11,16#04,16#64,
@@ -133,7 +133,7 @@ m3ua_tm_data_tcap_empty_continue_test() ->
             16#02,16#10,16#00,16#64,16#00,16#00,16#35,16#a7,
             16#00,16#00,16#05,16#04,16#03,16#03,16#00,16#c4,
             D/binary>>,
-    Exp = #{message_class => tm,
+    Exp = #{message_class => transfer,
             message_type => data,
             protocol_data =>
                 #{destination_point_code => <<0,0,5,4>>,
@@ -148,7 +148,7 @@ m3ua_tm_data_tcap_empty_continue_test() ->
     NewBin = otc_m3ua:encode(Val),
     ?assertEqual(Bin, NewBin).
 
-m3ua_tm_data_tcap_abort_test() ->
+m3ua_transfer_data_tcap_abort_test() ->
     D = <<16#09,16#01,16#03,16#0e,16#19,16#0b,16#12,16#08,
           16#00,16#11,16#04,16#64,16#07,16#77,16#77,16#77,
           16#77,16#0b,16#12,16#08,16#00,16#11,16#04,16#64,
@@ -160,7 +160,7 @@ m3ua_tm_data_tcap_abort_test() ->
             16#02,16#10,16#00,16#39,16#00,16#00,16#35,16#a7,
             16#00,16#00,16#05,16#04,16#03,16#03,16#00,16#ee,
             D/binary,16#00,16#00,16#00>>,
-    Exp = #{message_class => tm,
+    Exp = #{message_class => transfer,
             message_type => data,
             protocol_data =>
                 #{destination_point_code => <<0,0,5,4>>,
