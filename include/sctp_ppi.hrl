@@ -6,7 +6,7 @@
 -define(SCTP_PPI_M2AP, 43).
 -define(SCTP_PPI_M3AP, 44).
 -define(SCTP_PPI_SSH, 45).
--define(SCTP_PPI_Diameter, 46).
--define(SCTP_PPI_Diameter_DTLS, 47).
+-define(SCTP_PPI_DIAMETER, 46).
+-define(SCTP_PPI_DIAMETER_DTLS, 47).
 -define(SCTP_PPI_NGAP, 60).
 -define(SCTP_PPI_NGAP_DTLS, 66).
