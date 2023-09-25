@@ -38,7 +38,7 @@ decode_m3ua_sccp_payload_test() ->
 
     M3ua = #{protocol => m3ua,
              message_type => data,
-             message_class => tm,
+             message_class => transfer,
              protocol_data =>
                  #{service_indicator => sccp,
                    originating_point_code => <<0,0,5,4>>,

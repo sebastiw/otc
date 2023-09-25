@@ -1,7 +1,7 @@
 
 %% 3.1.2.  Message Classes and Types
 -define(M3UA_MSG_CLASS_MGMT, 0).
--define(M3UA_MSG_CLASS_TM, 1).
+-define(M3UA_MSG_CLASS_TRANSFER, 1).
 -define(M3UA_MSG_CLASS_SSNM, 2).
 -define(M3UA_MSG_CLASS_ASPSM, 3).
 -define(M3UA_MSG_CLASS_ASPTM, 4).
@@ -12,7 +12,7 @@
 -define(M3UA_MGMT_TYPE_NTFY, 1).
 
 %% Transfer Messages
--define(M3UA_TM_TYPE_DATA, 1).
+-define(M3UA_TRANSFER_TYPE_DATA, 1).
 
 %% SS7 Signalling Network Management (SSNM) Messages
 -define(M3UA_SSNM_TYPE_DUNA, 1).

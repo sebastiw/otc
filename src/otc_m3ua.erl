@@ -71,14 +71,14 @@ encode(#{message_type := MessageType, message_class := MessageClass} = Msg) ->
     <<1:8, 0:8, MC:8, MT:8, Len:32/big, Bin/binary>>.
 
 parse_message_class(?M3UA_MSG_CLASS_MGMT) -> mgmt;
-parse_message_class(?M3UA_MSG_CLASS_TM) -> tm;
+parse_message_class(?M3UA_MSG_CLASS_TRANSFER) -> transfer;
 parse_message_class(?M3UA_MSG_CLASS_SSNM) -> ssnm;
 parse_message_class(?M3UA_MSG_CLASS_ASPSM) -> aspsm;
 parse_message_class(?M3UA_MSG_CLASS_ASPTM) -> asptm;
 parse_message_class(?M3UA_MSG_CLASS_RKM) -> rkm.
 
 compose_message_class(mgmt) -> ?M3UA_MSG_CLASS_MGMT;
-compose_message_class(tm) -> ?M3UA_MSG_CLASS_TM;
+compose_message_class(transfer) -> ?M3UA_MSG_CLASS_TRANSFER;
 compose_message_class(ssnm) -> ?M3UA_MSG_CLASS_SSNM;
 compose_message_class(aspsm) -> ?M3UA_MSG_CLASS_ASPSM;
 compose_message_class(asptm) -> ?M3UA_MSG_CLASS_ASPTM;
@@ -86,7 +86,7 @@ compose_message_class(rkm) -> ?M3UA_MSG_CLASS_RKM.
 
 parse_message_type(mgmt, ?M3UA_MGMT_TYPE_ERR) -> err;
 parse_message_type(mgmt, ?M3UA_MGMT_TYPE_NTFY) -> ntfy;
-parse_message_type(tm, ?M3UA_TM_TYPE_DATA) -> data;
+parse_message_type(transfer, ?M3UA_TRANSFER_TYPE_DATA) -> data;
 parse_message_type(ssnm, ?M3UA_SSNM_TYPE_DUNA) -> duna;
 parse_message_type(ssnm, ?M3UA_SSNM_TYPE_DAVA) -> dava;
 parse_message_type(ssnm, ?M3UA_SSNM_TYPE_DAUD) -> daud;
@@ -110,7 +110,7 @@ parse_message_type(rkm, ?M3UA_RKM_TYPE_DEREG_RSP) -> dereg_rsp.
 
 compose_message_type(mgmt, err) -> ?M3UA_MGMT_TYPE_ERR;
 compose_message_type(mgmt, ntfy) -> ?M3UA_MGMT_TYPE_NTFY;
-compose_message_type(tm, data) -> ?M3UA_TM_TYPE_DATA;
+compose_message_type(transfer, data) -> ?M3UA_TRANSFER_TYPE_DATA;
 compose_message_type(ssnm, duna) -> ?M3UA_SSNM_TYPE_DUNA;
 compose_message_type(ssnm, dava) -> ?M3UA_SSNM_TYPE_DAVA;
 compose_message_type(ssnm, daud) -> ?M3UA_SSNM_TYPE_DAUD;
@@ -132,7 +132,7 @@ compose_message_type(rkm, reg_rsp) -> ?M3UA_RKM_TYPE_REG_RSP;
 compose_message_type(rkm, dereg_req) -> ?M3UA_RKM_TYPE_DEREG_REQ;
 compose_message_type(rkm, dereg_rsp) -> ?M3UA_RKM_TYPE_DEREG_RSP.
 
-decode_msg(tm, data, Bin) ->
+decode_msg(transfer, data, Bin) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {protocol_data, 16#0210, mandatory, single},
@@ -264,7 +264,7 @@ decode_msg(mgmt, ntfy, Bin) ->
                         ],
     decode_parameters(Bin, AllowedParameters).
 
-encode_msg(tm, data, Msg) ->
+encode_msg(transfer, data, Msg) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {protocol_data, 16#0210, mandatory, single},
