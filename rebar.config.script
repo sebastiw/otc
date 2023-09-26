@@ -1,6 +1,6 @@
 
-NO_ASN1 = false =/= os:getenv("NO_ASN1", false),
-NO_DIA = false =/= os:getenv("NO_DIA", false),
+NO_ASN1 = false =/= os:getenv("OTC_NO_ASN1", false),
+NO_DIA = false =/= os:getenv("OTC_NO_DIA", false),
 
 io:format("Compile ASN1s: ~p~n", [NO_ASN1]),
 io:format("Compile DIA: ~p~n", [NO_DIA]),
