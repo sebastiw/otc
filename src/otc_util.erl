@@ -52,7 +52,7 @@ enc_tbcd_digit(B) when B =:= $B; B =:= $b -> 2#1101;
 enc_tbcd_digit(C) when C =:= $C; C =:= $c -> 2#1110;
 enc_tbcd_digit(F) when F =:= $F; F =:= $f -> 2#1111.
 
-%% 3GPP TS 24.008 
+%% 3GPP TS 24.008
 decode_common_mcc_mnc(<<MCC2:4, MCC1:4, 2#1111:4, MCC3:4, MNC2:4, MNC1:4>>) ->
     lists:map(fun dec_tbcd_digit/1, [MCC1, MCC2, MCC3, MNC1, MNC2]);
 decode_common_mcc_mnc(<<MCC2:4, MCC1:4, MNC3:4, MCC3:4, MNC2:4, MNC1:4>>) ->

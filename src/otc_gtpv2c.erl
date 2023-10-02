@@ -13,18 +13,28 @@
         ]).
 
 %% Used in GTPv1-C
--export([tbcd_decode/1,
-         decode_mcc_mnc/1,
-         bin_to_ip_addr/1,
+-export([decode_mcc_mnc/1,
+         encode_mcc_mnc/1,
+         decode_ip_addr/1,
+         encode_ip_addr/1,
          decode_apn/1,
+         encode_apn/1,
          decode_pco/1,
+         encode_pco/1,
          decode_rai/1,
+         encode_rai/1,
          decode_sai/1,
+         encode_sai/1,
          decode_cgi/1,
+         encode_cgi/1,
          decode_csg_id/1,
+         encode_csg_id/1,
          decode_plmn_id/1,
+         encode_plmn_id/1,
          decode_timezone/1,
-         decode_imeisv/1
+         encode_timezone/1,
+         decode_imeisv/1,
+         encode_imeisv/1
         ]).
 
 spec() ->
@@ -1041,7 +1051,7 @@ compose_iei(private_extension) ->
 
 decode_parameter(imsi, V, _) ->
     %% ITU-T Rec E.212 TBCD digits
-    tbcd_decode(V);
+    otc_util:decode_tbcd(V);
 decode_parameter(cause, V, _) ->
     <<C:8, _S:5, PCE:1, BCE:1, CS:1, Rest0/binary>> = V,
     Is = case C >= 16 andalso C =< 63 of
@@ -1078,11 +1088,11 @@ decode_parameter(eps_bearer_id, V, _) ->
     <<_:4, EBI:4, _/binary>> = V,
     EBI;
 decode_parameter(ip_address, V, _) ->
-    bin_to_ip_addr(V);
+    decode_ip_addr(V);
 decode_parameter(mei, V, _) ->
     decode_imeisv(V);
 decode_parameter(msisdn, V, _) ->
-    tbcd_decode(V);
+    otc_util:decode_tbcd(V);
 decode_parameter(indication, V0, _) ->
     V = <<V0/binary, 0:(80-bit_size(V0))>>,
     <<DAF:1, DTF:1, HI:1, DFI:1, OI:1, ISRSI:1, ISRAI:1, SGWCI:1,
@@ -1183,14 +1193,14 @@ decode_parameter(pdn_address_allocation, V, _) ->
     case pdn_type(PDN) of
         ipv4 ->
             <<IPv4:4/binary, _/binary>> = R0,
-            #{ipv4 => bin_to_ip_addr(IPv4)};
+            #{ipv4 => decode_ip_addr(IPv4)};
         ipv6 ->
             <<IPv6:16/binary, _/binary>> = R0,
-            #{ipv6 => bin_to_ip_addr(IPv6)};
+            #{ipv6 => decode_ip_addr(IPv6)};
         ipv4v6 ->
             <<IPv4:4/binary, IPv6:16/binary, _/binary>> = R0,
-            #{ipv4 => bin_to_ip_addr(IPv4),
-              ipv6 => bin_to_ip_addr(IPv6)};
+            #{ipv4 => decode_ip_addr(IPv4),
+              ipv6 => decode_ip_addr(IPv6)};
         T ->
             T
     end;
@@ -1354,16 +1364,16 @@ decode_parameter(f_teid, V, _) ->
         {1, 0} ->
             #{interface_type => InterfaceType,
               teid_gre_key => TEIDGRE,
-              ipv4 => bin_to_ip_addr(IPv4)};
+              ipv4 => decode_ip_addr(IPv4)};
         {0, 1} ->
             #{interface_type => InterfaceType,
               teid_gre_key => TEIDGRE,
-              ipv6 => bin_to_ip_addr(IPv6)};
+              ipv6 => decode_ip_addr(IPv6)};
         {1, 1} ->
             #{interface_type => InterfaceType,
               teid_gre_key => TEIDGRE,
-              ipv4 => bin_to_ip_addr(IPv4),
-              ipv6 => bin_to_ip_addr(IPv6)}
+              ipv4 => decode_ip_addr(IPv4),
+              ipv6 => decode_ip_addr(IPv6)}
     end;
 decode_parameter(tmsi, V, _) ->
     %% Defined in 3GPP TS 23.003
@@ -1420,7 +1430,7 @@ decode_parameter(trace_information, V, _) ->
             %% Encoded as the first 12 octets in clause 5.5 of 3GPP TS 32.422
             list_of_interfaces => ListOfInterfaces,
             %% Specified in 3GPP TS 32.422
-            ip_address => bin_to_ip_addr(IPAddr)};
+            ip_address => decode_ip_addr(IPAddr)};
 decode_parameter(bearer_flags, V, _) ->
     <<_:4, ASI:1, Vind:1, VB:1, PPC:1>> = V,
     #{prohibit_payload_compression => PPC,
@@ -1836,10 +1846,10 @@ decode_parameter(fq_csid, V, _) ->
     {NodeId, R2} = case NodeIDType of
                        0 ->
                            <<NID:4/binary, R1/binary>> = R0,
-                           {#{ipv4 => bin_to_ip_addr(NID)}, R1};
+                           {#{ipv4 => decode_ip_addr(NID)}, R1};
                        1 ->
                            <<NID:16/binary, R1/binary>> = R0,
-                           {#{ipv6 => bin_to_ip_addr(NID)}, R1};
+                           {#{ipv6 => decode_ip_addr(NID)}, R1};
                        2 ->
                            <<MCCMNC:20, NID:12, R1/binary>> = R0,
                            {MCC, MNC} = lists:split(3, integer_to_list(MCCMNC)),
@@ -1893,18 +1903,18 @@ decode_parameter(mbms_ip_multicast_distribution, V, _) ->
     IPMulticastDistributionAddress = case {DAType, DALen} of
                                          {0, 4} ->
                                              %% ipv4
-                                             #{ipv4 => bin_to_ip_addr(IPMD)};
+                                             #{ipv4 => decode_ip_addr(IPMD)};
                                          {1, 16} ->
                                              %% ipv6
-                                             #{ipv6 => bin_to_ip_addr(IPMD)}
+                                             #{ipv6 => decode_ip_addr(IPMD)}
                                      end,
     IPMulticastSourceAddress = case {SAType, SALen} of
                                    {0, 4} ->
                                        %% ipv4
-                                       #{ipv4 => bin_to_ip_addr(IPMS)};
+                                       #{ipv4 => decode_ip_addr(IPMS)};
                                    {1, 16} ->
                                        %% ipv6
-                                       #{ipv6 => bin_to_ip_addr(IPMS)}
+                                       #{ipv6 => decode_ip_addr(IPMS)}
                                end,
     #{cteid => CTEID,
       ip_multicast_distribution_address => IPMulticastDistributionAddress,
@@ -2182,10 +2192,10 @@ decode_parameter(twan_identifier, V, _) ->
                    case {RelayIdType, RelayIdLen} of
                        {0, 4} ->
                            %% IPv4
-                           #{ipv4 => bin_to_ip_addr(RI), circuit_id => CId};
+                           #{ipv4 => decode_ip_addr(RI), circuit_id => CId};
                        {0, 16} ->
                            %% IPv6
-                           #{ipv6 => bin_to_ip_addr(RI), circuit_id => CId};
+                           #{ipv6 => decode_ip_addr(RI), circuit_id => CId};
                        {1, _} ->
                            %% FQDN
                            #{fqdn => RI, circuit_id => CId}
@@ -2582,17 +2592,17 @@ decode_parameter(sgi_ptp_tunnel_address, V, _) ->
             #{port => Port};
         {0, 1, 0} ->
             <<IPv6:16/binary>> = R0,
-            #{ipv6 => bin_to_ip_addr(IPv6)};
+            #{ipv6 => decode_ip_addr(IPv6)};
         {0, 1, 1} ->
             <<IPv6:16/binary, Port:16>> = R0,
-            #{ipv6 => bin_to_ip_addr(IPv6),
+            #{ipv6 => decode_ip_addr(IPv6),
               port => Port};
         {1, 0, 0} ->
             <<IPv4:4/binary>> = R0,
-            #{ipv4 => bin_to_ip_addr(IPv4)};
+            #{ipv4 => decode_ip_addr(IPv4)};
         {1, 0, 1} ->
             <<IPv4:4/binary, Port:16>> = R0,
-            #{ipv4 => bin_to_ip_addr(IPv4),
+            #{ipv4 => decode_ip_addr(IPv4),
               port => Port}
     end;
 decode_parameter(pgw_change_info, V, Opts) ->
@@ -2622,7 +2632,7 @@ decode_parameter(up_security_policy, V, _) ->
     end;
 decode_parameter(alternative_imsi, V, _) ->
     %% ITU-T Rec E.212 TBCD digits
-    tbcd_decode(V);
+    otc_util:decode_tbcd(V);
 decode_parameter(_, V, _) ->
     V.
 
@@ -2640,6 +2650,16 @@ decode_apn(<<>>, Acc) ->
 decode_apn(<<A1L, A1:A1L/binary, A2/binary>>, Acc) ->
     decode_apn(A2, [binary_to_list(A1) | Acc]).
 
+encode_apn(APN) ->
+    Parts = string:split(APN, "."),
+    encode_apn(lists:reverse(Parts), <<>>).
+
+encode_apn([], Acc) ->
+    Acc;
+encode_apn([A1|Parts], Acc) ->
+    A1L = byte_size(A1),
+    encode_apn(Parts, <<A1L, A1:A1L/binary, Acc/binary>>).
+
 decode_mcc_mnc(V) ->
     <<MCC2:4/big, MCC1:4/big,
       MNC3:4/big, MCC3:4/big,
@@ -2652,16 +2672,30 @@ decode_mcc_mnc(V) ->
                   [MNC1+$0, MNC2+$0, MNC3+$0]
           end,
     #{mcc => MCC, mnc => MNC}.
+encode_mcc_mnc(V) ->
+    #{mcc := MCC, mnc := MNC} = V,
+    [MCC1, MCC2, MCC3] = [C-$0 || C <- MCC],
+    [MNC1, MNC2, MNC3|_] = [N-$0 || N <- MNC] ++ [2#1111],
+    <<MCC2:4/big, MCC1:4/big,
+      MNC3:4/big, MCC3:4/big,
+      MNC2:4/big, MNC1:4/big>>.
 
-bin_to_ip_addr(IP) ->
+decode_ip_addr(IP) ->
     L = case byte_size(IP) of
             4  -> 8;
             16 -> 16
         end,
     IPParts = [A || <<A:L>> <= IP],
     list_to_tuple(IPParts).
+encode_ip_addr(IP) ->
+    IPParts = tuple_to_list(IP),
+    L = case length(IPParts) of
+            4  -> 8;
+            16 -> 16
+        end,
+    <<<<A:L>> || A <- IPParts>>.
 
-bin_to_mac_addr(IP) ->
+decode_mac_addr(IP) ->
     MACParts = [binary_to_list(A) || <<A:1/binary>> <= IP],
     lists:join(":", MACParts).
 
@@ -2818,17 +2852,35 @@ decode_cgi(V) ->
     MCCMNC#{location_area_code => LAC,
             cell_identity => CI}.
 
+encode_cgi(V) ->
+    #{location_area_code := LAC,
+      cell_identity := CI} = V,
+    MCCMNCBin = encode_mcc_mnc(V),
+    <<MCCMNCBin:3/binary, LAC:16, CI:16>>.
+
 decode_sai(V) ->
     <<MCCMNCBin:3/binary, LAC:16, SAC:16>> = V,
     MCCMNC = decode_mcc_mnc(MCCMNCBin),
     MCCMNC#{location_area_code => LAC,
             service_area_code => SAC}.
 
+encode_sai(V) ->
+    #{location_area_code := LAC,
+      service_area_code := SAC} = V,
+    MCCMNCBin = encode_mcc_mnc(V),
+    <<MCCMNCBin:3/binary, LAC:16, SAC:16>>.
+
 decode_rai(V) ->
     <<MCCMNCBin:3/binary, LAC:16, RAC:8, _/binary>> = V,
     MCCMNC = decode_mcc_mnc(MCCMNCBin),
     MCCMNC#{location_area_code => LAC,
             routing_area_code => RAC}.
+
+encode_rai(V) ->
+    #{location_area_code := LAC,
+      routing_area_code := RAC} = V,
+    MCCMNCBin = encode_mcc_mnc(V),
+    <<MCCMNCBin:3/binary, LAC:16, RAC:8>>.
 
 decode_tai(V) ->
     <<MCCMNCBin:3/binary, TAC:16>> = V,
@@ -2864,6 +2916,9 @@ decode_csg_id(CSGIDBin) ->
     <<_:5, CSGID:27>> = CSGIDBin,
     CSGID.
 
+encode_csg_id(CSGID) ->
+    <<0:5, CSGID:27>>.
+
 decode_plmn_id(V) ->
     %% Different MCC/MNC encoding than rest of the protocol
     <<MCC2:4/big, MCC1:4/big,
@@ -2877,6 +2932,20 @@ decode_plmn_id(V) ->
                   [MNC1+$0, MNC2+$0, MNC3+$0]
           end,
     #{mcc => MCC, mnc => MNC}.
+
+encode_plmn_id(V) ->
+    %% Different MCC/MNC encoding than rest of the protocol
+    #{mcc := MCC, mnc := MNC} = V,
+    [MCC1, MCC2, MCC3] = [C-$0 || C <- MCC],
+    [MNC1, MNC2, MNC3] = case length(MNC) of
+                             2 ->
+                                 [2#1111] ++ [N-$0 || N <- MNC];
+                             3 ->
+                                 [N-$0 || N <- MNC]
+                         end,
+    <<MCC2:4/big, MCC1:4/big,
+      MNC1:4/big, MCC3:4/big,
+      MNC3:4/big, MNC2:4/big>>.
 
 decode_timezone(V) ->
     <<TZa:4, S:1, TZb:3,
@@ -2922,6 +2991,24 @@ decode_timezone(V) ->
     #{time_zone => Tz*15,
       daylight_saving_time => DST}.
 
+encode_timezone(V) ->
+    #{time_zone := Tz,
+      daylight_saving_time := DST} = V,
+    DaylightSavingTime = case DST of
+                             no_adjustment -> 0;
+                             plus_one_hour -> 1;
+                             plus_two_hours -> 2
+                         end,
+    TzR = Tz div 15,
+    TZa = TzR rem 10,
+    TZb = (TzR - TZa) div 10,
+    S = case Tz < 0 of
+            true -> 1;
+            false ->  0
+        end,
+    <<TZa:4, S:1, TZb:3,
+      0:6, DaylightSavingTime:2>>.
+
 decode_imeisv(V) ->
     %% The ME Identity field contains either the IMEI or the IMEISV as
     %% defined in clause 6.2 of 3GPP TS 23.003 [2]. It is encoded as
@@ -2931,7 +3018,7 @@ decode_imeisv(V) ->
     %% 15 BCD digits and IMEISV is 16 BCD digits. For IMEI, bits 5 to
     %% 8 of the last octet shall be filled with an end mark coded as
     %% '1111'.
-    IMEISV = tbcd_decode(V),
+    IMEISV = otc_util:decode_tbcd(V),
     case length(IMEISV) of
         15 ->
             #{imei => IMEISV};
@@ -2939,6 +3026,15 @@ decode_imeisv(V) ->
             {IMEI, SV} = lists:split(15, IMEISV),
             #{imei => IMEI, sv => SV}
     end.
+
+encode_imeisv(V) ->
+    IMEISV = case V of
+                 #{imei := IMEI, sv := SV} ->
+                     IMEI ++ SV;
+                 #{imei := IMEI} ->
+                     IMEI
+             end,
+    otc_util:encode_tbcd(IMEISV).
 
 datetime_from_epoch(Seconds) ->
     Epoch = calendar:datetime_to_gregorian_seconds({{1900, 1, 1}, {0, 0, 0}}),
@@ -3000,6 +3096,36 @@ decode_pco(V) ->
           end,
     [PCO | decode_pco(R2)].
 
+encode_pco([]) ->
+    <<>>;
+encode_pco([#{id := ID} = PCO | R2]) ->
+    LenLen =
+        case ID of
+            16#0023 ->
+                %% QoS rules with the length of two octets
+                16;
+            16#0024 ->
+                %% QoS flow descriptions with the length of two octets);
+                16;
+            16#0030 ->
+                %% ATSSS response with the length of two octets);
+                16;
+            16#0031 ->
+                %% DNS server security information with length of two octets);
+                16;
+            16#0032 ->
+                %% ECS address with the length of two octets);or
+                16;
+            16#0041 ->
+                %% Service-level-AA container with the length of two octets);
+                16;
+            _ ->
+                8
+        end,
+    Content = maps:get(content, PCO, <<>>),
+    ContentLen = byte_size(Content),
+    <<ID:16, ContentLen:LenLen, Content:ContentLen/binary, (encode_pco(R2))/binary>>.
+
 decode_allocation_retention_priority(V) ->
     <<_:1, PCI:1, PL:4, _:1, PVI:1>> = V,
     #{priority_level => PL,
@@ -3046,35 +3172,35 @@ decode_tft_packet_filter_content(<<2#0001_0000:8, R0/binary>>, Acc) ->
     %% IPv4 remote address type
     <<IPv4:4/binary, IPv4Mask:4/binary, R1/binary>> = R0,
     Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{ipv4 => bin_to_ip_addr(IPv4),
-             mask => bin_to_ip_addr(IPv4Mask)},
+    V = Rem#{ipv4 => decode_ip_addr(IPv4),
+             mask => decode_ip_addr(IPv4Mask)},
     decode_tft_packet_filter_content(R1, Acc#{remote => V});
 decode_tft_packet_filter_content(<<2#0001_0001:8, R0/binary>>, Acc) ->
     %% IPv4 local address type
     <<IPv4:4/binary, IPv4Mask:4/binary, R1/binary>> = R0,
     Loc = maps:get(local, Acc, #{}),
-    V = Loc#{ipv4 => bin_to_ip_addr(IPv4),
-             mask => bin_to_ip_addr(IPv4Mask)},
+    V = Loc#{ipv4 => decode_ip_addr(IPv4),
+             mask => decode_ip_addr(IPv4Mask)},
     decode_tft_packet_filter_content(R1, Acc#{local => V});
 decode_tft_packet_filter_content(<<2#0010_0000:8, R0/binary>>, Acc) ->
     %% IPv6 remote address type
     <<IPv6:16/binary, Mask:16/binary, R1/binary>> = R0,
     Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{ipv6 => bin_to_ip_addr(IPv6),
-             mask => bin_to_ip_addr(Mask)},
+    V = Rem#{ipv6 => decode_ip_addr(IPv6),
+             mask => decode_ip_addr(Mask)},
     decode_tft_packet_filter_content(R1, Acc#{remote => V});
 decode_tft_packet_filter_content(<<2#0010_0001:8, R0/binary>>, Acc) ->
     %% IPv6 remote address/prefix length type
     <<IPv6:16/binary, PrefixLen:1/binary, R1/binary>> = R0,
     Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{ipv6 => bin_to_ip_addr(IPv6),
+    V = Rem#{ipv6 => decode_ip_addr(IPv6),
              prefix_length => PrefixLen},
     decode_tft_packet_filter_content(R1, Acc#{remote => V});
 decode_tft_packet_filter_content(<<2#0010_0011:8, R0/binary>>, Acc) ->
     %% IPv6 local address/prefix length type
     <<IPv6:16/binary, PrefixLen:1/binary, R1/binary>> = R0,
     Loc = maps:get(local, Acc, #{}),
-    V = Loc#{ipv6 => bin_to_ip_addr(IPv6),
+    V = Loc#{ipv6 => decode_ip_addr(IPv6),
              prefix_length => PrefixLen},
     decode_tft_packet_filter_content(R1, Acc#{local => V});
 decode_tft_packet_filter_content(<<2#0011_0000:8, R0/binary>>, Acc) ->
@@ -3123,11 +3249,11 @@ decode_tft_packet_filter_content(<<2#1000_0000:8, R0/binary>>, Acc) ->
 decode_tft_packet_filter_content(<<2#1000_0001:8, R0/binary>>, Acc) ->
     %% Destination MAC address type
     <<MAC:6/binary, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{destination_mac => bin_to_mac_addr(MAC)});
+    decode_tft_packet_filter_content(R1, Acc#{destination_mac => decode_mac_addr(MAC)});
 decode_tft_packet_filter_content(<<2#1000_0010:8, R0/binary>>, Acc) ->
     %% Source MAC address type
     <<MAC:6/binary, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{source_mac => bin_to_mac_addr(MAC)});
+    decode_tft_packet_filter_content(R1, Acc#{source_mac => decode_mac_addr(MAC)});
 decode_tft_packet_filter_content(<<2#1000_0011:8, R0/binary>>, Acc) ->
     %% 802.1Q C-TAG VID type
     <<_:4, VID:12, R1/binary>> = R0,
@@ -5142,30 +5268,6 @@ decode_msg(mbms_session_stop_response, Bin0) ->
     {Msg, _Unknown} = decode_tliv_list(Bin0, Fields),
     Msg#{message_group => mbms
         }.
-
-tbcd_decode(<<>>) ->
-    [];
-tbcd_decode(<<2#1111:4, A:4>>) ->
-    [tbcd_decode_num(A)];
-tbcd_decode(<<B:4, A:4, Rest/binary>>) ->
-    [tbcd_decode_num(A), tbcd_decode_num(B) | tbcd_decode(Rest)].
-
-tbcd_decode_num(2#0000) -> $0;
-tbcd_decode_num(2#0001) -> $1;
-tbcd_decode_num(2#0010) -> $2;
-tbcd_decode_num(2#0011) -> $3;
-tbcd_decode_num(2#0100) -> $4;
-tbcd_decode_num(2#0101) -> $5;
-tbcd_decode_num(2#0110) -> $6;
-tbcd_decode_num(2#0111) -> $7;
-tbcd_decode_num(2#1000) -> $8;
-tbcd_decode_num(2#1001) -> $9;
-tbcd_decode_num(2#1010) -> $A;
-tbcd_decode_num(2#1011) -> $B;
-tbcd_decode_num(2#1100) -> $C;
-tbcd_decode_num(2#1101) -> $D;
-tbcd_decode_num(2#1110) -> $E;
-tbcd_decode_num(2#1111) -> $F.
 
 encode_msg(_, _Msg) ->
     <<>>.

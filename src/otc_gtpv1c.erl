@@ -452,7 +452,7 @@ decode_ieis(<<?GTPv1C_IEI_CAUSE:8, Value:1/binary, Rest/binary>>) ->
     C = parse_iei_cause(V),
     [{cause, C}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_IMSI:8, Value:8/binary, Rest/binary>>) ->
-    IMSI = otc_gtpv2c:tbcd_decode(Value),
+    IMSI = otc_util:decode_tbcd(Value),
     [{imsi, IMSI}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_RAI:8, Value:6/binary, Rest/binary>>) ->
     RAI = otc_gtpv2c:decode_rai(Value),
@@ -728,9 +728,9 @@ decode_ieis(<<?GTPv1C_IEI_GSN_ADDRESS:8, L:16, Value:L/binary, Rest/binary>>) ->
     %% Defined in 3GPP TS 23.003
     A = case L of
             4 ->
-                #{ipv4 => otc_gtpv2c:bin_to_ip_addr(Value)};
+                #{ipv4 => otc_gtpv2c:decode_ip_addr(Value)};
             16 ->
-                #{ipv6 => otc_gtpv2c:bin_to_ip_addr(Value)}
+                #{ipv6 => otc_gtpv2c:decode_ip_addr(Value)}
         end,
     [{gsn_address, A}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_MSISDN:8, L:16, Value:L/binary, Rest/binary>>) ->
@@ -740,7 +740,7 @@ decode_ieis(<<?GTPv1C_IEI_MSISDN:8, L:16, Value:L/binary, Rest/binary>>) ->
     %% data type defined in 3GPP TS 29.002. The MSISDN shall be in
     %% international format and the "nature of address indicator"
     %% shall indicate "international number".
-    MSISDN = otc_gtpv2c:tbcd_decode(Value),
+    MSISDN = otc_util:decode_tbcd(Value),
     [{msisdn, MSISDN}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_QUALITY_OF_SERVICE_PROFILE:8, L:16, Value:L/binary, Rest/binary>>) ->
     QoS = decode_qos(Value),
@@ -999,15 +999,15 @@ decode_ieis(<<?GTPv1C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION:8, L:16, Value:L/binary
       HCInd:8>> = Value,
     DAddress = case {DAddrType, DAddrLen} of
                    {0, 4} ->
-                       #{ipv4 => otc_gtpv2c:bin_to_ip_addr(DAddr)};
+                       #{ipv4 => otc_gtpv2c:decode_ip_addr(DAddr)};
                    {1, 16} ->
-                       #{ipv6 => otc_gtpv2c:bin_to_ip_addr(DAddr)}
+                       #{ipv6 => otc_gtpv2c:decode_ip_addr(DAddr)}
                end,
     SAddress = case {SAddrType, SAddrLen} of
                    {0, 4} ->
-                       #{ipv4 => otc_gtpv2c:bin_to_ip_addr(SAddr)};
+                       #{ipv4 => otc_gtpv2c:decode_ip_addr(SAddr)};
                    {1, 16} ->
-                       #{ipv6 => otc_gtpv2c:bin_to_ip_addr(SAddr)}
+                       #{ipv6 => otc_gtpv2c:decode_ip_addr(SAddr)}
                end,
     MultiDist = #{common_tunnel_endpoint_identifier_data => CData,
                   distribution_address => DAddress,
@@ -1284,11 +1284,11 @@ decode_ieis(<<?GTPv1C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION:8, L:16, Value:L
     [{special_ie_type_for_ie_type_extension, Ext}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_CHARGING_GATEWAY_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 16 ->
     <<Value:16/binary, _/binary>> = Value0,
-    IP = #{ipv6 => otc_gtpv2c:bin_to_ip_addr(Value)},
+    IP = #{ipv6 => otc_gtpv2c:decode_ip_addr(Value)},
     [{charging_gateway_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_CHARGING_GATEWAY_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 4 ->
     <<Value:4/binary, _/binary>> = Value0,
-    IP = #{ipv4 => otc_gtpv2c:bin_to_ip_addr(Value)},
+    IP = #{ipv4 => otc_gtpv2c:decode_ip_addr(Value)},
     [{charging_gateway_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_PRIVATE_EXTENSION:8, L:16, Value:L/binary, Rest/binary>>) ->
     %% The Extension Identifier is a value defined in the Private
@@ -1300,11 +1300,11 @@ decode_ieis(<<?GTPv1C_IEI_PRIVATE_EXTENSION:8, L:16, Value:L/binary, Rest/binary
     [{private_extension, Ext}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_GTP_U_PEER_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 16 ->
     <<Value:16/binary, _/binary>> = Value0,
-    IP = #{ipv6 => otc_gtpv2c:bin_to_ip_addr(Value)},
+    IP = #{ipv6 => otc_gtpv2c:decode_ip_addr(Value)},
     [{gtp_u_peer_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_GTP_U_PEER_ADDRESS:8, L:16, Value0:L/binary, Rest/binary>>) when L >= 4 ->
     <<Value:4/binary, _/binary>> = Value0,
-    IP = #{ipv4 => otc_gtpv2c:bin_to_ip_addr(Value)},
+    IP = #{ipv4 => otc_gtpv2c:decode_ip_addr(Value)},
     [{gtp_u_peer_address, IP}|decode_ieis(Rest)];
 decode_ieis(<<?GTPv1C_IEI_RECOVERY_TIME_STAMP:8, L:16, Value:L/binary, Rest/binary>>) ->
     <<Seconds:32, Fractions:32, _/binary>> = Value,
@@ -1321,7 +1321,7 @@ encode_ieis([{cause, C}|Rest]) ->
     Value = <<V:8>>,
     <<?GTPv1C_IEI_CAUSE:8, Value:1/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{imsi, IMSI}|Rest]) ->
-    Value = otc_gtpv2c:tbcd_encode(IMSI),
+    Value = otc_util:encode_tbcd(IMSI),
     <<?GTPv1C_IEI_IMSI:8, Value:8/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{rai, RAI}|Rest]) ->
     Value = otc_gtpv2c:encode_rai(RAI),
@@ -1604,20 +1604,20 @@ encode_ieis([{pdp_context, PDPContext}|Rest]) ->
     {PTO, PDA, Ex} = case PDPAddr of
                          #{ipv4 := IPv4,
                            ipv6 := IPv6} ->
-                             PAddr = otc_gtpv2c:ip_addr_to_bin(IPv4),
+                             PAddr = otc_gtpv2c:encode_ip_addr(IPv4),
                              PALen = byte_size(PAddr),
                              P = <<16#21, PALen:8, PAddr:PALen/binary>>,
-                             EPAddr = otc_gtpv2c:ip_addr_to_bin(IPv6),
+                             EPAddr = otc_gtpv2c:encode_ip_addr(IPv6),
                              EPALen = byte_size(EPAddr),
                              E = <<16#57:8, EPALen:8, EPAddr:EPALen/binary>>,
                              {1, P, E};
                          #{ipv4 := IPv4} ->
-                             PAddr = otc_gtpv2c:ip_addr_to_bin(IPv4),
+                             PAddr = otc_gtpv2c:encode_ip_addr(IPv4),
                              PALen = byte_size(PAddr),
                              P = <<16#21, PALen:8, PAddr:PALen/binary>>,
                              {1, P, <<>>};
                          #{ipv6 := IPv6} ->
-                             EPAddr = otc_gtpv2c:ip_addr_to_bin(IPv6),
+                             EPAddr = otc_gtpv2c:encode_ip_addr(IPv6),
                              EPALen = byte_size(EPAddr),
                              E = <<16#57:8, EPALen:8, EPAddr:EPALen/binary>>,
                              {1, E, <<>>}
@@ -1664,9 +1664,9 @@ encode_ieis([{gsn_address, A}|Rest]) ->
     %% Defined in 3GPP TS 23.003
     Value = case A of
                 #{ipv4 := IPv4} ->
-                    otc_gtpv2c:ip_addr_to_bin(IPv4);
+                    otc_gtpv2c:encode_ip_addr(IPv4);
                 #{ipv6 := IPv6} ->
-                    otc_gtpv2c:ip_addr_to_bin(IPv6)
+                    otc_gtpv2c:encode_ip_addr(IPv6)
             end,
     L = byte_size(Value),
     <<?GTPv1C_IEI_GSN_ADDRESS:8, L:16, Value:L/binary, (encode_ieis(Rest))/binary>>;
@@ -1677,7 +1677,7 @@ encode_ieis([{msisdn, MSISDN}|Rest]) ->
     %% data type defined in 3GPP TS 29.002. The MSISDN shall be in
     %% international format and the "nature of address indicator"
     %% shall indicate "international number".
-    Value = otc_gtpv2c:tbcd_encode(MSISDN),
+    Value = otc_util:encode_tbcd(MSISDN),
     L = byte_size(Value),
     <<?GTPv1C_IEI_MSISDN:8, L:16, Value:L/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{quality_of_service_profile, QoS}|Rest]) ->
@@ -1974,16 +1974,16 @@ encode_ieis([{mbms_ip_multicast_distribution, MultiDist}|Rest]) ->
       mbms_hc_indicator := HCInd} = MultiDist,
     {DAddrType, DAddr} = case DAddress of
                              #{ipv4 := DIPv4} ->
-                                 {0, otc_gtpv2c:ip_addr_to_bin(DIPv4)};
+                                 {0, otc_gtpv2c:encode_ip_addr(DIPv4)};
                              #{ipv6 := DIPv6} ->
-                                 {1, otc_gtpv2c:ip_addr_to_bin(DIPv6)}
+                                 {1, otc_gtpv2c:encode_ip_addr(DIPv6)}
                             end,
     DAddrLen = byte_size(DAddr),
     {SAddrType, SAddr} = case SAddress of
                              #{ipv4 := SIPv4} ->
-                                 {0, otc_gtpv2c:ip_addr_to_bin(SIPv4)};
+                                 {0, otc_gtpv2c:encode_ip_addr(SIPv4)};
                              #{ipv6 := SIPv6} ->
-                                 {1, otc_gtpv2c:ip_addr_to_bin(SIPv6)}
+                                 {1, otc_gtpv2c:encode_ip_addr(SIPv6)}
                          end,
     SAddrLen = byte_size(SAddr),
     Value = <<CData:4/binary,
@@ -2312,11 +2312,11 @@ encode_ieis([{special_ie_type_for_ie_type_extension, Ext}|Rest]) ->
     L = byte_size(Value),
     <<?GTPv1C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION:8, L:16, Value:L/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{charging_gateway_address, #{ipv6 := IP}}|Rest]) ->
-    Value = otc_gtpv2c:ip_addr_to_bin(IP),
+    Value = otc_gtpv2c:encode_ip_addr(IP),
     L = byte_size(Value),
     <<?GTPv1C_IEI_CHARGING_GATEWAY_ADDRESS:8, L:16, Value:L/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{charging_gateway_address, #{ipv4 := IP}}|Rest]) ->
-    Value = otc_gtpv2c:ip_addr_to_bin(IP),
+    Value = otc_gtpv2c:encode_ip_addr(IP),
     L = byte_size(Value),
     <<?GTPv1C_IEI_CHARGING_GATEWAY_ADDRESS:8, L:16, Value:L/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{private_extension, Ext}|Rest]) ->
@@ -2329,12 +2329,12 @@ encode_ieis([{private_extension, Ext}|Rest]) ->
     L = byte_size(Value),
     <<?GTPv1C_IEI_PRIVATE_EXTENSION:8, L:16, Value:L/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{gtp_u_peer_address, #{ipv6 := IP}}|Rest]) ->
-    Value = otc_gtpv2c:ip_addr_to_bin(IP),
+    Value = otc_gtpv2c:encode_ip_addr(IP),
     Value0 = <<Value:16/binary>>,
     L = byte_size(Value0),
     <<?GTPv1C_IEI_GTP_U_PEER_ADDRESS:8, L:16, Value0:L/binary, (encode_ieis(Rest))/binary>>;
 encode_ieis([{gtp_u_peer_address, #{ipv4 := IP}}|Rest]) ->
-    Value = otc_gtpv2c:ip_addr_to_bin(IP),
+    Value = otc_gtpv2c:encode_ip_addr(IP),
     Value0 = <<Value:4/binary>>,
     L = byte_size(Value0),
     <<?GTPv1C_IEI_GTP_U_PEER_ADDRESS:8, L:16, Value0:L/binary, (encode_ieis(Rest))/binary>>;
@@ -4118,13 +4118,13 @@ decode_pdp_address(Org, Type, Addr) ->
                   non_ip ->
                       #{non_ip => Addr};
                   ipv4 ->
-                      #{ipv4 => otc_gtpv2c:bin_to_ip_addr(Addr)};
+                      #{ipv4 => otc_gtpv2c:decode_ip_addr(Addr)};
                   ipv6 ->
-                      #{ipv6 => otc_gtpv2c:bin_to_ip_addr(Addr)};
+                      #{ipv6 => otc_gtpv2c:decode_ip_addr(Addr)};
                   ipv4v6 ->
                       <<IPv4:4/binary, IPv6:16/binary, _/binary>> = Addr,
-                      #{ipv4 => otc_gtpv2c:bin_to_ip_addr(IPv4),
-                        ipv6 => otc_gtpv2c:bin_to_ip_addr(IPv6)}
+                      #{ipv4 => otc_gtpv2c:decode_ip_addr(IPv4),
+                        ipv6 => otc_gtpv2c:decode_ip_addr(IPv6)}
               end,
     Address.
 
@@ -4161,19 +4161,19 @@ encode_pdp_address(#{ipv4 := IPv4,
                      ipv6 := IPv6}) ->
     {Org, Type} = compose_pdp_address_type(ipv4v6),
     Organization = compose_pdp_address_org(Org),
-    IPv4Bin = otc_gtpv2c:ip_addr_to_bin(IPv4),
-    IPv6Bin = otc_gtpv2c:ip_addr_to_bin(IPv6),
+    IPv4Bin = otc_gtpv2c:encode_ip_addr(IPv4),
+    IPv6Bin = otc_gtpv2c:encode_ip_addr(IPv6),
     Addr = <<IPv4Bin:4/binary, IPv6Bin:16/binary>>,
     {Organization, Type, Addr};
 encode_pdp_address(#{ipv4 := IPv4}) ->
     {Org, Type} = compose_pdp_address_type(ipv4),
     Organization = compose_pdp_address_org(Org),
-    IPv4Bin = otc_gtpv2c:ip_addr_to_bin(IPv4),
+    IPv4Bin = otc_gtpv2c:encode_ip_addr(IPv4),
     {Organization, Type, IPv4Bin};
 encode_pdp_address(#{ipv6 := IPv6}) ->
     {Org, Type} = compose_pdp_address_type(ipv6),
     Organization = compose_pdp_address_org(Org),
-    IPv6Bin = otc_gtpv2c:ip_addr_to_bin(IPv6),
+    IPv6Bin = otc_gtpv2c:encode_ip_addr(IPv6),
     {Organization, Type, IPv6Bin}.
 
 decode_rab_setup_info(Value) ->
@@ -4184,13 +4184,13 @@ decode_rab_setup_info(Value) ->
         <<DATA:4/binary, RNCIP/binary>> ->
             #{nsapi => NSAPI,
               data => DATA,
-              rnc_ip => otc_gtpv2c:bin_to_ip_addr(RNCIP)}
+              rnc_ip => otc_gtpv2c:decode_ip_addr(RNCIP)}
     end.
 
 encode_rab_setup_info(#{nsapi := NSAPI,
                          data := DATA,
                          rnc_ip := IP}) ->
-    RNCIP = otc_gtpv2c:ip_addr_to_bin(IP),
+    RNCIP = otc_gtpv2c:encode_ip_addr(IP),
     <<0:4, NSAPI:4, DATA:4/binary, RNCIP/binary>>;
 encode_rab_setup_info(#{nsapi := NSAPI}) ->
     <<0:4, NSAPI:4>>.
@@ -4238,7 +4238,7 @@ decode_address(Bin) ->
     #{extension_indicator => ExtI,
       nature_of_address => NoA,
       numbering_plan => NP,
-      address => otc_gtpv2c:tbcd_decode(Addr)}.
+      address => otc_util:decode_tbcd(Addr)}.
 
 encode_address(Value) ->
     #{extension_indicator := ExtI,
@@ -4267,5 +4267,5 @@ encode_address(Value) ->
               reserved_extension -> 2#1111;
               {reserved, N} -> N
           end,
-    Addr = otc_gtpv2c:tbcd_encode(A),
+    Addr = otc_util:encode_tbcd(A),
     <<ExtI:1, NoAI:3, NPI:4, Addr/binary>>.
