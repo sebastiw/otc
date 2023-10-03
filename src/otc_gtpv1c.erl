@@ -40,7 +40,7 @@ encode(Msg) ->
     MT = compose_message_type(MessageType),
     {[E,S,PN], GTP0} = encode_msg_fields(Msg),
     IEIs = encode_msg(MessageType, Msg),
-    GTP1 = encode_ieis(IEIs),
+    GTP1 = encode_ieis(lists:reverse(IEIs)),
     Len = byte_size(GTP0) + byte_size(GTP1),
     <<1:3, 1:1, 0:1, E:1, S:1, PN:1, MT:8, Len:16, TEID:32, GTP0/binary, GTP1/binary>>.
 
@@ -341,24 +341,15 @@ decode_msg_fields(E, S, PN, GTP0) ->
     end.
 
 encode_msg_fields(Map) ->
-    EH = maps:get(extension_headers, Map, undefined),
-    SN = maps:get(sequence_number, Map, undefined),
-    NN = maps:get(npdu_number, Map, undefined),
+    EH = maps:get(extension_headers, Map, #{}),
+    SN = maps:get(sequence_number, Map, 0),
+    PN = maps:get(npdu_number, Map, 0),
 
-    ExtHeaders = case EH of
-                     undefined -> <<0:8>>;
-                     _ -> compose_extension_headers(EH)
-                 end,
-    SequenceNum = case SN of
-                      undefined -> <<0:16>>;
-                      _ -> <<SN:16>>
-                  end,
-    NPDUNum = case NN of
-                  undefined -> <<0:8>>;
-                  _ -> <<NN:8>>
-              end,
+    ExtHeaders = compose_extension_headers(EH),
+    SequenceNum = <<SN:16>>,
+    NPDUNum = <<PN:8>>,
 
-    Indicators = [case I of undefined -> 0; _ -> 1 end || I <- [EH, SN, NN]],
+    Indicators = [min(maps:size(EH), 1), min(SN, 1), min(PN, 1)],
     Bin = case lists:sum(Indicators) of
               0 -> <<>>;
               _ -> <<SequenceNum/binary, NPDUNum/binary, ExtHeaders/binary>>

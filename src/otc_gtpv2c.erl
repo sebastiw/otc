@@ -2656,7 +2656,8 @@ encode_apn(APN) ->
 
 encode_apn([], Acc) ->
     Acc;
-encode_apn([A1|Parts], Acc) ->
+encode_apn([P|Parts], Acc) ->
+    A1 = list_to_binary(P),
     A1L = byte_size(A1),
     encode_apn(Parts, <<A1L, A1:A1L/binary, Acc/binary>>).
 

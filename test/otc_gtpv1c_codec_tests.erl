@@ -3,8 +3,8 @@
 -include_lib("eunit/include/eunit.hrl").
 
 sgsn_context_response_test() ->
-    Bin = <<"3233002c09fe4b60850e0000018010d8fde1aa113aeb040a850004c0a8a8f58500"
-            "04c0a8a8f5ff000bd7cf030020060103070180">>,
+    Bin = <<"3233002709FE4B60850E00000180113AEB040A850004C0A8A8F58500"
+            "04C0A8A8F5FF000BD7CF030020060103070180">>,
     Map = #{message_type => sgsn_context_response,
             message_group => mobility_management,
             teid => 167660384,
@@ -21,14 +21,16 @@ sgsn_context_response_test() ->
                   value => binary:decode_hex(<<"030020060103070180">>)}
            },
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 create_pdp_context_request_test() ->
-    Bin = <<"321000a600000000a170ff000242900901020304f50342f089fffeff0ffc100015"
-            "78aa11bc391c691405800002f12183000908696e7465726e657484002380802110"
-            "01000010810600000000830600000000000d00000a000005000010000011008500"
-            "04d9ae4c22850004d9ae4c38860007916427851633f787000f0223921f9396fdfe"
-            "74fcffff00640094000140970001019800080142f0890408acf099000240009a00"
+    Bin = <<"321000A600000000A17000000242900901020304F50342F089FFFEFF0FFC100015"
+            "78AA11BC391C691405800002F12183000908696E7465726E657484002380802110"
+            "01000010810600000000830600000000000D00000A000005000010000011008500"
+            "04D9AE4C22850004D9AE4C38860007916427851633F787000F0223921F9396FDFE"
+            "74FCFFFF00640094000140970001019800080142F0890408ACF099000240009A00"
             "083175113171327203">>,
     Map = #{message_group => tunnel_management,
             message_type => create_pdp_context_request,
@@ -82,13 +84,15 @@ create_pdp_context_request_test() ->
             imeisv => #{imei => "135711131723273",
                         sv => "0"}},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 create_pdp_context_response_test() ->
-    Bin = <<"32110072bc391c69a1700000018008fe1080c6c00511850ee0057f016580db8000"
-            "06f1210a077c7c84002b80000d0408080808000d04080804048021100300001081"
-            "06080808088306080804040005010200100205dc85000454d89e0385000454d89e"
-            "0387000f0223921f9396fdfe74fcffff006400b8000101">>,
+    Bin = <<"32110072BC391C69A1700000018008FE1080C6C00511850EE0057F016580DB8000"
+            "06F1210A077C7C84002B80000D0408080808000D04080804048021100300001081"
+            "06080808088306080804040005010200100205DC85000454D89E0385000454D89E"
+            "0387000F0223921F9396FDFE74FCFFFF006400B8000101">>,
     Map = #{message_group => tunnel_management,
             message_type => create_pdp_context_response,
             extension_headers => #{},
@@ -122,12 +126,14 @@ create_pdp_context_response_test() ->
                       binary:decode_hex(<<"23921f9396fdfe74fcffff006400">>)},
             bearer_control_mode => ms_nw},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 update_pdp_context_request_test() ->
-    Bin = <<"3612005c89f6c00a8c10000201ffff000242900901020304f50342f27911c0640e"
-            "041041e077a21112fb83401405850004ddb105e1850004ddb104e787000d021b62"
-            "1f71965858744bffff0094000120970001029800080042f27911c0b18699000223"
+    Bin = <<"3612005C89F6C00A8C10000201FFFF000242900901020304F50342F27911C0640E"
+            "041041E077A21112FB83401405850004DDB105E1850004DDB104E787000D021B62"
+            "1F71965858744BFFFF0094000120970001029800080042F27911C0B18699000223"
             "00">>,
     Map = #{message_group => tunnel_management,
             message_type => update_pdp_context_request,
@@ -170,11 +176,13 @@ update_pdp_context_request_test() ->
                 #{time_zone => 480,
                   daylight_saving_time => no_adjustment}},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 update_pdp_context_response_test() ->
-    Bin = <<"3213003912fb83408c10000001800e3c1089f6c00a1189f6c00a7f031403468500"
-            "04b9273759850004b927375987000d021b621f71965858744bffff00b5000100">>,
+    Bin = <<"3213003912FB83408C10000001800E3C1089F6C00A1189F6C00A7F031403468500"
+            "04B9273759850004B927375987000D021B621F71965858744BFFFF00B5000100">>,
     Map = #{message_group => tunnel_management,
             message_type => update_pdp_context_response,
             teid => 318473024,
@@ -193,10 +201,12 @@ update_pdp_context_response_test() ->
                       binary:decode_hex(<<"1b621f71965858744bffff00">>)},
             ms_info_change_reporting_action => stop_reporting},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 delete_pdp_context_request_test() ->
-    Bin = <<"32140008850ee005b804ff0013ff1405">>,
+    Bin = <<"32140008850EE005B804000013FF1405">>,
     Map = #{message_group => tunnel_management,
             message_type => delete_pdp_context_request,
             teid => 2232344581,
@@ -205,10 +215,12 @@ delete_pdp_context_request_test() ->
             nsapi => 5,
             teardown_ind => true},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 delete_pdp_contest_response_test() ->
-    Bin = <<"32150006bc391c69b80400000180">>,
+    Bin = <<"32150006BC391C69B80400000180">>,
     Map = #{message_group => tunnel_management,
             message_type => delete_pdp_context_response,
             teid => 3157859433,
@@ -216,20 +228,24 @@ delete_pdp_contest_response_test() ->
             extension_headers => #{},
             cause => request_accepted},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 echo_request_test() ->
-    Bin = <<"3201000400000000b9650000">>,
+    Bin = <<"3201000400000000B9650000">>,
     Map = #{message_group => path_management,
             message_type => echo_request,
             teid => 0,
             sequence_number => 47461,
             extension_headers => #{}},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
 echo_response_test() ->
-    Bin = <<"3202000600000000b96500000e0a">>,
+    Bin = <<"3202000600000000B96500000E0A">>,
     Map = #{message_type => echo_response,
             message_group => path_management,
             teid => 0,
@@ -237,5 +253,7 @@ echo_response_test() ->
             extension_headers => #{},
             recovery => 10},
     Msg = otc_gtpv1c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertEqual(Map, Msg),
+    NewBin = otc_gtpv1c:encode(Map),
+    ?assertEqual(Bin, binary:encode_hex(NewBin)).
 
