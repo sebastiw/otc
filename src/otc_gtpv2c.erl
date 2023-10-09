@@ -64,7 +64,7 @@ encode(Map) ->
     MT = compose_message_type(MessageType),
     {[P, T, MP], MsgFields} = encode_msg_fields(Map),
     MsgBin = encode_msg(MessageType, Map),
-    Len = byte_size(MsgBin),
+    Len = byte_size(MsgFields) + byte_size(MsgBin),
     <<2:3, P:1, T:1, MP:1, 0:2, MT:8, Len:16, MsgFields/binary, MsgBin/binary>>.
 
 parse_message_type(?GTPv2C_MSG_TYPE_ECHO_REQUEST) ->
@@ -430,17 +430,24 @@ decode_msg_fields(P, T, M, GTP0) ->
 encode_msg_fields(Map) ->
     PB = maps:get(piggy_backed, Map, false),
     TEID = maps:get(teid, Map, undefined),
-    MP = maps:get(message_priority, Map, 0),
+    MP = maps:get(message_priority, Map, false),
     SN = maps:get(sequence_number, Map, 0),
 
     Indicators = [case PB of true -> 1; _ -> 0 end,
                   case TEID of undefined -> 0; _ -> 1 end,
-                  case MP of 0 -> 0; _ -> 1 end],
+                  case MP of false -> 0; _ -> 1 end],
+
+    MBin = case MP of
+               false ->
+                   <<0:4, 0:4>>;
+               _ ->
+                   <<MP:4, 0:4>>
+           end,
     Bin = case TEID of
               undefined ->
-                  <<SN:24, MP:4, 0:4>>;
+                  <<SN:24, MBin/binary>>;
               _ ->
-                  <<TEID:32, SN:24, MP:4, 0:4>>
+                  <<TEID:32, SN:24, MBin/binary>>
           end,
     {Indicators, Bin}.
 
@@ -2880,48 +2887,48 @@ encode_parameter(user_location_information, V, _) ->
     <<Indicators/binary, Body/binary>>;
 encode_parameter(f_teid, V, _) ->
     IT = case maps:get(interface_type, V) of
-                        0 -> s1u_enodeb_gtpu;
-                        1 -> s1u_sgw_gtpu;
-                        2 -> s12_rnc_gtpu;
-                        3 -> s12_sgw_gtpu;
-                        4 -> s5s8_sgw_gtpu;
-                        5 -> s5s8_pgw_gtpu;
-                        6 -> s5s8_sgw_gtpc;
-                        7 -> s5s8_pgw_gtpc;
-                        8 -> s5s8_sgw_pmipv6;
-                        9 -> s5s8_pgw_pmipv6;
-                        10 -> s11_mme_gtpc;
-                        11 -> s11s4_sgw_gtpc;
-                        12 -> s10n26_mme_gtpc;
-                        13 -> s3_mme_gtpc;
-                        14 -> s3_sgsn_gtpc;
-                        15 -> s4_sgsn_gtpu;
-                        16 -> s4_sgw_gtpu;
-                        17 -> s4_sgsn_gtpc;
-                        18 -> s16_sgsn_gtpc;
-                        19 -> enodeb_gnodeb_gtpu_dl_data_forwarding;
-                        20 -> enodeb_gtpu_ul_data_forwarding;
-                        21 -> rnc_gtpu_data_forwarding;
-                        22 -> sgsn_gtpu_data_forwarding;
-                        23 -> sgw_upf_gtpu_dl_data_forwarding;
-                        24 -> sm_mbms_gw_gtpc;
-                        25 -> sn_mbms_gw_gtpc;
-                        26 -> sm_mme_gtpc;
-                        27 -> sn_sgsn_gtpc;
-                        28 -> sgw_gtpu_ul_data_forwarding;
-                        29 -> sn_sgsn_gtpu;
-                        30 -> s2b_epdg_gtpc;
-                        31 -> s2bu_epdg_gtpu;
-                        32 -> s2b_pgw_gtpc;
-                        33 -> s2bu_pgw_gtpu;
-                        34 -> s2a_twan_gtpu;
-                        35 -> s2a_twan_gtpc;
-                        36 -> s2a_pgw_gtpc;
-                        37 -> s2a_pgw_gtpu;
-                        38 -> s11_mme_gtpu;
-                        39 -> s11_sgw_gtpu;
-                        40 -> n26_amf_gtpc;
-                        41 -> n19mb_upf_gtpu
+                        s1u_enodeb_gtpu -> 0;
+                        s1u_sgw_gtpu -> 1;
+                        s12_rnc_gtpu -> 2;
+                        s12_sgw_gtpu -> 3;
+                        s5s8_sgw_gtpu -> 4;
+                        s5s8_pgw_gtpu -> 5;
+                        s5s8_sgw_gtpc -> 6;
+                        s5s8_pgw_gtpc -> 7;
+                        s5s8_sgw_pmipv6 -> 8;
+                        s5s8_pgw_pmipv6 -> 9;
+                        s11_mme_gtpc -> 10;
+                        s11s4_sgw_gtpc -> 11;
+                        s10n26_mme_gtpc -> 12;
+                        s3_mme_gtpc -> 13;
+                        s3_sgsn_gtpc -> 14;
+                        s4_sgsn_gtpu -> 15;
+                        s4_sgw_gtpu -> 16;
+                        s4_sgsn_gtpc -> 17;
+                        s16_sgsn_gtpc -> 18;
+                        enodeb_gnodeb_gtpu_dl_data_forwarding -> 19;
+                        enodeb_gtpu_ul_data_forwarding -> 20;
+                        rnc_gtpu_data_forwarding -> 21;
+                        sgsn_gtpu_data_forwarding -> 22;
+                        sgw_upf_gtpu_dl_data_forwarding -> 23;
+                        sm_mbms_gw_gtpc -> 24;
+                        sn_mbms_gw_gtpc -> 25;
+                        sm_mme_gtpc -> 26;
+                        sn_sgsn_gtpc -> 27;
+                        sgw_gtpu_ul_data_forwarding -> 28;
+                        sn_sgsn_gtpu -> 29;
+                        s2b_epdg_gtpc -> 30;
+                        s2bu_epdg_gtpu -> 31;
+                        s2b_pgw_gtpc -> 32;
+                        s2bu_pgw_gtpu -> 33;
+                        s2a_twan_gtpu -> 34;
+                        s2a_twan_gtpc -> 35;
+                        s2a_pgw_gtpc -> 36;
+                        s2a_pgw_gtpu -> 37;
+                        s11_mme_gtpu -> 38;
+                        s11_sgw_gtpu -> 39;
+                        n26_amf_gtpc -> 40;
+                        n19mb_upf_gtpu -> 41
                     end,
     TEIDGRE = maps:get(teid_gre_key, V),
     {V4, V6, IPv4, IPv6} = case V of
@@ -5587,7 +5594,7 @@ decode_tliv(<<Type:8, Len:16, _Spare:4, Instance:4, Bin0/binary>>) ->
     {Type, Instance, Data, Rest}.
 
 encode_tliv_list(Msg, List) ->
-    encode_tliv_list(Msg, List, <<>>).
+    encode_tliv_list(Msg, lists:reverse(List), <<>>).
 
 encode_tliv_list(_Msg, [], Acc) ->
     Acc;
@@ -7240,17 +7247,17 @@ encode_msg(echo_request, Msg) ->
     Fields = [{recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
               {sending_node_features, {?GTPv2C_IEI_NODE_FEATURES, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(echo_response, Msg) ->
     Fields = [{recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, mandatory},
               {sending_node_features, {?GTPv2C_IEI_NODE_FEATURES, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(version_not_supported, Msg) ->
     Fields = [],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_session_request, Msg) ->
     BearerContextCreated = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7340,7 +7347,7 @@ encode_msg(create_session_request, Msg) ->
               {up_function_selection_indication_flags, {?GTPv2C_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS, 0}, conditional},
               {apn_rate_control_status, {?GTPv2C_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_session_response, Msg) ->
     BearerContextCreated = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7413,7 +7420,7 @@ encode_msg(create_session_response, Msg) ->
               {alternative_pgw_csmf_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, optional},
               {up_security_policy, {?GTPv2C_IEI_UP_SECURITY_POLICY, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_bearer_request, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7469,7 +7476,7 @@ encode_msg(create_bearer_request, Msg) ->
               {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
               {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_bearer_response, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7518,7 +7525,7 @@ encode_msg(create_bearer_response, Msg) ->
               {ue_tcp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(bearer_resource_command, Msg) ->
     OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
@@ -7545,7 +7552,7 @@ encode_msg(bearer_resource_command, Msg) ->
               {sender_f_teid, {?GTPv2C_IEI_F_TEID, 2}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(bearer_resource_failure_indication, Msg) ->
     OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
@@ -7562,7 +7569,7 @@ encode_msg(bearer_resource_failure_indication, Msg) ->
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
               {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(modify_bearer_request, Msg) ->
     BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7614,7 +7621,7 @@ encode_msg(modify_bearer_request, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(modify_bearer_response, Msg) ->
     BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7670,7 +7677,7 @@ encode_msg(modify_bearer_response, Msg) ->
               {pdn_connection_charging_id, {?GTPv2C_IEI_CHARGING_ID, 0}, conditional_optional},
               {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_session_request, Msg) ->
     OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
@@ -7701,7 +7708,7 @@ encode_msg(delete_session_request, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_bearer_request, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7745,7 +7752,7 @@ encode_msg(delete_bearer_request, Msg) ->
               {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
               {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_session_response, Msg) ->
     LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
@@ -7769,7 +7776,7 @@ encode_msg(delete_session_response, Msg) ->
               {extended_protocol_config_opts, {?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS, 0}, conditional_optional},
               {apn_rate_control_status, {?GTPv2C_IEI_APN_RATE_CONTROL_STATUS, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_bearer_response, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7809,7 +7816,7 @@ encode_msg(delete_bearer_response, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(downlink_data_notification, Msg) ->
     LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
@@ -7830,7 +7837,7 @@ encode_msg(downlink_data_notification, Msg) ->
               {paging_and_service_information, {?GTPv2C_IEI_PAGING_AND_SERVICE_INFORMATION, 0}, conditional_optional},
               {dl_data_packets_size, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(downlink_data_notification_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
@@ -7841,24 +7848,24 @@ encode_msg(downlink_data_notification_acknowledge, Msg) ->
               {dl_buffering_duration, {?GTPv2C_IEI_EPC_TIMER, 0}, conditional_optional},
               {dl_buffering_suggested_packet_count, {?GTPv2C_IEI_INTEGER_NUMBER, 0}, optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(downlink_data_notification_failure_indication, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {originating_node, {?GTPv2C_IEI_NODE_TYPE, 0}, conditional_optional},
               {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_indirect_data_forwarding_tunnel_request, Msg) ->
     Fields = [{private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_indirect_data_forwarding_tunnel_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(modify_bearer_command, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7875,7 +7882,7 @@ encode_msg(modify_bearer_command, Msg) ->
               {twanepdgs_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 2}, optional, OCI},
               {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(modify_bearer_failure_indication, Msg) ->
     OCI = [{overload_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
@@ -7889,7 +7896,7 @@ encode_msg(modify_bearer_failure_indication, Msg) ->
               {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
               {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(update_bearer_request, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7939,7 +7946,7 @@ encode_msg(update_bearer_request, Msg) ->
               {nbifom_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional_optional},
               {pgw_change_info, {?GTPv2C_IEI_PGW_CHANGE_INFO, 0}, conditional_optional, PGWChangeInfo},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(update_bearer_response, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -7979,7 +7986,7 @@ encode_msg(update_bearer_response, Msg) ->
               {ue_tcp_port, {?GTPv2C_IEI_PORT_NUMBER, 1}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_bearer_command, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8000,7 +8007,7 @@ encode_msg(delete_bearer_command, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_bearer_failure_indication, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8018,7 +8025,7 @@ encode_msg(delete_bearer_failure_indication, Msg) ->
               {pgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, conditional_optional, OCI},
               {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 1}, optional, OCI},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_indirect_data_forwarding_tunnel_request, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8037,7 +8044,7 @@ encode_msg(create_indirect_data_forwarding_tunnel_request, Msg) ->
               {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_indirect_data_forwarding_tunnel_response, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8054,7 +8061,7 @@ encode_msg(create_indirect_data_forwarding_tunnel_response, Msg) ->
               {bearer_contexts, {?GTPv2C_IEI_BEARER_CONTEXT, 0}, mandatory, BearerContext},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(release_access_bearers_request, Msg) ->
     Fields = [{list_of_rabs, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
@@ -8063,7 +8070,7 @@ encode_msg(release_access_bearers_request, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(release_access_bearers_response, Msg) ->
     LCI = [{load_control_sequence_number, {?GTPv2C_IEI_SEQUENCE_NUMBER, 0}, mandatory},
@@ -8079,12 +8086,12 @@ encode_msg(release_access_bearers_response, Msg) ->
               {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
               {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(stop_paging_indication, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(modify_access_bearers_request, Msg) ->
     BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8102,7 +8109,7 @@ encode_msg(modify_access_bearers_request, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(modify_access_bearers_response, Msg) ->
     BearerContextModified = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8128,7 +8135,7 @@ encode_msg(modify_access_bearers_response, Msg) ->
               {sgws_node_level_load_control_information, {?GTPv2C_IEI_LOAD_CONTROL_INFORMATION, 0}, optional, LCI},
               {sgws_overload_control_information, {?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION, 0}, optional, OCI},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(remote_ue_report_notification, Msg) ->
     RemoteUEContextConnected = [{remote_user_id, {?GTPv2C_IEI_REMOTE_USER_ID, 0}, mandatory},
@@ -8139,12 +8146,12 @@ encode_msg(remote_ue_report_notification, Msg) ->
     Fields = [{remote_ue_context_connected, {?GTPv2C_IEI_REMOTE_UE_CONTEXT, 0}, conditional, RemoteUEContextConnected},
               {remote_ue_context_disconnected, {?GTPv2C_IEI_REMOTE_UE_CONTEXT, 1}, conditional, RemoteUEContextDisconnected},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(remote_ue_report_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(forward_relocation_request, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8252,7 +8259,7 @@ encode_msg(forward_relocation_request, Msg) ->
               {iwk_scef_id_for_monitoring_event, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
               {alternative_imsi, {?GTPv2C_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(forward_relocation_response, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, conditional},
@@ -8289,12 +8296,12 @@ encode_msg(forward_relocation_response, Msg) ->
               {vsrvcc_rejected_cause, {?GTPv2C_IEI_SRVCC_CAUSE, 0}, conditional_optional},
               {msc_number, {?GTPv2C_IEI_NODE_NUMBER, 2}, optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(forward_relocation_complete_notification, Msg) ->
     Fields = [{indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(forward_relocation_complete_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
@@ -8302,7 +8309,7 @@ encode_msg(forward_relocation_complete_acknowledge, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {secondary_rat_usage_data_report_from_ng_ran, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 1}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(context_request, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
@@ -8325,7 +8332,7 @@ encode_msg(context_request, Msg) ->
               {mme_identifier, {?GTPv2C_IEI_NODE_IDENTIFIER, 1}, optional},
               {ciot_optimizations_support_indication, {?GTPv2C_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(context_response, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8407,7 +8414,7 @@ encode_msg(context_response, Msg) ->
               {iwk_scef_id_for_monitoring_event, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
               {alternative_imsi, {?GTPv2C_IEI_ALTERNATIVE_IMSI, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(context_acknowledge, Msg) ->
     BearerContext = [{eps_bearer_id, {?GTPv2C_IEI_EPS_BEARER_ID, 0}, mandatory},
@@ -8422,7 +8429,7 @@ encode_msg(context_acknowledge, Msg) ->
               {sgsn_identifier_for_mt_sms, {?GTPv2C_IEI_NODE_IDENTIFIER, 0}, conditional_optional},
               {mme_identifier_for_mt_sms, {?GTPv2C_IEI_NODE_IDENTIFIER, 1}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(identification_request, Msg) ->
     Fields = [{guti, {?GTPv2C_IEI_GUTI, 0}, conditional},
@@ -8435,7 +8442,7 @@ encode_msg(identification_request, Msg) ->
               {hop_counter, {?GTPv2C_IEI_HOP_COUNTER, 0}, optional},
               {target_plmn_id, {?GTPv2C_IEI_SERVING_NETWORK, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(identification_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
@@ -8447,7 +8454,7 @@ encode_msg(identification_response, Msg) ->
               {monitoring_event_extension_information, {?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION, 0}, conditional_optional},
               {extended_trace_information, {?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(forward_access_context_notification, Msg) ->
     Fields = [{rab_contexts, {?GTPv2C_IEI_RAB_CONTEXT, 0}, conditional},
@@ -8456,24 +8463,24 @@ encode_msg(forward_access_context_notification, Msg) ->
               {e_utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 0}, conditional},
               {e_utran_transparent_container, {?GTPv2C_IEI_F_CONTAINER, 1}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(forward_access_context_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(detach_notification, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {detach_type, {?GTPv2C_IEI_DETACH_TYPE, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(detach_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(change_notification_request, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
@@ -8489,7 +8496,7 @@ encode_msg(change_notification_request, Msg) ->
               {secondary_rat_usage_data_report, {?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT, 0}, conditional_optional},
               {pscell_id, {?GTPv2C_IEI_PSCELL_ID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(change_notification_response, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
@@ -8499,7 +8506,7 @@ encode_msg(change_notification_response, Msg) ->
               {csg_information_reporting_action, {?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION, 0}, conditional_optional},
               {presence_reporting_area_action, {?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(relocation_cancel_request, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
@@ -8507,41 +8514,41 @@ encode_msg(relocation_cancel_request, Msg) ->
               {indication_flags, {?GTPv2C_IEI_INDICATION, 0}, conditional_optional},
               {ranap_cause, {?GTPv2C_IEI_F_CAUSE, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(relocation_cancel_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(configuration_transfer_tunnel, Msg) ->
     Fields = [{son_container, {?GTPv2C_IEI_F_CONTAINER, 0}, mandatory},
               {target_node_id, {?GTPv2C_IEI_TARGET_IDENTIFICATION, 0}, mandatory},
               {connected_target_enodeb_id, {?GTPv2C_IEI_TARGET_IDENTIFICATION, 1}, conditional_optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(ran_information_relay, Msg) ->
     Fields = [{bss_container, {?GTPv2C_IEI_F_CONTAINER, 0}, mandatory},
               {rim_routing_address, {?GTPv2C_IEI_TARGET_IDENTIFICATION, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(isr_status_indication, Msg) ->
     Fields = [{action_indication, {?GTPv2C_IEI_ACTION_INDICATION, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(ue_registration_query_request, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(ue_registration_query_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
               {selected_core_network_operator_identifier, {?GTPv2C_IEI_PLMN_ID, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(suspend_notification, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
@@ -8554,12 +8561,12 @@ encode_msg(suspend_notification, Msg) ->
               {hop_counter, {?GTPv2C_IEI_HOP_COUNTER, 0}, optional},
               {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(suspend_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(resume_notification, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
@@ -8567,12 +8574,12 @@ encode_msg(resume_notification, Msg) ->
               {originating_node, {?GTPv2C_IEI_NODE_TYPE, 0}, conditional_optional},
               {sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(resume_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(cs_paging_indication, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
@@ -8584,36 +8591,36 @@ encode_msg(cs_paging_indication, Msg) ->
               {emlpp_priority, {?GTPv2C_IEI_EMLPP_PRIORITY, 0}, optional},
               {service_indicator, {?GTPv2C_IEI_SERVICE_INDICATOR, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(alert_mme_notification, Msg) ->
     Fields = [{private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(alert_mme_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(ue_activity_notification, Msg) ->
     Fields = [{private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(ue_activity_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_forwarding_tunnel_request, Msg) ->
     Fields = [{s103_pdn_data_forwarding_info, {?GTPv2C_IEI_S103_PDN_DATA_FORWARDING_INFO, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(create_forwarding_tunnel_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {s1_u_data_forwarding_info, {?GTPv2C_IEI_S1_U_DATA_FORWARDING_INFO, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_pdn_connection_set_request, Msg) ->
     Fields = [{mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
@@ -8622,62 +8629,62 @@ encode_msg(delete_pdn_connection_set_request, Msg) ->
               {epdg_fq_csid, {?GTPv2C_IEI_FQ_CSID, 3}, conditional},
               {twan_fq_csid, {?GTPv2C_IEI_FQ_CSID, 4}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(delete_pdn_connection_set_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(update_pdn_connection_set_request, Msg) ->
     Fields = [{mme_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
               {sgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 1}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(update_pdn_connection_set_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {pgw_fq_csid, {?GTPv2C_IEI_FQ_CSID, 0}, conditional},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(pgw_restart_notification, Msg) ->
     Fields = [{pgw_s5s8_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 0}, mandatory},
               {sgw_s11s4_ip_address, {?GTPv2C_IEI_IP_ADDRESS, 1}, mandatory},
               {cause, {?GTPv2C_IEI_CAUSE, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(pgw_restart_notification_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(pgw_downlink_triggering_notification, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, mandatory},
               {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
               {pgw_s5_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(pgw_downlink_triggering_acknowledge, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
               {mmes4_sgsn_identifier, {?GTPv2C_IEI_IP_ADDRESS, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(trace_session_activation, Msg) ->
     Fields = [{imsi, {?GTPv2C_IEI_IMSI, 0}, conditional},
               {trace_information, {?GTPv2C_IEI_TRACE_INFORMATION, 0}, mandatory},
               {mei, {?GTPv2C_IEI_MEI, 0}, conditional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(trace_session_deactivation, Msg) ->
     Fields = [{trace_reference, {?GTPv2C_IEI_TRACE_REFERENCE, 0}, mandatory}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(mbms_session_start_request, Msg) ->
     Fields = [{sender_f_teid, {?GTPv2C_IEI_F_TEID, 0}, mandatory},
@@ -8695,7 +8702,7 @@ encode_msg(mbms_session_start_request, Msg) ->
               {mbms_alternative_ip_multicast_distribution, {?GTPv2C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION, 1}, conditional_optional},
               {mbms_cell_list, {?GTPv2C_IEI_ECGI_LIST, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(mbms_session_start_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
@@ -8704,7 +8711,7 @@ encode_msg(mbms_session_start_response, Msg) ->
               {sn_u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 1}, conditional},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(mbms_session_update_request, Msg) ->
     Fields = [{mbms_service_area, {?GTPv2C_IEI_MBMS_SERVICE_AREA, 0}, conditional},
@@ -8718,7 +8725,7 @@ encode_msg(mbms_session_update_request, Msg) ->
               {mbms_data_transfer, {?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
               {mbms_cell_list, {?GTPv2C_IEI_ECGI_LIST, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(mbms_session_update_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
@@ -8726,18 +8733,18 @@ encode_msg(mbms_session_update_response, Msg) ->
               {sn_u_sgsn_f_teid, {?GTPv2C_IEI_F_TEID, 0}, conditional},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(mbms_session_stop_request, Msg) ->
     Fields = [{mbms_flow_identifier, {?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER, 0}, conditional},
               {mbms_data_transfer, {?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER, 0}, conditional_optional},
               {mbms_flags, {?GTPv2C_IEI_MBMS_FLAGS, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin;
 encode_msg(mbms_session_stop_response, Msg) ->
     Fields = [{cause, {?GTPv2C_IEI_CAUSE, 0}, mandatory},
               {recovery, {?GTPv2C_IEI_RECOVERY_RESTART_COUNTER, 0}, conditional_optional},
               {private_extension, {?GTPv2C_IEI_PRIVATE_EXTENSION, vs}, optional}],
-    {Bin, _Unknown} = encode_tliv_list(Msg, Fields),
+    Bin = encode_tliv_list(Msg, Fields),
     Bin.
