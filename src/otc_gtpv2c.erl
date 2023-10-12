@@ -12,6 +12,9 @@
          encode/1
         ]).
 
+-export([fraction_to_ns/1
+        ]).
+
 %% Used in GTPv1-C
 -export([decode_mcc_mnc/1,
          encode_mcc_mnc/1,
@@ -422,7 +425,7 @@ decode_msg_fields(P, T, M, GTP0) ->
                            <<MP:4, _:4, Rest2/binary>> = Rest1,
                            {[{message_priority, MP}], Rest2};
                        0 ->
-                           <<_:8, Rest2/binary>> = Rest1,
+                           <<_:4, _:4, Rest2/binary>> = Rest1,
                            {[{message_priority, false}], Rest2}
                    end,
     {maps:from_list(Fs0 ++ Fs1 ++ Fs2), Rest3}.
@@ -752,307 +755,6 @@ parse_iei(?GTPv2C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION) ->
 parse_iei(?GTPv2C_IEI_PRIVATE_EXTENSION) ->
     private_extension.
 
-compose_iei(imsi) ->
-    ?GTPv2C_IEI_IMSI;
-compose_iei(cause) ->
-    ?GTPv2C_IEI_CAUSE;
-compose_iei(recovery_restart_counter) ->
-    ?GTPv2C_IEI_RECOVERY_RESTART_COUNTER;
-compose_iei(stn_sr) ->
-    ?GTPv2C_IEI_STN_SR;
-compose_iei(srvcc_cause) ->
-    ?GTPv2C_IEI_SRVCC_CAUSE;
-compose_iei(apn) ->
-    ?GTPv2C_IEI_APN;
-compose_iei(ambr) ->
-    ?GTPv2C_IEI_AMBR;
-compose_iei(eps_bearer_id) ->
-    ?GTPv2C_IEI_EPS_BEARER_ID;
-compose_iei(ip_address) ->
-    ?GTPv2C_IEI_IP_ADDRESS;
-compose_iei(mei) ->
-    ?GTPv2C_IEI_MEI;
-compose_iei(msisdn) ->
-    ?GTPv2C_IEI_MSISDN;
-compose_iei(indication) ->
-    ?GTPv2C_IEI_INDICATION;
-compose_iei(protocol_configuration_options) ->
-    ?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS;
-compose_iei(pdn_address_allocation) ->
-    ?GTPv2C_IEI_PDN_ADDRESS_ALLOCATION;
-compose_iei(bearer_qos) ->
-    ?GTPv2C_IEI_BEARER_QOS;
-compose_iei(flow_qos) ->
-    ?GTPv2C_IEI_FLOW_QOS;
-compose_iei(rat_type) ->
-    ?GTPv2C_IEI_RAT_TYPE;
-compose_iei(serving_network) ->
-    ?GTPv2C_IEI_SERVING_NETWORK;
-compose_iei(bearer_tft) ->
-    ?GTPv2C_IEI_BEARER_TFT;
-compose_iei(traffic_aggregate_description) ->
-    ?GTPv2C_IEI_TRAFFIC_AGGREGATE_DESCRIPTION;
-compose_iei(user_location_information) ->
-    ?GTPv2C_IEI_USER_LOCATION_INFORMATION;
-compose_iei(f_teid) ->
-    ?GTPv2C_IEI_F_TEID;
-compose_iei(tmsi) ->
-    ?GTPv2C_IEI_TMSI;
-compose_iei(global_cn_id) ->
-    ?GTPv2C_IEI_GLOBAL_CN_ID;
-compose_iei(s103_pdn_data_forwarding_info) ->
-    ?GTPv2C_IEI_S103_PDN_DATA_FORWARDING_INFO;
-compose_iei(s1_u_data_forwarding_info) ->
-    ?GTPv2C_IEI_S1_U_DATA_FORWARDING_INFO;
-compose_iei(delay_value) ->
-    ?GTPv2C_IEI_DELAY_VALUE;
-compose_iei(bearer_context) ->
-    ?GTPv2C_IEI_BEARER_CONTEXT;
-compose_iei(charging_id) ->
-    ?GTPv2C_IEI_CHARGING_ID;
-compose_iei(charging_characteristics) ->
-    ?GTPv2C_IEI_CHARGING_CHARACTERISTICS;
-compose_iei(trace_information) ->
-    ?GTPv2C_IEI_TRACE_INFORMATION;
-compose_iei(bearer_flags) ->
-    ?GTPv2C_IEI_BEARER_FLAGS;
-compose_iei(pdn_type) ->
-    ?GTPv2C_IEI_PDN_TYPE;
-compose_iei(procedure_transaction_id) ->
-    ?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID;
-compose_iei(mm_context_gsm_key_and_triplets) ->
-    ?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_AND_TRIPLETS;
-compose_iei(mm_context_umts_key_cipher_and_quintuplets) ->
-    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_CIPHER_AND_QUINTUPLETS;
-compose_iei(mm_context_gsm_key_cipher_and_quintuplets) ->
-    ?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_CIPHER_AND_QUINTUPLETS;
-compose_iei(mm_context_umts_key_and_quintuplets) ->
-    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_AND_QUINTUPLETS;
-compose_iei(mm_context_eps_security_context_quadruplets_and_quintuplets) ->
-    ?GTPv2C_IEI_MM_CONTEXT_EPS_SECURITY_CONTEXT_QUADRUPLETS_AND_QUINTUPLETS;
-compose_iei(mm_context_umts_key_quadruplets_and_quintuplets) ->
-    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_QUADRUPLETS_AND_QUINTUPLETS;
-compose_iei(pdn_connection) ->
-    ?GTPv2C_IEI_PDN_CONNECTION;
-compose_iei(pdu_numbers) ->
-    ?GTPv2C_IEI_PDU_NUMBERS;
-compose_iei(p_tmsi) ->
-    ?GTPv2C_IEI_P_TMSI;
-compose_iei(p_tmsi_signature) ->
-    ?GTPv2C_IEI_P_TMSI_SIGNATURE;
-compose_iei(hop_counter) ->
-    ?GTPv2C_IEI_HOP_COUNTER;
-compose_iei(ue_time_zone) ->
-    ?GTPv2C_IEI_UE_TIME_ZONE;
-compose_iei(trace_reference) ->
-    ?GTPv2C_IEI_TRACE_REFERENCE;
-compose_iei(complete_request_message) ->
-    ?GTPv2C_IEI_COMPLETE_REQUEST_MESSAGE;
-compose_iei(guti) ->
-    ?GTPv2C_IEI_GUTI;
-compose_iei(f_container) ->
-    ?GTPv2C_IEI_F_CONTAINER;
-compose_iei(f_cause) ->
-    ?GTPv2C_IEI_F_CAUSE;
-compose_iei(plmn_id) ->
-    ?GTPv2C_IEI_PLMN_ID;
-compose_iei(target_identification) ->
-    ?GTPv2C_IEI_TARGET_IDENTIFICATION;
-compose_iei(packet_flow_id) ->
-    ?GTPv2C_IEI_PACKET_FLOW_ID;
-compose_iei(rab_context) ->
-    ?GTPv2C_IEI_RAB_CONTEXT;
-compose_iei(source_rnc_pdcp_context_info) ->
-    ?GTPv2C_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO;
-compose_iei(port_number) ->
-    ?GTPv2C_IEI_PORT_NUMBER;
-compose_iei(apn_restriction) ->
-    ?GTPv2C_IEI_APN_RESTRICTION;
-compose_iei(selection_mode) ->
-    ?GTPv2C_IEI_SELECTION_MODE;
-compose_iei(source_identification) ->
-    ?GTPv2C_IEI_SOURCE_IDENTIFICATION;
-compose_iei(change_reporting_action) ->
-    ?GTPv2C_IEI_CHANGE_REPORTING_ACTION;
-compose_iei(fq_csid) ->
-    ?GTPv2C_IEI_FQ_CSID;
-compose_iei(channel_needed) ->
-    ?GTPv2C_IEI_CHANNEL_NEEDED;
-compose_iei(emlpp_priority) ->
-    ?GTPv2C_IEI_EMLPP_PRIORITY;
-compose_iei(node_type) ->
-    ?GTPv2C_IEI_NODE_TYPE;
-compose_iei(fqdn) ->
-    ?GTPv2C_IEI_FQDN;
-compose_iei(transaction_identifier) ->
-    ?GTPv2C_IEI_TRANSACTION_IDENTIFIER;
-compose_iei(mbms_session_duration) ->
-    ?GTPv2C_IEI_MBMS_SESSION_DURATION;
-compose_iei(mbms_service_area) ->
-    ?GTPv2C_IEI_MBMS_SERVICE_AREA;
-compose_iei(mbms_session_identifier) ->
-    ?GTPv2C_IEI_MBMS_SESSION_IDENTIFIER;
-compose_iei(mbms_flow_identifier) ->
-    ?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER;
-compose_iei(mbms_ip_multicast_distribution) ->
-    ?GTPv2C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION;
-compose_iei(mbms_distribution_acknowledge) ->
-    ?GTPv2C_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE;
-compose_iei(rfsp_index) ->
-    ?GTPv2C_IEI_RFSP_INDEX;
-compose_iei(user_csg_information) ->
-    ?GTPv2C_IEI_USER_CSG_INFORMATION;
-compose_iei(csg_information_reporting_action) ->
-    ?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION;
-compose_iei(csg_id) ->
-    ?GTPv2C_IEI_CSG_ID;
-compose_iei(csg_membership_indication) ->
-    ?GTPv2C_IEI_CSG_MEMBERSHIP_INDICATION;
-compose_iei(service_indicator) ->
-    ?GTPv2C_IEI_SERVICE_INDICATOR;
-compose_iei(detach_type) ->
-    ?GTPv2C_IEI_DETACH_TYPE;
-compose_iei(local_distiguished_name) ->
-    ?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME;
-compose_iei(node_features) ->
-    ?GTPv2C_IEI_NODE_FEATURES;
-compose_iei(mbms_time_to_data_transfer) ->
-    ?GTPv2C_IEI_MBMS_TIME_TO_DATA_TRANSFER;
-compose_iei(throttling) ->
-    ?GTPv2C_IEI_THROTTLING;
-compose_iei(allocation_retention_priority) ->
-    ?GTPv2C_IEI_ALLOCATION_RETENTION_PRIORITY;
-compose_iei(epc_timer) ->
-    ?GTPv2C_IEI_EPC_TIMER;
-compose_iei(signalling_priority_indication) ->
-    ?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION;
-compose_iei(temporary_mobile_group_identity) ->
-    ?GTPv2C_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY;
-compose_iei(additional_mm_context_for_srvcc) ->
-    ?GTPv2C_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC;
-compose_iei(additional_flags_for_srvcc) ->
-    ?GTPv2C_IEI_ADDITIONAL_FLAGS_FOR_SRVCC;
-compose_iei(mdt_configuration) ->
-    ?GTPv2C_IEI_MDT_CONFIGURATION;
-compose_iei(additional_protocol_configuration_options) ->
-    ?GTPv2C_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS;
-compose_iei(absolute_time_of_mbms_data_transfer) ->
-    ?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER;
-compose_iei(henb_information_reporting) ->
-    ?GTPv2C_IEI_HENB_INFORMATION_REPORTING;
-compose_iei(ipv4_configuration_parameters) ->
-    ?GTPv2C_IEI_IPV4_CONFIGURATION_PARAMETERS;
-compose_iei(change_to_report_flags) ->
-    ?GTPv2C_IEI_CHANGE_TO_REPORT_FLAGS;
-compose_iei(action_indication) ->
-    ?GTPv2C_IEI_ACTION_INDICATION;
-compose_iei(twan_identifier) ->
-    ?GTPv2C_IEI_TWAN_IDENTIFIER;
-compose_iei(uli_timestamp) ->
-    ?GTPv2C_IEI_ULI_TIMESTAMP;
-compose_iei(mbms_flags) ->
-    ?GTPv2C_IEI_MBMS_FLAGS;
-compose_iei(ran_nas_cause) ->
-    ?GTPv2C_IEI_RAN_NAS_CAUSE;
-compose_iei(cn_operator_selection_entity) ->
-    ?GTPv2C_IEI_CN_OPERATOR_SELECTION_ENTITY;
-compose_iei(trusted_wlan_mode_indication) ->
-    ?GTPv2C_IEI_TRUSTED_WLAN_MODE_INDICATION;
-compose_iei(node_number) ->
-    ?GTPv2C_IEI_NODE_NUMBER;
-compose_iei(node_identifier) ->
-    ?GTPv2C_IEI_NODE_IDENTIFIER;
-compose_iei(presence_reporting_area_action) ->
-    ?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION;
-compose_iei(presence_reporting_area_information) ->
-    ?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION;
-compose_iei(twan_identifier_timestamp) ->
-    ?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP;
-compose_iei(overload_control_information) ->
-    ?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION;
-compose_iei(load_control_information) ->
-    ?GTPv2C_IEI_LOAD_CONTROL_INFORMATION;
-compose_iei(metric) ->
-    ?GTPv2C_IEI_METRIC;
-compose_iei(sequence_number) ->
-    ?GTPv2C_IEI_SEQUENCE_NUMBER;
-compose_iei(apn_and_relative_capacity) ->
-    ?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY;
-compose_iei(wlan_offloadability_indication) ->
-    ?GTPv2C_IEI_WLAN_OFFLOADABILITY_INDICATION;
-compose_iei(paging_and_service_information) ->
-    ?GTPv2C_IEI_PAGING_AND_SERVICE_INFORMATION;
-compose_iei(integer_number) ->
-    ?GTPv2C_IEI_INTEGER_NUMBER;
-compose_iei(millisecond_time_stamp) ->
-    ?GTPv2C_IEI_MILLISECOND_TIME_STAMP;
-compose_iei(monitoring_event_information) ->
-    ?GTPv2C_IEI_MONITORING_EVENT_INFORMATION;
-compose_iei(ecgi_list) ->
-    ?GTPv2C_IEI_ECGI_LIST;
-compose_iei(remote_ue_context) ->
-    ?GTPv2C_IEI_REMOTE_UE_CONTEXT;
-compose_iei(remote_user_id) ->
-    ?GTPv2C_IEI_REMOTE_USER_ID;
-compose_iei(remote_ue_ip_information) ->
-    ?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION;
-compose_iei(ciot_optimizations_support_indication) ->
-    ?GTPv2C_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION;
-compose_iei(scef_pdn_connection) ->
-    ?GTPv2C_IEI_SCEF_PDN_CONNECTION;
-compose_iei(header_compression_configuration) ->
-    ?GTPv2C_IEI_HEADER_COMPRESSION_CONFIGURATION;
-compose_iei(extended_protocol_configuration_options) ->
-    ?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS;
-compose_iei(serving_plmn_rate_control) ->
-    ?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL;
-compose_iei(counter) ->
-    ?GTPv2C_IEI_COUNTER;
-compose_iei(mapped_ue_usage_type) ->
-    ?GTPv2C_IEI_MAPPED_UE_USAGE_TYPE;
-compose_iei(secondary_rat_usage_data_report) ->
-    ?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT;
-compose_iei(up_function_selection_indication_flags) ->
-    ?GTPv2C_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS;
-compose_iei(maximum_packet_loss_rate) ->
-    ?GTPv2C_IEI_MAXIMUM_PACKET_LOSS_RATE;
-compose_iei(apn_rate_control_status) ->
-    ?GTPv2C_IEI_APN_RATE_CONTROL_STATUS;
-compose_iei(extended_trace_information) ->
-    ?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION;
-compose_iei(monitoring_event_extension_information) ->
-    ?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION;
-compose_iei(additional_rrm_policy_index) ->
-    ?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX;
-compose_iei(v2x_context) ->
-    ?GTPv2C_IEI_V2X_CONTEXT;
-compose_iei(pc5_qos_parameters) ->
-    ?GTPv2C_IEI_PC5_QOS_PARAMETERS;
-compose_iei(services_authorized) ->
-    ?GTPv2C_IEI_SERVICES_AUTHORIZED;
-compose_iei(bit_rate) ->
-    ?GTPv2C_IEI_BIT_RATE;
-compose_iei(pc5_qos_flow) ->
-    ?GTPv2C_IEI_PC5_QOS_FLOW;
-compose_iei(sgi_ptp_tunnel_address) ->
-    ?GTPv2C_IEI_SGI_PTP_TUNNEL_ADDRESS;
-compose_iei(pgw_change_info) ->
-    ?GTPv2C_IEI_PGW_CHANGE_INFO;
-compose_iei(pgw_fqdn) ->
-    ?GTPv2C_IEI_PGW_FQDN;
-compose_iei(group_id) ->
-    ?GTPv2C_IEI_GROUP_ID;
-compose_iei(pscell_id) ->
-    ?GTPv2C_IEI_PSCELL_ID;
-compose_iei(up_security_policy) ->
-    ?GTPv2C_IEI_UP_SECURITY_POLICY;
-compose_iei(alternative_imsi) ->
-    ?GTPv2C_IEI_ALTERNATIVE_IMSI;
-compose_iei(special_ie_type_for_ie_type_extension) ->
-    ?GTPv2C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION;
-compose_iei(private_extension) ->
-    ?GTPv2C_IEI_PRIVATE_EXTENSION.
-
 decode_parameter(imsi, V, _) ->
     %% ITU-T Rec E.212 TBCD digits
     otc_util:decode_tbcd(V);
@@ -1098,6 +800,7 @@ decode_parameter(mei, V, _) ->
 decode_parameter(msisdn, V, _) ->
     otc_util:decode_tbcd(V);
 decode_parameter(indication, V0, _) ->
+    %% If the binary is less than 80 bits, pad it with 0es.
     V = <<V0/binary, 0:(80-bit_size(V0))>>,
     <<DAF:1, DTF:1, HI:1, DFI:1, OI:1, ISRSI:1, ISRAI:1, SGWCI:1,
       SQCI:1, UIMSI:1, CFSI:1, CRSI:1, P:1, PT:1, SI:1, MSV:1,
@@ -1194,7 +897,7 @@ decode_parameter(protocol_configuration_options, V, _) ->
     decode_pco(R0);
 decode_parameter(pdn_address_allocation, V, _) ->
     <<PDN:1/binary, R0/binary>> = V,
-    case pdn_type(PDN) of
+    case decode_pdn_type(PDN) of
         ipv4 ->
             <<IPv4:4/binary, _/binary>> = R0,
             #{ipv4 => decode_ip_addr(IPv4)};
@@ -1446,7 +1149,7 @@ decode_parameter(bearer_flags, V, _) ->
       vsrvcc_indicator => Vind,
       activity_status_indicator => ASI};
 decode_parameter(pdn_type, V, _) ->
-    pdn_type(V);
+    decode_pdn_type(V);
 decode_parameter(procedure_transaction_id, V, _) ->
     <<PTI:8>> = V,
     PTI;
@@ -2131,8 +1834,7 @@ decode_parameter(absolute_time_of_mbms_data_transfer, V, _) ->
     %% with a granularity of 1 /2**32 second.
     <<Seconds:32, Fraction:32>> = V,
     #{date_time => datetime_from_epoch(Seconds),
-      fraction_raw => Fraction,
-      fraction_ns => fraction_to_ns(Fraction)};
+      fraction_raw => Fraction};
 decode_parameter(henb_information_reporting, V, _) ->
     <<_:7, FTI:1>> = V,
     case FTI of
@@ -2518,8 +2220,7 @@ decode_parameter(apn_rate_control_status, V, _) ->
       additional_exception_reports => AdditionalExceptionReports,
       downlink_packets_allowed => DownlinkPacketsAllowed,
       validity_time => datetime_from_epoch(ValidityTimeS),
-      validity_time_fractions_raw => ValidityTimeF,
-      validity_time_fractions_ns => fraction_to_ns(ValidityTimeF)};
+      validity_time_fractions_raw => ValidityTimeF};
 decode_parameter(extended_trace_information, V, _) ->
     <<MCCMNCBin:3/binary,
       TraceId:3/binary,
@@ -3004,7 +2705,7 @@ encode_parameter(bearer_flags, V, _) ->
       activity_status_indicator := ASI} = V,
     <<0:4, ASI:1, Vind:1, VB:1, PPC:1>>;
 encode_parameter(pdn_type, V, _) ->
-    pdn_type(V);
+    encode_pdn_type(V);
 encode_parameter(procedure_transaction_id, V, _) ->
     <<V:8>>;
 encode_parameter(mm_context_gsm_key_and_triplets, V, _) ->
@@ -3664,9 +3365,7 @@ encode_parameter(additional_protocol_configuration_options, V, _) ->
     V;
 encode_parameter(absolute_time_of_mbms_data_transfer, V, _) ->
     #{date_time := S,
-      fraction_raw := Fraction,
-      fraction_ns := FractionNS} = V,
-    Fraction = fraction_from_ns(FractionNS),
+      fraction_raw := Fraction} = V,
     Seconds = datetime_to_epoch(S),
     <<Seconds:32, Fraction:32>>;
 encode_parameter(henb_information_reporting, V, _) ->
@@ -4047,10 +3746,8 @@ encode_parameter(apn_rate_control_status, V, _) ->
       additional_exception_reports := AdditionalExceptionReports,
       downlink_packets_allowed := DownlinkPacketsAllowed,
       validity_time := VT,
-      validity_time_fractions_raw := ValidityTimeF,
-      validity_time_fractions_ns := F} = V,
+      validity_time_fractions_raw := ValidityTimeF} = V,
     ValidityTimeS = datetime_to_epoch(VT),
-    ValidityTimeF = fraction_from_ns(F),
     <<UplinkPacketsAllowed:32,
       AdditionalExceptionReports:32,
       DownlinkPacketsAllowed:32,
@@ -4184,7 +3881,7 @@ decode_apn(<<A1L, A1:A1L/binary, A2/binary>>, Acc) ->
     decode_apn(A2, [binary_to_list(A1) | Acc]).
 
 encode_apn(APN) ->
-    Parts = string:split(APN, "."),
+    Parts = string:split(APN, ".", all),
     encode_apn(lists:reverse(Parts), <<>>).
 
 encode_apn([], Acc) ->
@@ -4226,7 +3923,7 @@ encode_ip_addr(IP) ->
     IPParts = tuple_to_list(IP),
     L = case length(IPParts) of
             4  -> 8;
-            16 -> 16
+            8 -> 16
         end,
     <<<<A:L>> || A <- IPParts>>.
 
@@ -4237,11 +3934,11 @@ decode_mac_addr(M) ->
 encode_mac_addr(M) ->
     <<<<(list_to_binary(A)):1/binary>> || A <- string:split(M, ":")>>.
 
-pdn_type(<<_:5, 2#001:3>>) -> ipv4;
-pdn_type(<<_:5, 2#010:3>>) -> ipv6;
-pdn_type(<<_:5, 2#011:3>>) -> ipv4v6;
-pdn_type(<<_:5, 2#100:3>>) -> non_ip;
-pdn_type(<<_:5, 2#101:3>>) -> ethernet.
+decode_pdn_type(<<_:5, 2#001:3>>) -> ipv4;
+decode_pdn_type(<<_:5, 2#010:3>>) -> ipv6;
+decode_pdn_type(<<_:5, 2#011:3>>) -> ipv4v6;
+decode_pdn_type(<<_:5, 2#100:3>>) -> non_ip;
+decode_pdn_type(<<_:5, 2#101:3>>) -> ethernet.
 
 encode_pdn_type(ipv4) -> <<0:5, 2#001:3>>;
 encode_pdn_type(ipv6) -> <<0:5, 2#010:3>>;
@@ -4797,10 +4494,6 @@ datetime_to_epoch(DT) ->
 fraction_to_ns(Fraction) ->
     erlang:floor(Fraction / math:pow(2, 32)*erlang:convert_time_unit(1, second, nanosecond)).
 
-fraction_from_ns(Fraction) ->
-    erlang:floor(Fraction * math:pow(2, 32)*erlang:convert_time_unit(1, second, nanosecond)).
-
-
 decode_additional_pras(0, _) ->
     [];
 decode_additional_pras(1, V) ->
@@ -4959,7 +4652,7 @@ decode_tft_packet_filters(N, R0, Acc) ->
                             2#11 -> bidirectional
                         end,
            evaluation_precedence => EvalPrec,
-           content => decode_tft_packet_filter_content(PFBin, #{})
+           content => decode_tft_packet_filter_content(PFBin, [])
           },
     decode_tft_packet_filters(N-1, R2, [PF|Acc]).
 
@@ -4990,118 +4683,117 @@ encode_tft_packet_filters([T|R], Acc0) ->
     encode_tft_packet_filters(R, Acc1).
 
 decode_tft_packet_filter_content(<<>>, Acc) ->
-    Acc;
+    lists:reverse(Acc);
 decode_tft_packet_filter_content(<<2#0001_0000:8, R0/binary>>, Acc) ->
     %% IPv4 remote address type
     <<IPv4:4/binary, IPv4Mask:4/binary, R1/binary>> = R0,
-    Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{ipv4 => decode_ip_addr(IPv4),
-             mask => decode_ip_addr(IPv4Mask)},
-    decode_tft_packet_filter_content(R1, Acc#{remote => V});
+    V = {remote, #{ipv4 => decode_ip_addr(IPv4),
+                   mask => decode_ip_addr(IPv4Mask)}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0001_0001:8, R0/binary>>, Acc) ->
     %% IPv4 local address type
     <<IPv4:4/binary, IPv4Mask:4/binary, R1/binary>> = R0,
-    Loc = maps:get(local, Acc, #{}),
-    V = Loc#{ipv4 => decode_ip_addr(IPv4),
-             mask => decode_ip_addr(IPv4Mask)},
-    decode_tft_packet_filter_content(R1, Acc#{local => V});
+    V = {local, #{ipv4 => decode_ip_addr(IPv4),
+                  mask => decode_ip_addr(IPv4Mask)}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0010_0000:8, R0/binary>>, Acc) ->
     %% IPv6 remote address type
     <<IPv6:16/binary, Mask:16/binary, R1/binary>> = R0,
-    Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{ipv6 => decode_ip_addr(IPv6),
-             mask => decode_ip_addr(Mask)},
-    decode_tft_packet_filter_content(R1, Acc#{remote => V});
+    V = {remote, #{ipv6 => decode_ip_addr(IPv6),
+                   mask => decode_ip_addr(Mask)}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0010_0001:8, R0/binary>>, Acc) ->
     %% IPv6 remote address/prefix length type
     <<IPv6:16/binary, PrefixLen:1/binary, R1/binary>> = R0,
-    Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{ipv6 => decode_ip_addr(IPv6),
-             prefix_length => PrefixLen},
-    decode_tft_packet_filter_content(R1, Acc#{remote => V});
+    V = {remote, #{ipv6 => decode_ip_addr(IPv6),
+                   prefix_length => PrefixLen}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0010_0011:8, R0/binary>>, Acc) ->
     %% IPv6 local address/prefix length type
     <<IPv6:16/binary, PrefixLen:1/binary, R1/binary>> = R0,
-    Loc = maps:get(local, Acc, #{}),
-    V = Loc#{ipv6 => decode_ip_addr(IPv6),
-             prefix_length => PrefixLen},
-    decode_tft_packet_filter_content(R1, Acc#{local => V});
+    V = {local, #{ipv6 => decode_ip_addr(IPv6),
+                  prefix_length => PrefixLen}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0011_0000:8, R0/binary>>, Acc) ->
     %% Protocol identifier/Next header type
     <<ProtocolId:8, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{protocol_identifier => ProtocolId});
+    V = {protocol_identifier, ProtocolId},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0100_0000:8, R0/binary>>, Acc) ->
     %% Single local port type
     <<Port:16, R1/binary>> = R0,
-    Loc = maps:get(local, Acc, #{}),
-    V = Loc#{port => Port},
-    decode_tft_packet_filter_content(R1, Acc#{local => V});
+    V = {local, #{port => Port}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0100_0001:8, R0/binary>>, Acc) ->
     %% Local port range type
     <<LowPort:16, HighPort:16, R1/binary>> = R0,
     Port = #{low => LowPort, high => HighPort},
-    Loc = maps:get(local, Acc, #{}),
-    V = Loc#{port => Port},
-    decode_tft_packet_filter_content(R1, Acc#{local => V});
+    V = {local, #{port => Port}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0101_0000:8, R0/binary>>, Acc) ->
     %% Single remote port type
     <<Port:16, R1/binary>> = R0,
-    Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{port => Port},
-    decode_tft_packet_filter_content(R1, Acc#{remote => V});
+    V = {remote, #{port => Port}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0101_0001:8, R0/binary>>, Acc) ->
     %% Remote port range type
     <<LowPort:16, HighPort:16, R1/binary>> = R0,
     Port = #{low => LowPort, high => HighPort},
-    Rem = maps:get(remote, Acc, #{}),
-    V = Rem#{port => Port},
-    decode_tft_packet_filter_content(R1, Acc#{remote => V});
+    V = {remote, #{port => Port}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0110_0000:8, R0/binary>>, Acc) ->
     %% Security parameter index type
     <<SecurityParamIndex:4/binary, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{security_parameter_index => SecurityParamIndex});
+    V = {security_parameter_index, SecurityParamIndex},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#0111_0000:8, R0/binary>>, Acc) ->
     %% Type of service/Traffic class type
     <<ToS:1/binary, Mask:1/binary, R1/binary>> = R0,
-    V = #{type => ToS, mask => Mask},
-    decode_tft_packet_filter_content(R1, Acc#{service => V});
+    V = {service, #{type => ToS, mask => Mask}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0000:8, R0/binary>>, Acc) ->
     %% Flow label type
     <<_:4, FlowLabel:20, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{flow_label => FlowLabel});
+    V = {flow_label, FlowLabel},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0001:8, R0/binary>>, Acc) ->
     %% Destination MAC address type
     <<MAC:6/binary, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{destination_mac => decode_mac_addr(MAC)});
+    V = {destination_mac, decode_mac_addr(MAC)},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0010:8, R0/binary>>, Acc) ->
     %% Source MAC address type
     <<MAC:6/binary, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{source_mac => decode_mac_addr(MAC)});
+    V = {source_mac, decode_mac_addr(MAC)},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0011:8, R0/binary>>, Acc) ->
     %% 802.1Q C-TAG VID type
     <<_:4, VID:12, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{q_ctag_vid => VID});
+    V = {q_ctag_vid, VID},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0100:8, R0/binary>>, Acc) ->
     %% 802.1Q S-TAG VID type
     <<_:4, VID:12, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{q_stag_vid => VID});
+    V = {q_stag_vid, VID},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0101:8, R0/binary>>, Acc) ->
     %% 802.1Q C-TAG PCP/DEI type
     <<_:4, PCP:3, DEI:1, R1/binary>> = R0,
-    V = #{pcp => PCP, dei => DEI},
-    decode_tft_packet_filter_content(R1, Acc#{q_ctag_pcp => V});
+    V = {q_ctag_pcp, #{pcp => PCP, dei => DEI}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0110:8, R0/binary>>, Acc) ->
     %% 802.1Q S-TAG PCP/DEI type
     <<_:4, PCP:3, DEI:1, R1/binary>> = R0,
-    V = #{pcp => PCP, dei => DEI},
-    decode_tft_packet_filter_content(R1, Acc#{q_stag_pcp => V});
+    V = {q_stag_pcp, #{pcp => PCP, dei => DEI}},
+    decode_tft_packet_filter_content(R1, [V|Acc]);
 decode_tft_packet_filter_content(<<2#1000_0111:8, R0/binary>>, Acc) ->
     %% Ethertype type
     <<Ethertype:16, R1/binary>> = R0,
-    decode_tft_packet_filter_content(R1, Acc#{ethertype => Ethertype}).
+    V = {ethertype, Ethertype},
+    decode_tft_packet_filter_content(R1, [V|Acc]).
 
 encode_tft_packet_filter_content(C) ->
-    encode_tft_packet_filter_content(maps:to_list(C), <<>>).
+    encode_tft_packet_filter_content(lists:reverse(C), <<>>).
 
 encode_tft_packet_filter_content([], Acc) ->
     Acc;
@@ -5166,7 +4858,7 @@ encode_tft_packet_filter_content([{local, #{port := Port}}|R], Acc0) ->
     %% Single local port type
     Acc1 = <<2#0100_0000:8, Port:16, Acc0/binary>>,
     encode_tft_packet_filter_content(R, Acc1);
-encode_tft_packet_filter_content([{protocol_identifiers, V}|R], Acc0) ->
+encode_tft_packet_filter_content([{protocol_identifier, V}|R], Acc0) ->
     %% Protocol identifier/Next header type
     ProtocolId = V,
     Acc1 = <<2#0011_0000:8, ProtocolId:8, Acc0/binary>>,
@@ -5575,7 +5267,6 @@ decode_tliv_list(<<>>, List, Acc) ->
 decode_tliv_list(Bin, [], Acc) ->
     {Acc, Bin};
 decode_tliv_list(Bin, List, Acc) ->
-    %% TODO: support for Private Extension instance=VS
     {Type, Instance, DataBin, Rest} = decode_tliv(Bin),
     {value, H, NewList} = tlivtake(Type, Instance, List),
     Name = element(1, H),
@@ -5586,11 +5277,9 @@ decode_tliv_list(Bin, List, Acc) ->
     Data = decode_parameter(parse_iei(Type), DataBin, Opts),
     decode_tliv_list(Rest, NewList, Acc#{Name => Data}).
 
-decode_tliv(<<254:8, Len:16, _Spare:4, Instance:4, Type:16, Bin0/binary>>) ->
-    <<Data:Len/binary, Rest/binary>> = Bin0,
+decode_tliv(<<254:8, Len:16, _Spare:4, Instance:4, Type:16, Data:Len/binary, Rest/binary>>) ->
     {Type, Instance, Data, Rest};
-decode_tliv(<<Type:8, Len:16, _Spare:4, Instance:4, Bin0/binary>>) ->
-    <<Data:Len/binary, Rest/binary>> = Bin0,
+decode_tliv(<<Type:8, Len:16, _Spare:4, Instance:4, Data:Len/binary, Rest/binary>>) ->
     {Type, Instance, Data, Rest}.
 
 encode_tliv_list(Msg, List) ->

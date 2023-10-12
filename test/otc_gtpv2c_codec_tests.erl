@@ -3,7 +3,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 create_session_request_test() ->
-    Bin = <<"482001860000000037B2EE000100080042829978563412f14C0006007409036606"
+    Bin = <<"482001860000000037B2EE000100080042829978563412F14C0006007409036606"
             "454B000800733272311171350156000D001842F08928E742F08900041701530003"
             "0042F089520001000A570009008A67B8031EAC10436F570009018700000000AC10"
             "0899470026000F696E7465726E74696E7465726E6574027636066D6E6330393806"
@@ -103,16 +103,18 @@ create_session_request_test() ->
                   additional_exception_reports => 0,
                   downlink_packets_allowed => 200,
                   validity_time => {{2019,3,7},{12,45,0}},
-                  validity_time_fractions_raw => 16909060,
-                  validity_time_fractions_ns => 3_936_947}},
+                  validity_time_fractions_raw => 16_909_060}},
+    ?assertEqual(3_936_947, otc_gtpv2c:fraction_to_ns(16_909_060)),
     Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 create_session_response_test() ->
-    Bin = <<"4821008405415ea10000620002000200100057000901878701000ab92737594f00"
-            "0500010a83ac117f000100004800080000000100000001004e00270080000d0408"
-            "080808000d04080804048021100300001081060808080883060808040400100205"
-            "dc5d002000490001000502000200100057000902858701000ab92737595e000400"
+    Bin = <<"4821008405415EA10000620002000200100057000901878701000AB92737594F00"
+            "0500010A83AC117F000100004800080000000100000001004E00270080000D0408"
+            "080808000D04080804048021100300001081060808080883060808040400100205"
+            "DC5D002000490001000502000200100057000902858701000AB92737595E000400"
             "03145955">>,
     Map = #{version => 2,
             message_group => tunnel_management,
@@ -153,18 +155,20 @@ create_session_response_test() ->
                         teid_gre_key => 2264989706},
                   charging_id => <<3,20,89,85>>}},
     Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 create_bearer_request_test() ->
-    Bin = <<"485F010D04B7FF761615720049000100065D00F10049000100005400AB00241080"
+    Bin = <<"485F011004B7FF761615720049000100065D00F10049000100005400AB00241080"
             "2920240753002000103B0000000000000004FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
             "FF301140C35B509F43217F2620240753002000103B0000000000000004FFFFFFFF"
             "FFFFFFFFFFFFFFFFFFFFFFFF3011509F43123F2920240753002000103B00000000"
             "00000004FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF301140C35A509F42233E262024"
             "0753002000103B0000000000000004FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3011"
-            "509F42500016002501000000002A000000002A000000002A000000002A57000901"
-            "858B28B47BCAB3C7F157000900812F8586C60AF01FCDCB00050003000A00054D00"
-            "07000100000000001C">>,
+            "509F4257000900812F8586C60AF01FCD57000901858B28B47BCAB3C7F150001600"
+            "2501000000002A000000002A000000002A000000002ACB00050003000A00054D00"
+            "0A000100000000001C000000">>,
     Map = #{version => 2,
             message_group => tunnel_management,
             piggy_backed => false,
@@ -181,40 +185,40 @@ create_bearer_request_test() ->
                             [#{direction => downlink,
                                identifier => 0,
                                evaluation_precedence => 128,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40771},
-                                            protocol_identifier => 16#11,
-                                            local => #{port => 50011}
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {local, #{port => 50011}},
+                                           {remote, #{port => 40771}}
+                                          ]
                               },
                              #{direction => uplink,
                                identifier => 1,
                                evaluation_precedence => 127,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40771},
-                                            protocol_identifier => 16#11
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {remote, #{port => 40771}}
+                                          ]
                               },
                              #{direction => downlink,
                                identifier => 2,
                                evaluation_precedence => 63,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40770},
-                                            protocol_identifier => 16#11,
-                                            local => #{port => 50010}
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {local, #{port => 50010}},
+                                           {remote, #{port => 40770}}
+                                          ]
                               },
                              #{direction => uplink,
                                identifier => 3,
                                evaluation_precedence => 62,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40770},
-                                            protocol_identifier => 16#11
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {remote, #{port => 40770}}
+                                          ]
                               }
                             ]},
                   bearer_level_qos =>
@@ -313,7 +317,9 @@ create_bearer_request_test() ->
                   user_plane_integrity_protection_support_indication => 0,
                   wlcp_pdn_connection_modification_support_indication => 0}},
     Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 forward_relocation_request_1_test() ->
     Bin = <<"4885032C00000000000001000100080042829978563412f1570009008E00025A9C"
@@ -439,14 +445,12 @@ forward_relocation_request_1_test() ->
                          downlink_packets_allowed => 32768,
                          uplink_packets_allowed => 4096,
                          validity_time => {{2019,3,7},{12,49,16}},
-                         validity_time_fractions_ns => 62991157,
                          validity_time_fractions_raw => 270544960},
                        #{additional_exception_reports => 16,
                          apn => "APN1.mnc098.mcc240.gprs",
                          downlink_packets_allowed => 524288,
                          uplink_packets_allowed => 65536,
                          validity_time => {{2019,3,7},{12,53,32}},
-                         validity_time_fractions_ns => 66928104,
                          validity_time_fractions_raw => 287454020}]},
             e_utran_transparent_container =>
                 #{eutran_transparent_container =>
@@ -477,6 +481,8 @@ forward_relocation_request_1_test() ->
             s1_ap_cause => #{radio_network_layer_cause => <<16>>},
             selected_plmn_id => #{mcc => "255",
                                   mnc => "02"}},
+    ?assertEqual(62991157, otc_gtpv2c:fraction_to_ns(270544960)),
+    ?assertEqual(66928104, otc_gtpv2c:fraction_to_ns(287454020)),
     Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
     ?assertMatch(Map, Msg).
 
@@ -883,26 +889,22 @@ create_bearer_request2_test() ->
                                identifier => 0,
                                evaluation_precedence => 48,
                                content =>
-                                   #{local => #{port => 49120},
-                                     remote =>
-                                         #{port => 36064,
-                                           ipv4 =>
-                                               {148,122,173,88},
-                                           mask =>
-                                               {255,255,255,255}},
-                                     protocol_identifier => 17}},
+                                   [{remote, #{ipv4 => {148,122,173,88},
+                                               mask => {255,255,255,255}}},
+                                    {protocol_identifier, 17},
+                                    {local, #{port => 49120}},
+                                    {remote, #{port => 36064}}
+                                   ]},
                              #{direction => downlink,
                                identifier => 1,
                                evaluation_precedence => 49,
                                content =>
-                                   #{local => #{port => 49120},
-                                     remote =>
-                                         #{port => 36064,
-                                           ipv4 =>
-                                               {148,122,173,88},
-                                           mask =>
-                                               {255,255,255,255}},
-                                     protocol_identifier => 17}}]},
+                                   [{remote, #{ipv4 => {148,122,173,88},
+                                               mask => {255,255,255,255}}},
+                                    {protocol_identifier, 17},
+                                    {local, #{port => 49120}},
+                                    {remote, #{port => 36064}}
+                                   ]}]},
                   s5s8u_pgw_f_teid =>
                       #{ipv4 => {84,216,158,3},
                         interface_type => s5s8_pgw_gtpu,
