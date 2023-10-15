@@ -322,7 +322,7 @@ create_bearer_request_test() ->
     ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 forward_relocation_request_1_test() ->
-    Bin = <<"4885032C00000000000001000100080042829978563412f1570009008E00025A9C"
+    Bin = <<"4885032C00000000000001000100080042829978563412F1570009008E00025A9C"
             "9C17040C6D008F0047001E000A45564552595748455245066D6E63303032066D63"
             "6332353504677072737F000100FF4A0004000A014A8149000100055700090087B9"
             "1CEFFA95FEC6F25D003E0049000100055700090081000000970A667FA157000901"
@@ -396,7 +396,9 @@ forward_relocation_request_1_test() ->
                   teid_gre_key => 101712041},
             sgw_node_name => "TOPON.S11.SGW.UGW001WVN",
             mmesgsnamf_ue_mm_context =>
-                #{security_mode => 4,
+                #{type =>
+                      mm_context_eps_security_context_quadruplets_and_quintuplets,
+                  security_mode => 4,
                   ksi => 6,
                   used_nas_integrity_protection_algorithm => 2,
                   used_nas_cipher => 2,
@@ -477,17 +479,20 @@ forward_relocation_request_1_test() ->
                 #{mcc => "255",
                   mnc => "02",
                   gnodeb_id => 3220293,
-                  tracking_area_code => <<":*O">>},
+                  id_length => 22,
+                  '5gs_tracking_area_code' => <<":*O">>},
             s1_ap_cause => #{radio_network_layer_cause => <<16>>},
             selected_plmn_id => #{mcc => "255",
                                   mnc => "02"}},
     ?assertEqual(62991157, otc_gtpv2c:fraction_to_ns(270544960)),
     ?assertEqual(66928104, otc_gtpv2c:fraction_to_ns(287454020)),
     Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
-    ?assertMatch(Map, Msg).
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 forward_relocation_request_2_test() ->
-    Bin = <<"488503320000000000C156000100080042900901020304f5570009008C31EB70CD"
+    Bin = <<"488503320000000000C156000100080042900901020304F5570009008C31EB70CD"
             "71D5828B6D00E30047001A0006706172726F74066D6E63303938066D6363323430"
             "046770727349000100054A0004000A25A331800001000057000900878CF7DFC075"
             "2E64F488004C0005746F706F6E0570677773351473656261737469772D69732D64"
@@ -567,7 +572,9 @@ forward_relocation_request_2_test() ->
             sgw_node_name =>
                 "topon.sgws5.sebastiw-is-darkness.tele.com.epc.mnc098.mcc240.3gppnetwork.org",
             mmesgsnamf_ue_mm_context =>
-                #{security_mode => 4,
+                #{type =>
+                      mm_context_eps_security_context_quadruplets_and_quintuplets,
+                  security_mode => 4,
                   used_nas_integrity_protection_algorithm => 2,
                   used_nas_cipher => 2,
                   nas_downlink_count => 40,
@@ -772,7 +779,9 @@ identification_response_test() ->
             teid => 0,
             sequence_number => 54777,
             mmesgsn_ue_mm_context =>
-                #{security_mode => 4,
+                #{type =>
+                      mm_context_eps_security_context_quadruplets_and_quintuplets,
+                  security_mode => 4,
                   ksi => 1,
                   used_nas_integrity_protection_algorithm => 2,
                   used_nas_cipher => 2,

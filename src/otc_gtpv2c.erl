@@ -755,6 +755,307 @@ parse_iei(?GTPv2C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION) ->
 parse_iei(?GTPv2C_IEI_PRIVATE_EXTENSION) ->
     private_extension.
 
+compose_iei(imsi) ->
+    ?GTPv2C_IEI_IMSI;
+compose_iei(cause) ->
+    ?GTPv2C_IEI_CAUSE;
+compose_iei(recovery_restart_counter) ->
+    ?GTPv2C_IEI_RECOVERY_RESTART_COUNTER;
+compose_iei(stn_sr) ->
+    ?GTPv2C_IEI_STN_SR;
+compose_iei(srvcc_cause) ->
+    ?GTPv2C_IEI_SRVCC_CAUSE;
+compose_iei(apn) ->
+    ?GTPv2C_IEI_APN;
+compose_iei(ambr) ->
+    ?GTPv2C_IEI_AMBR;
+compose_iei(eps_bearer_id) ->
+    ?GTPv2C_IEI_EPS_BEARER_ID;
+compose_iei(ip_address) ->
+    ?GTPv2C_IEI_IP_ADDRESS;
+compose_iei(mei) ->
+    ?GTPv2C_IEI_MEI;
+compose_iei(msisdn) ->
+    ?GTPv2C_IEI_MSISDN;
+compose_iei(indication) ->
+    ?GTPv2C_IEI_INDICATION;
+compose_iei(protocol_configuration_options) ->
+    ?GTPv2C_IEI_PROTOCOL_CONFIGURATION_OPTIONS;
+compose_iei(pdn_address_allocation) ->
+    ?GTPv2C_IEI_PDN_ADDRESS_ALLOCATION;
+compose_iei(bearer_qos) ->
+    ?GTPv2C_IEI_BEARER_QOS;
+compose_iei(flow_qos) ->
+    ?GTPv2C_IEI_FLOW_QOS;
+compose_iei(rat_type) ->
+    ?GTPv2C_IEI_RAT_TYPE;
+compose_iei(serving_network) ->
+    ?GTPv2C_IEI_SERVING_NETWORK;
+compose_iei(bearer_tft) ->
+    ?GTPv2C_IEI_BEARER_TFT;
+compose_iei(traffic_aggregate_description) ->
+    ?GTPv2C_IEI_TRAFFIC_AGGREGATE_DESCRIPTION;
+compose_iei(user_location_information) ->
+    ?GTPv2C_IEI_USER_LOCATION_INFORMATION;
+compose_iei(f_teid) ->
+    ?GTPv2C_IEI_F_TEID;
+compose_iei(tmsi) ->
+    ?GTPv2C_IEI_TMSI;
+compose_iei(global_cn_id) ->
+    ?GTPv2C_IEI_GLOBAL_CN_ID;
+compose_iei(s103_pdn_data_forwarding_info) ->
+    ?GTPv2C_IEI_S103_PDN_DATA_FORWARDING_INFO;
+compose_iei(s1_u_data_forwarding_info) ->
+    ?GTPv2C_IEI_S1_U_DATA_FORWARDING_INFO;
+compose_iei(delay_value) ->
+    ?GTPv2C_IEI_DELAY_VALUE;
+compose_iei(bearer_context) ->
+    ?GTPv2C_IEI_BEARER_CONTEXT;
+compose_iei(charging_id) ->
+    ?GTPv2C_IEI_CHARGING_ID;
+compose_iei(charging_characteristics) ->
+    ?GTPv2C_IEI_CHARGING_CHARACTERISTICS;
+compose_iei(trace_information) ->
+    ?GTPv2C_IEI_TRACE_INFORMATION;
+compose_iei(bearer_flags) ->
+    ?GTPv2C_IEI_BEARER_FLAGS;
+compose_iei(pdn_type) ->
+    ?GTPv2C_IEI_PDN_TYPE;
+compose_iei(procedure_transaction_id) ->
+    ?GTPv2C_IEI_PROCEDURE_TRANSACTION_ID;
+compose_iei(mm_context_gsm_key_and_triplets) ->
+    ?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_AND_TRIPLETS;
+compose_iei(mm_context_umts_key_cipher_and_quintuplets) ->
+    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_CIPHER_AND_QUINTUPLETS;
+compose_iei(mm_context_gsm_key_cipher_and_quintuplets) ->
+    ?GTPv2C_IEI_MM_CONTEXT_GSM_KEY_CIPHER_AND_QUINTUPLETS;
+compose_iei(mm_context_umts_key_and_quintuplets) ->
+    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_AND_QUINTUPLETS;
+compose_iei(mm_context_eps_security_context_quadruplets_and_quintuplets) ->
+    ?GTPv2C_IEI_MM_CONTEXT_EPS_SECURITY_CONTEXT_QUADRUPLETS_AND_QUINTUPLETS;
+compose_iei(mm_context_umts_key_quadruplets_and_quintuplets) ->
+    ?GTPv2C_IEI_MM_CONTEXT_UMTS_KEY_QUADRUPLETS_AND_QUINTUPLETS;
+compose_iei(pdn_connection) ->
+    ?GTPv2C_IEI_PDN_CONNECTION;
+compose_iei(pdu_numbers) ->
+    ?GTPv2C_IEI_PDU_NUMBERS;
+compose_iei(p_tmsi) ->
+    ?GTPv2C_IEI_P_TMSI;
+compose_iei(p_tmsi_signature) ->
+    ?GTPv2C_IEI_P_TMSI_SIGNATURE;
+compose_iei(hop_counter) ->
+    ?GTPv2C_IEI_HOP_COUNTER;
+compose_iei(ue_time_zone) ->
+    ?GTPv2C_IEI_UE_TIME_ZONE;
+compose_iei(trace_reference) ->
+    ?GTPv2C_IEI_TRACE_REFERENCE;
+compose_iei(complete_request_message) ->
+    ?GTPv2C_IEI_COMPLETE_REQUEST_MESSAGE;
+compose_iei(guti) ->
+    ?GTPv2C_IEI_GUTI;
+compose_iei(f_container) ->
+    ?GTPv2C_IEI_F_CONTAINER;
+compose_iei(f_cause) ->
+    ?GTPv2C_IEI_F_CAUSE;
+compose_iei(plmn_id) ->
+    ?GTPv2C_IEI_PLMN_ID;
+compose_iei(target_identification) ->
+    ?GTPv2C_IEI_TARGET_IDENTIFICATION;
+compose_iei(packet_flow_id) ->
+    ?GTPv2C_IEI_PACKET_FLOW_ID;
+compose_iei(rab_context) ->
+    ?GTPv2C_IEI_RAB_CONTEXT;
+compose_iei(source_rnc_pdcp_context_info) ->
+    ?GTPv2C_IEI_SOURCE_RNC_PDCP_CONTEXT_INFO;
+compose_iei(port_number) ->
+    ?GTPv2C_IEI_PORT_NUMBER;
+compose_iei(apn_restriction) ->
+    ?GTPv2C_IEI_APN_RESTRICTION;
+compose_iei(selection_mode) ->
+    ?GTPv2C_IEI_SELECTION_MODE;
+compose_iei(source_identification) ->
+    ?GTPv2C_IEI_SOURCE_IDENTIFICATION;
+compose_iei(change_reporting_action) ->
+    ?GTPv2C_IEI_CHANGE_REPORTING_ACTION;
+compose_iei(fq_csid) ->
+    ?GTPv2C_IEI_FQ_CSID;
+compose_iei(channel_needed) ->
+    ?GTPv2C_IEI_CHANNEL_NEEDED;
+compose_iei(emlpp_priority) ->
+    ?GTPv2C_IEI_EMLPP_PRIORITY;
+compose_iei(node_type) ->
+    ?GTPv2C_IEI_NODE_TYPE;
+compose_iei(fqdn) ->
+    ?GTPv2C_IEI_FQDN;
+compose_iei(transaction_identifier) ->
+    ?GTPv2C_IEI_TRANSACTION_IDENTIFIER;
+compose_iei(mbms_session_duration) ->
+    ?GTPv2C_IEI_MBMS_SESSION_DURATION;
+compose_iei(mbms_service_area) ->
+    ?GTPv2C_IEI_MBMS_SERVICE_AREA;
+compose_iei(mbms_session_identifier) ->
+    ?GTPv2C_IEI_MBMS_SESSION_IDENTIFIER;
+compose_iei(mbms_flow_identifier) ->
+    ?GTPv2C_IEI_MBMS_FLOW_IDENTIFIER;
+compose_iei(mbms_ip_multicast_distribution) ->
+    ?GTPv2C_IEI_MBMS_IP_MULTICAST_DISTRIBUTION;
+compose_iei(mbms_distribution_acknowledge) ->
+    ?GTPv2C_IEI_MBMS_DISTRIBUTION_ACKNOWLEDGE;
+compose_iei(rfsp_index) ->
+    ?GTPv2C_IEI_RFSP_INDEX;
+compose_iei(user_csg_information) ->
+    ?GTPv2C_IEI_USER_CSG_INFORMATION;
+compose_iei(csg_information_reporting_action) ->
+    ?GTPv2C_IEI_CSG_INFORMATION_REPORTING_ACTION;
+compose_iei(csg_id) ->
+    ?GTPv2C_IEI_CSG_ID;
+compose_iei(csg_membership_indication) ->
+    ?GTPv2C_IEI_CSG_MEMBERSHIP_INDICATION;
+compose_iei(service_indicator) ->
+    ?GTPv2C_IEI_SERVICE_INDICATOR;
+compose_iei(detach_type) ->
+    ?GTPv2C_IEI_DETACH_TYPE;
+compose_iei(local_distiguished_name) ->
+    ?GTPv2C_IEI_LOCAL_DISTIGUISHED_NAME;
+compose_iei(node_features) ->
+    ?GTPv2C_IEI_NODE_FEATURES;
+compose_iei(mbms_time_to_data_transfer) ->
+    ?GTPv2C_IEI_MBMS_TIME_TO_DATA_TRANSFER;
+compose_iei(throttling) ->
+    ?GTPv2C_IEI_THROTTLING;
+compose_iei(allocation_retention_priority) ->
+    ?GTPv2C_IEI_ALLOCATION_RETENTION_PRIORITY;
+compose_iei(epc_timer) ->
+    ?GTPv2C_IEI_EPC_TIMER;
+compose_iei(signalling_priority_indication) ->
+    ?GTPv2C_IEI_SIGNALLING_PRIORITY_INDICATION;
+compose_iei(temporary_mobile_group_identity) ->
+    ?GTPv2C_IEI_TEMPORARY_MOBILE_GROUP_IDENTITY;
+compose_iei(additional_mm_context_for_srvcc) ->
+    ?GTPv2C_IEI_ADDITIONAL_MM_CONTEXT_FOR_SRVCC;
+compose_iei(additional_flags_for_srvcc) ->
+    ?GTPv2C_IEI_ADDITIONAL_FLAGS_FOR_SRVCC;
+compose_iei(mdt_configuration) ->
+    ?GTPv2C_IEI_MDT_CONFIGURATION;
+compose_iei(additional_protocol_configuration_options) ->
+    ?GTPv2C_IEI_ADDITIONAL_PROTOCOL_CONFIGURATION_OPTIONS;
+compose_iei(absolute_time_of_mbms_data_transfer) ->
+    ?GTPv2C_IEI_ABSOLUTE_TIME_OF_MBMS_DATA_TRANSFER;
+compose_iei(henb_information_reporting) ->
+    ?GTPv2C_IEI_HENB_INFORMATION_REPORTING;
+compose_iei(ipv4_configuration_parameters) ->
+    ?GTPv2C_IEI_IPV4_CONFIGURATION_PARAMETERS;
+compose_iei(change_to_report_flags) ->
+    ?GTPv2C_IEI_CHANGE_TO_REPORT_FLAGS;
+compose_iei(action_indication) ->
+    ?GTPv2C_IEI_ACTION_INDICATION;
+compose_iei(twan_identifier) ->
+    ?GTPv2C_IEI_TWAN_IDENTIFIER;
+compose_iei(uli_timestamp) ->
+    ?GTPv2C_IEI_ULI_TIMESTAMP;
+compose_iei(mbms_flags) ->
+    ?GTPv2C_IEI_MBMS_FLAGS;
+compose_iei(ran_nas_cause) ->
+    ?GTPv2C_IEI_RAN_NAS_CAUSE;
+compose_iei(cn_operator_selection_entity) ->
+    ?GTPv2C_IEI_CN_OPERATOR_SELECTION_ENTITY;
+compose_iei(trusted_wlan_mode_indication) ->
+    ?GTPv2C_IEI_TRUSTED_WLAN_MODE_INDICATION;
+compose_iei(node_number) ->
+    ?GTPv2C_IEI_NODE_NUMBER;
+compose_iei(node_identifier) ->
+    ?GTPv2C_IEI_NODE_IDENTIFIER;
+compose_iei(presence_reporting_area_action) ->
+    ?GTPv2C_IEI_PRESENCE_REPORTING_AREA_ACTION;
+compose_iei(presence_reporting_area_information) ->
+    ?GTPv2C_IEI_PRESENCE_REPORTING_AREA_INFORMATION;
+compose_iei(twan_identifier_timestamp) ->
+    ?GTPv2C_IEI_TWAN_IDENTIFIER_TIMESTAMP;
+compose_iei(overload_control_information) ->
+    ?GTPv2C_IEI_OVERLOAD_CONTROL_INFORMATION;
+compose_iei(load_control_information) ->
+    ?GTPv2C_IEI_LOAD_CONTROL_INFORMATION;
+compose_iei(metric) ->
+    ?GTPv2C_IEI_METRIC;
+compose_iei(sequence_number) ->
+    ?GTPv2C_IEI_SEQUENCE_NUMBER;
+compose_iei(apn_and_relative_capacity) ->
+    ?GTPv2C_IEI_APN_AND_RELATIVE_CAPACITY;
+compose_iei(wlan_offloadability_indication) ->
+    ?GTPv2C_IEI_WLAN_OFFLOADABILITY_INDICATION;
+compose_iei(paging_and_service_information) ->
+    ?GTPv2C_IEI_PAGING_AND_SERVICE_INFORMATION;
+compose_iei(integer_number) ->
+    ?GTPv2C_IEI_INTEGER_NUMBER;
+compose_iei(millisecond_time_stamp) ->
+    ?GTPv2C_IEI_MILLISECOND_TIME_STAMP;
+compose_iei(monitoring_event_information) ->
+    ?GTPv2C_IEI_MONITORING_EVENT_INFORMATION;
+compose_iei(ecgi_list) ->
+    ?GTPv2C_IEI_ECGI_LIST;
+compose_iei(remote_ue_context) ->
+    ?GTPv2C_IEI_REMOTE_UE_CONTEXT;
+compose_iei(remote_user_id) ->
+    ?GTPv2C_IEI_REMOTE_USER_ID;
+compose_iei(remote_ue_ip_information) ->
+    ?GTPv2C_IEI_REMOTE_UE_IP_INFORMATION;
+compose_iei(ciot_optimizations_support_indication) ->
+    ?GTPv2C_IEI_CIOT_OPTIMIZATIONS_SUPPORT_INDICATION;
+compose_iei(scef_pdn_connection) ->
+    ?GTPv2C_IEI_SCEF_PDN_CONNECTION;
+compose_iei(header_compression_configuration) ->
+    ?GTPv2C_IEI_HEADER_COMPRESSION_CONFIGURATION;
+compose_iei(extended_protocol_configuration_options) ->
+    ?GTPv2C_IEI_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS;
+compose_iei(serving_plmn_rate_control) ->
+    ?GTPv2C_IEI_SERVING_PLMN_RATE_CONTROL;
+compose_iei(counter) ->
+    ?GTPv2C_IEI_COUNTER;
+compose_iei(mapped_ue_usage_type) ->
+    ?GTPv2C_IEI_MAPPED_UE_USAGE_TYPE;
+compose_iei(secondary_rat_usage_data_report) ->
+    ?GTPv2C_IEI_SECONDARY_RAT_USAGE_DATA_REPORT;
+compose_iei(up_function_selection_indication_flags) ->
+    ?GTPv2C_IEI_UP_FUNCTION_SELECTION_INDICATION_FLAGS;
+compose_iei(maximum_packet_loss_rate) ->
+    ?GTPv2C_IEI_MAXIMUM_PACKET_LOSS_RATE;
+compose_iei(apn_rate_control_status) ->
+    ?GTPv2C_IEI_APN_RATE_CONTROL_STATUS;
+compose_iei(extended_trace_information) ->
+    ?GTPv2C_IEI_EXTENDED_TRACE_INFORMATION;
+compose_iei(monitoring_event_extension_information) ->
+    ?GTPv2C_IEI_MONITORING_EVENT_EXTENSION_INFORMATION;
+compose_iei(additional_rrm_policy_index) ->
+    ?GTPv2C_IEI_ADDITIONAL_RRM_POLICY_INDEX;
+compose_iei(v2x_context) ->
+    ?GTPv2C_IEI_V2X_CONTEXT;
+compose_iei(pc5_qos_parameters) ->
+    ?GTPv2C_IEI_PC5_QOS_PARAMETERS;
+compose_iei(services_authorized) ->
+    ?GTPv2C_IEI_SERVICES_AUTHORIZED;
+compose_iei(bit_rate) ->
+    ?GTPv2C_IEI_BIT_RATE;
+compose_iei(pc5_qos_flow) ->
+    ?GTPv2C_IEI_PC5_QOS_FLOW;
+compose_iei(sgi_ptp_tunnel_address) ->
+    ?GTPv2C_IEI_SGI_PTP_TUNNEL_ADDRESS;
+compose_iei(pgw_change_info) ->
+    ?GTPv2C_IEI_PGW_CHANGE_INFO;
+compose_iei(pgw_fqdn) ->
+    ?GTPv2C_IEI_PGW_FQDN;
+compose_iei(group_id) ->
+    ?GTPv2C_IEI_GROUP_ID;
+compose_iei(pscell_id) ->
+    ?GTPv2C_IEI_PSCELL_ID;
+compose_iei(up_security_policy) ->
+    ?GTPv2C_IEI_UP_SECURITY_POLICY;
+compose_iei(alternative_imsi) ->
+    ?GTPv2C_IEI_ALTERNATIVE_IMSI;
+compose_iei(special_ie_type_for_ie_type_extension) ->
+    ?GTPv2C_IEI_SPECIAL_IE_TYPE_FOR_IE_TYPE_EXTENSION;
+compose_iei(private_extension) ->
+    ?GTPv2C_IEI_PRIVATE_EXTENSION.
+
 decode_parameter(imsi, V, _) ->
     %% ITU-T Rec E.212 TBCD digits
     otc_util:decode_tbcd(V);
@@ -1153,7 +1454,7 @@ decode_parameter(pdn_type, V, _) ->
 decode_parameter(procedure_transaction_id, V, _) ->
     <<PTI:8>> = V,
     PTI;
-decode_parameter(mm_context_gsm_key_and_triplets, V, _) ->
+decode_parameter(mm_context_gsm_key_and_triplets = IEI, V, _) ->
     <<SecurityMode:3, _:1, DRXI:1, CKSN:3,
       NumTriplets:3, _:3, UAMBRI:1, SAMBRI:1,
       _:5, UsedCipher:3,
@@ -1164,13 +1465,14 @@ decode_parameter(mm_context_gsm_key_and_triplets, V, _) ->
 
     {CommonMM, _R11} = decode_common_mm_context(DRXI, 0, SAMBRI, UAMBRI, 0, R1),
 
-    Base = #{security_mode => SecurityMode,
+    Base = #{type => IEI,
+             security_mode => SecurityMode,
              cksn => CKSN,
              used_cipher => UsedCipher,
              kc => Kc,
              triplets => Triplets},
     maps_merge_all([Base, CommonMM]);
-decode_parameter(mm_context_umts_key_cipher_and_quintuplets, V, _) ->
+decode_parameter(mm_context_umts_key_cipher_and_quintuplets = IEI, V, _) ->
     <<SecurityMode:3, _:1, DRXI:1, CKSN:3,
       NumQuintuplets:3, IOVI:1, GUPII:1, UGIPAI:1, UAMBRI:1, SAMBRI:1,
       _:2, UsedGPRSIntegrityProtectionAlgorithm:3, UsedCipher:3,
@@ -1190,7 +1492,8 @@ decode_parameter(mm_context_umts_key_cipher_and_quintuplets, V, _) ->
              end,
     {IOV, _R11} = maybe_decode(IOVI, IOVFun, R12, #{}),
 
-    Base = #{security_mode => SecurityMode,
+    Base = #{type => IEI,
+             security_mode => SecurityMode,
              cksn => CKSN,
              gupii => GUPII,
              ugipai => UGIPAI,
@@ -1201,7 +1504,7 @@ decode_parameter(mm_context_umts_key_cipher_and_quintuplets, V, _) ->
              quintuplets => Quintuplets,
              higher_bitrates_than_16_mbps_flag => HigherBitratesThan16MbpsFlag},
     maps_merge_all([Base, CommonMM, IOV]);
-decode_parameter(mm_context_gsm_key_cipher_and_quintuplets, V, _) ->
+decode_parameter(mm_context_gsm_key_cipher_and_quintuplets = IEI, V, _) ->
     <<SecurityMode:3, _:1, DRXI:1, CKSN:3,
       NumQuintuplets:3, _:3, UAMBRI:1, SAMBRI:1,
       _:5, UsedCipher:3,
@@ -1214,14 +1517,15 @@ decode_parameter(mm_context_gsm_key_cipher_and_quintuplets, V, _) ->
 
     {HigherBitratesThan16MbpsFlag, _R12} = otc_l3_codec:decode_lv(R11),
 
-    Base = #{security_mode => SecurityMode,
+    Base = #{type => IEI,
+             security_mode => SecurityMode,
              cksn => CKSN,
              used_cipher => UsedCipher,
              kc => Kc,
              quintuplets => Quintuplets,
              higher_bitrates_than_16_mbps_flag => HigherBitratesThan16MbpsFlag},
     maps_merge_all([Base, CommonMM]);
-decode_parameter(mm_context_umts_key_and_quintuplets, V, _) ->
+decode_parameter(mm_context_umts_key_and_quintuplets = IEI, V, _) ->
     <<SecurityMode:3, _:1, DRXI:1, KSI:3,
       NumQuintuplets:3, IOVI:1, GUPII:1, UGIPAI:1, UAMBRI:1, SAMBRI:1,
       _:5, UsedGPRSIntegrityProtectionAlgorithm:3,
@@ -1243,7 +1547,8 @@ decode_parameter(mm_context_umts_key_and_quintuplets, V, _) ->
 
     {ExtendedAccessRestrictionData, _R14} = otc_l3_codec:decode_lv(R13),
 
-    Base = #{security_mode => SecurityMode,
+    Base = #{type => IEI,
+             security_mode => SecurityMode,
              ksi => KSI,
              gupii => GUPII,
              ugipai => UGIPAI,
@@ -1254,7 +1559,7 @@ decode_parameter(mm_context_umts_key_and_quintuplets, V, _) ->
              higher_bitrates_than_16_mbps_flag => HigherBitratesThan16MbpsFlag,
              extended_access_restriction_data => ExtendedAccessRestrictionData},
     maps_merge_all([Base, CommonMM, IOV]);
-decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V, _) ->
+decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets = IEI, V, _) ->
     <<SecurityMode:3, NHI:1, DRXI:1, KSI:3,
       NumQuintuplets:3, NumQuadruplets:3, UAMBRI:1, OSCI:1,
       SAMBRI:1, UsedNASIntegrityProtectionAlgorithm:3, UsedNASCipher:4,
@@ -1300,7 +1605,8 @@ decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V,
             end,
     CN = maybe_decode(CNFun, R23, #{}),
 
-    Base = #{security_mode => SecurityMode,
+    Base = #{type => IEI,
+             security_mode => SecurityMode,
              ksi => KSI,
              used_nas_integrity_protection_algorithm => UsedNASIntegrityProtectionAlgorithm,
              used_nas_cipher => UsedNASCipher,
@@ -1315,7 +1621,7 @@ decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V,
              apn_rate_control_statuses => APNRateControlStatuses,
              extended_access_restriction_data => ExtARD},
     maps_merge_all([Base, CommonMM, CN]);
-decode_parameter(mm_context_umts_key_quadruplets_and_quintuplets, V, _) ->
+decode_parameter(mm_context_umts_key_quadruplets_and_quintuplets = IEI, V, _) ->
     <<SecurityMode:3, _:1, DRXI:1, KSI:3,
       NumQuintuplets:3, NumQuadruplets:3, UAMBRI:1, SAMBRI:1,
       _:8, CK:16/binary, IK:16/binary,
@@ -1329,7 +1635,8 @@ decode_parameter(mm_context_umts_key_quadruplets_and_quintuplets, V, _) ->
     {APNRateControlStatusesBin, _R12} = otc_l3_codec:decode_lve(R11),
     APNRateControlStatuses = decode_apn_rate_control_statuses(APNRateControlStatusesBin),
 
-    Base = #{security_mode => SecurityMode,
+    Base = #{type => IEI,
+             security_mode => SecurityMode,
              ksi => KSI,
              ck => CK,
              ik => IK,
@@ -1409,7 +1716,7 @@ decode_parameter(target_identification, V, _) ->
     case TargetType of
         0 ->
             %% RNC-ID
-            <<RAIBin:7/binary, RNCID:2/binary, ERNCID/binary>> = TargetID,
+            <<RAIBin:6/binary, RNCID:2/binary, ERNCID/binary>> = TargetID,
             RAI = decode_rai(RAIBin),
             RAI#{rnc_id => RNCID,
                  extended_rnc_id => ERNCID};
@@ -1439,7 +1746,8 @@ decode_parameter(target_identification, V, _) ->
             <<_:(32-GnodeBLen), GnodeB:GnodeBLen>> = GnodeBBin,
             MCCMNC = decode_mcc_mnc(MCCMNCBin),
             MCCMNC#{gnodeb_id => GnodeB,
-                    tracking_area_code => TAC};
+                    id_length => GnodeBLen,
+                    '5gs_tracking_area_code' => TAC};
         6 ->
             %% Macro ng-eNB-ID
             <<MCCMNCBin:3/binary, _:4, MacroNg:20, TAC:3/binary>> = TargetID,
@@ -1461,8 +1769,8 @@ decode_parameter(target_identification, V, _) ->
         8 ->
             %% en-gNB-ID
             <<MCCMNCBin:3/binary, TAC5I:1, TACI:1, ENGNBLen:6, ID:4/binary,
-              T0:(TAC5I*3)/binary,
-              T1:(TACI*3)/binary>> = TargetID,
+              T0:(TACI*3)/binary,
+              T1:(TAC5I*3)/binary>> = TargetID,
             <<_:(32-ENGNBLen), ENGNBID:ENGNBLen>> = ID,
             MCCMNC = decode_mcc_mnc(MCCMNCBin),
             TAC5 = case TAC5I of
@@ -1477,9 +1785,9 @@ decode_parameter(target_identification, V, _) ->
                       1 ->
                           T1
                   end,
-            MCCMNC#{engnb_id => ENGNBID,
-                    tac5gs => TAC5,
-                    tac => TAC}
+            MCCMNC#{enhanced_gnodeb_id => ENGNBID,
+                    '5gs_tracking_area_code' => TAC5,
+                    tracking_area_code => TAC}
     end;
 decode_parameter(packet_flow_id, V, _) ->
     <<_:4, EBI:4, PacketFlowId/binary>> = V,
@@ -2845,7 +3153,9 @@ encode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V,
                               mapped -> 2#10
                           end,
                   UER = otc_l3_codec:encode_lv(UERadioCapabilityID, <<0:6, ENSCT:2>>),
-                  otc_l3_codec:encode_lv(CoreNetworkRestrictions, UER)
+                  otc_l3_codec:encode_lv(CoreNetworkRestrictions, UER);
+              _ ->
+                  <<>>
           end,
 
     APNRateControlStatusesBin = encode_apn_rate_control_statuses(APNRateControlStatuses),
@@ -2984,9 +3294,9 @@ encode_parameter(plmn_id, V, _) ->
     encode_plmn_id(V);
 encode_parameter(target_identification, V, _) ->
     {TargetType, TargetID} = case V of
-                                 #{engnb_id := ENGNBID,
-                                   tac5gs := TAC5,
-                                   tac := TAC} ->
+                                 #{enhanced_gnodeb_id := ENGNBID,
+                                   '5gs_tracking_area_code' := TAC5,
+                                   tracking_area_code := TAC} ->
                                      %% en-gNB-ID
                                      MCCMNCBin = encode_mcc_mnc(V),
                                      TAC5 = case TAC5 of
@@ -3023,10 +3333,10 @@ encode_parameter(target_identification, V, _) ->
                                      MCCMNCBin = encode_mcc_mnc(V),
                                      {6, <<MCCMNCBin:3/binary, 0:4, MacroNg:20, TAC:3/binary>>};
                                  #{gnodeb_id := GnodeB,
-                                   tracking_area_code := TAC} ->
+                                   id_length := GnodeBLen,
+                                   '5gs_tracking_area_code' := TAC} ->
                                      %% gNB-ID
                                      MCCMNCBin = encode_mcc_mnc(V),
-                                     GnodeBLen = byte_size(GnodeB),
                                      GnodeBBin = <<0:(32-GnodeBLen), GnodeB:GnodeBLen>>,
                                      {5, <<MCCMNCBin:3/binary, 0:2, GnodeBLen:6, GnodeBBin:4/binary, TAC:3/binary>>};
                                  #{extended_macro_enodeb_id := EENB,
@@ -4106,7 +4416,7 @@ encode_common_mm_context(V) ->
       access_restriction_data := ARD,
       voice_domain_preference_and_ues_usage_setting := VoiceDomainPreferenceAndUEsUsageSetting} = V,
 
-    R18 = otc_l3_codec:decode_lv(VoiceDomainPreferenceAndUEsUsageSetting, <<>>),
+    R18 = otc_l3_codec:encode_lv(VoiceDomainPreferenceAndUEsUsageSetting, <<>>),
 
     R17 = case V of
               #{old_security_container := OSCM} ->
@@ -5287,30 +5597,23 @@ encode_tliv_list(Msg, List) ->
 
 encode_tliv_list(_Msg, [], Acc) ->
     Acc;
-encode_tliv_list(Msg, [{N, {Type, Instance}, mandatory}|NewList], Acc) ->
-    V = maps:get(N, Msg),
-    Opts = [],
-    DataBin = encode_parameter(parse_iei(Type), V, Opts),
-    Bin = encode_tliv({Type, Instance, DataBin}),
-    encode_tliv_list(Msg, NewList, <<Bin/binary, Acc/binary>>);
-encode_tliv_list(Msg, [{N, {Type, Instance}, mandatory, Opts}|NewList], Acc) ->
-    V = maps:get(N, Msg),
-    DataBin = encode_parameter(parse_iei(Type), V, Opts),
-    Bin = encode_tliv({Type, Instance, DataBin}),
-    encode_tliv_list(Msg, NewList, <<Bin/binary, Acc/binary>>);
-encode_tliv_list(Msg, [{N, {Type, Instance}, _}|NewList], Acc) when is_map_key(N, Msg) ->
-    V = maps:get(N, Msg),
-    Opts = [],
-    DataBin = encode_parameter(parse_iei(Type), V, Opts),
-    Bin = encode_tliv({Type, Instance, DataBin}),
-    encode_tliv_list(Msg, NewList, <<Bin/binary, Acc/binary>>);
-encode_tliv_list(Msg, [{N, {Type, Instance}, _, Opts}|NewList], Acc) when is_map_key(N, Msg) ->
-    V = maps:get(N, Msg),
-    DataBin = encode_parameter(parse_iei(Type), V, Opts),
-    Bin = encode_tliv({Type, Instance, DataBin}),
-    encode_tliv_list(Msg, NewList, <<Bin/binary, Acc/binary>>);
-encode_tliv_list(Msg, [_|NewList], Acc) ->
-    encode_tliv_list(Msg, NewList, Acc).
+encode_tliv_list(Msg, [H|NewList], Acc) ->
+    {N, {Type, Instance}, C, Opts} = default_tliv(H),
+    case mandatory =:= C orelse is_map_key(N, Msg) of
+        true when not is_list(Type) ->
+            V = maps:get(N, Msg),
+            DataBin = encode_parameter(parse_iei(Type), V, Opts),
+            Bin = encode_tliv({Type, Instance, DataBin}),
+            encode_tliv_list(Msg, NewList, <<Bin/binary, Acc/binary>>);
+        true ->
+            V = maps:get(N, Msg),
+            T = maps:get(type, V),
+            DataBin = encode_parameter(T, V, Opts),
+            Bin = encode_tliv({compose_iei(T), Instance, DataBin}),
+            encode_tliv_list(Msg, NewList, <<Bin/binary, Acc/binary>>);
+        false ->
+            encode_tliv_list(Msg, NewList, Acc)
+    end.
 
 encode_tliv({Type, Instance, Data}) when Type >= 256 ->
     Len = byte_size(Data),
@@ -5320,6 +5623,13 @@ encode_tliv({Type, Instance, Data}) ->
     Len = byte_size(Data),
     Bin0 = <<Data:Len/binary>>,
     <<Type:8, Len:16, 0:4, Instance:4, Bin0/binary>>.
+
+default_tliv({N, {Type, Instance}, mandatory}) ->
+    {N, {Type, Instance}, mandatory, []};
+default_tliv({N, {Type, Instance}, C}) ->
+    {N, {Type, Instance}, C, []};
+default_tliv(H) ->
+    H.
 
 tlivtake(Type, Instance, List) ->
     tlivtake(Type, Instance, List, []).
