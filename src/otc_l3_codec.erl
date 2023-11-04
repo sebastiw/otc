@@ -249,11 +249,15 @@ decode_iei_list_test_() ->
       ]},
      {"Basic Type 4",
       [?_assertEqual({#{iei_1 => <<55:8, 44:8>>}, <<>>}, decode_iei_list(<<2:8, 55:8, 44:8>>, [{iei_1, 24, lv, 3}])),
-       ?_assertEqual({#{iei_1 => <<55:8, 44:8>>}, <<>>}, decode_iei_list(<<24:8, 2:8, 55:8, 44:8>>, [{iei_1, 24, tlv, 4}]))
+       ?_assertEqual({#{iei_1 => <<>>}, <<>>}, decode_iei_list(<<0:8>>, [{iei_1, 24, lv, 1}])),
+       ?_assertEqual({#{iei_1 => <<55:8, 44:8>>}, <<>>}, decode_iei_list(<<24:8, 2:8, 55:8, 44:8>>, [{iei_1, 24, tlv, 4}])),
+       ?_assertEqual({#{iei_1 => <<>>}, <<>>}, decode_iei_list(<<24:8, 0:8>>, [{iei_1, 24, tlv, 4}]))
       ]},
      {"Basic Type 6",
       [?_assertEqual({#{iei_1 => <<55:8, 44:8>>}, <<>>}, decode_iei_list(<<2:16, 55:8, 44:8>>, [{iei_1, 24, lve, 4}])),
-       ?_assertEqual({#{iei_1 => <<55:8, 44:8>>}, <<>>}, decode_iei_list(<<24:8, 2:16, 55:8, 44:8>>, [{iei_1, 24, tlve, 5}]))
+       ?_assertEqual({#{iei_1 => <<>>}, <<>>}, decode_iei_list(<<0:16>>, [{iei_1, 24, lve, 4}])),
+       ?_assertEqual({#{iei_1 => <<55:8, 44:8>>}, <<>>}, decode_iei_list(<<24:8, 2:16, 55:8, 44:8>>, [{iei_1, 24, tlve, 5}])),
+       ?_assertEqual({#{iei_1 => <<>>}, <<>>}, decode_iei_list(<<24:8, 0:16>>, [{iei_1, 24, tlve, 5}]))
       ]},
      {"Multivalues",
       [?_assertEqual({#{iei_1 => <<55:8, 44:8>>, iei_2 => <<55:8, 44:8>>}, <<>>},
@@ -343,11 +347,15 @@ encode_iei_list_test_() ->
       ]},
      {"Basic Type 4",
       [?_assertEqual(<<2:8, 55:8, 44:8>>, encode_iei_list(#{iei_1 => <<55:8, 44:8>>}, [{iei_1, 24, lv, 3}])),
-       ?_assertEqual(<<24:8, 2:8, 55:8, 44:8>>, encode_iei_list(#{iei_1 => <<55:8, 44:8>>}, [{iei_1, 24, tlv, 4}]))
+       ?_assertEqual(<<0:8>>, encode_iei_list(#{iei_1 => <<>>}, [{iei_1, 24, lv, 1}])),
+       ?_assertEqual(<<24:8, 2:8, 55:8, 44:8>>, encode_iei_list(#{iei_1 => <<55:8, 44:8>>}, [{iei_1, 24, tlv, 4}])),
+       ?_assertEqual(<<24:8, 0:8>>, encode_iei_list(#{iei_1 => <<>>}, [{iei_1, 24, tlv, 2}]))
       ]},
      {"Basic Type 6",
       [?_assertEqual(<<2:16, 55:8, 44:8>>, encode_iei_list(#{iei_1 => <<55:8, 44:8>>}, [{iei_1, 24, lve, 4}])),
-       ?_assertEqual(<<24:8, 2:16, 55:8, 44:8>>, encode_iei_list(#{iei_1 => <<55:8, 44:8>>}, [{iei_1, 24, tlve, 5}]))
+       ?_assertEqual(<<0:16>>, encode_iei_list(#{iei_1 => <<>>}, [{iei_1, 24, lve, 2}])),
+       ?_assertEqual(<<24:8, 2:16, 55:8, 44:8>>, encode_iei_list(#{iei_1 => <<55:8, 44:8>>}, [{iei_1, 24, tlve, 5}])),
+       ?_assertEqual(<<24:8, 0:16>>, encode_iei_list(#{iei_1 => <<>>}, [{iei_1, 24, tlve, 3}]))
       ]},
      {"Multivalues",
       [?_assertEqual(<<2:16, 55:8, 44:8, 24:8, 2:16, 55:8, 44:8>>,

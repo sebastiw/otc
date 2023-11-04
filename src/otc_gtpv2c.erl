@@ -1590,20 +1590,19 @@ decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets = I
     {APNRateControlStatusesBin, R23} = maybe_decode(byte_size(R22), fun otc_l3_codec:decode_lve/1, R22, <<>>),
     APNRateControlStatuses = decode_apn_rate_control_statuses(APNRateControlStatusesBin),
 
+    {CoreNetworkRestrictions, R24} = maybe_decode(byte_size(R23), fun otc_l3_codec:decode_lv/1, R23, <<>>),
+    {UERadioCapabilityID, R25} = maybe_decode(byte_size(R24), fun otc_l3_codec:decode_lv/1, R24, <<>>),
+
     CNFun = fun (R) ->
-                    {CoreNetworkRestrictions, Rp0} = otc_l3_codec:decode_lv(R),
-                    {UERadioCapabilityID, Rp1} = otc_l3_codec:decode_lv(Rp0),
-                    <<_:6, ENSCT:2>> = Rp1,
-                    #{core_network_restrictions => CoreNetworkRestrictions,
-                      ue_radio_capability_id => UERadioCapabilityID,
-                      eps_nas_security_context_type => case ENSCT of
+                    <<_:6, ENSCT:2>> = R,
+                    #{eps_nas_security_context_type => case ENSCT of
                                                            2#00 -> not_supported;
                                                            2#01 -> native;
                                                            2#10 -> mapped
                                                        end
                      }
             end,
-    CN = maybe_decode(CNFun, R23, #{}),
+    CN = maybe_decode(CNFun, R25, #{}),
 
     Base = #{type => IEI,
              security_mode => SecurityMode,
@@ -1619,7 +1618,10 @@ decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets = I
              ue_additional_security_capability => UEAdditionalSecurityCapability,
              ue_nr_security_capability => UENRSecurityCapability,
              apn_rate_control_statuses => APNRateControlStatuses,
-             extended_access_restriction_data => ExtARD},
+             extended_access_restriction_data => ExtARD,
+             core_network_restrictions => CoreNetworkRestrictions,
+             ue_radio_capability_id => UERadioCapabilityID
+            },
     maps_merge_all([Base, CommonMM, CN]);
 decode_parameter(mm_context_umts_key_quadruplets_and_quintuplets = IEI, V, _) ->
     <<SecurityMode:3, _:1, DRXI:1, KSI:3,
@@ -3141,27 +3143,29 @@ encode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V,
       ue_additional_security_capability := UEAdditionalSecurityCapability,
       ue_nr_security_capability := UENRSecurityCapability,
       apn_rate_control_statuses := APNRateControlStatuses,
-      extended_access_restriction_data := ExtARD} = V,
+      extended_access_restriction_data := ExtARD,
+      core_network_restrictions := CoreNetworkRestrictions,
+      ue_radio_capability_id := UERadioCapabilityID
+     } = V,
 
-    R24 = case V of
-              #{core_network_restrictions := CoreNetworkRestrictions,
-                ue_radio_capability_id := UERadioCapabilityID,
-                eps_nas_security_context_type := E} ->
+    R25 = case V of
+              #{eps_nas_security_context_type := E} ->
                   ENSCT = case E of
                               not_supported -> 2#00;
                               native -> 2#01;
                               mapped -> 2#10
                           end,
-                  UER = otc_l3_codec:encode_lv(UERadioCapabilityID, <<0:6, ENSCT:2>>),
-                  otc_l3_codec:encode_lv(CoreNetworkRestrictions, UER);
+                  <<0:6, ENSCT:2>>;
               _ ->
                   <<>>
           end,
+    R24 = otc_l3_codec:encode_lv(UERadioCapabilityID, R25),
+    R23 = otc_l3_codec:encode_lv(CoreNetworkRestrictions, R24),
 
     APNRateControlStatusesBin = encode_apn_rate_control_statuses(APNRateControlStatuses),
-    R23 = otc_l3_codec:encode_lve(APNRateControlStatusesBin, <<>>),
-    R22 = otc_l3_codec:encode_lv(UENRSecurityCapability, <<>>),
-    R21 = otc_l3_codec:encode_lv(UEAdditionalSecurityCapability, <<>>),
+    R22 = otc_l3_codec:encode_lve(APNRateControlStatusesBin, R23),
+    R21 = otc_l3_codec:encode_lv(UENRSecurityCapability, R22),
+    R20 = otc_l3_codec:encode_lv(UEAdditionalSecurityCapability, R21),
 
     ExtendedAccessRestrictionData = case ExtARD of
                                         #{nr_as_secondary_rat := NS,
@@ -3179,8 +3183,8 @@ encode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V,
                                             <<>>
                                     end,
 
-    R20 = otc_l3_codec:encode_lv(ExtendedAccessRestrictionData, <<>>),
-    R19 = otc_l3_codec:encode_lve(UERadioCapabilityForPagingInformation, <<>>),
+    R19 = otc_l3_codec:encode_lv(ExtendedAccessRestrictionData, R20),
+    R18 = otc_l3_codec:encode_lve(UERadioCapabilityForPagingInformation, R19),
 
     {DRXI, NHI, SAMBRI, UAMBRI, OSCI, CommonMM} = encode_common_mm_context(V),
 
@@ -3198,12 +3202,7 @@ encode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V,
       Quintuplets/binary,
       Quadruplets/binary,
       CommonMM/binary,
-      R19/binary,
-      R20/binary,
-      R21/binary,
-      R22/binary,
-      R23/binary,
-      R24/binary>>;
+      R18/binary>>;
 encode_parameter(mm_context_umts_key_quadruplets_and_quintuplets, V, _) ->
     #{security_mode := SecurityMode,
       ksi := KSI,
