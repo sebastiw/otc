@@ -3,7 +3,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 create_session_request_test() ->
-    Bin = <<"482001860000000037B2EE000100080042829978563412f14C0006007409036606"
+    Bin = <<"482001860000000037B2EE000100080042829978563412F14C0006007409036606"
             "454B000800733272311171350156000D001842F08928E742F08900041701530003"
             "0042F089520001000A570009008A67B8031EAC10436F570009018700000000AC10"
             "0899470026000F696E7465726E74696E7465726E6574027636066D6E6330393806"
@@ -15,8 +15,7 @@ create_session_request_test() ->
             "004900010005500016006809000000000000000000000000000000000000000003"
             "00010044720002006300A9001A0007090102030405060708091112131415160521"
             "2223242542F089CC0014000000006400000000000000C8E02B90CC01020304">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Map = #{version => 2,
             message_group => tunnel_management,
             piggy_backed => false,
             message_priority => false,
@@ -104,19 +103,20 @@ create_session_request_test() ->
                   additional_exception_reports => 0,
                   downlink_packets_allowed => 200,
                   validity_time => {{2019,3,7},{12,45,0}},
-                  validity_time_fractions_raw => 16909060,
-                  validity_time_fractions_ns => 3_936_947}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+                  validity_time_fractions_raw => 16_909_060}},
+    ?assertEqual(3_936_947, otc_gtpv2c:fraction_to_ns(16_909_060)),
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 create_session_response_test() ->
-    Bin = <<"4821008405415ea10000620002000200100057000901878701000ab92737594f00"
-            "0500010a83ac117f000100004800080000000100000001004e00270080000d0408"
-            "080808000d04080804048021100300001081060808080883060808040400100205"
-            "dc5d002000490001000502000200100057000902858701000ab92737595e000400"
+    Bin = <<"4821008405415EA10000620002000200100057000901878701000AB92737594F00"
+            "0500010A83AC117F000100004800080000000100000001004E00270080000D0408"
+            "080808000D04080804048021100300001081060808080883060808040400100205"
+            "DC5D002000490001000502000200100057000902858701000AB92737595E000400"
             "03145955">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => create_session_response,
             piggy_backed => false,
@@ -154,21 +154,22 @@ create_session_response_test() ->
                         interface_type => s5s8_pgw_gtpu,
                         teid_gre_key => 2264989706},
                   charging_id => <<3,20,89,85>>}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 create_bearer_request_test() ->
-    Bin = <<"485F010D04B7FF761615720049000100065D00F10049000100005400AB00241080"
+    Bin = <<"485F011004B7FF761615720049000100065D00F10049000100005400AB00241080"
             "2920240753002000103B0000000000000004FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
             "FF301140C35B509F43217F2620240753002000103B0000000000000004FFFFFFFF"
             "FFFFFFFFFFFFFFFFFFFFFFFF3011509F43123F2920240753002000103B00000000"
             "00000004FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF301140C35A509F42233E262024"
             "0753002000103B0000000000000004FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3011"
-            "509F42500016002501000000002A000000002A000000002A000000002A57000901"
-            "858B28B47BCAB3C7F157000900812F8586C60AF01FCDCB00050003000A00054D00"
-            "07000100000000001C">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+            "509F4257000900812F8586C60AF01FCD57000901858B28B47BCAB3C7F150001600"
+            "2501000000002A000000002A000000002A000000002ACB00050003000A00054D00"
+            "0A000100000000001C000000">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             piggy_backed => false,
             message_priority => false,
@@ -179,44 +180,45 @@ create_bearer_request_test() ->
             bearer_contexts =>
                 #{eps_bearer_id => 0,
                   tft =>
-                      #{packet_filters =>
+                      #{operation => create_new,
+                        packet_filters =>
                             [#{direction => downlink,
                                identifier => 0,
                                evaluation_precedence => 128,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40771},
-                                            protocol_identifier => 16#11,
-                                            local => #{port => 50011}
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {local, #{port => 50011}},
+                                           {remote, #{port => 40771}}
+                                          ]
                               },
                              #{direction => uplink,
                                identifier => 1,
                                evaluation_precedence => 127,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40771},
-                                            protocol_identifier => 16#11
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {remote, #{port => 40771}}
+                                          ]
                               },
                              #{direction => downlink,
                                identifier => 2,
                                evaluation_precedence => 63,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40770},
-                                            protocol_identifier => 16#11,
-                                            local => #{port => 50010}
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {local, #{port => 50010}},
+                                           {remote, #{port => 40770}}
+                                          ]
                               },
                              #{direction => uplink,
                                identifier => 3,
                                evaluation_precedence => 62,
-                               content => #{remote => #{ipv6 => aton("2407:5300:2000:103b::4"),
-                                                        mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                                                        port => 40770},
-                                            protocol_identifier => 16#11
-                                           }
+                               content => [{remote, #{ipv6 => aton("2407:5300:2000:103b::4"),
+                                                      mask => aton("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")}},
+                                           {protocol_identifier, 16#11},
+                                           {remote, #{port => 40770}}
+                                          ]
                               }
                             ]},
                   bearer_level_qos =>
@@ -314,37 +316,40 @@ create_bearer_request_test() ->
                   unauthenticated_imsi => 0,
                   user_plane_integrity_protection_support_indication => 0,
                   wlcp_pdn_connection_modification_support_indication => 0}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 forward_relocation_request_1_test() ->
-    Bin = <<"4885032C00000000000001000100080042829978563412f1570009008E00025A9C"
+    Bin = <<"4885032E00000000000001000100080042829978563412F1570009008E00025A9C"
             "9C17040C6D008F0047001E000A45564552595748455245066D6E63303032066D63"
             "6332353504677072737F000100FF4A0004000A014A8149000100055700090087B9"
             "1CEFFA95FEC6F25D003E0049000100055700090081000000970A667FA157000901"
             "85B918EFFA95FEC6F2500016006C08000000000000000000000000000000000000"
             "00008900010080480008000000EA600000EA60570009018B061000A9AC1316C988"
-            "00180005544F504F4E03533131035347570955475730303157564E6B00E1009E02"
+            "00180005544F504F4E03533131035347570955475730303157564E6B00E3009E02"
             "A200000A00002A8DF90D5F6DC051386F9A0DA929E701F6D1BE424757ACDE711680"
             "9902010F479C0A0031FEAEDEA4CA074F7ABBA12D72041863F72468C44B0700307C"
             "05572B8832B7F203000186A0000186A00000EA600000EA6004E0E0C04003E58024"
             "0831751131713272230001020000010202FFFF0000660034001E0A455645525957"
             "48455245066D6E63303032066D6363323535046770727300001000000000010000"
             "8000E02B91CC10203040002E00180441504E31066D6E63303938066D6363323430"
-            "0467707273000100000000001000080000E02B92CC112233447601490003408120"
-            "0A3027C5200004001041860244F8FFF13E3FFC4F8FFF13E3FFC4F8FFEFE1FF9011"
-            "03004870CA74A9020020F33035359A46014046F651021E2424031B1A53032AB715"
-            "56621E40008DD8C63310F2000468C4B19887900022150002140328B2F00222F00C"
-            "140140C7886119024284ADEC047E6700C1D8E047E6700C9D80FA81B40761545074"
-            "2F3E82059967FF44AE618531B38020114270380E0A1A000120080C01102ABB4000"
-            "00091A0C2549E062C40303041210308F341C31186F212BA035869CE2D001020055"
-            "4E772CB550971C581A0CA36220096102F6802BA91A85590980890C823DB6FBDA33"
-            "5DB730423DEB2F08BFE3C922F469FD65531BB0C02F6800C1232F2F2ED9B736E103"
-            "140585E880EB3B112774DC1268C5E2CA1E35B7D7B6DF03B300004E400245000052"
-            "F52002F680110052F5200316201100000C0052F52002C0C02100001179000C0005"
-            "52F52016003123453A2A4F7700020000107800030052F520">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+            "0467707273000100000000001000080000E02B92CC112233440000760149000340"
+            "81200A3027C5200004001041860244F8FFF13E3FFC4F8FFF13E3FFC4F8FFEFE1FF"
+            "901103004870CA74A9020020F33035359A46014046F651021E2424031B1A53032A"
+            "B71556621E40008DD8C63310F2000468C4B19887900022150002140328B2F00222"
+            "F00C140140C7886119024284ADEC047E6700C1D8E047E6700C9D80FA81B4076154"
+            "50742F3E82059967FF44AE618531B38020114270380E0A1A000120080C01102ABB"
+            "400000091A0C2549E062C40303041210308F341C31186F212BA035869CE2D00102"
+            "00554E772CB550971C581A0CA36220096102F6802BA91A85590980890C823DB6FB"
+            "DA335DB730423DEB2F08BFE3C922F469FD65531BB0C02F6800C1232F2F2ED9B736"
+            "E103140585E880EB3B112774DC1268C5E2CA1E35B7D7B6DF03B300004E40024500"
+            "0052F52002F680110052F5200316201100000C0052F52002C0C02100001179000C"
+            "000552F52016003123453A2A4F7700020000107800030052F520">>,
+
+
+    Map = #{version => 2,
             message_group => mobility_management,
             piggy_backed => false,
             message_priority => false,
@@ -393,7 +398,9 @@ forward_relocation_request_1_test() ->
                   teid_gre_key => 101712041},
             sgw_node_name => "TOPON.S11.SGW.UGW001WVN",
             mmesgsnamf_ue_mm_context =>
-                #{security_mode => 4,
+                #{type =>
+                      mm_context_eps_security_context_quadruplets_and_quintuplets,
+                  security_mode => 4,
                   ksi => 6,
                   used_nas_integrity_protection_algorithm => 2,
                   used_nas_cipher => 2,
@@ -442,15 +449,15 @@ forward_relocation_request_1_test() ->
                          downlink_packets_allowed => 32768,
                          uplink_packets_allowed => 4096,
                          validity_time => {{2019,3,7},{12,49,16}},
-                         validity_time_fractions_ns => 62991157,
                          validity_time_fractions_raw => 270544960},
                        #{additional_exception_reports => 16,
                          apn => "APN1.mnc098.mcc240.gprs",
                          downlink_packets_allowed => 524288,
                          uplink_packets_allowed => 65536,
                          validity_time => {{2019,3,7},{12,53,32}},
-                         validity_time_fractions_ns => 66928104,
-                         validity_time_fractions_raw => 287454020}]},
+                         validity_time_fractions_raw => 287454020}],
+                  core_network_restrictions => <<>>,
+                  ue_radio_capability_id => <<>>},
             e_utran_transparent_container =>
                 #{eutran_transparent_container =>
                       binary:decode_hex(<<"4081200A3027C5200004001041860244F8FF"
@@ -476,17 +483,22 @@ forward_relocation_request_1_test() ->
                 #{mcc => "255",
                   mnc => "02",
                   gnodeb_id => 3220293,
-                  tracking_area_code => <<":*O">>},
+                  id_length => 22,
+                  '5gs_tracking_area_code' => <<":*O">>},
             s1_ap_cause => #{radio_network_layer_cause => <<16>>},
             selected_plmn_id => #{mcc => "255",
                                   mnc => "02"}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    ?assertEqual(62991157, otc_gtpv2c:fraction_to_ns(270544960)),
+    ?assertEqual(66928104, otc_gtpv2c:fraction_to_ns(287454020)),
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 forward_relocation_request_2_test() ->
-    Bin = <<"488503320000000000C156000100080042900901020304f5570009008C31EB70CD"
+    Bin = <<"488503440000000000C156000100080042900901020304F5570009008C31EB70CD"
             "71D5828B6D00E30047001A0006706172726F74066D6E63303938066D6363323430"
-            "046770727349000100054A0004000A25A331800001000057000900878CF7DFC075"
+            "046770727380000100004A0004000A25A331490001000557000900878CF7DFC075"
             "2E64F488004C0005746F706F6E0570677773351473656261737469772D69732D64"
             "61726B6E6573730474656C6503636F6D03657063066D6E63303938066D63633234"
             "300B336770706E6574776F726B036F72675D00460049000100055700090081C242"
@@ -495,22 +507,23 @@ forward_relocation_request_2_test() ->
             "000493E057000901975870CF5EC0A8AB1888004C0005746F706F6E057367777335"
             "1473656261737469772D69732D6461726B6E6573730474656C6503636F6D036570"
             "63066D6E63303938066D63633234300B336770706E6574776F726B036F72676B00"
-            "6F009802A200002800002C166018D55F4272DCD6B8B74EA7BF1175A54B476074D9"
+            "79009802A200002800002C166018D55F4272DCD6B8B74EA7BF1175A54B476074D9"
             "3BF1632201DF8787B9FC0A00FEC5322C68CE46CFDC6F2BA665B3CB9ED71A6FC2BB"
             "BB9D61097CD34A5D368CF700000124F8000493E0000124F8000493E004E060C040"
-            "03E5E024087332723111713551004D00020010007600DA00034080B10B102FC518"
-            "004001072248244F93FFC4F93FFC4F93FFC4F93FFC4F93FFAE07EE40441401190A"
-            "70CA74A9220205800000000015D8000000E13C200280255970811623A1B880D013"
-            "E1B8800004011004C1037B01FFA9C0B81FFA9C083EA26A03D7538A1D884F9806EF"
-            "32CD73F9563FF454D618721B2286112680B4000000A20082810464D90050400201"
-            "03089846F8064ADFB24550AC073D0010000803C0A752ABCAF720074070A3CDB021"
-            "5881040B8ED40000004E400245000042F08926FAED410042F089326C8020000016"
-            "0042F08926FAED4180000079000A000742F089836FAB1A30317700020000217800"
-            "030042F0895300030042F0899F000600035758A600004C00060074090366064503"
-            "00010085720002006300CD00310042F0899876540C000000000000000000000000"
-            "02000000140000000000000000000000000000000000000000040A0B0C0D">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+            "03E5E02408733272311171355100000000000000000000004D000A001000000000"
+            "00000000007600DA00034080B10B102FC518004001072248244F93FFC4F93FFC4F"
+            "93FFC4F93FFC4F93FFAE07EE40441401190A70CA74A9220205800000000015D800"
+            "0000E13C200280255970811623A1B880D013E1B8800004011004C1037B01FFA9C0"
+            "B81FFA9C083EA26A03D7538A1D884F9806EF32CD73F9563FF454D618721B228611"
+            "2680B4000000A20082810464D9005040020103089846F8064ADFB24550AC073D00"
+            "10000803C0A752ABCAF720074070A3CDB0215881040B8ED40000004E4002450000"
+            "42F08926FAED410042F089326C80200000160042F08926FAED4180000079000A00"
+            "0742F089836FAB1A30317700020000217800030042F08903000100857200020063"
+            "005300030042F0899F000600035758A600004C000600740903660645CD00310042"
+            "F0899876540C000000000000000000000000020000001400000000000000000000"
+            "00000000000000000000040A0B0C0D">>,
+
+    Map = #{version => 2,
             piggy_backed => false,
             message_priority => false,
             message_group => mobility_management,
@@ -565,7 +578,9 @@ forward_relocation_request_2_test() ->
             sgw_node_name =>
                 "topon.sgws5.sebastiw-is-darkness.tele.com.epc.mnc098.mcc240.3gppnetwork.org",
             mmesgsnamf_ue_mm_context =>
-                #{security_mode => 4,
+                #{type =>
+                      mm_context_eps_security_context_quadruplets_and_quintuplets,
+                  security_mode => 4,
                   used_nas_integrity_protection_algorithm => 2,
                   used_nas_cipher => 2,
                   nas_downlink_count => 40,
@@ -598,6 +613,8 @@ forward_relocation_request_2_test() ->
                         wb_e_utran => allowed},
                   apn_rate_control_statuses => [],
                   extended_access_restriction_data => #{},
+                  core_network_restrictions => <<>>,
+                  ue_radio_capability_id => <<>>,
                   ksi => 0,
                   ue_additional_security_capability => <<>>,
                   ue_nr_security_capability => <<>>,
@@ -725,15 +742,16 @@ forward_relocation_request_2_test() ->
                   session_trace_depth => 0,
                   trace_id => <<152,118,84>>,
                   triggering_events => <<0,0,0,0,0,0,0,0,0,0,0,0>>}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 identification_request_test() ->
     Bin = <<"4880005B0000000000D5F90075000A0042F089E28140E079F62D74003A00001744"
             "80FDEF180741120BF642F089E28140E079F62D04E060C04000050201D011D15244"
             "F002008A5C0A003103E5E0249011035758A65D0100E05300030042F089">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Map = #{version => 2,
             piggy_backed => false,
             message_priority => false,
             message_group => mobility_management,
@@ -754,17 +772,19 @@ identification_request_test() ->
             target_plmn_id => #{mcc => "240",
                                 mnc => "98"}
            },
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 identification_response_test() ->
-    Bin = <<"488100980000000000D5F9006B007A008103A2000004000018224014064F109DC0"
-            "57BDDBE2DBDC37B6FECB4FD71AB176AA23BFFBCB7E2E4CCB000124F8000493E000"
-            "0124F8000493E004E060C04003E5E0240873327231117135110008223014164F20"
-            "9DC067BDCBE2DBCC37B6FECB4FD71AB176BA23BFFBBB7E2E4CBB0000000103048F"
-            "008F000255550100080042829978563412f1020002001000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4881009C0000000000D5F9000200020010000100080042829978563412F16B007E"
+            "008103A2000004000018224014064F109DC057BDDBE2DBDC37B6FECB4FD71AB176"
+            "AA23BFFBCB7E2E4CCB000124F8000493E0000124F8000493E004E060C04003E5E0"
+            "240873327231117135110008223014164F209DC067BDCBE2DBCC37B6FECB4FD71A"
+            "B176BA23BFFBBB7E2E4CBB0000000103048F008F0002555500000000">>,
+
+    Map = #{version => 2,
             piggy_backed => false,
             message_priority => false,
             message_group => mobility_management,
@@ -772,7 +792,9 @@ identification_response_test() ->
             teid => 0,
             sequence_number => 54777,
             mmesgsn_ue_mm_context =>
-                #{security_mode => 4,
+                #{type =>
+                      mm_context_eps_security_context_quadruplets_and_quintuplets,
+                  security_mode => 4,
                   ksi => 1,
                   used_nas_integrity_protection_algorithm => 2,
                   used_nas_cipher => 2,
@@ -823,19 +845,22 @@ identification_response_test() ->
                         nr_as_secondary_rat => not_allowed},
                   ue_additional_security_capability =>
                       binary:decode_hex(<<"8F008F00">>),
-                  ue_nr_security_capability => <<"UU">>
+                  ue_nr_security_capability => <<"UU">>,
+                  core_network_restrictions => <<>>,
+                  ue_radio_capability_id => <<>>
                  },
             imsi => "242899876543211",
             cause => #{cause => request_accepted,
                        cause_source => originated_by_remote_node}
            },
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 bearer_resource_command_test() ->
-    Bin = <<"4844001e801c20079825e900490001000c640001000855000300a220114900010106">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4844001E801C20079825E900490001000C640001000855000300A220114900010106">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => bearer_resource_command,
             teid => 2149326855,
@@ -846,13 +871,14 @@ bearer_resource_command_test() ->
             procedure_transaction_id => 8,
             traffic_aggregate_description => <<162,32,17>>,
             eps_bearer_id => 6},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 bearer_resource_failure_indication_test() ->
-    Bin = <<"4845001ce49ebf329825e90002000600450049000000490001000c6400010008">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4845001CE49EBF329825E90002000600450049000000490001000C6400010008">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => bearer_resource_failure_indication,
             piggy_backed => false,
@@ -866,16 +892,17 @@ bearer_resource_failure_indication_test() ->
                   offending_ie_instance => 0},
             linked_eps_bearer_id => 12,
             procedure_transaction_id => 8},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 create_bearer_request2_test() ->
-    Bin = <<"485f00723bc9e2604a5e050049000100065d006100490001000054002900222030"
-            "1110947aad58ffffffff301140bfe0508ce011311110947aad58ffffffff301140"
-            "bfe0508ce057000901858ac0800554d89e03500016000801000000004000000000"
-            "40000000004000000000405e000400016588ce">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"485F00723BC9E2604A5E050049000100065D006100490001000054002900222030"
+            "1110947AAD58FFFFFFFF301140BFE0508CE011311110947AAD58FFFFFFFF301140"
+            "BFE0508CE057000901858AC0800554D89E03500016000801000000004000000000"
+            "40000000004000000000405E000400016588CE">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => create_bearer_request,
             piggy_backed => false,
@@ -886,31 +913,28 @@ create_bearer_request2_test() ->
             bearer_contexts =>
                 #{eps_bearer_id => 0,
                   tft =>
-                      #{packet_filters =>
+                      #{operation => create_new,
+                        packet_filters =>
                             [#{direction => uplink,
                                identifier => 0,
                                evaluation_precedence => 48,
                                content =>
-                                   #{local => #{port => 49120},
-                                     remote =>
-                                         #{port => 36064,
-                                           ipv4 =>
-                                               {148,122,173,88},
-                                           mask =>
-                                               {255,255,255,255}},
-                                     protocol_identifier => 17}},
+                                   [{remote, #{ipv4 => {148,122,173,88},
+                                               mask => {255,255,255,255}}},
+                                    {protocol_identifier, 17},
+                                    {local, #{port => 49120}},
+                                    {remote, #{port => 36064}}
+                                   ]},
                              #{direction => downlink,
                                identifier => 1,
                                evaluation_precedence => 49,
                                content =>
-                                   #{local => #{port => 49120},
-                                     remote =>
-                                         #{port => 36064,
-                                           ipv4 =>
-                                               {148,122,173,88},
-                                           mask =>
-                                               {255,255,255,255}},
-                                     protocol_identifier => 17}}]},
+                                   [{remote, #{ipv4 => {148,122,173,88},
+                                               mask => {255,255,255,255}}},
+                                    {protocol_identifier, 17},
+                                    {local, #{port => 49120}},
+                                    {remote, #{port => 36064}}
+                                   ]}]},
                   s5s8u_pgw_f_teid =>
                       #{ipv4 => {84,216,158,3},
                         interface_type => s5s8_pgw_gtpu,
@@ -924,15 +948,16 @@ create_bearer_request2_test() ->
                         guaranteed_bitrate_uplink => 64,
                         guaranteed_bitrate_downlink => 64},
                   charging_id => <<1,101,136,206>>}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 create_bearer_response_test() ->
-    Bin = <<"48600048861780054a5e050056000d001842f2797bd542f279010f38015d002500"
-            "490001000702000200100057000902843bc9e26ad994906f57000903858ac08005"
-            "54d89e03020002001000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"48600048861780054A5E05000200020010005D0025004900010007020002001000"
+            "57000902843BC9E26AD994906F57000903858AC0800554D89E0356000D001842F2"
+            "797BD542F279010F3801">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => create_bearer_response,
             piggy_backed => false,
@@ -962,13 +987,14 @@ create_bearer_response_test() ->
             cause =>
                 #{cause => request_accepted,
                   cause_source => originated_by_remote_node}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 delete_bearer_request_test() ->
-    Bin = <<"4863000d3bc9e2601a8205004900010107">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4863000D3BC9E2601A8205004900010107">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => delete_bearer_request,
             piggy_backed => false,
@@ -976,14 +1002,15 @@ delete_bearer_request_test() ->
             teid => 1003086432,
             sequence_number => 1737221,
             eps_bearer_ids => 7},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 delete_bearer_response_test() ->
-    Bin = <<"4864003c861780051a82050002000200100056000d001842f2797bd542f2790121"
-            "0408720002004000aa000400e79783815d000b004900010007020002001000">>,
+    Bin = <<"4864003C861780051A8205000200020010005D000B004900010007020002001000"
+            "72000200400056000D001842F2797BD542F27901210408AA000400E7978381">>,
     Map = #{version => 2,
-            protocol => gtpv2c,
             message_group => tunnel_management,
             message_type => delete_bearer_response,
             piggy_backed => false,
@@ -1009,37 +1036,39 @@ delete_bearer_response_test() ->
                   cause =>
                       #{cause => request_accepted,
                         cause_source => originated_by_remote_node}}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 failed_delete_bearer_command_test() ->
-    Bin = <<"4842002f855de00a92633f00560008001042f08901ffda6faa000400e7977f2d72"
-            "000200400057000900860d2e3220d9ae45c0">>,
+    Bin = <<"4842002F855DE00A92633F00560008001042F08901FFDA6FAA000400E7977F2D72"
+            "000200400057000900860D2E3220D9AE45C0">>,
     ?assertThrow({error, {missing_mandatory_tlivs, [bearer_contexts]}},
                  otc:decapsulate(gtpv2c, binary:decode_hex(Bin))).
 
 failed_delete_bearer_failure_indication_test() ->
-    Bin = <<"484300120d2e322092633f000200060046005d000000">>,
+    Bin = <<"484300120D2E322092633F000200060046005D000000">>,
     ?assertThrow({error, {missing_mandatory_tlivs, [bearer_context]}},
                  otc:decapsulate(gtpv2c, binary:decode_hex(Bin))).
 
 suspend_notification_test() ->
-    Bin = <<"48a200088159000344ecb200">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"48A200088159000344ECB200">>,
+    Map = #{version => 2,
             message_group => cs_fallback_and_srvcc_related,
             message_type => suspend_notification,
             message_priority => false,
             piggy_backed => false,
             teid => 2170093571,
             sequence_number => 4517042},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 suspend_acknowledgement_test() ->
-    Bin = <<"48a3000e0256804044ecb200020002001000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"48A3000E0256804044ECB200020002001000">>,
+    Map = #{version => 2,
             message_group => cs_fallback_and_srvcc_related,
             message_type => suspend_acknowledge,
             piggy_backed => false,
@@ -1049,13 +1078,14 @@ suspend_acknowledgement_test() ->
             cause =>
                 #{cause => request_accepted,
                   cause_source => originated_by_remote_node}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 resume_notification_test() ->
-    Bin = <<"48a400148159000344ecc4000100080042829978563412f1">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"48A400148159000344ECC4000100080042829978563412F1">>,
+    Map = #{version => 2,
             message_group => cs_fallback_and_srvcc_related,
             message_type => resume_notification,
             piggy_backed => false,
@@ -1063,13 +1093,14 @@ resume_notification_test() ->
             teid => 2170093571,
             sequence_number => 4517060,
             imsi => "242899876543211"},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 resume_acknowledgement_test() ->
-    Bin = <<"48a5000e0256804044ecc400020002001000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"48A5000E0256804044ECC400020002001000">>,
+    Map = #{version => 2,
             message_group => cs_fallback_and_srvcc_related,
             message_type => resume_acknowledge,
             piggy_backed => false,
@@ -1079,14 +1110,15 @@ resume_acknowledgement_test() ->
             cause =>
                 #{cause => request_accepted,
                   cause_source => originated_by_remote_node}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 delete_session_request_test() ->
-    Bin = <<"482400338154c002311c7c00490001000656000d001842f089859f42f06904cae3"
-            "01aa000400e7977ecd57000900862dcb0310d9ae45c0">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"482400338154C002311C7C00490001000656000D001842F089859F42F06904CAE3"
+            "0157000900862DCB0310D9AE45C0AA000400E7977ECD">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => delete_session_request,
             piggy_backed => false,
@@ -1106,13 +1138,14 @@ delete_session_request_test() ->
                 #{ipv4 => {217,174,69,192},
                   teid_gre_key => 768279312,
                   interface_type => s5s8_sgw_gtpc}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 delete_session_response_test() ->
     Bin = <<"4825000e2dcb0310311c7c00020002001000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => delete_session_response,
             piggy_backed => false,
@@ -1122,42 +1155,43 @@ delete_session_response_test() ->
             cause =>
                 #{cause => request_accepted,
                   cause_source => originated_by_remote_node}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg).
 
 echo_request_test() ->
-    Bin = <<"4001000900000000030001001a">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4001000900000000030001001A">>,
+    Map = #{version => 2,
             message_group => path_management,
             message_type => echo_request,
             sequence_number => 0,
             piggy_backed => false,
             message_priority => false,
             recovery => 26},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 echo_response_test() ->
-    Bin = <<"4002000900000000030001000a">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4002000900000000030001000A">>,
+    Map = #{version => 2,
             message_group => path_management,
             message_type => echo_response,
             sequence_number => 0,
             piggy_backed => false,
             message_priority => false,
             recovery => 10},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 modify_bearer_request_test() ->
-    Bin = <<"4822007385118009400e91004b0008003175113171327263520001000656000d00"
-            "1842f08986c742f069050cb4165300030042f0894d000400001000085700090086"
-            "13334440d9ae45c048000800000021c0000021c003000100167200020040005d00"
-            "12004900010005570009018413334445d9ae45ca">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4822007985118009400E91004B000800317511317132726356000D001842F08986"
+            "C742F069050CB4165300030042F08952000100064D000A00001000080000000000"
+            "00570009008613334440D9AE45C048000800000021C0000021C05D001200490001"
+            "0005570009018413334445D9AE45CA0300010016720002004000">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => modify_bearer_request,
             piggy_backed => false,
@@ -1281,14 +1315,15 @@ modify_bearer_request_test() ->
                       #{ipv4 => {217,174,69,202},
                         teid_gre_key => 322126917,
                         interface_type => s5s8_sgw_gtpu}}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 modify_bearer_response_test() ->
-    Bin = <<"4823003913334440400e91000200020010004c0006006427851633f74900010005"
-            "7f000100005d00130049000100050200020010005e00040002f9fceb">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4823003913334440400E91000200020010004C0006006427851633F74900010005"
+            "7F000100005D00130049000100050200020010005E00040002F9FCEB">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => modify_bearer_response,
             piggy_backed => false,
@@ -1307,15 +1342,16 @@ modify_bearer_response_test() ->
                         cause_source => originated_by_remote_node},
                   eps_bearer_id => 5,
                   charging_id => <<2,249,252,235>>}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 modify_bearer_command_test() ->
-    Bin = <<"4840004485118009c00e920048000800000493e0000493e05d001f004900010005"
+    Bin = <<"4840004485118009C00E920048000800000493E0000493E05D001F004900010005"
             "500016005809000000000000000000000000000000000000000057000900861333"
-            "4440d9ae45c0">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+            "4440D9AE45C0">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => modify_bearer_command,
             piggy_backed => false,
@@ -1339,13 +1375,14 @@ modify_bearer_command_test() ->
                 #{ipv4 => {217,174,69,192},
                   teid_gre_key => 322126912,
                   interface_type => s5s8_sgw_gtpc}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 update_bearer_request_test() ->
-    Bin = <<"4861001d13334440c00e92005d000500490001000548000800000493e0000493e0">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4861001D13334440C00E92005D000500490001000548000800000493E0000493E0">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => update_bearer_request,
             piggy_backed => false,
@@ -1355,14 +1392,15 @@ update_bearer_request_test() ->
             bearer_contexts => #{eps_bearer_id => 5},
             apn_ambr => #{downlink => 300000,
                           uplink => 300000}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 update_bearer_response_test() ->
-    Bin = <<"4862002e85118009c00e920002000200100056000d001842f08986c742f069050c"
-            "b4165d000b004900010005020002001000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4862002E85118009C00E92000200020010005D000B004900010005020002001000"
+            "56000D001842F08986C742F069050CB416">>,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => update_bearer_response,
             piggy_backed => false,
@@ -1384,14 +1422,15 @@ update_bearer_response_test() ->
                       #{cause => request_accepted,
                         cause_source => originated_by_remote_node},
                   eps_bearer_id => 5}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 modify_bearer_command2_test() ->
-    Bin = <<"4840003788af2003df41860048000800000493e0000493e05d001f004900010005"
+    Bin = <<"4840003788AF2003DF41860048000800000493E0000493E05D001F004900010005"
             "5000160058090000000000000000000000000000000000000000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => modify_bearer_command,
             piggy_backed => false,
@@ -1411,13 +1450,14 @@ modify_bearer_command2_test() ->
                         pre_emption_vulnerability => true,
                         priority_level => 6,
                         qci => 9}}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 modify_bearer_failure_indication_test() ->
     Bin = <<"4841000e00000000df418600020002004000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Map = #{version => 2,
             message_group => tunnel_management,
             message_type => modify_bearer_failure_indication,
             piggy_backed => false,
@@ -1427,15 +1467,14 @@ modify_bearer_failure_indication_test() ->
             cause =>
                 #{cause => context_not_found,
                   cause_source => originated_by_remote_node}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg).
 
 change_notification_request_test() ->
-    Bin = <<"4826005a8701000a000064000100080042900901020304f54b0008003175113171"
-            "327223520001000656000d001842f27911c042f2790d9b19fc4900010005c9001b"
-            "00030005e680965ce680966100000000000000000000000000000004">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4826005A8701000A000064000100080042900901020304F54B0008003175113171"
+            "327223520001000656000D001842F27911C042F2790D9B19FC4900010005C9001B"
+            "00030005E680965CE680966100000000000000000000000000000004">>,
+    Map = #{version => 2,
             message_group => mobility_management,
             message_type => change_notification_request,
             piggy_backed => false,
@@ -1462,13 +1501,14 @@ change_notification_request_test() ->
                   usage_data_dl => 0,
                   usage_data_ul => 4},
             lbi => 5},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 change_notification_response_test() ->
-    Bin = <<"4827001a00000000000064000100080042900901020304f5020002001000">>,
-    Map = #{protocol => gtpv2c,
-            version => 2,
+    Bin = <<"4827001A00000000000064000100080042900901020304F5020002001000">>,
+    Map = #{version => 2,
             message_group => mobility_management,
             message_type => change_notification_response,
             piggy_backed => false,
@@ -1479,8 +1519,10 @@ change_notification_response_test() ->
             cause =>
                 #{cause => request_accepted,
                   cause_source => originated_by_remote_node}},
-    Msg = otc:decode(gtpv2c, binary:decode_hex(Bin)),
-    ?assertMatch({ok, [Map]}, Msg).
+    Msg = otc_gtpv2c:decode(binary:decode_hex(Bin)),
+    ?assertMatch(Map, Msg),
+    NewBin = otc_gtpv2c:encode(Map),
+    ?assertMatch(Bin, binary:encode_hex(NewBin)).
 
 %% -----------------------------------------------------------------------------
 
