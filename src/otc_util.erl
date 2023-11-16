@@ -100,28 +100,24 @@ encode_network_name(#{coding_scheme := cell_broadcast,
     AddCI = true_to_one(CI),
     <<1:1, 2#000:3, AddCI:1, SpareBits:3, TextBin/binary>>.
 
-decode_gsm_packed(Str) ->
-    decode_gsm_packed(Str, <<>>).
+decode_gsm_packed(Bin) ->
+    Spares = 8-((byte_size(Bin)*7) rem 8),
+    decode_gsm_packed(Bin, Spares).
 
-decode_gsm_packed(<<>>, _) ->
-    [];
-decode_gsm_packed(Bin, Acc) when byte_size(Bin) > 0 ->
-    L = 7-bit_size(Acc),
-    <<B:(8-L), A:L, Rest/binary>> = Bin,
-    <<S:8>> = <<0:1, A:L, Acc/bitstring>>,
-    [S|decode_gsm_packed(Rest, <<B:(8-L)>>)].
+decode_gsm_packed(Bin, SpareBits) ->
+    <<0:SpareBits, R/bitstring>> = binary_reverse(Bin),
+    lists:reverse([S || <<S:7>> <= R]).
 
 encode_gsm_packed(Str) ->
-    list_to_bitstring(encode_gsm_packed(Str, <<>>)).
+    Spares = 8-((length(Str)*7) rem 8),
+    encode_gsm_packed(Str, Spares).
 
-encode_gsm_packed([], Acc) ->
-    L = bit_size(Acc),
-    [<<0:(8-L), Acc/bitstring>>];
-encode_gsm_packed([A|Rs], Acc) ->
-    P = (8-bit_size(Acc)) rem 8,
-    K = (7+bit_size(Acc)) rem 8,
-    <<_:1, B1:K, B0:P>> = <<A:8>>,
-    [<<B0:P, Acc/bitstring>>|encode_gsm_packed(Rs, <<B1:K>>)].
+encode_gsm_packed(Str, SpareBits) ->
+    R = <<<<S:7>> || S <- lists:reverse(Str)>>,
+    binary_reverse(<<0:SpareBits, R/bitstring>>).
+
+binary_reverse(Bin) ->
+    binary:encode_unsigned(binary:decode_unsigned(Bin, little)).
 
 zero_to_allowed(0) -> allowed;
 zero_to_allowed(1) -> not_allowed.
