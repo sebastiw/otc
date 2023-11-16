@@ -1957,7 +1957,7 @@ decode_parameter(user_csg_information, V, _) ->
       AccessMode:2, _:4, LCSG:1, CMI:1>> = V,
     MCCMNC = decode_mcc_mnc(MCCMNCBin),
     CSGID = decode_csg_id(CSGIDBin),
-    Base = maps_merge_all([MCCMNC, CSGID]),
+    Base = maps_merge_all([MCCMNC, #{csg_id => CSGID}]),
     Base#{access_mode => case AccessMode of 0 -> closed; 1 -> hybrid end,
           leave_csg_flag => one_to_true(LCSG),
           csg_membership_indication => one_to_true(CMI)};
@@ -2964,7 +2964,7 @@ encode_parameter(s103_pdn_data_forwarding_info, V, _) ->
       gre_key := GREKey,
       eps_bearer_ids := EPSBearerIDs} = V,
     EPSNum = length(EPSBearerIDs),
-    EPSBearers = [<<0:4, ID:4>> || ID <- EPSBearerIDs],
+    EPSBearers = <<<<0:4, ID:4>> || ID <- EPSBearerIDs>>,
     Len = byte_size(HSGWAddr),
     <<Len:8, HSGWAddr:Len/binary, GREKey:4/binary,
       EPSNum:8, EPSBearers/binary>>;
@@ -3214,7 +3214,7 @@ encode_parameter(mm_context_umts_key_quadruplets_and_quintuplets, V, _) ->
 
     APNRateControlStatusesBin = encode_apn_rate_control_statuses(APNRateControlStatuses),
 
-    {DRXI, SAMBRI, UAMBRI, CommonMM} = encode_common_mm_context(V),
+    {DRXI, 0, SAMBRI, UAMBRI, 0, CommonMM} = encode_common_mm_context(V),
 
     NumQuadruplets = length(Quads),
     Quadruplets = encode_quadruplets(Quads),
@@ -3308,10 +3308,10 @@ encode_parameter(target_identification, V, _) ->
                                                T1 ->
                                                    T1
                                            end,
-                                     ENGNBLen = byte_size(ENGNBID),
+                                     ENGNBLen = bit_size(ENGNBID),
                                      TAC5I = min(1, byte_size(TAC5)),
                                      TACI = min(1, byte_size(TAC)),
-                                     ID = <<0:(32-ENGNBLen), ENGNBID:ENGNBLen>>,
+                                     ID = <<0:(32-ENGNBLen), ENGNBID:ENGNBLen/bitstring>>,
                                      {8, <<MCCMNCBin:3/binary, TAC5I:1, TACI:1, ENGNBLen:6, ID:4/binary,
                                            TAC5:(TAC5I*3)/binary,
                                            TAC:(TACI*3)/binary>>};
@@ -3424,22 +3424,23 @@ encode_parameter(change_reporting_action, V, _) ->
 encode_parameter(fq_csid, V, _) ->
     #{node_id := NodeId,
       csids := CSIDs} = V,
-    NodeIDType = case NodeId of
-                     #{mcc := MC,
-                       mnc := MN,
-                       node_id := NID} ->
-                         MCC = integer_to_list(MC),
-                         MNC = integer_to_list(MN),
-                         MCCMNC = MCC ++ MNC,
-                         <<MCCMNC:20, NID:12>>;
-                     #{ipv6 := IPv6} ->
-                         encode_ip_addr(IPv6);
-                     #{ipv4 := IPv4} ->
-                         encode_ip_addr(IPv4)
-                 end,
+    {NodeIDType, NoID} = case NodeId of
+                             #{mcc := MC,
+                               mnc := MN,
+                               node_id := NID} ->
+                                 MCC = integer_to_list(MC),
+                                 MNC = integer_to_list(MN),
+                                 MCCMNC = list_to_integer(MCC ++ MNC),
+                                 {2, <<MCCMNC:20, NID:12>>};
+                             #{ipv6 := IPv6} ->
+                                 {1, encode_ip_addr(IPv6)};
+                             #{ipv4 := IPv4} ->
+                                 {0, encode_ip_addr(IPv4)}
+                         end,
     NumberOfCSIDs = length(CSIDs),
     CSs = <<<<C:2/binary>> || C <- CSIDs>>,
     <<NodeIDType:4, NumberOfCSIDs:4,
+      NoID/binary,
       CSs/binary>>;
 encode_parameter(channel_needed, V, _) ->
     V;
@@ -3504,13 +3505,14 @@ encode_parameter(mbms_distribution_acknowledge, V, _) ->
 encode_parameter(user_csg_information, V, _) ->
     #{access_mode := A,
       leave_csg_flag := L,
-      csg_membership_indication := C} = V,
+      csg_membership_indication := C,
+      csg_id := CSGID} = V,
 
     AccessMode = case A of closed -> 0; hybrid -> 1 end,
     LCSG = true_to_one(L),
     CMI = true_to_one(C),
     MCCMNCBin = encode_mcc_mnc(V),
-    CSGIDBin = encode_csg_id(V),
+    CSGIDBin = encode_csg_id(CSGID),
     <<MCCMNCBin:3/binary,
       CSGIDBin:4/binary,
       AccessMode:2, 0:4, LCSG:1, CMI:1>>;
@@ -3665,10 +3667,10 @@ encode_parameter(mdt_configuration, V, _) ->
       EventThresholdRSRQ:8,
       AreaScopeLen:8, AreaScope:AreaScopeLen/binary,
       0:4, PLI:1, PMI:1, MPI:1, CRRMI:1,
-      CollectionPeriod:(CRRMI*8),
-      MeasurementPeriod:(MPI*8),
-      PositioningMethod:(PMI*8),
-      NumberOfMDTPLMNs:(PLI*8), MDTPLMNList:(NumberOfMDTPLMNs*3)/binary>>;
+      CollectionPeriod:CRRMI/binary,
+      MeasurementPeriod:MPI/binary,
+      PositioningMethod:PMI/binary,
+      NumberOfMDTPLMNs:(PLI*8)/big, MDTPLMNList:NumberOfMDTPLMNs/binary-unit:3>>;
 encode_parameter(additional_protocol_configuration_options, V, _) ->
     %% Specified in 3GPP TS 29.275
     V;
@@ -3811,7 +3813,7 @@ encode_parameter(trusted_wlan_mode_indication, V, _) ->
 encode_parameter(node_number, V, _) ->
     %% ISDN-number of SGSN (3GPP TS 23.003), MME (3GPP TS 29.002), or
     %% MSC (3GPP TS 29.002)
-    NodeNumLen = length(V),
+    NodeNumLen = byte_size(V),
     <<NodeNumLen:8, V:NodeNumLen/binary>>;
 encode_parameter(node_identifier, V, _) ->
     #{node_name := NodeName,
@@ -3878,7 +3880,7 @@ encode_parameter(presence_reporting_area_action, V, _) ->
 encode_parameter(presence_reporting_area_information, V, _) ->
     #{presence_reporting_area_identifier := PRAI,
       additional_presence_reporting_areas := APRAs} = V,
-    {APRA, R0} = encode_additional_pras(APRAs),
+    APRA = encode_additional_pras(APRAs),
     {INAPRA, OPRA, IPRA} = case maps:get(flag, V, undefined) of
                                undefined ->
                                    {0, 0, 0};
@@ -3889,9 +3891,10 @@ encode_parameter(presence_reporting_area_information, V, _) ->
                                inactive ->
                                    {1, 0, 0}
                            end,
+    APRAI = min(1, byte_size(APRA)),
     <<PRAI:3/binary,
-      0:4, INAPRA:1, APRA:1, OPRA:1, IPRA:1,
-      R0/binary>>;
+      0:4, INAPRA:1, APRAI:1, OPRA:1, IPRA:1,
+      APRA/binary>>;
 encode_parameter(twan_identifier_timestamp, V, _) ->
     <<Seconds:32>> = V,
     datetime_from_epoch(Seconds);
@@ -3941,7 +3944,7 @@ encode_parameter(monitoring_event_information, V, _) ->
 encode_parameter(ecgi_list, V, _) ->
     ECGINum = length(V),
     R0 = <<<<(encode_ecgi(E))/binary>> || E <- V>>,
-    <<ECGINum:2/binary,
+    <<ECGINum:16/big,
       R0/binary>>;
 encode_parameter(remote_ue_context, V, Opts) ->
     %% Remote UE Context Grouped Type
@@ -3958,7 +3961,7 @@ encode_parameter(remote_user_id, V, _) ->
     <<0:6, IMEIF:1, MSISDNF:1,
       IMSILen:8, IMSI:IMSILen/binary,
       MSISDNLen:(MSISDNF*8), MSISDN:MSISDNLen/binary,
-      IMEILen:(IMEIF*8), IMEI:IMEILen/binary, _/binary>> = V;
+      IMEILen:(IMEIF*8), IMEI:IMEILen/binary>>;
 encode_parameter(remote_ue_ip_information, V, _) ->
     V;
 encode_parameter(ciot_optimizations_support_indication, V, _) ->
@@ -4104,10 +4107,10 @@ encode_parameter(pc5_qos_parameters, V, Opts) ->
     %% PC5 QoS Parameters Grouped Type
     _PC5QoSParams = encode_tliv_list(V, Opts);
 encode_parameter(services_authorized, V, _) ->
-    #{vehicle := V,
-      pedestrian := P} = V,
-    VA = case V of authorized -> 0; unauthorized -> 1 end,
-    PA = case P of authorized -> 0; unauthorized -> 1 end,
+    #{vehicle := Ve,
+      pedestrian := Pe} = V,
+    VA = case Ve of authorized -> 0; unauthorized -> 1 end,
+    PA = case Pe of authorized -> 0; unauthorized -> 1 end,
     <<VA:8, PA:8>>;
 encode_parameter(bit_rate, V, _) ->
     <<V:32>>;
@@ -5207,7 +5210,7 @@ decode_tft_parameters_list(R) ->
 decode_tft_parameters_list(<<>>, Acc) ->
     lists:reverse(Acc);
 decode_tft_parameters_list(R0, Acc) ->
-    <<PID:8, PLen:8, PCon:PLen, R2/binary>> = R0,
+    <<PID:8, PLen:8, PCon:PLen/binary, R2/binary>> = R0,
     P = #{identifier => PID, content => PCon},
     decode_tft_parameters_list(R2, [P|Acc]).
 
@@ -5219,7 +5222,7 @@ encode_tft_parameters_list([], Acc) ->
 encode_tft_parameters_list([P|R], Acc) ->
     #{identifier := PID, content := PCon} = P,
     PLen = byte_size(PCon),
-    encode_tft_parameters_list(R, <<PID:8, PLen:8, PCon:PLen, Acc/binary>>).
+    encode_tft_parameters_list(R, <<PID:8, PLen:8, PCon:PLen/binary, Acc/binary>>).
 
 
 hex_string(BSS) ->
