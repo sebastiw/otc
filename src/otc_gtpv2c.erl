@@ -26,6 +26,8 @@
          encode_pco/1,
          decode_rai/1,
          encode_rai/1,
+         decode_lai/1,
+         encode_lai/1,
          decode_sai/1,
          encode_sai/1,
          decode_cgi/1,
@@ -409,7 +411,7 @@ compose_message_type(mbms_session_stop_response) ->
     ?GTPv2C_MSG_TYPE_MBMS_SESSION_STOP_RESPONSE.
 
 decode_msg_fields(P, T, M, GTP0) ->
-    PB = one_to_true(P),
+    PB = otc_util:one_to_true(P),
     Fs0 = [{piggy_backed, PB}],
     {Fs1, Rest1} = case T of
                        1 ->
@@ -1577,11 +1579,11 @@ decode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets = I
 
     ExtARDFun = fun (R) ->
                         <<_:3, NRUNA:1, NRUSRNA:1, NRNA:1, USSRNA:1, NRSRNA:1, _/binary>> = R,
-                        #{nr_as_secondary_rat => to_allowed(NRSRNA),
-                          unlicensed_spectrum_lwa_lwip_as_secondary_rat => to_allowed(USSRNA),
-                          nr_in_5gs => to_allowed(NRNA),
-                          new_radio_unlicensed_as_secondary_rat => to_allowed(NRUSRNA),
-                          nr_u_in_5gs => to_allowed(NRUNA)}
+                        #{nr_as_secondary_rat => otc_util:zero_to_allowed(NRSRNA),
+                          unlicensed_spectrum_lwa_lwip_as_secondary_rat => otc_util:zero_to_allowed(USSRNA),
+                          nr_in_5gs => otc_util:zero_to_allowed(NRNA),
+                          new_radio_unlicensed_as_secondary_rat => otc_util:zero_to_allowed(NRUSRNA),
+                          nr_u_in_5gs => otc_util:zero_to_allowed(NRUNA)}
                 end,
     ExtARD = maybe_decode(ExtARDFun, ExtendedAccessRestrictionData, #{}),
 
@@ -1959,17 +1961,17 @@ decode_parameter(user_csg_information, V, _) ->
     CSGID = decode_csg_id(CSGIDBin),
     Base = maps_merge_all([MCCMNC, #{csg_id => CSGID}]),
     Base#{access_mode => case AccessMode of 0 -> closed; 1 -> hybrid end,
-          leave_csg_flag => one_to_true(LCSG),
-          csg_membership_indication => one_to_true(CMI)};
+          leave_csg_flag => otc_util:one_to_true(LCSG),
+          csg_membership_indication => otc_util:one_to_true(CMI)};
 decode_parameter(csg_information_reporting_action, V, _) ->
     <<_:5, UCIUHC:1, UCISHC:1, UCICSG:1>> = V,
     case UCIUHC + UCISHC + UCICSG of
         0 ->
             stop_reporting;
         _ ->
-            #{unsubscribed_hybrid_cell => one_to_true(UCIUHC),
-              subscribed_hybrid_cell => one_to_true(UCISHC),
-              csg_cell => one_to_true(UCICSG)}
+            #{unsubscribed_hybrid_cell => otc_util:one_to_true(UCIUHC),
+              subscribed_hybrid_cell => otc_util:one_to_true(UCISHC),
+              csg_cell => otc_util:one_to_true(UCICSG)}
     end;
 decode_parameter(rfsp_index, V, _) ->
     %% Specified in 3GPP TS 36.413
@@ -1980,7 +1982,7 @@ decode_parameter(csg_id, V, _) ->
     decode_csg_id(CSGIDBin);
 decode_parameter(csg_membership_indication, V, _) ->
     <<_:7, CMI:1>> = V,
-    zero_to_true(CMI);
+    otc_util:zero_to_true(CMI);
 decode_parameter(service_indicator, V, _) ->
     <<SI:8>> = V,
     case SI of 1 -> cs_call; 2 -> sms end;
@@ -2067,7 +2069,7 @@ decode_parameter(epc_timer, V, _) ->
       value => TimerValue};
 decode_parameter(signalling_priority_indication, V, _) ->
     <<_:7, LAPI:1>> = V,
-    #{low_access_priority => one_to_true(LAPI)};
+    #{low_access_priority => otc_util:one_to_true(LAPI)};
 decode_parameter(temporary_mobile_group_identity, V, _) ->
     %% 3GPP TS 29.061 and 3GPP TS 24.008
     <<TMGI:5/binary>> = V,
@@ -2081,8 +2083,8 @@ decode_parameter(additional_mm_context_for_srvcc, V, _) ->
       supported_codec_list => SCL};
 decode_parameter(additional_flags_for_srvcc, V, _) ->
     <<_:6, VF:1, ICS:1>> = V,
-    #{ims_centralized_service => one_to_true(ICS),
-      vsrvcc_flag => one_to_true(VF)};
+    #{ims_centralized_service => otc_util:one_to_true(ICS),
+      vsrvcc_flag => otc_util:one_to_true(VF)};
 decode_parameter(mdt_configuration, V, _) ->
     <<JobType:8,
       ListOfMeasurements:4/binary,
@@ -2157,8 +2159,8 @@ decode_parameter(ipv4_configuration_parameters, V, _) ->
       ipv4_address => {IP1, IP2, IP3, IP4}};
 decode_parameter(change_to_report_flags, V, _) ->
     <<_:6, TZCR:1, SNCR:1>> = V,
-    #{time_zone => one_to_true(TZCR),
-      serving_network => one_to_true(SNCR)};
+    #{time_zone => otc_util:one_to_true(TZCR),
+      serving_network => otc_util:one_to_true(SNCR)};
 decode_parameter(action_indication, V, _) ->
     <<_:5, AI:3>> = V,
     case AI of
@@ -2229,8 +2231,8 @@ decode_parameter(uli_timestamp, V, _) ->
     datetime_from_epoch(Seconds);
 decode_parameter(mbms_flags, V, _) ->
     <<_:6, LMRI:1, MSRI:1>> = V,
-    #{mbms_session_re_establishment => one_to_true(MSRI),
-      local_mbms_bearer_context_release => one_to_true(LMRI)};
+    #{mbms_session_re_establishment => otc_util:one_to_true(MSRI),
+      local_mbms_bearer_context_release => otc_util:one_to_true(LMRI)};
 decode_parameter(ran_nas_cause, V, _) ->
     <<ProtoType:4, CauseType:4, R0/binary>> = V,
     case ProtoType of
@@ -2277,8 +2279,8 @@ decode_parameter(cn_operator_selection_entity, V, _) ->
     end;
 decode_parameter(trusted_wlan_mode_indication, V, _) ->
     <<_:6, MCM:1, SCM:1>> = V,
-    #{multi_connection_mode => one_to_true(MCM),
-      single_connection_mode => one_to_true(SCM)};
+    #{multi_connection_mode => otc_util:one_to_true(MCM),
+      single_connection_mode => otc_util:one_to_true(SCM)};
 decode_parameter(node_number, V, _) ->
     %% ISDN-number of SGSN (3GPP TS 23.003), MME (3GPP TS 29.002), or
     %% MSC (3GPP TS 29.002)
@@ -2383,8 +2385,8 @@ decode_parameter(apn_and_relative_capacity, V, _) ->
       apn => APN};
 decode_parameter(wlan_offloadability_indication, V, _) ->
     <<_:6, EI:1, UI:1>> = V,
-    #{eutran_offloadability => one_to_true(EI),
-      utran_offloadability => one_to_true(UI)};
+    #{eutran_offloadability => otc_util:one_to_true(EI),
+      utran_offloadability => otc_util:one_to_true(UI)};
 decode_parameter(paging_and_service_information, V, _) ->
     <<0:4, EBI:4, _:7, PPI:1, R0/binary>> = V,
     Base = #{eps_bearer_id => EBI},
@@ -2437,10 +2439,10 @@ decode_parameter(remote_ue_ip_information, V, _) ->
     V;
 decode_parameter(ciot_optimizations_support_indication, V, _) ->
     <<_:4, IHCSI:1, AWOPDN:1, SCNIPDN:1, SGNIPDN:1>> = V,
-    #{ip_header_compression_support => one_to_true(IHCSI),
-      attach_without_pdn_support => one_to_true(AWOPDN),
-      scef_non_ip_pdn_support => one_to_true(SCNIPDN),
-      sgi_non_ip_pdn_support => one_to_true(SGNIPDN)};
+    #{ip_header_compression_support => otc_util:one_to_true(IHCSI),
+      attach_without_pdn_support => otc_util:one_to_true(AWOPDN),
+      scef_non_ip_pdn_support => otc_util:one_to_true(SCNIPDN),
+      sgi_non_ip_pdn_support => otc_util:one_to_true(SGNIPDN)};
 decode_parameter(scef_pdn_connection, V, Opts) ->
     %% PDN Connection Grouped Type
     {PDNConnection, _} = decode_tliv_list(V, Opts),
@@ -2655,8 +2657,8 @@ encode_parameter(cause, V, _) ->
     #{cause := Cause,
       cause_source := CSource} = V,
     C = compose_cause_type(Cause),
-    PCE = true_to_one(maps:get(pdn_connection_ie_error, V, false)),
-    BCE = true_to_one(maps:get(bearer_context_ie_error, V, false)),
+    PCE = otc_util:true_to_one(maps:get(pdn_connection_ie_error, V, false)),
+    BCE = otc_util:true_to_one(maps:get(bearer_context_ie_error, V, false)),
     CS = case CSource of
              originated_by_remote_node -> 0;
              originated_by_sending_node -> 1
@@ -3173,11 +3175,11 @@ encode_parameter(mm_context_eps_security_context_quadruplets_and_quintuplets, V,
                                           nr_in_5gs := N5,
                                           new_radio_unlicensed_as_secondary_rat := US,
                                           nr_u_in_5gs := U5} ->
-                                            NRSRNA = from_allowed(NS),
-                                            USSRNA = from_allowed(USS),
-                                            NRNA = from_allowed(N5),
-                                            NRUSRNA = from_allowed(US),
-                                            NRUNA = from_allowed(U5),
+                                            NRSRNA = otc_util:allowed_to_zero(NS),
+                                            USSRNA = otc_util:allowed_to_zero(USS),
+                                            NRNA = otc_util:allowed_to_zero(N5),
+                                            NRUSRNA = otc_util:allowed_to_zero(US),
+                                            NRUNA = otc_util:allowed_to_zero(U5),
                                             <<0:3, NRUNA:1, NRUSRNA:1, NRNA:1, USSRNA:1, NRSRNA:1>>;
                                         _ ->
                                             <<>>
@@ -3509,8 +3511,8 @@ encode_parameter(user_csg_information, V, _) ->
       csg_id := CSGID} = V,
 
     AccessMode = case A of closed -> 0; hybrid -> 1 end,
-    LCSG = true_to_one(L),
-    CMI = true_to_one(C),
+    LCSG = otc_util:true_to_one(L),
+    CMI = otc_util:true_to_one(C),
     MCCMNCBin = encode_mcc_mnc(V),
     CSGIDBin = encode_csg_id(CSGID),
     <<MCCMNCBin:3/binary,
@@ -3521,9 +3523,9 @@ encode_parameter(csg_information_reporting_action, V, _) ->
         stop_reporting ->
             <<0:8>>;
         _ ->
-            UCIUHC = true_to_one(maps:get(unsubscribed_hybrid_cell, V, false)),
-            UCISHC = true_to_one(maps:get(subscribed_hybrid_cell, V, false)),
-            UCICSG = true_to_one(maps:get(csg_cell, V, false)),
+            UCIUHC = otc_util:true_to_one(maps:get(unsubscribed_hybrid_cell, V, false)),
+            UCISHC = otc_util:true_to_one(maps:get(subscribed_hybrid_cell, V, false)),
+            UCICSG = otc_util:true_to_one(maps:get(csg_cell, V, false)),
             <<0:5, UCIUHC:1, UCISHC:1, UCICSG:1>>
     end;
 encode_parameter(rfsp_index, V, _) ->
@@ -3533,7 +3535,7 @@ encode_parameter(csg_id, V, _) ->
     CSGIDBin = encode_csg_id(V),
     <<CSGIDBin:4/binary>>;
 encode_parameter(csg_membership_indication, V, _) ->
-    CMI = true_to_zero(V),
+    CMI = otc_util:true_to_zero(V),
     <<0:7, CMI:1>>;
 encode_parameter(service_indicator, V, _) ->
     SI = case V of cs_call -> 1; sms -> 2 end,
@@ -3615,7 +3617,7 @@ encode_parameter(epc_timer, V, _) ->
     <<TimerUnit:3, TimerValue:5>>;
 encode_parameter(signalling_priority_indication, V, _) ->
     #{low_access_priority := L} = V,
-    LAPI = true_to_one(L),
+    LAPI = otc_util:true_to_one(L),
     <<0:7, LAPI:1>>;
 encode_parameter(temporary_mobile_group_identity, V, _) ->
     %% 3GPP TS 29.061 and 3GPP TS 24.008
@@ -3633,8 +3635,8 @@ encode_parameter(additional_mm_context_for_srvcc, V, _) ->
 encode_parameter(additional_flags_for_srvcc, V, _) ->
     #{ims_centralized_service := I,
       vsrvcc_flag := F} = V,
-    ICS = true_to_one(I),
-    VF = true_to_one(F),
+    ICS = otc_util:true_to_one(I),
+    VF = otc_util:true_to_one(F),
     <<0:6, VF:1, ICS:1>>;
 encode_parameter(mdt_configuration, V, _) ->
     #{job_type := JobType,
@@ -3692,8 +3694,8 @@ encode_parameter(ipv4_configuration_parameters, V, _) ->
 encode_parameter(change_to_report_flags, V, _) ->
     #{time_zone := Tz,
       serving_network := SN} = V,
-    TZCR = true_to_one(Tz),
-    SNCR = true_to_one(SN),
+    TZCR = otc_util:true_to_one(Tz),
+    SNCR = otc_util:true_to_one(SN),
     <<0:6, TZCR:1, SNCR:1>>;
 encode_parameter(action_indication, V, _) ->
     AI = case V of
@@ -3777,8 +3779,8 @@ encode_parameter(uli_timestamp, V, _) ->
 encode_parameter(mbms_flags, V, _) ->
     #{mbms_session_re_establishment := M,
       local_mbms_bearer_context_release := L} = V,
-    MSRI = true_to_one(M),
-    LMRI = true_to_one(L),
+    MSRI = otc_util:true_to_one(M),
+    LMRI = otc_util:true_to_one(L),
     <<0:6, LMRI:1, MSRI:1>>;
 encode_parameter(ran_nas_cause, V, _) ->
     #{protocol_type := PT,
@@ -3807,8 +3809,8 @@ encode_parameter(cn_operator_selection_entity, V, _) ->
 encode_parameter(trusted_wlan_mode_indication, V, _) ->
     #{multi_connection_mode := M,
       single_connection_mode := S} = V,
-    MCM = true_to_one(M),
-    SCM = true_to_one(S),
+    MCM = otc_util:true_to_one(M),
+    SCM = otc_util:true_to_one(S),
     <<0:6, MCM:1, SCM:1>>;
 encode_parameter(node_number, V, _) ->
     %% ISDN-number of SGSN (3GPP TS 23.003), MME (3GPP TS 29.002), or
@@ -3917,8 +3919,8 @@ encode_parameter(apn_and_relative_capacity, V, _) ->
 encode_parameter(wlan_offloadability_indication, V, _) ->
     #{eutran_offloadability := EO,
       utran_offloadability := UO} = V,
-    EI = true_to_one(EO),
-    UI = true_to_one(UO),
+    EI = otc_util:true_to_one(EO),
+    UI = otc_util:true_to_one(UO),
     <<0:6, EI:1, UI:1>>;
 encode_parameter(paging_and_service_information, V, _) ->
     #{eps_bearer_id := EBI} = V,
@@ -3969,10 +3971,10 @@ encode_parameter(ciot_optimizations_support_indication, V, _) ->
       attach_without_pdn_support := ATT,
       scef_non_ip_pdn_support := SCEF,
       sgi_non_ip_pdn_support := SGI} = V,
-    IHCSI = true_to_one(IPH),
-    AWOPDN = true_to_one(ATT),
-    SCNIPDN = true_to_one(SCEF),
-    SGNIPDN = true_to_one(SGI),
+    IHCSI = otc_util:true_to_one(IPH),
+    AWOPDN = otc_util:true_to_one(ATT),
+    SCNIPDN = otc_util:true_to_one(SCEF),
+    SGNIPDN = otc_util:true_to_one(SGI),
     <<0:4, IHCSI:1, AWOPDN:1, SCNIPDN:1, SGNIPDN:1>>;
 encode_parameter(scef_pdn_connection, V, Opts) ->
     %% PDN Connection Grouped Type
@@ -3980,13 +3982,13 @@ encode_parameter(scef_pdn_connection, V, Opts) ->
 encode_parameter(header_compression_configuration, V, _) ->
     #{max_cid_value := MAXCID,
       profile_identifiers := PIs} = V,
-    I2 = true_to_one(lists:member(16#0002, PIs)),
-    I3 = true_to_one(lists:member(16#0003, PIs)),
-    I4 = true_to_one(lists:member(16#0004, PIs)),
-    I6 = true_to_one(lists:member(16#0006, PIs)),
-    I102 = true_to_one(lists:member(16#0102, PIs)),
-    I103 = true_to_one(lists:member(16#0103, PIs)),
-    I104 = true_to_one(lists:member(16#0104, PIs)),
+    I2 = otc_util:true_to_one(lists:member(16#0002, PIs)),
+    I3 = otc_util:true_to_one(lists:member(16#0003, PIs)),
+    I4 = otc_util:true_to_one(lists:member(16#0004, PIs)),
+    I6 = otc_util:true_to_one(lists:member(16#0006, PIs)),
+    I102 = otc_util:true_to_one(lists:member(16#0102, PIs)),
+    I103 = otc_util:true_to_one(lists:member(16#0103, PIs)),
+    I104 = otc_util:true_to_one(lists:member(16#0104, PIs)),
     <<0:1, I104:1, I103:1, I102:1, I6:1, I4:1, I3:1, I2:1, 0:8, MAXCID:16>>;
 encode_parameter(extended_protocol_configuration_options, V, _) ->
     V;
@@ -4375,14 +4377,14 @@ decode_common_mm_context(DRXI, NHI, SAMBRI, UAMBRI, OSCI, R2) ->
 
     <<ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1,
       R10/binary>> = R9,
-    ARD = #{utran => to_allowed(UNA),
-            geran => to_allowed(GENA),
-            gan => to_allowed(GANA),
-            i_hspa_evolution => to_allowed(INA),
-            wb_e_utran => to_allowed(ENA),
-            nb_iot => to_allowed(NBNA),
-            enhanced_coverage => to_allowed(ECNA),
-            ho_to_non_3gpp_access => to_allowed(HNNA)},
+    ARD = #{utran => otc_util:zero_to_allowed(UNA),
+            geran => otc_util:zero_to_allowed(GENA),
+            gan => otc_util:zero_to_allowed(GANA),
+            i_hspa_evolution => otc_util:zero_to_allowed(INA),
+            wb_e_utran => otc_util:zero_to_allowed(ENA),
+            nb_iot => otc_util:zero_to_allowed(NBNA),
+            enhanced_coverage => otc_util:zero_to_allowed(ECNA),
+            ho_to_non_3gpp_access => otc_util:zero_to_allowed(HNNA)},
 
     OSCFun = fun (R) ->
                      <<NHI_old:1, RLOS:1, KSI_old:3, NCC_old:3,
@@ -4449,14 +4451,14 @@ encode_common_mm_context(V) ->
       nb_iot := N,
       enhanced_coverage := En,
       ho_to_non_3gpp_access := H} = ARD,
-    UNA = from_allowed(U),
-    GENA = from_allowed(G),
-    GANA = from_allowed(GA),
-    INA = from_allowed(I),
-    ENA = from_allowed(E),
-    NBNA = from_allowed(N),
-    ECNA = from_allowed(En),
-    HNNA = from_allowed(H),
+    UNA = otc_util:allowed_to_zero(U),
+    GENA = otc_util:allowed_to_zero(G),
+    GANA = otc_util:allowed_to_zero(GA),
+    INA = otc_util:allowed_to_zero(I),
+    ENA = otc_util:allowed_to_zero(E),
+    NBNA = otc_util:allowed_to_zero(N),
+    ECNA = otc_util:allowed_to_zero(En),
+    HNNA = otc_util:allowed_to_zero(H),
     R10 = <<ECNA:1, NBNA:1, HNNA:1, ENA:1, INA:1, GANA:1, GENA:1, UNA:1>>,
 
     MEI = encode_parameter(mei, M, []),
@@ -4511,24 +4513,6 @@ encode_common_mm_context(V) ->
                   R17/binary,
                   R18/binary>>,
     {DRXI, NHI, SAMBRI, UAMBRI, OSCI, MMContext}.
-
-to_allowed(0) -> allowed;
-to_allowed(1) -> not_allowed.
-
-from_allowed(allowed) -> 0;
-from_allowed(not_allowed) -> 1.
-
-one_to_true(1) -> true;
-one_to_true(0) -> false.
-
-true_to_one(true) -> 1;
-true_to_one(false) -> 0.
-
-zero_to_true(0) -> true;
-zero_to_true(1) -> false.
-
-true_to_zero(true) -> 0;
-true_to_zero(false) -> 1.
 
 maybe_decode(_, <<>>, Default) ->
     Default;

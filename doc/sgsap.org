@@ -1,0 +1,314 @@
+* Overview
+
+  3GPP TS 29.118 v17.0.0
+  Mobility Management Entity (MME) - Visitor Location Register (VLR)
+  SGs interface specification
+
+* Chapter 8 Message functional definitions and contents
+
+| 2#8765_4321 | Message type                     | Reference |
+|-------------+----------------------------------+-----------|
+| 2#0000_0001 | SGsAP-PAGING-REQUEST             |      8.14 |
+| 2#0000_0010 | SGsAP-PAGING-REJECT              |      8.13 |
+| 2#0000_0110 | SGsAP-SERVICE-REQUEST            |      8.17 |
+| 2#0000_0111 | SGsAP-DOWNLINK-UNITDATA          |       8.4 |
+| 2#0000_1000 | SGsAP-UPLINK-UNITDATA            |      8.22 |
+| 2#0000_1001 | SGsAP-LOCATION-UPDATE-REQUEST    |      8.11 |
+| 2#0000_1010 | SGsAP-LOCATION-UPDATE-ACCEPT     |       8.9 |
+| 2#0000_1011 | SGsAP-LOCATION-UPDATE-REJECT     |      8.10 |
+| 2#0000_1100 | SGsAP-TMSI-REALLOCATION-COMPLETE |      8.19 |
+| 2#0000_1101 | SGsAP-ALERT-REQUEST              |       8.3 |
+| 2#0000_1110 | SGsAP-ALERT-ACK                  |       8.1 |
+| 2#0000_1111 | SGsAP-ALERT-REJECT               |       8.2 |
+| 2#0001_0000 | SGsAP-UE-ACTIVITY-INDICATION     |      8.20 |
+| 2#0001_0001 | SGsAP-EPS-DETACH-INDICATION      |       8.6 |
+| 2#0001_0010 | SGsAP-EPS-DETACH-ACK             |       8.5 |
+| 2#0001_0011 | SGsAP-IMSI-DETACH-INDICATION     |       8.8 |
+| 2#0001_0100 | SGsAP-IMSI-DETACH-ACK            |       8.7 |
+| 2#0001_0101 | SGsAP-RESET-INDICATION           |      8.16 |
+| 2#0001_0110 | SGsAP-RESET-ACK                  |      8.15 |
+| 2#0001_0111 | SGsAP-SERVICE-ABORT-REQUEST      |      8.24 |
+| 2#0001_1000 | SGsAP-MO-CSFB-INDICATION         |      8.25 |
+| 2#0001_1010 | SGsAP-MM-INFORMATION-REQUEST     |      8.12 |
+| 2#0001_1011 | SGsAP-RELEASE-REQUEST            |      8.23 |
+| 2#0001_1101 | SGsAP-STATUS                     |      8.18 |
+| 2#0001_1111 | SGsAP-UE-UNREACHABLE             |      8.21 |
+
+** 8.1 SGsAP-ALERT-ACK
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+
+** 8.2 SGsAP-ALERT-REJECT
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+| SGs Cause           |    9.4.18 | M        | TLV    |      3 |
+
+** 8.3 SGsAP-ALERT-REQUEST
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+
+** 8.4 SGsAP-DOWNLINK-UNITDATA
+
+| Information Element   | Reference | Presence | Format | Length |
+|-----------------------+-----------+----------+--------+--------|
+| Message type          |       9.2 | M        | V      |      1 |
+| IMSI                  |     9.4.6 | M        | TLV    |   6-10 |
+| NAS message container |    9.4.15 | M        | TLV    |  4-253 |
+
+** 8.5 SGsAP-EPS-DETACH-ACK
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+
+** 8.6 SGsAP-EPS-DETACH-INDICATION
+
+| Information Element               | Reference | Presence | Format | Length |
+|-----------------------------------+-----------+----------+--------+--------|
+| Message type                      |       9.2 | M        | V      |      1 |
+| IMSI                              |     9.4.6 | M        | TLV    |   6-10 |
+| MME name                          |    9.4.13 | M        | TLV    |     57 |
+| IMSI detach from EPS service type |     9.4.7 | M        | TLV    |      3 |
+
+** 8.7 SGsAP-IMSI-DETACH-ACK
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+
+** 8.8 SGsAP-IMSI-DETACH-INDICATION
+
+| Information Element                   | Reference | Presence | Format | Length |
+|---------------------------------------+-----------+----------+--------+--------|
+| Message type                          |       9.2 | M        | V      |      1 |
+| IMSI                                  |     9.4.6 | M        | TLV    |   6-10 |
+| MME name                              |    9.4.13 | M        | TLV    |     57 |
+| IMSI Detach from non-EPS service type |     9.4.8 | M        | TLV    |      3 |
+
+** 8.9 SGsAP-LOCATION-UPDATE-ACCEPT
+
+| Information Element      | Reference | Presence | Format | Length |
+|--------------------------+-----------+----------+--------+--------|
+| Message type             |       9.2 | M        | V      |      1 |
+| IMSI                     |     9.4.6 | M        | TLV    |   6-10 |
+| Location area identifier |    9.4.11 | M        | TLV    |      7 |
+| New TMSI, or IMSI        |    9.4.14 | O        | TLV    |   6-10 |
+
+** 8.10 SGsAP-LOCATION-UPDATE-REJECT
+
+| Information Element      | Reference | Presence | Format | Length |
+|--------------------------+-----------+----------+--------+--------|
+| Message type             |       9.2 | M        | V      |      1 |
+| IMSI                     |     9.4.6 | M        | TLV    |   6-10 |
+| Reject cause             |    9.4.16 | M        | TLV    |      3 |
+| Location area identifier |    9.4.11 | M        | TLV    |      7 |
+
+** 8.11 SGsAP-LOCATION-UPDATE-REQUEST
+
+| Information Element          | Reference | Presence | Format | Length |
+|------------------------------+-----------+----------+--------+--------|
+| Message type                 |       9.2 | M        | V      |      1 |
+| IMSI                         |     9.4.6 | M        | TLV    |   6-10 |
+| MME name                     |    9.4.13 | M        | TLV    |     57 |
+| EPS location update type     |     9.4.2 | M        | TLV    |      3 |
+| New location area identifier |    9.4.11 | M        | TLV    |      7 |
+| Old location area identifier |    9.4.11 | O        | TLV    |      7 |
+| TMSI status                  |    9.4.21 | O        | TLV    |      3 |
+| IMEISV                       |     9.4.5 | O        | TLV    |     10 |
+| TAI                          |   9.4.21a | O        | TLV    |      7 |
+| E-CGI                        |    9.4.3a | O        | TLV    |      9 |
+| TMSI based NRI container     |    9.4.26 | O        | TLV    |      4 |
+| Selected CS domain operator  |    9.4.27 | O        | TLV    |      5 |
+
+** 8.12 SGsAP-MM-INFORMATION-REQUEST
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+| MM information      |    9.4.12 | M        | TLV    |    3-n |
+
+** 8.13 SGsAP-PAGING-REJECT
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+| SGs Cause           |    9.4.18 | M        | TLV    |      3 |
+
+** 8.14 SGsAP-PAGING-REQUEST
+
+| Information Element          | Reference | Presence | Format | Length |
+|------------------------------+-----------+----------+--------+--------|
+| Message type                 |       9.2 | M        | V      |      1 |
+| IMSI                         |     9.4.6 | M        | TLV    |   6-10 |
+| VLR name                     |    9.4.22 | M        | TLV    |    3-n |
+| Service indicator            |    9.4.17 | M        | TLV    |      3 |
+| TMSI                         |    9.4.20 | O        | TLV    |      6 |
+| CLI                          |     9.4.1 | O        | TLV    |   3-14 |
+| Location area identifier     |    9.4.11 | O        | TLV    |      7 |
+| Global CN-Id                 |     9.4.4 | O        | TLV    |      7 |
+| SS code                      |    9.4.19 | O        | TLV    |      3 |
+| LCS indicator                |    9.4.10 | O        | TLV    |      3 |
+| LCS client identity          |     9.4.9 | O        | TLV    |    3-n |
+| Channel needed               |    9.4.23 | O        | TLV    |      3 |
+| eMLPP Priority               |    9.4.24 | O        | TLV    |      3 |
+| Additional paging indicators |    9.4.25 | O        | TLV    |      3 |
+| SM Delivery Timer            |    9.4.29 | O        | TLV    |      4 |
+| SM Delivery Start Time       |    9.4.30 | O        | TLV    |      6 |
+| Maximum Retransmission Time  |    9.4.32 | O        | TLV    |      6 |
+
+** 8.15 SGsAP-RESET-ACK
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| MME name            |    9.4.13 | C        | TLV    |     57 |
+| VLR name            |    9.4.22 | C        | TLV    |    3-n |
+
+** 8.16 SGsAP-RESET-INDICATION
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| MME name            |    9.4.13 | C        | TLV    |     57 |
+| VLR name            |    9.4.22 | C        | TLV    |    3-n |
+
+** 8.17 SGsAP-SERVICE-REQUEST
+
+| Information Element        | Reference | Presence | Format | Length |
+|----------------------------+-----------+----------+--------+--------|
+| Message type               | 9.2       | M        | V      |      1 |
+| IMSI                       | 9.4.6     | M        | TLV    |   6-10 |
+| Service indicator          | 9.4.17    | M        | TLV    |      3 |
+| IMEISV                     | 9.4.5     | O        | TLV    |     10 |
+| UE Time Zone               | 9.4.21b   | O        | TLV    |      3 |
+| Mobile Station Classmark 2 | 9.4.14a   | O        | TLV    |      5 |
+| TAI Tracking               | 9.4.21a   | O        | TLV    |      7 |
+| E-CGI E-UTRAN              | 9.4.3a    | O        | TLV    |      9 |
+| UE EMM Mode                | 9.4.21c   | O        | TLV    |      3 |
+
+** 8.18 SGsAP-STATUS
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | O        | TLV    |   6-10 |
+| SGs Cause           |    9.4.18 | M        | TLV    |      3 |
+| Erroneous message   |     9.4.3 | M        | TLV    |    3-n |
+
+** 8.19 SGsAP-TMSI-REALLOCATION-COMPLETE
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+
+** 8.20 SGsAP-UE-ACTIVITY-INDICATION
+
+| Information Element          | Reference | Presence | Format | Length |
+|------------------------------+-----------+----------+--------+--------|
+| Message type                 |       9.2 | M        | V      |      1 |
+| IMSI                         |     9.4.6 | M        | TLV    |   6-10 |
+| Maximum UE Availability Time |    9.4.28 | O        | TLV    |      6 |
+
+** 8.21 SGsAP-UE-UNREACHABLE
+
+| Information Element                  | Reference | Presence | Format | Length |
+|--------------------------------------+-----------+----------+--------+--------|
+| Message type                         |       9.2 | M        | V      |      1 |
+| IMSI                                 |     9.4.6 | M        | TLV    |   6-10 |
+| SGs Cause                            |    9.4.18 | M        | TLV    |      3 |
+| Requested Retransmission Time        |    9.4.33 | O        | TLV    |      6 |
+| Additional UE Unreachable indicators |    9.4.31 | O        | TLV    |      3 |
+
+** 8.22 SGsAP-UPLINK-UNITDATA
+
+| Information Element        | Reference | Presence | Format | Length |
+|----------------------------+-----------+----------+--------+--------|
+| Message type               | 9.2       | M        | V      |      1 |
+| IMSI                       | 9.4.6     | M        | TLV    |   6-10 |
+| NAS message container      | 9.4.15    | M        | TLV    |  4-253 |
+| IMEISV                     | 9.4.5     | O        | TLV    |     10 |
+| UE Time Zone               | 9.4.21b   | O        | TLV    |      3 |
+| Mobile Station Classmark 2 | 9.4.14a   | O        | TLV    |      5 |
+| TAI                        | 9.4.21a   | O        | TLV    |      7 |
+| E-CGI                      | 9.4.3a    | O        | TLV    |      9 |
+
+** 8.23 SGsAP-RELEASE-REQUEST
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+| SGs Cause           |    9.4.18 | O        | TLV    |      3 |
+
+** 8.24 SGsAP-SERVICE-ABORT-REQUEST
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        |       9.2 | M        | V      |      1 |
+| IMSI                |     9.4.6 | M        | TLV    |   6-10 |
+
+** 8.25 SGsAP-MO-CSFB-INDICATION
+
+| Information Element | Reference | Presence | Format | Length |
+|---------------------+-----------+----------+--------+--------|
+| Message type        | 9.2       | M        | V      |      1 |
+| IMSI                | 9.4.6     | M        | TLV    |   6-10 |
+| TAI                 | 9.4.21a   | O        | TLV    |      7 |
+| E-CGI               | 9.4.3a    | O        | TLV    |      9 |
+
+* 9 Information element coding
+
+| 2#8765_4321 | Information element                   | Reference |
+|-------------+---------------------------------------+-----------|
+| 2#0000_0001 | IMSI                                  |     9.4.6 |
+| 2#0000_0010 | VLR name                              |    9.4.22 |
+| 2#0000_0011 | TMSI                                  |    9.4.20 |
+| 2#0000_0100 | Location area identifier              |    9.4.11 |
+| 2#0000_0101 | Channel Needed                        |    9.4.23 |
+| 2#0000_0110 | eMLPP Priority                        |    9.4.24 |
+| 2#0000_0111 | TMSI status                           |    9.4.21 |
+| 2#0000_1000 | SGs cause                             |    9.4.18 |
+| 2#0000_1001 | MME name                              |    9.4.13 |
+| 2#0000_1010 | EPS location update type              |     9.4.2 |
+| 2#0000_1011 | Global CN-Id                          |     9.4.4 |
+| 2#0000_1110 | Mobile identity                       |    9.4.14 |
+| 2#0000_1111 | Reject cause                          |    9.4.16 |
+| 2#0001_0000 | IMSI detach from EPS service type     |     9.4.7 |
+| 2#0001_0001 | IMSI detach from non-EPS service type |     9.4.8 |
+| 2#0001_0101 | IMEISV                                |     9.4.5 |
+| 2#0001_0110 | NAS message container                 |    9.4.15 |
+| 2#0001_0111 | MM information                        |    9.4.12 |
+| 2#0001_1011 | Erroneous message                     |     9.4.3 |
+| 2#0001_1100 | CLI                                   |     9.4.1 |
+| 2#0001_1101 | LCS client identity                   |     9.4.9 |
+| 2#0001_1110 | LCS indicator                         |    9.4.10 |
+| 2#0001_1111 | SS code                               |    9.4.19 |
+| 2#0010_0000 | Service indicator                     |    9.4.17 |
+| 2#0010_0001 | UE Time Zone                          |   9.4.21b |
+| 2#0010_0010 | Mobile Station Classmark 2            |   9.4.14a |
+| 2#0010_0011 | Tracking Area Identity                |   9.4.21a |
+| 2#0010_0100 | E-UTRAN Cell Global Identity          |    9.4.3a |
+| 2#0010_0101 | UE EMM mode                           |   9.4.21c |
+| 2#0010_0110 | Additional paging indicators          |    9.4.25 |
+| 2#0010_0111 | TMSI based NRI container              |    9.4.26 |
+| 2#0010_1000 | Selected CS domain operator           |    9.4.27 |
+| 2#0010_1001 | Maximum UE Availability Time          |    9.4.28 |
+| 2#0010_1010 | SM Delivery Timer                     |    9.4.29 |
+| 2#0010_1011 | SM Delivery Start Time                |    9.4.30 |
+| 2#0010_1100 | Additional UE Unreachable indicators  |    9.4.31 |
+| 2#0010_1101 | Maximum Retransmission Time           |    9.4.32 |
+| 2#0010_1110 | Requested Retransmission Time         |    9.4.33 |
