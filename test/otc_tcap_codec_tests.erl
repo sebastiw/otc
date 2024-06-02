@@ -80,3 +80,31 @@ end_returnResult_with_component_test() ->
     ?assertEqual({Exp, Bin}, Val),
     NewBin = otc_tcap:encode(element(1, Val)),
     ?assertEqual(Bin, NewBin).
+
+tcap_without_linkedid_test() ->
+    %% issue #23
+    MAPBin = <<48,19,160,9,128,7,1,2,3,4,5,6,7,161,0,131,4,9,8,7,6>>,
+    Bin = <<98,67,72,4,0,0,1,179,107,26,40,24,6,7,0,17,134,
+            5,1,1,1,160,13,96,11,161,9,6,7,4,0,0,1,0,29,3,
+            108,31,161,29,2,1,0,129,0,2,1,71,MAPBin/binary>>,
+    InvokeComponent = #{
+        component_type => invoke,
+        invokeId => 0,
+        opcode => {local, 71},
+        argument => MAPBin
+    },
+    Tcap = #{dialogue =>
+               #{type => dialogueRequest,
+                 application_context_family => map,
+                 user_information => undefined,
+                 application_context_name => 'anyTimeInfoEnquiryContext-v3',
+                 supported_versions => [version1]},
+            otid => <<"000001B3">>,
+            components =>
+               [InvokeComponent],
+            type => 'begin'},
+    Exp = Tcap#{components => [InvokeComponent#{linkedId => absent}]},
+    Val = otc_tcap:decode(Bin),
+    ?assertEqual({Exp, Bin}, Val),
+    NewBin = otc_tcap:encode(element(1, Val)),
+    ?assertEqual(Bin, NewBin).
