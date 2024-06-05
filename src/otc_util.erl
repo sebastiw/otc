@@ -145,13 +145,19 @@ gsm_packed_test() ->
     ?assertEqual(binary:decode_hex(<<"E779FB56768F01">>), encode_gsm_packed("gsm7enc")),
     ?assertEqual(<<79,234,16>>, encode_gsm_packed("OTC")).
 
-write_to_pcap(Filename, Bin) ->
-  %% {[LowestLayer|_], _} = Map,
-  %% PPI = otc_sctp_ppid:codec(maps:get(protocol, LowestLayer)),
+write_to_pcap(Filename, {[LowestLayer|_], _} = Tuple) ->
+  {ok, Bin} = otc:encode(Tuple),
+  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer)),
+  write_to_pcap(Filename, PPI, Bin);
+write_to_pcap(Filename, [LowestLayer|_] = List) ->
+  {ok, Bin} = otc:encode(List),
+  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer)),
+  write_to_pcap(Filename, PPI, Bin).
 
+write_to_pcap(Filename, PPI, Bin) ->
   DataChunk = <<16#28024345:32, %% TSN
                 0:16, 0:16, %% Stream identifier, sequence number
-                3:32, %% PPI
+                PPI:32, %% PPI
                 Bin/binary>>,
   ChunkLen = byte_size(DataChunk) + 4, %% Chunk in bytes including the Type, Flags, Length, and Value.
   ChunkLenRest = case ChunkLen rem 4 of
