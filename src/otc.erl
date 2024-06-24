@@ -3,7 +3,7 @@
 
 %% Supported protocol
 -export([sctp_ppi/1,
-         %% sctp/1,
+         sctp/1,
          m2pa/1,
          mtp3/1,
          m3ua/1,
@@ -23,10 +23,10 @@
         ]).
 
 %% General functions
--export([%% decapsulate/1,
+-export([decapsulate/1,
          decapsulate/2,
          decapsulate/3,
-         %% decode/1,
+         decode/1,
          decode/2,
          decode/3,
          encapsulate/1,
@@ -37,10 +37,12 @@
 
 %% Supported protocols ---------------------------------------------------------
 
--type protocol() :: sctp_ppi | m3ua | m2pa | mtp3 | sccp | sccp_mgmt | tcap | map | nas_eps | nas_eps_emm | nas_eps_esm | gtpv1c | gtpv2c | sgsap.
+-type protocol() :: sctp_ppi | sctp | m3ua | m2pa | mtp3 | sccp | sccp_mgmt | tcap | map
+                  | nas_eps | nas_eps_emm | nas_eps_esm
+                  | gtpv1c | gtpv2c | sgsap.
 
 next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
-%% next({sctp, V}) -> otc_sctp:next(V);
+next({sctp, V}) -> otc_sctp:next(V);
 next({m2pa, V}) -> otc_m2pa:next(V);
 next({m3ua, V}) -> otc_m3ua:next(V);
 next({mtp3, V}) -> otc_mtp3:next(V);
@@ -59,7 +61,7 @@ next({gtpv2c, V}) -> otc_gtpv2c:next(V);
 next({sgsap, V}) -> otc_sgsap:next(V).
 
 sctp_ppi(PPI) -> otc_sctp_ppi:codec(PPI).
-%% sctp(D) -> otc_sctp:codec(D).
+sctp(D) -> otc_sctp:codec(D).
 m2pa(D) -> otc_m2pa:codec(D).
 mtp3(D) -> otc_mtp3:codec(D).
 m3ua(D) -> otc_m3ua:codec(D).
@@ -86,10 +88,14 @@ sgsap(D) -> otc_sgsap:codec(D).
 -type packet() :: headers() | Decoded :: {headers(), data()} | Decapsulated :: [header() | binary()].
 -type payload() :: header() | headers() | {header() | headers(), data()} | {protocol(), header() | {header(), data()}} | data().
 
+-spec otc:decapsulate(data()) -> packet().
 -spec otc:decapsulate(protocol(), data()) -> packet().
 -spec otc:decapsulate(protocol(), data(), options()) -> packet().
-%% decapsulate/1,2 works on valid packets. If the packet is malformed
-%% or unsupported, decapsulate/1 will crash.
+%% decapsulate/1,2,3 works on valid packets. If the packet is malformed
+%% or unsupported, decapsulate/1,2,3 will crash.
+decapsulate(Data) when is_binary(Data) ->
+    decapsulate(sctp, Data).
+
 decapsulate(Proto, Data) ->
     decapsulate(Proto, Data, #{}).
 
@@ -97,8 +103,6 @@ decapsulate(PPI, Data, Opts) when is_integer(PPI) ->
     decapsulate_next(sctp_ppi(PPI), Data, [], Opts);
 decapsulate(Proto, Data, Opts) when is_atom(Proto) ->
     decapsulate_next(Proto, Data, [], Opts).
-%% decapsulate(Data) when is_binary(Data) ->
-%%     decapsulate_next({sctp, Data}, []).
 
 decapsulate_next('$stop', Data, Headers, _Opts) ->
     lists:reverse([Data|Headers]);
@@ -112,19 +116,20 @@ decapsulate_next(Proto, Data, Headers, Opts) ->
             lists:reverse([Header#{protocol => Proto}|Headers])
     end.
 
-%% -spec otc:decode(data()) ->
-%%           {ok, packet()} |
-%%           {error, SoFar :: headers(), {FailedProto :: protocol(), data()}}.
+-spec otc:decode(data()) ->
+          {ok, packet()} |
+          {error, SoFar :: headers(), {FailedProto :: protocol(), data()}}.
 -spec otc:decode(protocol(), data()) ->
           {ok, packet()} |
           {error, SoFar :: headers(), {FailedProto :: protocol(), data()}}.
 -spec otc:decode(protocol(), data(), options()) ->
           {ok, packet()} |
           {error, SoFar :: headers(), {FailedProto :: protocol(), data()}}.
-%% Similar to decapsulate/1 but, on error, returns any part of the
+%% Similar to decapsulate/1,2,3 but, on error, returns any part of the
 %% packet that has been successfully converted to Erlang term format.
-%% decode(Data) when is_binary(Data) ->
-%%     decode(sctp, Data).
+decode(Data) when is_binary(Data) ->
+    decode(sctp, Data).
+
 decode(P, Data) ->
     decode(P, Data, #{}).
 
