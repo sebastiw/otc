@@ -1,8 +1,9 @@
 ;; 3GPP TS 29.140 v7.0.0 MM10
 
 @id       16777226
-@name     dia_3gpp_ts_29140
+@name     dia_3gpp_ts_29140_MM10
 @vendor   10415 3gpp
+@prefix   MM10
 
 @inherits diameter_gen_base_rfc6733
 

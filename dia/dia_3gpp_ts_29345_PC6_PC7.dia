@@ -3,6 +3,7 @@
 @id       16777340
 @name     dia_3gpp_ts_29345_PC6_PC7
 @vendor   10415 3gpp
+@prefix   PC6_PC7
 
 @inherits diameter_gen_base_rfc6733
 
@@ -322,4 +323,3 @@ DIAMETER_ERROR_INVALID_TARGET_RPAUID                        5639
 DIAMETER_ERROR_NO_ASSOCIATED_RESTRICTED_CODE                5640
 ; DIAMETER_ERROR_REVOCATION_FAILURE                           56x1
 ; DIAMETER_ERROR_ALREADY_BANNED                               56x2
-

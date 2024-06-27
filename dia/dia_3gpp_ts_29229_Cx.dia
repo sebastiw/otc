@@ -3,6 +3,7 @@
 @id       16777216
 @name     dia_3gpp_ts_29229_Cx
 @vendor   10415 3gpp
+@prefix   Cx
 
 @inherits diameter_gen_base_rfc6733
 
@@ -258,3 +259,19 @@ Push-Profile-Answer ::= <Diameter Header: 305, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
+@define Experimental-Result-Code
+DIAMETER_FIRST_REGISTRATION                                 2001
+DIAMETER_SUBSEQUENT_REGISTRATION                            2002
+DIAMETER_UNREGISTERED_SERVICE                               2003
+DIAMETER_SUCCESS_SERVER_NAME_NOT_STORED                     2004
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_IDENTITIES_DONT_MATCH                        5002
+DIAMETER_ERROR_IDENTITY_NOT_REGISTERED                      5003
+DIAMETER_ERROR_ROAMING_NOT_ALLOWED                          5004
+DIAMETER_ERROR_IDENTITY_ALREADY_REGISTERED                  5005
+DIAMETER_ERROR_AUTH_SCHEME_NOT_SUPPORTED                    5006
+DIAMETER_ERROR_IN_ASSIGNMENT_TYPE                           5007
+DIAMETER_ERROR_TOO_MUCH_DATA                                5008
+DIAMETER_ERROR_NOT_SUPPORTED_USER_DATA                      5009
+DIAMETER_ERROR_FEATURE_UNSUPPORTED                          5011
+DIAMETER_ERROR_SERVING_NODE_FEATURE_UNSUPPORTED             5012

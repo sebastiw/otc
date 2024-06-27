@@ -3,6 +3,7 @@
 @id       16777220
 @name     dia_3gpp_ts_29109_Zn
 @vendor   10415 3GPP
+@prefix   Zn
 
 @inherits diameter_gen_base_rfc6733
 
@@ -44,3 +45,7 @@ Boostrapping-Info-Answer ::= <Diameter Header: 310, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
+@define Experimental-Result-Code
+DIAMETER_ERROR_IDENTITY_UNKNOWN                             5401
+DIAMETER_ERROR_NOT_AUTHORIZED                               5402
+DIAMETER_ERROR_TRANSACTION_IDENTIFIER_INVALID               5403
