@@ -5,7 +5,7 @@
 -include("include/l3.hrl").
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
          encode/1]).
@@ -17,11 +17,11 @@
 spec() ->
     "3GPP TS 24.301 version 16.8.0".
 
-codec(Bin) when is_binary(Bin) ->
+codec(Bin, _Opts) when is_binary(Bin) ->
     decode(Bin);
-codec(Map) when is_map(Map) ->
+codec(Map, _Opts) when is_map(Map) ->
     encode({Map, <<>>});
-codec({Map, PDU}) when is_map(Map), is_binary(PDU) ->
+codec({Map, PDU}, _Opts) when is_map(Map), is_binary(PDU) ->
     encode({Map, PDU}).
 
 -spec next(map()) -> '$stop' | {ok, nas_eps | nas_eps_emm | nas_eps_esm}.
