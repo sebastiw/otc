@@ -1273,7 +1273,7 @@ encode_parameter(refusal_cause, RC) ->
 encode_parameter(data, Bin) ->
     Bin;
 encode_parameter(segmentation, V) ->
-    F = case maps:get(first_segment_indication, V, true) of 
+    F = case maps:get(first_segment_indication, V, true) of
             true ->
                 0;
             _ ->
@@ -1291,8 +1291,48 @@ encode_parameter(importance, Importance) ->
 encode_parameter(long_data, Bin) ->
     Bin.
 
+decode_address(Bin, #{address_type := ansi}) ->
+    decode_ansi_address(Bin);
 decode_address(Bin, _Opts) ->
     decode_itu_address(Bin).
+
+%% T1.112.3
+decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
+    {SSN, Bin1} = case SSNI of
+                      0 -> {undefined, Bin0};
+                      1 -> <<SSN0:8/big, Rest0/binary>> = Bin0,
+                           {parse_ssn(SSN0), Rest0}
+                  end,
+    {PC, Bin2} = case PCI of
+                     0 -> {undefined, Bin1};
+                     1 -> <<NCM:8, NC:8, NI:8, Rest1/binary>> = Bin1,
+                          {<<NI:8, NC:8, NCM:8>>, Rest1}
+                 end,
+    GT = case GTI of
+             2#0001 ->
+                 %% global title includes translation type,
+                 %% numbering plan and encoding scheme
+                 <<TT:8/big, NP:4, ES:4, GT0/binary>> = Bin2,
+                 GT1 = decode_gt_part(ES, GT0),
+                 GT1#{translation_type => TT,
+                      numbering_plan => NP};
+             2#0010 ->
+                 %% global title includes translation type
+                 %% only
+                 <<TT:8/big, GT0/binary>> = Bin2,
+                 #{translation_type => TT,
+                   address => GT0}
+         end,
+    RoutingInd = case RI of
+                     1 -> subsystem_number;
+                     0 -> global_title
+                 end,
+    #{national_use_indicator => 1 =:= NR,
+      routing_indicator => RoutingInd,
+      global_title => GT,
+      subsystem_number => SSN,
+      point_code => PC
+     }.
 
 decode_itu_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
     {PC, Bin1} = case PCI of
