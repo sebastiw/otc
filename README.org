@@ -16,8 +16,12 @@
 
 * Usage
 
-  otc can be called with both decode/2, decode/3, as well as decapsulate/2, decapsulate/3 functions.
-  The differens is that decapsulate will crash on errors while decode returns an error-tuple.
+  otc can be called with both `decode/2`, `decode/3`, as well as
+  `decapsulate/2`, `decapsulate/3` functions.  The differens is that
+  decapsulate will crash on errors while decode returns an
+  error-tuple.
+
+  `decode/1` and `decapsulate/1` assumes SCTP packets.
 
   In successful cases `decode` will return an ok-tuple containing
   either (only) a list of headers if the binary was fully decoded, or
@@ -42,6 +46,9 @@
 
   6> otc:decapsulate(m2pa, LinkBinary).
   [#{protocol := m2pa, ..}]
+
+  7> otc:decode(SctpBinary).
+  {ok, [#{protocol := sctp, ..}]}
 #+END_SRC
 
   For encoding there is only one function encode/1, but it can take
@@ -79,6 +86,7 @@
 
 | Name    | Spec                          | Decode | Encode | Production Tested (Decode/Encode) | Notes                                                 |
 |---------+-------------------------------+--------+--------+-----------------------------------+-------------------------------------------------------|
+| SCTP    | IETF RFC 2960 October 2000    | X      | X      |                                   |                                                       |
 | M3UA    | IETF RFC 4666 September 2006  | X      | X      | DE                                |                                                       |
 | M2PA    | IETF RFC 4165 September 2005  | X      | X      | DE                                |                                                       |
 | MTP3    | ITU-T Q.704 (07/96) July 1996 | X      | X      | DE                                |                                                       |
