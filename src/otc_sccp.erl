@@ -2,11 +2,14 @@
 -behaviour(otc_codec).
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
+         decode/2,
          encode/1
         ]).
+
+-deprecated([{decode, 1, "Use decode/2 instead."}]).
 
 -export([parse_ssn/1,
          compose_ssn/1
@@ -18,11 +21,11 @@
 spec() ->
     "ITU-T Q.713 (03/2001)".
 
-codec(Bin) when is_binary(Bin) ->
-    decode(Bin);
-codec(Map) when is_map(Map) ->
+codec(Bin, Opts) when is_binary(Bin) ->
+    decode(Bin, Opts);
+codec(Map, _Opts) when is_map(Map) ->
     encode({Map, <<>>});
-codec({Map, PDU}) ->
+codec({Map, PDU}, _Opts) ->
     encode({Map, PDU}).
 
 -define(IS_SCCP_MGMT,
@@ -86,9 +89,12 @@ next(#{calling_party_address := #{subsystem_number := cap},
 %% TODO: ITU-T Q.1400 (03/93)
 next(_) -> '$stop'.
 
-decode(<<MT:8/big, Rest/binary>>) ->
+decode(Bin) ->
+    decode(Bin, #{}).
+
+decode(<<MT:8/big, Rest/binary>>, Opts) ->
     MessageType = parse_message_type(MT),
-    Msg = decode_msg(MessageType, Rest),
+    Msg = decode_msg(MessageType, Rest, Opts),
     case Msg#{message_type => MessageType} of
         #{long_data := LD} = Msg2 ->
             {maps:without([long_data], Msg2), LD};
@@ -166,7 +172,7 @@ compose_message_type(xudts) -> ?SCCP_MSG_TYPE_XUDTS;
 compose_message_type(ludt) -> ?SCCP_MSG_TYPE_LUDT;
 compose_message_type(ludts) -> ?SCCP_MSG_TYPE_LUDTS.
 
-decode_msg(cr, Bin) ->
+decode_msg(cr, Bin, Opts) ->
     NumPointers = 2,
     <<SLR:3/binary, PC:1/binary, Bin1/binary>> = Bin,
     [CdPA, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
@@ -176,11 +182,11 @@ decode_msg(cr, Bin) ->
                          {hop_counter, 3},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{source_local_reference => decode_parameter(source_local_reference, SLR),
-               protocol_class => decode_parameter(protocol_class, PC),
-               called_party_address => decode_parameter(called_party_address, CdPA)};
-decode_msg(cc, Bin) ->
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{source_local_reference => decode_parameter(source_local_reference, SLR, Opts),
+               protocol_class => decode_parameter(protocol_class, PC, Opts),
+               called_party_address => decode_parameter(called_party_address, CdPA, Opts)};
+decode_msg(cc, Bin, Opts) ->
     NumPointers = 1,
     <<DLR:3/binary, SLR:3/binary, PC:1/binary, Bin1/binary>> = Bin,
     [OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
@@ -189,11 +195,11 @@ decode_msg(cc, Bin) ->
                          {data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               source_local_reference => decode_parameter(source_local_reference, SLR),
-               protocol_class => decode_parameter(protocol_class, PC)};
-decode_msg(cref, Bin) ->
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               source_local_reference => decode_parameter(source_local_reference, SLR, Opts),
+               protocol_class => decode_parameter(protocol_class, PC, Opts)};
+decode_msg(cref, Bin, Opts) ->
     NumPointers = 1,
     <<DLR:3/binary, RC:1/binary, Bin1/binary>> = Bin,
     [OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
@@ -201,149 +207,149 @@ decode_msg(cref, Bin) ->
                          {data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               refusal_cause => decode_parameter(refusal_cause, RC)};
-decode_msg(rlsd, Bin) ->
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               refusal_cause => decode_parameter(refusal_cause, RC, Opts)};
+decode_msg(rlsd, Bin, Opts) ->
     NumPointers = 1,
     <<DLR:3/binary, SLR:3/binary, RC:1/binary, Bin1/binary>> = Bin,
     [OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               source_local_reference => decode_parameter(source_local_reference, SLR),
-               release_cause => decode_parameter(release_cause, RC)};
-decode_msg(rlc, Bin) ->
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               source_local_reference => decode_parameter(source_local_reference, SLR, Opts),
+               release_cause => decode_parameter(release_cause, RC, Opts)};
+decode_msg(rlc, Bin, Opts) ->
     NumPointers = 0,
     <<DLR:3/binary, SLR:3/binary, Bin1/binary>> = Bin,
     [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               source_local_reference => decode_parameter(source_local_reference, SLR)};
-decode_msg(dt1, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               source_local_reference => decode_parameter(source_local_reference, SLR, Opts)};
+decode_msg(dt1, Bin, Opts) ->
     NumPointers = 1,
     <<DLR:3/binary, SR:1/binary, Bin1/binary>> = Bin,
     [D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               segmenting_reassembling => decode_parameter(segmenting_reassembling, SR),
-               data => decode_parameter(data, D)};
-decode_msg(dt2, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               segmenting_reassembling => decode_parameter(segmenting_reassembling, SR, Opts),
+               data => decode_parameter(data, D, Opts)};
+decode_msg(dt2, Bin, Opts) ->
     NumPointers = 1,
     <<DLR:3/binary, SS:2/binary, Bin1/binary>> = Bin,
     [D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               sequencing_segmenting => decode_parameter(sequencing_segmenting, SS),
-               data => decode_parameter(data, D)};
-decode_msg(ak, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               sequencing_segmenting => decode_parameter(sequencing_segmenting, SS, Opts),
+               data => decode_parameter(data, D, Opts)};
+decode_msg(ak, Bin, Opts) ->
     NumPointers = 0,
     <<DLR:3/binary, RSN:1/binary, C:1/binary, Bin1/binary>> = Bin,
     [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               receive_sequence_number => decode_parameter(receive_sequence_number, RSN),
-               credit => decode_parameter(credit, C)};
-decode_msg(udt, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               receive_sequence_number => decode_parameter(receive_sequence_number, RSN, Opts),
+               credit => decode_parameter(credit, C, Opts)};
+decode_msg(udt, Bin, Opts) ->
     NumPointers = 3,
     <<PC:1/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
-    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
-    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
     Optionals = #{},
-    Optionals#{protocol_class => decode_parameter(protocol_class, PC),
+    Optionals#{protocol_class => decode_parameter(protocol_class, PC, Opts),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
                data => D};
-decode_msg(udts, Bin) ->
+decode_msg(udts, Bin, Opts) ->
     NumPointers = 3,
     <<RC:1/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
-    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
-    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
     Optionals = #{},
-    Optionals#{return_cause => decode_parameter(return_cause, RC),
+    Optionals#{return_cause => decode_parameter(return_cause, RC, Opts),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
                data => D};
-decode_msg(ed, Bin) ->
+decode_msg(ed, Bin, Opts) ->
     NumPointers = 1,
     <<DLR:3/binary, Bin1/binary>> = Bin,
     [D] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               data => decode_parameter(data, D)};
-decode_msg(ea, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               data => decode_parameter(data, D, Opts)};
+decode_msg(ea, Bin, Opts) ->
     NumPointers = 0,
     <<DLR:3/binary, Bin1/binary>> = Bin,
     [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR)};
-decode_msg(rsr, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts)};
+decode_msg(rsr, Bin, Opts) ->
     NumPointers = 0,
     <<DLR:3/binary, SLR:3/binary, RC:1/binary, Bin1/binary>> = Bin,
     [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               source_local_reference => decode_parameter(source_local_reference, SLR),
-               reset_cause => decode_parameter(reset_cause, RC)};
-decode_msg(rsc, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               source_local_reference => decode_parameter(source_local_reference, SLR, Opts),
+               reset_cause => decode_parameter(reset_cause, RC, Opts)};
+decode_msg(rsc, Bin, Opts) ->
     NumPointers = 0,
     <<DLR:3/binary, SLR:3/binary, Bin1/binary>> = Bin,
     [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               source_local_reference => decode_parameter(source_local_reference, SLR)};
-decode_msg(err, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               source_local_reference => decode_parameter(source_local_reference, SLR, Opts)};
+decode_msg(err, Bin, Opts) ->
     NumPointers = 0,
     <<DLR:3/binary, EC:1/binary, Bin1/binary>> = Bin,
     [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               error_cause => decode_parameter(error_cause, EC)};
-decode_msg(it, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               error_cause => decode_parameter(error_cause, EC, Opts)};
+decode_msg(it, Bin, Opts) ->
     NumPointers = 0,
     <<DLR:3/binary, SLR:3/binary, PC:1/binary, SS:2/binary, C:1/binary, Bin1/binary>> = Bin,
     [] = separate_fields(absolute_pointers(Bin1, NumPointers)),
     Optionals = #{},
-    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR),
-               source_local_reference => decode_parameter(source_local_reference, SLR),
-               protocol_class => decode_parameter(protocol_class, PC),
-               sequencing_segmenting => decode_parameter(sequencing_segmenting, SS),
-               credit => decode_parameter(credit, C)};
-decode_msg(xudt, Bin) ->
+    Optionals#{destination_local_reference => decode_parameter(destination_local_reference, DLR, Opts),
+               source_local_reference => decode_parameter(source_local_reference, SLR, Opts),
+               protocol_class => decode_parameter(protocol_class, PC, Opts),
+               sequencing_segmenting => decode_parameter(sequencing_segmenting, SS, Opts),
+               credit => decode_parameter(credit, C, Opts)};
+decode_msg(xudt, Bin, Opts) ->
     NumPointers = 4,
     <<PC:1/binary, HC:1/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
-    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{protocol_class => decode_parameter(protocol_class, PC),
-               hop_counter => decode_parameter(hop_counter, HC),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{protocol_class => decode_parameter(protocol_class, PC, Opts),
+               hop_counter => decode_parameter(hop_counter, HC, Opts),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
                data => D};
-decode_msg(xudts, Bin) ->
+decode_msg(xudts, Bin, Opts) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
-    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{return_cause => decode_parameter(return_cause, RC),
-               hop_counter => decode_parameter(hop_counter, HC),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{return_cause => decode_parameter(return_cause, RC, Opts),
+               hop_counter => decode_parameter(hop_counter, HC, Opts),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
                data => D};
-decode_msg(ludt, Bin) ->
+decode_msg(ludt, Bin, Opts) ->
     NumPointers = 4,
     <<PC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
     <<CdPAP:16/big, CgPAP:16/big, LDP:16/big, OptBinP:16/big>> = Pointers,
@@ -357,15 +363,15 @@ decode_msg(ludt, Bin) ->
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
-    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{protocol_class => decode_parameter(protocol_class, PC),
-               hop_counter => decode_parameter(hop_counter, HC),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{protocol_class => decode_parameter(protocol_class, PC, Opts),
+               hop_counter => decode_parameter(hop_counter, HC, Opts),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
                long_data => LD};
-decode_msg(ludts, Bin) ->
+decode_msg(ludts, Bin, Opts) ->
     NumPointers = 4,
     <<RC:1/binary, HC:1/binary, Pointers:(2*NumPointers)/binary, Bin1/binary>> = Bin,
     <<CdPAP:16/big, CgPAP:16/big, LDP:16/big, OptBinP:16/big>> = Pointers,
@@ -379,11 +385,11 @@ decode_msg(ludts, Bin) ->
     AllowedParameters = [{segmentation, 6},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    CalledPartyAddress = decode_parameter(called_party_address, CdPA),
-    CallingPartyAddress = decode_parameter(calling_party_address, CgPA),
-    Optionals = decode_parameters(OptBin, AllowedParameters),
-    Optionals#{return_cause => decode_parameter(return_cause, RC),
-               hop_counter => decode_parameter(hop_counter, HC),
+    CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
+    CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
+    Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
+    Optionals#{return_cause => decode_parameter(return_cause, RC, Opts),
+               hop_counter => decode_parameter(hop_counter, HC, Opts),
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
                long_data => LD}.
@@ -875,24 +881,24 @@ encode_msg(ludts,
       CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, LDLen:16/big, LD/binary,
       OptBin/binary>>.
 
-decode_parameters(Bin, Parameters) ->
-    decode_parameters(Bin, Parameters, #{}).
+decode_parameters(Bin, Parameters, Opts) ->
+    decode_parameters(Bin, Parameters, #{}, Opts).
 
-decode_parameters(_, [], Acc) ->
+decode_parameters(_, [], Acc, _Opts) ->
     Acc;
-decode_parameters(<<>>, _, Acc) ->
+decode_parameters(<<>>, _, Acc, _Opts) ->
     Acc;
-decode_parameters(<<?SCCP_IEI_END_OF_OPTIONAL_PARAMETERS:8/big>>, _, Acc) ->
+decode_parameters(<<?SCCP_IEI_END_OF_OPTIONAL_PARAMETERS:8/big>>, _, Acc, _Opts) ->
     Acc;
-decode_parameters(<<IEI:8/big, Len:8/big, Bin0/binary>>, Os, Acc) ->
+decode_parameters(<<IEI:8/big, Len:8/big, Bin0/binary>>, Os, Acc, Opts) ->
     <<V:Len/binary, Rest/binary>> = Bin0,
     Param = parse_iei(IEI),
     case lists:keytake(Param, 1, Os) of
         {value, {Name, _}, NOs} ->
-            Par = decode_parameter(Name, V),
-            decode_parameters(Rest, NOs, Acc#{Name => Par});
+            Par = decode_parameter(Name, V, Opts),
+            decode_parameters(Rest, NOs, Acc#{Name => Par}, Opts);
         false ->
-            decode_parameters(Rest, Os, Acc)
+            decode_parameters(Rest, Os, Acc, Opts)
     end.
 
 encode_parameters(Msg, Parameters) ->
@@ -954,15 +960,15 @@ compose_iei(segmentation) -> ?SCCP_IEI_SEGMENTATION;
 compose_iei(hop_counter) -> ?SCCP_IEI_HOP_COUNTER;
 compose_iei(importance) -> ?SCCP_IEI_IMPORTANCE.
 
-decode_parameter(destination_local_reference, Bin) ->
+decode_parameter(destination_local_reference, Bin, _Opts) ->
     Bin;
-decode_parameter(source_local_reference, Bin) ->
+decode_parameter(source_local_reference, Bin, _Opts) ->
     Bin;
-decode_parameter(called_party_address, Bin) ->
-    decode_address(Bin);
-decode_parameter(calling_party_address, Bin) ->
-    decode_address(Bin);
-decode_parameter(protocol_class, Bin) ->
+decode_parameter(called_party_address, Bin, Opts) ->
+    decode_address(Bin, Opts);
+decode_parameter(calling_party_address, Bin, Opts) ->
+    decode_address(Bin, Opts);
+decode_parameter(protocol_class, Bin, _Opts) ->
     case Bin of
         <<O:4, 2#0000:4>> ->
             Opts = parse_protocol_class_options(O),
@@ -975,55 +981,55 @@ decode_parameter(protocol_class, Bin) ->
         <<S:4, 2#0011:4>> ->
             #{class => 3, spare => S}   % Connection-oriented
     end;
-decode_parameter(segmenting_reassembling, Bin) ->
+decode_parameter(segmenting_reassembling, Bin, _Opts) ->
     <<_Spare:7, M:1>> = Bin,
     case M of
         0 -> no_more_data;
         1 -> more_data
     end;
-decode_parameter(receive_sequence_number, Bin) ->
+decode_parameter(receive_sequence_number, Bin, _Opts) ->
     <<PR:7, _Spare:1>> = Bin,
     PR;
-decode_parameter(sequencing_segmenting, Bin) ->
+decode_parameter(sequencing_segmenting, Bin, _Opts) ->
     <<PS:7, _Spare:1, PR:7, M:1>> = Bin,
     #{send_sequence_number => PS,
       receive_sequence_number => PR,
       more_data => 1 =:= M
      };
-decode_parameter(credit, Bin) ->
+decode_parameter(credit, Bin, _Opts) ->
     Bin;
-decode_parameter(release_cause, Bin) ->
+decode_parameter(release_cause, Bin, _Opts) ->
     <<RC:8>> = Bin,
     parse_release_cause(RC);
-decode_parameter(return_cause, Bin) ->
+decode_parameter(return_cause, Bin, _Opts) ->
     <<RC:8>> = Bin,
     parse_return_cause(RC);
-decode_parameter(reset_cause, Bin) ->
+decode_parameter(reset_cause, Bin, _Opts) ->
     <<RC:8>> = Bin,
     parse_reset_cause(RC);
-decode_parameter(error_cause, Bin) ->
+decode_parameter(error_cause, Bin, _Opts) ->
     <<EC:8>> = Bin,
     parse_error_cause(EC);
-decode_parameter(refusal_cause, Bin) ->
+decode_parameter(refusal_cause, Bin, _Opts) ->
     <<RC:8>> = Bin,
     parse_refusal_cause(RC);
-decode_parameter(data, Bin) ->
+decode_parameter(data, Bin, _Opts) ->
     Bin;
-decode_parameter(segmentation, Bin) ->
+decode_parameter(segmentation, Bin, _Opts) ->
     <<F:1, C:1, _Spare:2, Rem:4, LocalRef:3/binary>> = Bin,
     #{first_segment_indication => 0 == F,
       class => C,
       remaining_segments => Rem,
       local_reference => LocalRef};
-decode_parameter(hop_counter, Bin) ->
+decode_parameter(hop_counter, Bin, _Opts) ->
     <<HC:8>> = Bin,
     HC;
-decode_parameter(importance, Bin) ->
+decode_parameter(importance, Bin, _Opts) ->
     <<_Spare:5, Importance:3>> = Bin,
     Importance;
-decode_parameter(long_data, Bin) ->
+decode_parameter(long_data, Bin, _Opts) ->
     Bin;
-decode_parameter(_, _) ->
+decode_parameter(_, _, _Opts) ->
     undefined.
 
 parse_protocol_class_options(2#0000) ->
@@ -1285,7 +1291,10 @@ encode_parameter(importance, Importance) ->
 encode_parameter(long_data, Bin) ->
     Bin.
 
-decode_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
+decode_address(Bin, _Opts) ->
+    decode_itu_address(Bin).
+
+decode_itu_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
     {PC, Bin1} = case PCI of
                      0 -> {undefined, Bin0};
                      1 -> <<LSB:8, 0:2, MSB:6, Rest0/binary>> = Bin0,

@@ -6,7 +6,7 @@
 -include("include/l3.hrl").
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
          encode/1
@@ -45,11 +45,11 @@
 spec() ->
     "3GPP TS 29.274 v17.7.0".
 
-codec(Bin) when is_binary(Bin) ->
+codec(Bin, _Opts) when is_binary(Bin) ->
     decode(Bin);
-codec(Map) when is_map(Map) ->
+codec(Map, _Opts) when is_map(Map) ->
     encode(Map);
-codec({Map, <<>>}) when is_map(Map) ->
+codec({Map, <<>>}, _Opts) when is_map(Map) ->
     encode(Map).
 
 next(_) ->

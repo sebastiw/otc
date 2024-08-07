@@ -1,7 +1,7 @@
 -module(otc_sctp).
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
          encode/1]).
@@ -13,9 +13,9 @@ spec() ->
 
 next(_) -> '$stop'.
 
-codec(Bin) when is_binary(Bin) ->
+codec(Bin, _Opts) when is_binary(Bin) ->
     decode(Bin);
-codec(Map) when is_map(Map) ->
+codec(Map, _Opts) when is_map(Map) ->
     encode(Map).
 
 decode(<<SPort:16, DPort:16, VTag:4/binary, Checksum:4/binary, Chunks/binary>>) ->
@@ -284,10 +284,10 @@ decode_parameters(T, <<PT:16, PL:16, R/binary>>, Acc) ->
     decode_parameters(T, Rest, [Parameter|Acc]).
 
 decode_parameter(T, 5, 8, V) when init =:= T; init_ack =:= T ->
-    {ok, IP} = inet:parse_ipv4_address(V),
+    {ok, IP} = inet:parse_ipv4_address(binary_to_list(V)),
     {ipv4, IP};
 decode_parameter(T, 6, 20, V) when init =:= T; init_ack =:= T ->
-    {ok, IP} = inet:parse_ipv6_address(V),
+    {ok, IP} = inet:parse_ipv6_address(binary_to_list(V)),
     {ipv6, IP};
 decode_parameter(init_ack, 7, _, V) ->
     {state_cookie, V};
@@ -377,12 +377,12 @@ decode_error_causes(<<1:16, 8:16, SID:16, _:16, R/binary>>) ->
     C = #{cause_code => invalid_stream_identifier,
           stream_identifier => SID},
     [C|decode_error_causes(R)];
-decode_error_causes(<<2:16, Len:16, MP:32, V:(Len-8), R/binary>>) ->
+decode_error_causes(<<2:16, Len:16, MP:32, V:(Len-8)/binary, R/binary>>) ->
     Params = [P || <<P:16>> <= V],
     C = #{cause_code => missing_mandatory_parameter,
           missing_parameters => lists:sublist(Params, MP)},
     [C|decode_error_causes(R)];
-decode_error_causes(<<3:16, 8:16, V:4, R/binary>>) ->
+decode_error_causes(<<3:16, 8:16, V:32, R/binary>>) ->
     C = #{cause_code => stale_cookie_error,
           measure_of_staleness => V},
     [C|decode_error_causes(R)];
@@ -422,10 +422,10 @@ encode_error_causes([#{cause_code := missing_mandatory_parameter} = Cause|R]) ->
     V = <<<<P:16>> || P <- Params>>,
     MP = length(Params),
     Len = byte_size(V) + 8,
-    <<2:16, Len:16, MP:32, V:(Len-8), (encode_error_causes(R))/binary>>;
+    <<2:16, Len:16, MP:32, V:(Len-8)/binary, (encode_error_causes(R))/binary>>;
 encode_error_causes([#{cause_code := stale_cookie_error} = Cause|R]) ->
     #{measure_of_staleness := V} = Cause,
-    <<3:16, 8:16, V:4, (encode_error_causes(R))/binary>>;
+    <<3:16, 8:16, V:32, (encode_error_causes(R))/binary>>;
 encode_error_causes([#{cause_code := out_of_resource} = _Cause|R]) ->
     <<4:16, 4:16, (encode_error_causes(R))/binary>>;
 encode_error_causes([#{cause_code := unresolvable_address} = Cause|R]) ->

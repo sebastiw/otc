@@ -6,7 +6,7 @@
 
 -export([spec/0,
          next/1,
-         codec/1,
+         codec/2,
          decode/1,
          encode/1
         ]).
@@ -17,11 +17,11 @@ spec() ->
 next(_) ->
     '$stop'.
 
-codec(Bin) when is_binary(Bin) ->
+codec(Bin, _Opts) when is_binary(Bin) ->
     decode(Bin);
-codec(Msg) when is_map(Msg) ->
+codec(Msg, _Opts) when is_map(Msg) ->
     encode({Msg, <<>>});
-codec({Msg, PDU}) ->
+codec({Msg, PDU}, _Opts) ->
     encode({Msg, PDU}).
 
 decode(<<MT:8, Bin1/binary>>) ->
