@@ -101,7 +101,7 @@ next({gtpv2c, V}) -> otc_gtpv2c:next(V);
 next({sgsap, V}) -> otc_sgsap:next(V).
 
 sctp_ppi(PPI) -> sctp_ppi(PPI, #{}).
-sctp(D) -> sctp(D, Opts).
+sctp(D) -> sctp(D, #{}).
 m2pa(D) -> m2pa(D, #{}).
 mtp3(D) -> mtp3(D, #{}).
 m3ua(D) -> m3ua(D, #{}).

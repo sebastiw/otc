@@ -147,11 +147,11 @@ gsm_packed_test() ->
 
 write_to_pcap(Filename, {[LowestLayer|_], _} = Tuple) ->
   {ok, Bin} = otc:encode(Tuple),
-  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer)),
+  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer), #{}),
   write_to_pcap(Filename, PPI, Bin);
 write_to_pcap(Filename, [LowestLayer|_] = List) ->
   {ok, Bin} = otc:encode(List),
-  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer)),
+  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer), #{}),
   write_to_pcap(Filename, PPI, Bin).
 
 write_to_pcap(Filename, PPI, Bin) ->
