@@ -838,7 +838,6 @@ compose_network_indicator(national) -> ?MTP3_NETIND_NATIONAL;
 compose_network_indicator(national_spare) -> ?MTP3_NETIND_NATIONAL_SPARE;
 compose_network_indicator({reserved, R}) -> R.
 
-
 -spec decode_point_code({binary(), binary()}) -> [itu_point_code() | ansi_point_code()].
 decode_point_code({<<Mask:8/big>>, <<PCbin:24/big>>}) ->
     MaskBits = trunc(math:pow(2, Mask) - 1),
