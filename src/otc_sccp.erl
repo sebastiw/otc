@@ -324,8 +324,8 @@ decode_msg(xudt, Bin, Opts) ->
     <<PC:1/binary, HC:1/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(Opts)],
     CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
     CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
     Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
@@ -339,8 +339,8 @@ decode_msg(xudts, Bin, Opts) ->
     <<RC:1/binary, HC:1/binary, Bin1/binary>> = Bin,
     [CdPA, CgPA, D, OptBin] = separate_fields(absolute_pointers(Bin1, NumPointers, true)),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(Opts)],
     CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
     CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
     Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
@@ -361,8 +361,8 @@ decode_msg(ludt, Bin, Opts) ->
     LD = binary:part(Bin1, LDP+1, LDL-1),
     OptBin = binary:part(Bin1, byte_size(Bin1), -OptBinP),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(Opts)],
     CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
     CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
     Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
@@ -383,8 +383,8 @@ decode_msg(ludts, Bin, Opts) ->
     LD = binary:part(Bin1, LDP+1, LDL-1),
     OptBin = binary:part(Bin1, byte_size(Bin1), -OptBinP),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(Opts)],
     CalledPartyAddress = decode_parameter(called_party_address, CdPA, Opts),
     CallingPartyAddress = decode_parameter(calling_party_address, CgPA, Opts),
     Optionals = decode_parameters(OptBin, AllowedParameters, Opts),
@@ -393,7 +393,6 @@ decode_msg(ludts, Bin, Opts) ->
                called_party_address => CalledPartyAddress,
                calling_party_address => CallingPartyAddress,
                long_data => LD}.
-
 
 absolute_pointers(Bin, NumPointers) ->
     absolute_pointers(Bin, NumPointers, false).
@@ -786,8 +785,8 @@ encode_msg(xudt,
     CgPALen = byte_size(CgPA),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(#{address_type => ansi})],
     OptBin = encode_parameters(Msg, AllowedParameters),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
@@ -813,8 +812,8 @@ encode_msg(xudts,
     CgPALen = byte_size(CgPA),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(#{address_type => ansi})],
     OptBin = encode_parameters(Msg, AllowedParameters),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
@@ -840,8 +839,8 @@ encode_msg(ludt,
     CgPALen = byte_size(CgPA),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(#{address_type => ansi})],
     OptBin = encode_parameters(Msg, AllowedParameters),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
@@ -867,8 +866,8 @@ encode_msg(ludts,
     CgPALen = byte_size(CgPA),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
-                         {importance, 3},
-                         {end_of_optional_parameters, 1}],
+                         {importance, 3}
+                        |ansi_parameters(#{address_type => ansi})],
     OptBin = encode_parameters(Msg, AllowedParameters),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
@@ -880,6 +879,15 @@ encode_msg(ludts,
     <<RC/binary, HC/binary, Pointers/binary,
       CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, LDLen:16/big, LD/binary,
       OptBin/binary>>.
+
+ansi_parameters(#{address_type := ansi}) ->
+    [{intermediate_signaling_network_identification, {3, 18}},
+     {intermediate_network_selection, {5, 7}},
+     {message_type_interworking, 2},
+     {end_of_optional_parameters, 1}
+    ];
+ansi_parameters(_) ->
+    [{end_of_optional_parameters, 1}].
 
 decode_parameters(Bin, Parameters, Opts) ->
     decode_parameters(Bin, Parameters, #{}, Opts).
@@ -938,7 +946,10 @@ parse_iei(?SCCP_IEI_CREDIT) -> credit;
 parse_iei(?SCCP_IEI_DATA) -> data;
 parse_iei(?SCCP_IEI_SEGMENTATION) -> segmentation;
 parse_iei(?SCCP_IEI_HOP_COUNTER) -> hop_counter;
-parse_iei(?SCCP_IEI_IMPORTANCE) -> importance.
+parse_iei(?SCCP_IEI_IMPORTANCE) -> importance;
+parse_iei(?SCCP_IEI_ANSI_INTERMEDIATE_SIGNALING_NETWORK_IDENTIFICATION) -> intermediate_signaling_network_identification;
+parse_iei(?SCCP_IEI_ANSI_INTERMEDIATE_NETWORK_SELECTION) -> intermediate_network_selection;
+parse_iei(?SCCP_IEI_ANSI_MESSAGE_TYPE_INTERWORKING) -> message_type_interworking.
 
 %% compose_iei(destination_local_reference) -> ?SCCP_IEI_DESTINATION_LOCAL_REFERENCE;
 %% compose_iei(source_local_reference) -> ?SCCP_IEI_SOURCE_LOCAL_REFERENCE;
@@ -958,7 +969,10 @@ compose_iei(credit) -> ?SCCP_IEI_CREDIT;
 compose_iei(data) -> ?SCCP_IEI_DATA;
 compose_iei(segmentation) -> ?SCCP_IEI_SEGMENTATION;
 compose_iei(hop_counter) -> ?SCCP_IEI_HOP_COUNTER;
-compose_iei(importance) -> ?SCCP_IEI_IMPORTANCE.
+compose_iei(importance) -> ?SCCP_IEI_IMPORTANCE;
+compose_iei(intermediate_signaling_network_identification) -> ?SCCP_IEI_ANSI_INTERMEDIATE_SIGNALING_NETWORK_IDENTIFICATION;
+compose_iei(intermediate_network_selection) -> ?SCCP_IEI_ANSI_INTERMEDIATE_NETWORK_SELECTION;
+compose_iei(message_type_interworking) -> ?SCCP_IEI_ANSI_MESSAGE_TYPE_INTERWORKING.
 
 decode_parameter(destination_local_reference, Bin, _Opts) ->
     Bin;
@@ -1029,6 +1043,58 @@ decode_parameter(importance, Bin, _Opts) ->
     Importance;
 decode_parameter(long_data, Bin, _Opts) ->
     Bin;
+decode_parameter(intermediate_signaling_network_identification, Bin, _Opts) ->
+    <<Counter:3, TI:1, _Res:1, IRI:2, MI:1, RCE:TI/binary, NIDs/binary>> = Bin,
+    NS = case RCE of
+             <<>> ->
+                 #{};
+             <<_:6, NetSpec:2>> ->
+                 #{network_specific => NetSpec}
+         end,
+    NetworkIDs = [NI || <<NI:2/binary>> <= NIDs],
+    NS#{counter => Counter,
+        network_identifiers => NetworkIDs,
+        isni_routing_identificator => case IRI of
+                                          2#00 -> neither_constrained_nor_suggested;
+                                          2#01 -> constrained;
+                                          2#10 -> reserved;
+                                          2#11 -> spare
+                                      end,
+        identify_networks => 1 =:= MI};
+decode_parameter(intermediate_network_selection, Bin, _Opts) ->
+    <<Counter:2, _Res:2, ToR:2, IT:2, NIDs/binary>> = Bin,
+    NetworkIDs = case byte_size(NIDs) of
+                     4 ->
+                         <<NI1:2/binary, NI2:2/binary>> = NIDs,
+                         [NI1, NI2];
+                     2 ->
+                         [NIDs]
+                 end,
+    #{counter => Counter,
+      network_identifiers => NetworkIDs,
+      type_of_routing => case ToR of
+                             2#00 -> neither_constrained_nor_suggested;
+                             2#01 -> constrained;
+                             2#10 -> suggested;
+                             2#11 -> reserved
+                         end,
+      information_type => case IT of
+                              2#00 -> ss7;
+                              2#01 -> reserved;
+                              _ -> {network_specific, IT}
+                          end
+     };
+decode_parameter(message_type_interworking, Bin, _Opts) ->
+    <<_Res:1, Drop:1, _Spare:3, OMT:3>> = Bin,
+    #{parameter_can_be_dropped => 1 =:= Drop,
+      original_message_type => case OMT of
+                                   2#000 -> unqualified;
+                                   2#001 -> udt;
+                                   2#010 -> xudt;
+                                   2#011 -> ludt;
+                                   _ -> spare
+                               end
+     };
 decode_parameter(_, _, _Opts) ->
     undefined.
 
@@ -1103,6 +1169,14 @@ parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SCCP_FAILURE) -> sccp_failure;
 parse_return_cause(?SCCP_IEI_RETURN_CAUSE_HOP_COUNTER_VIOLATION) -> hop_counter_violation;
 parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_NOT_SUPPORTED) -> segmentation_not_supported;
 parse_return_cause(?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_FAILURE) -> segmentation_failure;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_MESSAGE_CHANGE_FAILURE) -> message_change_failure;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_INVALID_INS_ROUTING_REQUEST) -> invalid_ins_routing_request;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_INVALID_ISNI_ROUTING_REQUEST) -> invalid_isni_routing_request;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_UNAUTHORIZED_MESSAGE) -> unauthorized_message;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_MESSAGE_INCOMPATIBILITY) -> message_incompatibility;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_ISNI_CONSTRAINED_ROUTING) -> insi_constrained_routing;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_REDUNDANT_ISNI_CONSTRAINED_ROUTING_INFORMATION) -> redundant_isni_constrained_routing_information;
+parse_return_cause(?SCCP_IEI_ANSI_RETURN_CAUSE_ISNI_IDENTIFICATION) -> isni_identification;
 parse_return_cause(V) when V >= 2#0000_1111; V =< 2#1110_0100 -> {reserved_international, V};
 parse_return_cause(V) when V >= 2#1110_0101; V =< 2#1111_1110 -> {reserved_national, V};
 parse_return_cause(V) -> {reserved, V}.
@@ -1122,6 +1196,14 @@ compose_return_cause(sccp_failure) -> ?SCCP_IEI_RETURN_CAUSE_SCCP_FAILURE;
 compose_return_cause(hop_counter_violation) -> ?SCCP_IEI_RETURN_CAUSE_HOP_COUNTER_VIOLATION;
 compose_return_cause(segmentation_not_supported) -> ?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_NOT_SUPPORTED;
 compose_return_cause(segmentation_failure) -> ?SCCP_IEI_RETURN_CAUSE_SEGMENTATION_FAILURE;
+compose_return_cause(message_change_failure) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_MESSAGE_CHANGE_FAILURE;
+compose_return_cause(invalid_ins_routing_request) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_INVALID_INS_ROUTING_REQUEST;
+compose_return_cause(invalid_isni_routing_request) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_INVALID_ISNI_ROUTING_REQUEST;
+compose_return_cause(unauthorized_message) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_UNAUTHORIZED_MESSAGE;
+compose_return_cause(message_incompatibility) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_MESSAGE_INCOMPATIBILITY;
+compose_return_cause(insi_constrained_routing) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_ISNI_CONSTRAINED_ROUTING;
+compose_return_cause(redundant_isni_constrained_routing_information) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_REDUNDANT_ISNI_CONSTRAINED_ROUTING_INFORMATION;
+compose_return_cause(isni_identification) -> ?SCCP_IEI_ANSI_RETURN_CAUSE_ISNI_IDENTIFICATION;
 compose_return_cause({reserved_international, V}) -> V;
 compose_return_cause({reserved_national, V}) -> V;
 compose_return_cause({reserved, V}) -> V.
@@ -1273,7 +1355,7 @@ encode_parameter(refusal_cause, RC) ->
 encode_parameter(data, Bin) ->
     Bin;
 encode_parameter(segmentation, V) ->
-    F = case maps:get(first_segment_indication, V, true) of 
+    F = case maps:get(first_segment_indication, V, true) of
             true ->
                 0;
             _ ->
@@ -1289,10 +1371,104 @@ encode_parameter(hop_counter, HC) ->
 encode_parameter(importance, Importance) ->
     <<0:5, Importance:3>>;
 encode_parameter(long_data, Bin) ->
-    Bin.
+    Bin;
+encode_parameter(intermediate_signaling_network_identification, V) ->
+    #{counter := Counter,
+      network_identifiers := NetworkIDs,
+      isni_routing_identificator := RoutingID,
+      identify_networks := IN} = V,
+    IRI = case RoutingID of
+              neither_constrained_nor_suggested -> 2#00;
+              constrained -> 2#01;
+              reserved -> 2#10;
+              spare -> 2#11
+          end,
 
+    RCE = case maps:get(network_specific, V, undefined) of
+              undefined ->
+                  <<>>;
+              NetSpec ->
+                  <<0:6, NetSpec:2>>
+          end,
+    TI = byte_size(RCE),
+    NIDs = binary:list_to_bin(NetworkIDs),
+    MI = otc_util:true_to_one(IN),
+    <<Counter:3, TI:1, 0:1, IRI:2, MI:1, RCE:TI/binary, NIDs/binary>>;
+encode_parameter(intermediate_network_selection, V) ->
+    #{counter := Counter,
+      network_identifiers := NetworkIDs,
+      type_of_routing := TypeOfRouting,
+      information_type := InformationType
+     } = V,
+    ToR = case TypeOfRouting of
+              neither_constrained_nor_suggested -> 2#00;
+              constrained -> 2#01;
+              suggested -> 2#10;
+              reserved -> 2#11
+          end,
+    IT = case InformationType of
+             ss7 -> 2#00;
+             reserved -> 2#01;
+             {network_specific, I} -> I
+         end,
+    NIDs = binary:list_to_bin(NetworkIDs),
+    <<Counter:2, 0:2, ToR:2, IT:2, NIDs/binary>>;
+encode_parameter(message_type_interworking, V) ->
+    #{parameter_can_be_dropped := D,
+      original_message_type := OriginalMessageType
+     } = V,
+    Drop = otc_util:true_to_one(D),
+    OMT = case OriginalMessageType of
+              unqualified -> 2#000;
+              udt -> 2#001;
+              xudt -> 2#010;
+              ludt -> 2#011;
+              spare -> 2#111
+          end,
+    <<0:1, Drop:1, 0:3, OMT:3>>.
+
+decode_address(Bin, #{address_type := ansi}) ->
+    decode_ansi_address(Bin);
 decode_address(Bin, _Opts) ->
     decode_itu_address(Bin).
+
+%% T1.112.3
+decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
+    {SSN, Bin1} = case SSNI of
+                      0 -> {undefined, Bin0};
+                      1 -> <<SSN0:8/big, Rest0/binary>> = Bin0,
+                           {parse_ssn(SSN0), Rest0}
+                  end,
+    {PC, Bin2} = case PCI of
+                     0 -> {undefined, Bin1};
+                     1 -> <<NCM:8, NC:8, NI:8, Rest1/binary>> = Bin1,
+                          {<<NI:8, NC:8, NCM:8>>, Rest1}
+                 end,
+    GT = case GTI of
+             2#0001 ->
+                 %% global title includes translation type,
+                 %% numbering plan and encoding scheme
+                 <<TT:8/big, NP:4, ES:4, GT0/binary>> = Bin2,
+                 GT1 = decode_gt_part(ES, GT0),
+                 GT1#{translation_type => TT,
+                      numbering_plan => NP};
+             2#0010 ->
+                 %% global title includes translation type
+                 %% only
+                 <<TT:8/big, GT0/binary>> = Bin2,
+                 #{translation_type => TT,
+                   address => GT0}
+         end,
+    RoutingInd = case RI of
+                     1 -> subsystem_number;
+                     0 -> global_title
+                 end,
+    #{national_use_indicator => 1 =:= NR,
+      routing_indicator => RoutingInd,
+      global_title => GT,
+      subsystem_number => SSN,
+      point_code => PC
+     }.
 
 decode_itu_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
     {PC, Bin1} = case PCI of
