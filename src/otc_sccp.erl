@@ -1709,10 +1709,10 @@ decode_bcd_digit(2#1110) -> $e;
 decode_bcd_digit(2#1111) -> $f;
 decode_bcd_digit(B) -> $0+B.
 
-encode_bcd_digit($a) -> 2#1010;
-encode_bcd_digit($b) -> 2#1011;
-encode_bcd_digit($c) -> 2#1100;
-encode_bcd_digit($d) -> 2#1101;
-encode_bcd_digit($e) -> 2#1110;
-encode_bcd_digit($f) -> 2#1111;
-encode_bcd_digit(B) -> B-$0.
+encode_bcd_digit(A) when A =:= $A; A =:= $a -> 2#1010;
+encode_bcd_digit(B) when B =:= $B; B =:= $b -> 2#1011;
+encode_bcd_digit(C) when C =:= $C; C =:= $c -> 2#1100;
+encode_bcd_digit(D) when D =:= $D; D =:= $d -> 2#1101;
+encode_bcd_digit(E) when E =:= $E; E =:= $e -> 2#1110;
+encode_bcd_digit(F) when F =:= $F; F =:= $f -> 2#1111;
+encode_bcd_digit(D) when D >= $0, D =< $9   -> D - $0.
