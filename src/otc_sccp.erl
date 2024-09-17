@@ -1701,6 +1701,35 @@ encode_bcd([A]) ->
 encode_bcd([A, B|Rest]) ->
     <<(encode_bcd_digit(B)):4, (encode_bcd_digit(A)):4, (encode_bcd(Rest))/binary>>.
 
+%% ITU-T Q.713 Paragraph 3.4.2.3.1 Global title indicator = 0001
+%% Each address signal is coded as follows:
+%% 0000 - digit 0
+%% 0001 - digit 1
+%% 0010 - digit 2
+%% 0011 - digit 3
+%% 0100 - digit 4
+%% 0101 - digit 5
+%% 0110 - digit 6
+%% 0111 - digit 7
+%% 1000 - digit 8
+%% 1001 - digit 9
+%% 1010 - spare
+%% 1011 - code 11
+%% 1100 - code 12
+%% 1101 - spare
+%% 1110 - spare
+%% 1111 - ST
+%%
+%% ITU-T Q.101
+%% Code 11/12 are used in "Facilities provided in international semi
+%% automatic working" (read internation exchanges).
+%% It is a way for the outgoing exchange operator (controlling
+%% operator) to obtain the incoming operator (code 11), or the delay
+%% operator (code 12).
+%%
+%% ITU-T Q.763
+%% ST is the end of pulsing signal (Stop Sending/Transmitting?) and is
+%% only defined for called party addresses. It is not in use in IP networks.
 decode_bcd_digit(2#1010) -> $a;
 decode_bcd_digit(2#1011) -> $b;
 decode_bcd_digit(2#1100) -> $c;
@@ -1709,10 +1738,10 @@ decode_bcd_digit(2#1110) -> $e;
 decode_bcd_digit(2#1111) -> $f;
 decode_bcd_digit(B) -> $0+B.
 
-encode_bcd_digit($a) -> 2#1010;
-encode_bcd_digit($b) -> 2#1011;
-encode_bcd_digit($c) -> 2#1100;
-encode_bcd_digit($d) -> 2#1101;
-encode_bcd_digit($e) -> 2#1110;
-encode_bcd_digit($f) -> 2#1111;
-encode_bcd_digit(B) -> B-$0.
+encode_bcd_digit(A) when A =:= $A; A =:= $a -> 2#1010;
+encode_bcd_digit(B) when B =:= $B; B =:= $b -> 2#1011;
+encode_bcd_digit(C) when C =:= $C; C =:= $c -> 2#1100;
+encode_bcd_digit(D) when D =:= $D; D =:= $d -> 2#1101;
+encode_bcd_digit(E) when E =:= $E; E =:= $e -> 2#1110;
+encode_bcd_digit(F) when F =:= $F; F =:= $f -> 2#1111;
+encode_bcd_digit(D) when D >= $0, D =< $9   -> D - $0.
