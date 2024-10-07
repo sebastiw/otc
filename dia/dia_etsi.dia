@@ -18,13 +18,65 @@
 
 @inherits dia_ietf
 
+@avp_vendor_id 10415
+Media-Type
+AF-Application-Identifier
+3GPP-User-Location-Info
+QoS-Information
+ToS-Traffic-Class
+Event-Trigger
+Precedence
+Reporting-Level
+Rule-Failure-Code
+Flow-Description
+Flow-Number
+Flows
+Flow-Status
+Max-Requested-Bandwidth-DL
+Max-Requested-Bandwidth-UL
+Media-Component-Number
+
+@avp_vendor_id 11502
+Traffic-Descriptor-UL
+Traffic-Descriptor-DL
+Maximum-Burst-Size
+Committed-Data-Rate
+Committed-Burst-Size
+Excess-Burst-Size
+
 @avp_types
+;; Inherited from dia_3gpp
+Media-Type                                                  520  Enumerated        MV
+AF-Application-Identifier                                   504  OctetString       MV
+3GPP-User-Location-Info                                     22   OctetString       V
+QoS-Information                                             1016 Grouped           MV
+ToS-Traffic-Class                                           1019 OctetString       MV
+Event-Trigger                                               1006 Enumerated        MV
+Precedence                                                  1010 Unsigned32        MV
+Reporting-Level                                             1011 Enumerated        MV
+Rule-Failure-Code                                           1031 Enumerated        MV
+Flow-Description                                            507  IPFilterRule      MV
+Flow-Number                                                 509  Unsigned32        MV
+Flows                                                       510  Grouped           MV
+Flow-Status                                                 511  Enumerated        MV
+Max-Requested-Bandwidth-DL                                  515  Unsigned32        MV
+Max-Requested-Bandwidth-UL                                  516  Unsigned32        MV
+Media-Component-Number                                      518  Unsigned32        MV
+
+;; Inherited from dia_itu
+Traffic-Descriptor-UL                                       1012 Grouped           V 
+Traffic-Descriptor-DL                                       1013 Grouped           V 
+Maximum-Burst-Size                                          1014 Unsigned32        V 
+Committed-Data-Rate                                         1015 Unsigned32        V 
+Committed-Burst-Size                                        1016 Unsigned32        V 
+Excess-Burst-Size                                           1017 Unsigned32        V 
+
 ;;  ES 283 034
 Globally-Unique-Address                                     300  Grouped           MV
 Address-Realm                                               301  OctetString       MV
 Logical-Access-ID                                           302  OctetString       V 
 Initial-Gate-Setting-Description                            303  Grouped           V 
-; QoS-Profile-Description                                     304  Grouped           V ; Inherits from dia_3gpp
+QoS-Profile-Description                                     304  Grouped           V
 IP-Connectivity-Status                                      305  Enumerated        V 
 Access-Network-Type                                         306  Grouped           V 
 Aggregation-Network-Type                                    307  Enumerated        V 
@@ -44,7 +96,7 @@ Requested-Information                                       353  Enumerated     
 Event-Type                                                  354  Enumerated        V 
 Civic-Location                                              355  OctetString       V 
 Geospatial-Location                                         356  OctetString       V 
-; Global-Access-Id                                          357  Grouped           V ; Inherits from dia_3gpp
+Global-Access-Id                                            357  Grouped           V
 Fixed-Access-ID                                             358  Grouped           V 
 Relay-Agent                                                 359  OctetString       V 
 Operator-Specific-GI                                        360  OctetString       V 
@@ -60,8 +112,7 @@ Session-Bundle-Id                                           400  Unsigned32     
 Data-Operation-Indicator                                    420  Enumerated        V 
 
 ;; TS 183 020
-; Inherits from dia_3gpp
-; Privacy-Indicator                                           440  Grouped           V 
+Privacy-Indicator                                           440  Grouped           V 
 
 ;; TS 183 017
 Binding-Information                                         450  Grouped           V 
@@ -102,16 +153,15 @@ Media-Authorization-Context-Id                              462  UTF8String     
 ; ETSI-Digest-Response-Auth                                 521  UTF8String        V 
 
 ;; TS 183 060
-; Inherits from dia_3gpp
-; Policy-Rule-Install                                         550  Grouped           MV
-; Policy-Rule-Remove                                          551  Grouped           MV
-; Policy-Rule-Definition                                      552  Grouped           MV
-; Policy-Rule-Base-Name                                       553  UTF8String        MV
-; Policy-Rule-Name                                            554  OctetString       MV
-; Policy-Rule-Report                                          555  Grouped           MV
-; Policy-Rule-Status                                          556  Enumerated        MV
-; Traffic-Flow                                                557  Grouped           MV
-; Policy-Update-Request                                       558  Grouped           MV
+Policy-Rule-Install                                         550  Grouped           MV
+Policy-Rule-Remove                                          551  Grouped           MV
+Policy-Rule-Definition                                      552  Grouped           MV
+Policy-Rule-Base-Name                                       553  UTF8String        MV
+Policy-Rule-Name                                            554  OctetString       MV
+Policy-Rule-Report                                          555  Grouped           MV
+Policy-Rule-Status                                          556  Enumerated        MV
+Traffic-Flow                                                557  Grouped           MV
+Policy-Update-Request                                       558  Grouped           MV
 
 ;; TS 183 059-1
 CNGCF-Address                                               600  Grouped           V 
@@ -136,6 +186,33 @@ Total-Bandwidth-DL                                          658  Unsigned32     
 
 
 @grouped
+;; Inherited from 3GPP
+QoS-Information ::= < AVP Header: 1016 >
+              [ Max-Requested-Bandwidth-UL ]
+              [ Max-Requested-Bandwidth-DL ]
+              [ Traffic-Descriptor-UL ]
+              [ Traffic-Descriptor-DL ]
+              [ ToS-Traffic-Class ]
+
+Flows ::= <AVP Header: 510>
+              { Media-Component-Number }
+          *   [ Flow-Number ]
+
+;; Inherited from ITU-T
+Traffic-Descriptor-UL ::= <AVP Header: 1012>
+              [ Maximum-Burst-Size ]
+              [ Committed-Data-Rate ]
+              [ Committed-Burst-Size ]
+              [ Excess-Burst-Size ]
+
+Traffic-Descriptor-DL ::= <AVP Header: 1013>
+              [ Maximum-Burst-Size ]
+              [ Committed-Data-Rate ]
+              [ Committed-Burst-Size ]
+              [ Excess-Burst-Size ]
+
+
+;; ETSI
 Globally-Unique-Address ::= <AVP Header: 300>
               [ Framed-IP-Address ]
               [ Framed-IPv6-Prefix ]
@@ -146,13 +223,13 @@ Initial-Gate-Setting-Description ::= <AVP Header: 303>
               [ Maximum-Allowed-Bandwidth-UL ]
               [ Maximum-Allowed-Bandwidth-DL ]
 
-; QoS-Profile-Description ::= <AVP Header: 304>
-;           *   [ Application-Class-ID ]
-;           *   [ Media-Type ]
-;               [ Reservation-Priority ]
-;               [ Maximum-Allowed-Bandwidth-UL ]
-;               [ Maximum-Allowed-Bandwidth-DL ]
-;               [ Transport-Class ]
+QoS-Profile-Description ::= <AVP Header: 304>
+          *   [ Application-Class-ID ]
+          *   [ Media-Type ] ; Inherited from dia_3gpp
+              [ Reservation-Priority ]
+              [ Maximum-Allowed-Bandwidth-UL ]
+              [ Maximum-Allowed-Bandwidth-DL ]
+              [ Transport-Class ]
 
 Access-Network-Type ::= <AVP Header: 306>
               { NAS-Port-Type }
@@ -166,10 +243,10 @@ ETSI-Location-Information ::= <AVP Header: 350>
               [ PIDF-Location-Object ]
           *   [ AVP ]
 
-; Global-Access-Id ::= <AVP Header: 357>
-;               [ Fixed-Access-ID ]
-;               [ 3GPP-User-Location-Info ]
-;           *   [ AVP ]
+Global-Access-Id ::= <AVP Header: 357>
+              [ Fixed-Access-ID ]
+              [ 3GPP-User-Location-Info ] ; Inherited from dia_3gpp
+          *   [ AVP ]
 
 Fixed-Access-ID ::= <AVP Header: 358>
               { Relay-Agent }
@@ -177,9 +254,9 @@ Fixed-Access-ID ::= <AVP Header: 358>
               [ Physical-Access-ID ]
           *   [ AVP ]
 
-; Privacy-Indicator ::= <AVP Header: 440>
-;           *   { Requested-Information }
-;           *   [ AF-Application-Identifier ]
+Privacy-Indicator ::= <AVP Header: 440>
+          *   { Requested-Information }
+          *   [ AF-Application-Identifier ] ; Inherited from dia_3gpp
 
 Binding-Information ::= <AVP Header: 450>
               { Binding-Input-List }
@@ -201,65 +278,101 @@ V4-Transport-Address ::= <AVP Header: 454>
               { Framed-IP-Address }
               { Port-Number }
 
-; Policy-Rule-Install ::= <AVP Header: 550>
-;           *   [ Policy-Rule-Definition ]
-;           *   [ Policy-Rule-Name ]
-;           *   [ Policy-Rule-Base-Name ]
-;           *   [ AVP ]
+Policy-Rule-Install ::= <AVP Header: 550>
+          *   [ Policy-Rule-Definition ]
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+          *   [ AVP ]
 
-; Policy-Rule-Remove ::= <AVP Header: 551>
-;           *   [ Policy-Rule-Name ]
-;           *   [ Policy-Rule-Base-Name ]
-;           *   [ AVP ]
+Policy-Rule-Remove ::= <AVP Header: 551>
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+          *   [ AVP ]
 
-; Policy-Rule-Definition ::= <AVP Header: 552>
-;               { Policy-Rule-Name }
-;               [ Service-Identifier ]
-;               [ Rating-Group ]
-;               [ User-Name ]
-;               [ Logical-Access-Id ]
-;               [ Framed-IP-Address ]
-;               [ Address-Realm ]
-;               [ Called-Station-ID ]
-;               [ Physical-Access-Id ]
-;               [ Flow-Description ]
-;               [ Flow-Status ]
-;               [ QoS-Information ]
-;               [ Reporting-Level ]
-;               [ Precedence ]
-;           *   [ Flows ]
-;           *   [ AVP ]
+Policy-Rule-Definition ::= <AVP Header: 552>
+              { Policy-Rule-Name }
+              [ Service-Identifier ]
+              [ Rating-Group ]
+              [ User-Name ]
+              [ Logical-Access-ID ]
+              [ Framed-IP-Address ]
+              [ Address-Realm ]
+              [ Called-Station-Id ]
+              [ Physical-Access-ID ]
+              [ Flow-Description ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ Reporting-Level ]
+              [ Precedence ]
+          *   [ Flows ]
+          *   [ AVP ]
 
-; Policy-Rule-Report ::= <AVP Header: 555>
-;           *   [ Policy-Rule-Name ]
-;           *   [ Policy-Rule-Base-Name ]
-;               [ Policy-Rule-Status ]
-;               [ Rule-Failure-Code ]
-;           *   [ AVP ]
+Policy-Rule-Report ::= <AVP Header: 555>
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+              [ Policy-Rule-Status ]
+              [ Rule-Failure-Code ]
+          *   [ AVP ]
 
-; Traffic-Flow ::= <AVP Header: 557>
-;               [ Flow-Description ]
-;               [ Flow-Status ]
-;               [ QoS-Information ]
-;               [ User-Name ]
-;               [ Called-Station-ID ]
-;               [ Framed-IP-Address ]
-;               [ Framed-Ipv6-Prefix ]
-;               [ Address-Realm ]
-;               [ Logical-Access-Id ]
-;               [ Physical-Access-ID ]
+Traffic-Flow ::= <AVP Header: 557>
+              [ Flow-Description ]
+              [ Flow-Status ]
+              [ QoS-Information ]
+              [ User-Name ]
+              [ Called-Station-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Address-Realm ]
+              [ Logical-Access-ID ]
+              [ Physical-Access-ID ]
 
-; Policy-Update-Request ::= <AVP Header: 558>
-;           *   [ Policy-Rule-Name ]
-;           *   [ Policy-Rule-Base-Name ]
-;               [ Policy-Rule-Status ]
-;               [ QoS-Information ]
-;           *   [ AVP ]
+Policy-Update-Request ::= <AVP Header: 558>
+          *   [ Policy-Rule-Name ]
+          *   [ Policy-Rule-Base-Name ]
+              [ Policy-Rule-Status ]
+              [ QoS-Information ]
+          *   [ AVP ]
 
 CNGCF-Address ::= <AVP Header: 600>
               [ TFTP-Server ]
               [ ACS-Server ]
 
+;; Inherited from 3GPP
+@enum Media-Type
+AUDIO                                                        0
+VIDEO                                                        1
+DATA                                                         2
+APPLICATION                                                  3
+CONTROL                                                      4
+TEXT                                                         5
+MESSAGE                                                      6
+OTHER                                                       0xFFFFFFFF
+
+@enum Event-Trigger
+LOSS_OF_BEARER                                               5
+RECOVERY_OF_BEARER                                           6
+RESOURCES_MODIFICATION                                       101
+ANY_EVENT                                                    11
+NO_EVENT                                                     12
+
+@enum Reporting-Level
+SERVICE_IDENTIFIER_LEVEL                                     0
+RATING_GROUP_LEVEL                                           1
+
+@enum Rule-Failure-Code
+UNKNOWN_RULE_NAME                                            1
+RATING_GROUP_ERROR                                           2
+SERVICE_IDENTIFIER_ERROR                                     3
+GW_RCEF_MALFUNCTION                                          4
+RESOURCES_LIMITATION                                         5
+MAX_NR_BEARERS_REACHED                                       6
+
+@enum Flow-Status
+ENABLED_UPLINK                                               0
+ENABLED_DOWNLINK                                             1
+REMOVED                                                      4
+
+;; ETSI
 @enum IP-Connectivity-Status
 IP_CONNECTIVITY_ON                                           0
 IP_CONNECTIVITY_LOST                                         1

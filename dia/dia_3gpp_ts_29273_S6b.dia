@@ -7,9 +7,24 @@
 
 @inherits diameter_gen_base_rfc6733
 
-@inherits dia_ietf
-
 @inherits dia_3gpp
+
+@inherits dia_ietf
+MIP6-Feature-Vector
+DRMP
+QoS-Resources
+QoS-Capability
+MIP6-Agent-Info
+OC-Supported-Features
+Load
+Service-Selection
+MIP-Session-Key
+Mobile-Node-Identifier
+EAP-Payload
+MIP-Careof-Address
+EAP-Master-Session-Key
+MIP-MN-HA-SPI
+OC-OLR
 
 @messages
 Diameter-EAP-Request ::= <Diameter Header: 268, REQ, PXY>
