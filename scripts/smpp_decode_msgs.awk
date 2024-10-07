@@ -108,6 +108,10 @@ start {
     field=atom(trim($2));
     size=trim($3);
     type=field_type(trim($4));
+    if(field == "sm_length") {
+        # no need for the short_message field
+        next;
+    }
     if(type == "tlv" && size == "-") {
         size="undefined";
     } else {

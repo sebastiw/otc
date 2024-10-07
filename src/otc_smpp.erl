@@ -298,7 +298,6 @@ decode_msg(#{command := submit_sm}, Bin) ->
                          {replace_if_present_flag, 1, integer},
                          {data_coding, 1, integer},
                          {sm_default_msg_id, 1, integer},
-                         {sm_length, 1, integer},
                          {short_message, {0, 255}, string},
                          {message_submission_tlvs, undefined, tlv}
                         ],
@@ -343,7 +342,6 @@ decode_msg(#{command := submit_multi}, Bin) ->
                          {replace_if_present_flag, 1, integer},
                          {data_coding, 1, integer},
                          {sm_default_msg_id, 1, integer},
-                         {sm_length, 1, integer},
                          {short_message, {0, 255}, string},
                          {message_submission_tlvs, undefined, tlv}
                         ],
@@ -372,7 +370,6 @@ decode_msg(#{command := deliver_sm}, Bin) ->
                          {replace_if_present_flag, 1, integer},
                          {data_coding, 1, integer},
                          {sm_default_msg_id, 1, integer},
-                         {sm_length, 1, integer},
                          {short_message, {0, 255}, string},
                          {message_delivery_request_tlvs, undefined, tlv}
                         ],
@@ -424,7 +421,6 @@ decode_msg(#{command := replace_sm}, Bin) ->
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {sm_default_msg_id, 1, integer},
-                         {sm_length, 1, integer},
                          {short_message, {0, 255}, string},
                          {message_replacement_request_tlvs, undefined, tlv}
                         ],
@@ -472,25 +468,38 @@ decode_parameters(Allowed, <<>>, Acc) ->
     ?LOG_INFO("Nothing more to decode but still want params, have: ~p, want: ~p", [Acc, Allowed]),
     Acc;
 decode_parameters([{Name, Length, integer}|Ts], Bin, Acc) ->
-    <<Value:(Length*8)/integer, Rest/binary>> = Bin,
-    decode_parameters(Ts, Rest, Acc#{Name => Value});
+    <<Value:(Length*8), Rest/binary>> = Bin,
+    NewAcc = decode_parameter(Name, Value, Acc),
+    decode_parameters(Ts, Rest, NewAcc);
 decode_parameters([{Name, {MinL, MaxL}, cstring}|Ts], Bin, Acc) ->
-    {Value, Rest} = extract_cstring(Bin, MinL, MaxL),
-    Length = byte_size(Value),
+    {Value, Rest} = extract_cstring(Bin),
+    Length = byte_size(Value)+1,
     true = Length >= MinL andalso Length =< MaxL,
-    decode_parameters(Ts, Rest, Acc#{Name => Value});
+    NewAcc = decode_parameter(Name, Value, Acc),
+    decode_parameters(Ts, Rest, NewAcc);
 decode_parameters([{Name, {MinL, MaxL}, string}|Ts], Bin, Acc) ->
+    timer:sleep(100),
     <<Length:8, Value:Length/binary, Rest/binary>> = Bin,
     true = Length >= MinL andalso Length =< MaxL,
-    decode_parameters(Ts, Rest, Acc#{Name => Value});
+    NewAcc = decode_parameter(Name, Value, Acc),
+    decode_parameters(Ts, Rest, NewAcc);
 decode_parameters([{Name, Length, tlv}|Ts], Bin, Acc) ->
-    <<Tag:8, Length:8, Value:Length/binary, Rest/binary>> = Bin,
-    decode_parameters(Ts, Rest, Acc#{Name => {Tag, Value}}).
+    <<Tag:16, Length:16, Value:Length/binary, Rest/binary>> = Bin,
+    NewAcc = decode_tlv(Name, Tag, Value, Acc),
+    decode_parameters(Ts, Rest, NewAcc).
 
-extract_cstring(Bin, MinL, MaxL) ->
+extract_cstring(Bin) ->
     case string:split(Bin, <<0>>) of
-        [A] when byte_size(A) >= MinL, byte_size(A) =< MaxL ->
+        [] ->
+            {<<>>, <<>>};
+        [A] ->
             {A, <<>>};
-        [A, Rest] when byte_size(A) >= MinL, byte_size(A) =< MaxL ->
+        [A, Rest] ->
             {A, Rest}
     end.
+
+decode_parameter(Name, Value, Acc) ->
+    Acc#{Name => Value}.
+
+decode_tlv(Name, Tag, Value, Acc) ->
+    Acc#{Name => {Tag, Value}}.
