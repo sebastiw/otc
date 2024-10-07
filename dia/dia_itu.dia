@@ -101,6 +101,7 @@ DOWNGRADED                                                   2
 INITIAL_REQUEST                                              1
 UPDATE_REQUEST                                               2
 TERMINATION_REQUEST                                          3
+QUERY_REQUEST                                                4 ; Added for ETSI
 
 @enum Removal-Cause
 SESSION_RELEASED                                             0

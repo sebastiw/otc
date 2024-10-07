@@ -4,6 +4,7 @@
 @id       16777351
 @name     dia_3gpp_ts_29283_Diameter_Data_Management
 @vendor   10415 3gpp
+@prefix   Diameter_Data_Management
 
 @inherits diameter_gen_base_rfc6733
 

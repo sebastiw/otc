@@ -3,6 +3,7 @@
 @id       1
 @name     dia_3gpp_ts_29061_Gi_Sgi
 @vendor   10415 3gpp
+@prefix   Gi_Sgi
 
 @inherits diameter_gen_base_rfc6733
 
@@ -333,3 +334,5 @@ ASA ::= <Diameter Header: 274, PXY>
           *   [ Proxy-Info ]
           *   [ AVP ]
 
+@define Experimental-Result-Code
+DIAMETER_PDP_CONTEXT_DELETION_INDICATION 2021

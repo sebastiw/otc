@@ -3,6 +3,7 @@
 @id       16777342
 @name     dia_3gpp_ts_29217_Np
 @vendor   10415 3gpp
+@prefix   Np
 
 @inherits diameter_gen_base_rfc6733
 
@@ -141,3 +142,6 @@ Modify-Uecontext-Answer ::= <Diameter Header: 8388722, PXY>
           *   [ Proxy-Info ]
           *   [ AVP ]
 
+@define Experimental-Result-Code
+DIAMETER_USER_UNKNOWN                                       5030
+DIAMETER_PENDING_TRANSACTION                                4144

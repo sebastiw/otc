@@ -3,6 +3,7 @@
 @id       16777223
 @name     dia_3gpp_ts_29061_Gmb
 @vendor   10415 3gpp
+@prefix   Gmb
 
 @inherits diameter_gen_base_rfc6733
 
@@ -64,7 +65,6 @@ ST-Request ::= <Diameter Header: 275, REQ, PXY>
           *   [ Route-Record ]
               [ Additional-MBMS-Trace-Info ]
 
-
 ST-Answer ::= <Diameter Header: 275, PXY>
               < Session-Id >
               { Result-Code }
@@ -79,7 +79,6 @@ ST-Answer ::= <Diameter Header: 275, PXY>
               [ Redirect-Host-Usage ]
               [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
-
 
 RAR ::= <Diameter Header: 258, REQ, PXY>
               < Session-Id >
@@ -167,4 +166,3 @@ DIAMETER_ERROR_STOP_INDICATION                              5121
 DIAMETER_ERROR_UNKNOWN_MBMS_BEARER_SERVICE                  5122
 DIAMETER_ERROR_SERVICE_AREA                                 5123
 DIAMETER_ERROR_OUT_OF_RESOURCES                             4121
-

@@ -3,6 +3,7 @@
 @id       16777358
 @name     dia_3gpp_ts_29154_Nta
 @vendor   10415 3gpp
+@prefix   Nta
 
 @inherits diameter_gen_base_rfc6733
 
@@ -86,4 +87,3 @@ ER-Answer ::= <Diameter Header: 8388736, PXY>
           *   [ Route-Record ]
           *   [ Load ]
           *   [ AVP ]
-

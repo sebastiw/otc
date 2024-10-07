@@ -3,6 +3,7 @@
 @id       16777303
 @name     dia_3gpp_ts_29212_Sd
 @vendor   10415 3gpp
+@prefix   Sd
 
 @inherits diameter_gen_base_rfc6733
 

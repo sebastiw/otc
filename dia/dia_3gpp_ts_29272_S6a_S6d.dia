@@ -3,6 +3,7 @@
 @id       16777251
 @name     dia_3gpp_ts_29272_S6a_S6d
 @vendor   10415 3gpp
+@prefix   S6a_S6d
 
 @inherits diameter_gen_base_rfc6733
 
@@ -337,3 +338,12 @@ Notify-Answer ::= <Diameter Header: 323, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNKNOWN_EPS_SUBSCRIPTION                     5420
+DIAMETER_ERROR_RAT_NOT_ALLOWED                              5421
+DIAMETER_ERROR_ROAMING_NOT_ALLOWED                          5004
+DIAMETER_ERROR_EQUIPMENT_UNKNOWN                            5422
+DIAMETER_ERROR_UNKNOWN_SERVING_NODE                         5423
+DIAMETER_AUTHENTICATION_DATA_UNAVAILABLE                    4181
+DIAMETER_ERROR_CAMEL_SUBSCRIPTION_PRESENT                   4182

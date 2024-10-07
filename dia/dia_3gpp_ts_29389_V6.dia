@@ -1,8 +1,9 @@
 ;; 3GPP TS 29.389 v17.0.0
 
 @id       16777356
-@name     dia_3gpp_ts_29389
+@name     dia_3gpp_ts_29389_V6
 @vendor   10415 3gpp
+@prefix   V6
 
 @inherits diameter_gen_base_rfc6733
 

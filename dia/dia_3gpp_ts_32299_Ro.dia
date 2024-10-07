@@ -1,0 +1,111 @@
+;; 3GPP TS 32.299 v17.0.0
+
+@id       4
+@name     dia_3gpp_ts_32299_Ro
+@vendor   10415 3gpp
+@prefix   Ro
+
+@inherits diameter_gen_base_rfc6733
+
+@inherits dia_3gpp
+
+@inherits dia_ietf
+
+@messages
+Credit-Control-Request ::= < Diameter Header: 272, REQ, PXY >
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Auth-Application-Id }
+              { Service-Context-Id }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ Destination-Host ]
+              [ User-Name ]
+              [ Origin-State-Id ]
+              [ Event-Timestamp ]
+          *   [ Subscription-Id ]
+              [ Termination-Cause ]
+              [ Requested-Action ]
+              [ AoC-Request-Type ]
+              [ Multiple-Services-Indicator ]
+          *   [ Multiple-Services-Credit-Control ]
+              [ CC-Correlation-Id ]
+              [ User-Equipment-Info ]
+              [ OC-Supported-Features ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ Service-Information ]
+          *   [ AVP ]
+
+Credit-Control-Answer::= < Diameter Header: 272, PXY >
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              { Auth-Application-Id }
+              { CC-Request-Type }
+              { CC-Request-Number }
+              [ Experimental-Result ]
+              [ CC-Session-Failover ]
+          *   [ Multiple-Services-Credit-Control ]
+              [ Cost-Information]
+              [ Low-Balance-Indication ]
+              [ Remaining-Balance ]
+              [ Credit-Control-Failure-Handling ]
+              [ Direct-Debiting-Failure-Handling ]
+              [ OC-Supported-Features ]
+              [ OC-OLR ]
+          *   [ Redirect-Host]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ Failed-AVP ]
+              [ Service-Information ]
+          *   [ AVP ]
+
+Re-Auth-Request ::= < Diameter Header: 258, REQ, PXY >
+              < Session-Id >
+              { Origin-Host }
+              { Origin-Realm }
+              { Destination-Realm }
+              { Destination-Host }
+              { Auth-Application-Id }
+              { Re-Auth-Request-Type }
+              [ User-Name ]
+              [ Origin-State-Id ]
+          *   [ Proxy-Info ]
+          *   [ Route-Record ]
+              [ G-S-U-Pool-Identifier ]
+              [ Service-Identifier ]
+              [ Rating-Group ]
+          *   [ AVP ]
+
+Re-Auth-Answer ::= < Diameter Header: 258, PXY >
+              < Session-Id >
+              { Result-Code }
+              { Origin-Host }
+              { Origin-Realm }
+              [ User-Name ]
+              [ Origin-State-Id ]
+              [ Error-Message ]
+              [ Error-Reporting-Host ]
+              [ Failed-AVP ]
+          *   [ Redirect-Host ]
+              [ Redirect-Host-Usage ]
+              [ Redirect-Max-Cache-Time ]
+          *   [ Proxy-Info ]
+          *   [ AVP ]
+
+@define Experimental-Result-Code
+DIAMETER_ERROR_FEATURE_UNSUPPORTED                          5011
+
+@define Result-Code
+DIAMETER_END_USER_SERVICE_DENIED                            4010
+DIAMETER_CREDIT_CONTROL_NOT_APPLICABLE                      4011
+DIAMETER_CREDIT_LIMIT_REACHED                               4012
+DIAMETER_AUTHORIZATION_REJECTED                             5003
+DIAMETER_USER_UNKNOWN                                       5030
+DIAMETER_RATING_FAILED                                      5031

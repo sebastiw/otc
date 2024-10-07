@@ -3,6 +3,7 @@
 @id       16777309
 @name     dia_3gpp_ts_29368_Tsp
 @vendor   10415 3gpp
+@prefix   Tsp
 
 @inherits diameter_gen_base_rfc6733
 
@@ -79,5 +80,3 @@ DN-Answer ::= <Diameter Header: 8388640, PXY>
               [ Failed-AVP ]
           *   [ Proxy-Info ]
           *   [ AVP ]
-
-

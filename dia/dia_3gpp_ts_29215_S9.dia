@@ -3,6 +3,7 @@
 @id       16777267
 @name     dia_3gpp_ts_29215_S9
 @vendor   10415 3GPP
+@prefix   S9
 
 @inherits diameter_gen_base_rfc6733
 
@@ -189,4 +190,3 @@ TE-Answer ::= <Diameter Header: 8388656, PXY>
 DIAMETER_ERROR_SUBSESSION                                   5470
 DIAMETER_ERROR_ONGOING_SESSION_ESTABLISHMENT                5471
 DIAMETER_PENDING_TRANSACTION                                4144
-

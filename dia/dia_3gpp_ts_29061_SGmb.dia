@@ -3,6 +3,7 @@
 @id       16777292
 @name     dia_3gpp_ts_29061_Gmb
 @vendor   10415 3gpp
+@prefix   SGmb
 
 @inherits diameter_gen_base_rfc6733
 
@@ -137,4 +138,3 @@ ASA ::= <Diameter Header: 274, PXY>
 
 @define Experimental-Result-Code
 DIAMETER_ERROR_UNKNOWN_MBMS_BEARER_SERVICE                  5122
-

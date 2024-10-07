@@ -3,6 +3,7 @@
 @id       16777355
 @name     dia_3gpp_ts_29388_V4
 @vendor   10415 3gpp
+@prefix   V4
 
 @inherits diameter_gen_base_rfc6733
 
@@ -154,4 +155,3 @@ Reset-Answer ::= <Diameter Header: 322, PXY>
 DIAMETER_ERROR_USER_UNKNOWN                                 5001
 DIAMETER_ERROR_UNKNOWN_V2X_SUBSCRIPTION                     5690
 DIAMETER_ERROR_V2X_NOT_ALLOWED                              5691
-

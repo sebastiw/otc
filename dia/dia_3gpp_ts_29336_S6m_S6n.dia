@@ -3,6 +3,7 @@
 @id       16777310
 @name     dia_3gpp_ts_29336_S6m_S6n
 @vendor   10415 3gpp
+@prefix   S6m_S6n
 
 @inherits diameter_gen_base_rfc6733
 
