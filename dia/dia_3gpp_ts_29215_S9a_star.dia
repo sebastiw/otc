@@ -3,6 +3,7 @@
 @id       16777320
 @name     dia_3gpp_ts_29215_S9a_star
 @vendor   10415 3GPP
+@prefix   S9a_star
 
 @inherits diameter_gen_base_rfc6733
 

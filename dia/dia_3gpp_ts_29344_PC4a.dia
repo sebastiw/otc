@@ -3,6 +3,7 @@
 @id       16777336
 @name     dia_3gpp_ts_29344_PC4a
 @vendor   10415 3gpp
+@prefix   PC4a
 
 @inherits diameter_gen_base_rfc6733
 
@@ -187,4 +188,3 @@ DIAMETER_ERROR_USER_UNKNOWN                                 5001
 DIAMETER_ERROR_UNKNOWN_PROSE_SUBSCRIPTION                   5610
 DIAMETER_ERROR_PROSE_NOT_ALLOWED                            5611
 DIAMETER_ERROR_UE_LOCATION_UNKNOWN                          5612
-

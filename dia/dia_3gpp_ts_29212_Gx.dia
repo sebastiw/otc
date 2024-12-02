@@ -3,6 +3,7 @@
 @id       16777238
 @name     dia_3gpp_ts_29212_Gx
 @vendor   10415 3gpp
+@prefix   Gx
 
 @inherits diameter_gen_base_rfc6733
 

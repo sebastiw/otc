@@ -1,8 +1,9 @@
-;; 3GPP TS 29.172 v17.0.0 SLg
+;; 3GPP TS 29.172 v17.0.0 SLg/Lgd
 
 @id       16777255
-@name     dia_3gpp_ts_29172_SLg
+@name     dia_3gpp_ts_29172_SLg_Lgd
 @vendor   10415 3gpp
+@prefix   SLg_Lgd
 
 @inherits diameter_gen_base_rfc6733
 
@@ -138,3 +139,12 @@ Location-Report-Answer ::= <Diameter Header: 8388621, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_NETWORK              5490
+DIAMETER_ERROR_UNREACHABLE_USER                             4221
+DIAMETER_ERROR_SUSPENDED_USER                               4222
+DIAMETER_ERROR_DETACHED_USER                                4223
+DIAMETER_ERROR_POSITIONING_DENIED                           4224
+DIAMETER_ERROR_POSITIONING_FAILED                           4225
+DIAMETER_ERROR_UNKNOWN_UNREACHABLE_LCS_CLIENT               4226
