@@ -1,15 +1,15 @@
-;; 3GPP TS 29.211 v6.4.0 Rx
+;; 3GPP TS 29.061 v17.6.0 Gmb
 
-@id       16777229
-@name     dia_3gpp_ts_29211_Rx
-@vendor   10415 3GPP
-@prefix   Rx
+@id       16777223
+@name     dia_3gpp_ts_29061_Mz
+@vendor   10415 3gpp
+@prefix   Mz
 
 @inherits diameter_gen_base_rfc6733
 
-@inherits dia_ietf
-
 @inherits dia_3gpp
+
+@inherits dia_ietf
 
 @messages
 AA-Request ::= <Diameter Header: 265, REQ, PXY>
@@ -18,15 +18,22 @@ AA-Request ::= <Diameter Header: 265, REQ, PXY>
               { Origin-Host }
               { Origin-Realm }
               { Destination-Realm }
-          *   [ Media-Component-Description ]
-          *   [ Flow-Grouping ]
-              [ AF-Charging-Identifier ]
-              [ SIP-Forking-Indication ]
-          *   [ Specific-Action ]
-          *   [ Subscription-Id ]
+              { Auth-Request-Type }
+              [ Destination-Host ]
+              [ Called-Station-Id ]
+              [ Calling-Station-Id ]
+              [ Framed-IP-Address ]
+              [ Framed-IPv6-Prefix ]
+              [ Framed-Interface-Id ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
-          *   [ AVP ]
+              [ 3GPP-IMSI ]
+              [ RAI ]
+              [ 3GPP-IMEISV ]
+              [ 3GPP-RAT-Type ]
+              [ 3GPP-User-Location-Info ]
+              [ 3GPP-MS-TimeZone ]
+              [ Additional-MBMS-Trace-Info ]
 
 AA-Answer ::= <Diameter Header: 265, PXY>
               < Session-Id >
@@ -37,38 +44,12 @@ AA-Answer ::= <Diameter Header: 265, PXY>
               [ Experimental-Result ]
               [ Error-Message ]
               [ Error-Reporting-Host ]
-          *   [ Failed-AVP ]
+              [ Failed-AVP ]
           *   [ Proxy-Info ]
-          *   [ AVP ]
-
-RA-Request ::= <Diameter Header: 258, REQ, PXY>
-              < Session-Id >
-              { Origin-Host }
-              { Origin-Realm }
-              { Destination-Realm }
-              { Destination-Host }
-              { Auth-Application-Id }
-              { Specific-Action }
-          *   [ Flows ]
-          *   [ Subscription-Id ]
-              [ Abort-Cause ]
-              [ Origin-State-Id ]
-          *   [ Proxy-Info ]
-          *   [ Route-Record ]
-          *   [ AVP ]
-
-RA-Answer ::= <Diameter Header: 258, PXY>
-              < Session-Id >
-              { Origin-Host }
-              { Origin-Realm }
-              [ Result-Code ]
-              [ Experimental-Result ]
-              [ Origin-State-Id ]
-              [ Error-Message ]
-              [ Error-Reporting-Host ]
-          *   [ Failed-AVP ]
-          *   [ Proxy-Info ]
-          *   [ AVP ]
+              [ Alternative-APN ]
+              [ 3GPP-IMSI ]
+              [ TMGI ]
+              [ Required-MBMS-Bearer-Capabilities ]
 
 ST-Request ::= <Diameter Header: 275, REQ, PXY>
               < Session-Id >
@@ -82,57 +63,47 @@ ST-Request ::= <Diameter Header: 275, REQ, PXY>
               [ Origin-State-Id ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
-          *   [ AVP ]
+              [ Additional-MBMS-Trace-Info ]
 
 ST-Answer ::= <Diameter Header: 275, PXY>
               < Session-Id >
+              { Result-Code }
               { Origin-Host }
               { Origin-Realm }
-              [ Result-Code ]
-              [ Experimental-Result ]
+          *   [ Class ]
               [ Error-Message ]
               [ Error-Reporting-Host ]
-          *   [ Failed-AVP ]
+              [ Failed-AVP ]
               [ Origin-State-Id ]
           *   [ Redirect-Host ]
               [ Redirect-Host-Usage ]
               [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
-              [ AVP ]
 
-AS-Request ::= <Diameter Header: 274, REQ, PXY>
+ASR ::= <Diameter Header: 274, REQ, PXY>
               < Session-Id >
               { Origin-Host }
               { Origin-Realm }
               { Destination-Realm }
               { Destination-Host }
               { Auth-Application-Id }
-              { Abort-Cause }
               [ Origin-State-Id ]
           *   [ Proxy-Info ]
           *   [ Route-Record ]
-              [ AVP ]
 
-AS-Answer ::= <Diameter Header: 274, PXY>
+ASA ::= <Diameter Header: 274, PXY>
               < Session-Id >
+              { Result-Code }
               { Origin-Host }
               { Origin-Realm }
-              [ Result-Code ]
-              [ Experimental-Result ]
               [ Origin-State-Id ]
               [ Error-Message ]
               [ Error-Reporting-Host ]
-          *   [ Failed-AVP ]
+              [ Failed-AVP ]
           *   [ Redirect-Host ]
               [ Redirect-Host-Usage ]
               [ Redirect-Max-Cache-Time ]
           *   [ Proxy-Info ]
-          *   [ AVP ]
-
-@enum Specific-Action
-INDICATION_OF_RELEASE_OF_BEARER                              4
-INDICATION_OF_ESTABLISHMENT_OF_BEARER                        5
 
 @define Experimental-Result-Code
-INVALID_SERVICE_INFORMATION                                 5061
-FILTER_RESTRICTIONS                                         5062
+DIAMETER_ERROR_UNKNOWN_MBMS_BEARER_SERVICE                  5122

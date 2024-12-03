@@ -3,6 +3,7 @@
 @id       16777312
 @name     dia_3gpp_ts_29338_S6c
 @vendor   10415 3gpp
+@prefix   S6c
 
 @inherits diameter_gen_base_rfc6733
 
@@ -131,4 +132,14 @@ Report-SM-Delivery-Status-Answer ::= <Diameter Header: 8388649, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
-
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_UNKNOWN                                 5001
+DIAMETER_ERROR_ABSENT_USER                                  5550
+DIAMETER_ERROR_USER_BUSY_FOR_MT_SMS                         5551
+DIAMETER_ERROR_FACILITY_NOT_SUPPORTED                       5552
+DIAMETER_ERROR_ILLEGAL_USER                                 5553
+DIAMETER_ERROR_ILLEGAL_EQUIPMENT                            5554
+DIAMETER_ERROR_SM_DELIVERY_FAILURE                          5555
+DIAMETER_ERROR_SERVICE_NOT_SUBSCRIBED                       5556
+DIAMETER_ERROR_SERVICE_BARRED                               5557
+DIAMETER_ERROR_MWD_LIST_FULL                                5558

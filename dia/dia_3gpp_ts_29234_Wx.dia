@@ -3,6 +3,7 @@
 @id       16777219
 @name     dia_3gpp_ts_29234_Wx
 @vendor   10415 3GPP
+@prefix   Wx
 
 @inherits diameter_gen_base_rfc6733
 
@@ -100,3 +101,8 @@ Server-Assignment-Answer ::= <Diameter Header: 301>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
+@define Experimental-Result-Code
+DIAMETER_ERROR_USER_NO_WLAN_SUBSCRIPTON                     5041
+DIAMETER_ERROR_W-APN_UNUSED_BY_USER                         5042
+DIAMETER_ERROR_NO_ACCESS_INDEPENDENT_SUBSCRIPTION           5043
+DIAMETER_ERROR_USER_NO_W-APN_SUBSCRIPTION                   5044
