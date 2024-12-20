@@ -68,6 +68,11 @@
   Examples are given with m2pa codec, but could be used with any of
   the supported protocols. See [tests](test/otc_tests.erl)
 
+  Due to ASN.1-files and Diameter dictionaries taking long time to
+  compile, one could set either or both of environment variables
+  `OTC_NO_ASN1=true`, `OTC_NO_DIA=true` before compiling otc (not that
+  the value doesn't matter).
+
 * Linguistics
 
   decode - function that converts from binary format to an Erlang map

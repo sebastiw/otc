@@ -1,9 +1,9 @@
 
-NO_ASN1 = false =/= os:getenv("OTC_NO_ASN1", false),
-NO_DIA = false =/= os:getenv("OTC_NO_DIA", false),
+COMPILE_ASN1 = false =:= os:getenv("OTC_NO_ASN1"),
+COMPILE_DIA = false =:= os:getenv("OTC_NO_DIA"),
 
-io:format("Compile ASN1s: ~p~n", [NO_ASN1]),
-io:format("Compile DIA: ~p~n", [NO_DIA]),
+io:format("Compile ASN1s: ~p~n", [COMPILE_ASN1]),
+io:format("Compile DIA: ~p~n", [COMPILE_DIA]),
 
 Remove_from_provider_hooks =
     fun(Key, Config0) ->
@@ -41,15 +41,15 @@ Remove_dia_config =
             Config1
     end,
 
-C0 = case NO_ASN1 of
-         false ->
+C0 = case COMPILE_ASN1 of
+         true ->
              CONFIG;
          _ ->
              Remove_asn1_config(CONFIG)
      end,
 
-C1 = case NO_DIA of
-         false ->
+C1 = case COMPILE_DIA of
+         true ->
              C0;
          _ ->
              Remove_dia_config(C0)
