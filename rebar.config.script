@@ -2,8 +2,8 @@
 COMPILE_ASN1 = false =:= os:getenv("OTC_NO_ASN1"),
 COMPILE_DIA = false =:= os:getenv("OTC_NO_DIA"),
 
-io:format("Compile ASN1s: ~p~n", [COMPILE_ASN1]),
-io:format("Compile DIA: ~p~n", [COMPILE_DIA]),
+io:format("Compile ASN.1-files: ~p~n", [COMPILE_ASN1]),
+io:format("Compile Diameter dicts: ~p~n", [COMPILE_DIA]),
 
 Remove_from_provider_hooks =
     fun(Key, Config0) ->
