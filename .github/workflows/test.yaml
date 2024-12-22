@@ -19,7 +19,6 @@ jobs:
             rebar3: "3.22.1"
             os: ubuntu-24.04
     env:
-      OTC_NO_ASN1: true
       OTC_NO_DIA: true
     steps:
       - uses: actions/checkout@v4
