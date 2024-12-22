@@ -1,9 +1,20 @@
 
-COMPILE_ASN1 = false =:= os:getenv("OTC_NO_ASN1"),
-COMPILE_DIA = false =:= os:getenv("OTC_NO_DIA"),
+NO_ASN1 = false =/= os:getenv("OTC_NO_ASN1"),
+NO_DIA = false =/= os:getenv("OTC_NO_DIA"),
 
-io:format("Compile ASN.1-files: ~p~n", [COMPILE_ASN1]),
-io:format("Compile Diameter dicts: ~p~n", [COMPILE_DIA]),
+io:format("Disable ASN.1: ~p~n", [NO_ASN1]),
+io:format("Disable Diameter dicts: ~p~n", [NO_DIA]),
+
+Remove_from_plugins =
+    fun(Key, Config0) ->
+            case lists:keytake(plugins, 1, Config0) of
+                {value, {plugins, Plugins0}, Config1} ->
+                    Plugins = lists:keydelete(Key, 1, Plugins0),
+                    [{plugins, Plugins}|Config1];
+                false ->
+                    Config0
+            end
+    end,
 
 Remove_from_provider_hooks =
     fun(Key, Config0) ->
@@ -17,42 +28,14 @@ Remove_from_provider_hooks =
             end
     end,
 
-Remove_from_plugins =
-    fun(Key, Config0) ->
-            case lists:keytake(plugins, 1, Config0) of
-                {value, {plugins, Plugins0}, Config1} ->
-                    Plugins = lists:keydelete(Key, 1, Plugins0),
-                    [{plugins, Plugins}|Config1];
-                false ->
-                    Config0
-            end
-    end,
-
-Remove_asn1_config =
-    fun(Config0) ->
-            Config1 = Remove_from_plugins(provider_asn1, Config0),
-            Config2 = Remove_from_provider_hooks(asn, Config1),
+Remove_from_config =
+    fun ({Plugin, HookName}, Config0) ->
+            Config1 = Remove_from_plugins(Plugin, Config0),
+            Config2 = Remove_from_provider_hooks(HookName, Config1),
             Config2
     end,
 
-Remove_dia_config =
-    fun(Config0) ->
-            Config1 = Remove_from_plugins(rebar3_diameter_compiler, Config0),
-            Config1
-    end,
+DisabledPlugins = [{provider_asn1, asn} || NO_ASN1]
+                  ++ [{rebar3_diameter_compiler, diameter} || NO_DIA],
 
-C0 = case COMPILE_ASN1 of
-         true ->
-             CONFIG;
-         _ ->
-             Remove_asn1_config(CONFIG)
-     end,
-
-C1 = case COMPILE_DIA of
-         true ->
-             C0;
-         _ ->
-             Remove_dia_config(C0)
-     end,
-
-C1.
+lists:foldl(Remove_from_config, CONFIG, DisabledPlugins).
