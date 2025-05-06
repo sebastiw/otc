@@ -1,6 +1,8 @@
 -module(otc_sccp).
 -behaviour(otc_codec).
 
+-compile([export_all]).
+
 -export([spec/0,
          codec/2,
          next/1,
@@ -1564,7 +1566,46 @@ encode_address(Address, _Opts) ->
     encode_itu_address(Address).
 
 encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
-    encode_itu_address(#{routing_indicator := RoutingInd} = Address).
+    NR = case maps:get(national_use_indicator, Address, false) of
+             true -> 1;
+             _ -> 0
+         end,
+
+    RI = case RoutingInd of
+             subsystem_number -> 1;
+             global_title -> 0
+         end,
+
+    {SSNI, SSNBin} = case maps:get(subsystem_number, Address, undefined) of
+                         undefined -> {0, <<>>};
+                         SSN -> {1, <<(compose_ssn(SSN)):8/big>>}
+                     end,
+
+    {PCI, PCBin} = case maps:get(point_code, Address, undefined) of
+                       undefined -> {0, <<>>};
+                       PC -> 
+                           <<NI:8, NC:8, NCM:8>> = PC,
+                           {1, <<NCM:8, NC:8, NI:8>>}
+                   end,
+
+    GlobalTitle = maps:get(global_title, Address, #{}),
+
+    {GTI, GTBin} = case GlobalTitle of
+                       #{translation_type := TT,
+                         numbering_plan := NP} when is_map_key(encoding_scheme, GlobalTitle) ->
+                           GT1 = encode_gt_part(GlobalTitle),
+                           ES = compose_encoding_scheme(maps:get(encoding_scheme, GlobalTitle), GlobalTitle),
+                           {2#0001, <<TT:8/big, NP:4, ES:4, GT1/binary>>};
+
+                       #{translation_type := TT} ->
+                           GT1 = maps:get(address, GlobalTitle, <<>>),
+                           {2#0010, <<TT:8/big, GT1/binary>>};
+
+                       _ ->
+                           {2#0000, <<>>}
+                   end,
+
+    <<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, SSNBin/binary, PCBin/binary, GTBin/binary>>.
 
 encode_itu_address(#{routing_indicator := RoutingInd} = Address) ->
     NR = case maps:get(national_use_indicator, Address, false) of
