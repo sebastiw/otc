@@ -263,7 +263,7 @@ encode(Data, Opts) when is_binary(Data) ->
     {ok, Data}.
 
 enc_safe(Proto, Pdu, Opts) ->
-    try ?MODULE:Proto(Pdu, Opts) of
+    try ?MODULE:Proto(Pdu, options(Proto, Opts)) of
         B when is_binary(B) ->
             {ok, B}
     catch E:R:S ->
