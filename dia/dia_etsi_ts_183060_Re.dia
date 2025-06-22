@@ -9,6 +9,8 @@
 @inherits dia_ietf
 
 @inherits dia_itu
+PI-Request-Type
+PI-Request-Number
 
 @inherits dia_etsi
 

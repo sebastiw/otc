@@ -2,7 +2,7 @@
 -behaviour(otc_codec).
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
          encode/1
@@ -13,11 +13,11 @@
 spec() ->
     "ITU-T Q.704 (07/96) July 1996".
 
-codec(Bin) when is_binary(Bin) ->
+codec(Bin, _Opts) when is_binary(Bin) ->
     decode(Bin);
-codec(Map) when is_map(Map) ->
+codec(Map, _Opts) when is_map(Map) ->
     encode(Map);
-codec({Map, PDU}) when is_map(Map) ->
+codec({Map, PDU}, _Opts) when is_map(Map) ->
     encode({Map, PDU}).
 
 -type subproto() :: sccp | tup | isup |

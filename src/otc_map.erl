@@ -1,9 +1,8 @@
 -module(otc_map).
-
 -behaviour(otc_codec).
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
          encode/1
@@ -18,11 +17,11 @@
 spec() ->
     "3GPP TS 29.002 v17.2.0".
 
-codec(TCAPBin) when is_binary(TCAPBin) ->
+codec(TCAPBin, _Opts) when is_binary(TCAPBin) ->
     decode(TCAPBin);
-codec({TCDialogue, #{result := Bin} = Component}) when is_binary(Bin) ->
+codec({TCDialogue, #{result := Bin} = Component}, _Opts) when is_binary(Bin) ->
     decode({TCDialogue, Component});
-codec(Component) when is_map(Component) ->
+codec(Component, _Opts) when is_map(Component) ->
     encode(Component).
 
 next(_) -> '$stop'.

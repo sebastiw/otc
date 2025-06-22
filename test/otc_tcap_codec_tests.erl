@@ -80,3 +80,37 @@ end_returnResult_with_component_test() ->
     ?assertEqual({Exp, Bin}, Val),
     NewBin = otc_tcap:encode(element(1, Val)),
     ?assertEqual(Bin, NewBin).
+
+tcap_without_linkedid_test() ->
+    %% issue #23
+    MAPBin = <<16#30,16#13,16#A0,16#09,16#80,16#07,16#01,16#02,
+               16#03,16#04,16#05,16#06,16#07,16#A1,16#00,16#83,
+               16#04,16#09,16#08,16#07,16#06>>,
+    Bin = <<16#62,16#43,16#48,16#04,16#00,16#00,16#01,16#B3,
+            16#6B,16#1A,16#28,16#18,16#06,16#07,16#00,16#11,
+            16#86,16#05,16#01,16#01,16#01,16#A0,16#0D,16#60,
+            16#0B,16#A1,16#09,16#06,16#07,16#04,16#00,16#00,
+            16#01,16#00,16#1D,16#03,16#6C,16#1F,16#A1,16#1D,
+            16#02,16#01,16#00,16#81,16#00,16#02,16#01,16#47,
+            MAPBin/binary>>,
+    InvokeComponent = #{
+        component_type => invoke,
+        invokeId => 0,
+        opcode => {local, 71},
+        argument => MAPBin
+    },
+    Tcap = #{dialogue =>
+               #{type => dialogueRequest,
+                 application_context_family => map,
+                 user_information => undefined,
+                 application_context_name => 'anyTimeInfoEnquiryContext-v3',
+                 supported_versions => [version1]},
+            otid => <<"000001B3">>,
+            components =>
+               [InvokeComponent],
+            type => 'begin'},
+    Exp = Tcap#{components => [InvokeComponent#{linkedId => absent}]},
+    Val = otc_tcap:decode(Bin),
+    ?assertEqual({Exp, Bin}, Val),
+    NewBin = otc_tcap:encode(element(1, Val)),
+    ?assertEqual(Bin, NewBin).

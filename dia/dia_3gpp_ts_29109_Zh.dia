@@ -3,6 +3,7 @@
 @id       16777221
 @name     dia_3gpp_ts_29109_Zh
 @vendor   10415 3GPP
+@prefix   Zh
 
 @inherits diameter_gen_base_rfc6733
 
@@ -25,7 +26,6 @@ Multimedia-Auth-Request ::= <Diameter Header: 303, REQ, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
-
 Multimedia-Auth-Answer ::= <Diameter Header: 303, PXY>
               < Session-Id >
               { Vendor-Specific-Application-Id }
@@ -42,3 +42,7 @@ Multimedia-Auth-Answer ::= <Diameter Header: 303, PXY>
           *   [ Proxy-Info ]
           *   [ Route-Record ]
 
+@define Experimental-Result-Code
+DIAMETER_ERROR_IDENTITY_UNKNOWN                             5401
+DIAMETER_ERROR_NOT_AUTHORIZED                               5402
+DIAMETER_ERROR_TRANSACTION_IDENTIFIER_INVALID               5403

@@ -2,7 +2,7 @@
 -behaviour(otc_codec).
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
          encode/1]).
@@ -10,9 +10,9 @@
 spec() ->
     "3GPP TS 24.501 version 16.10.0".
 
-codec({SecurityHeaderType, Bin}) when is_binary(Bin) ->
+codec({SecurityHeaderType, Bin}, _Opts) when is_binary(Bin) ->
     decode({SecurityHeaderType, Bin});
-codec(Map) when is_map(Map) ->
+codec(Map, _Opts) when is_map(Map) ->
     encode(Map).
 
 next(_) -> {ok, nas_5gs}.

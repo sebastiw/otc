@@ -5,3 +5,5 @@ rebar3.crashdump
 src/[A-Z]*
 src/dia_*
 include/dia_*
+pcap/*
+doc/*.html

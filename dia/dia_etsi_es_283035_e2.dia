@@ -7,8 +7,9 @@
 @inherits diameter_gen_base_rfc6733
 
 @inherits dia_3gpp
-AF-Application-Identifier
+; AF-Application-Identifier ; also defined in dia_etsi
 Expiry-Time
+Subs-Req-Type
 
 @inherits dia_etsi
 

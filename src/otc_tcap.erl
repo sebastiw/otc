@@ -1,10 +1,9 @@
 -module(otc_tcap).
-
 -behaviour(otc_codec).
 
 -export([spec/0,
          next/1,
-         codec/1,
+         codec/2,
          decode/1,
          encode/1
         ]).
@@ -16,11 +15,11 @@ next(#{dialogue :=
            #{application_context_family := M}}) -> {ok, M};
 next(_) -> '$stop'.
 
-codec(Bin) when is_binary(Bin) ->
+codec(Bin, _Opts) when is_binary(Bin) ->
     decode(Bin);
-codec(Map) when is_map(Map) ->
+codec(Map, _Opts) when is_map(Map) ->
     encode({Map, <<>>});
-codec({Map, PDU}) when is_map(Map) ->
+codec({Map, PDU}, _Opts) when is_map(Map) ->
     encode({Map, PDU}).
 
 decode(Bin) ->
@@ -233,14 +232,14 @@ encode_components([C|Cs]) ->
     [encode_component(C)|encode_components(Cs)].
 
 decode_component({basicROS, {invoke, C}}) ->
-    InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
-    LinkedId = parse_invoke_id(maps:get(linkedId, C, absent)),
+    InvokeId = parse_invoke_id(maps:get(invokeId, C, {absent, 'NULL'})),
+    LinkedId = parse_invoke_id(maps:get(linkedId, C, {absent, 'NULL'})),
     C#{component_type => invoke,
        invokeId => InvokeId,
        linkedId => LinkedId
       };
 decode_component({basicROS, {returnResult, C}}) ->
-    InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
+    InvokeId = parse_invoke_id(maps:get(invokeId, C, {absent, 'NULL'})),
     Base = C#{component_type => returnResult,
               invokeId => InvokeId
              },
@@ -253,7 +252,7 @@ decode_component({basicROS, {returnResult, C}}) ->
             Base
     end;
 decode_component({returnResultNotLast, C}) ->
-    InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
+    InvokeId = parse_invoke_id(maps:get(invokeId, C, {absent, 'NULL'})),
     Base = C#{component_type => returnResultNotLast,
               invokeId => InvokeId
              },
@@ -266,12 +265,12 @@ decode_component({returnResultNotLast, C}) ->
             Base
     end;
 decode_component({basicROS, {returnError, C}}) ->
-    InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
+    InvokeId = parse_invoke_id(maps:get(invokeId, C, {absent, 'NULL'})),
     C#{component_type => returnError,
        invokeId => InvokeId
       };
 decode_component({basicROS, {reject, C}}) ->
-    InvokeId = parse_invoke_id(maps:get(invokeId, C, absent)),
+    InvokeId = parse_invoke_id(maps:get(invokeId, C, {absent, 'NULL'})),
     {ProblemType, Problem} = maps:get(problem, C),
     C#{component_type => returnError,
        invokeId => InvokeId,
@@ -313,13 +312,13 @@ encode_component(#{component_type := CType} = C) ->
 
 parse_invoke_id({present, I}) ->
     I;
-parse_invoke_id(absent) ->
+parse_invoke_id({absent, 'NULL'}) ->
     absent.
 
 compose_invoke_id(I) when is_integer(I) ->
     {present, I};
 compose_invoke_id(absent) ->
-    absent.
+    {absent, 'NULL'}.
 
 remove_undefined_fields([], Map) ->
     Map;

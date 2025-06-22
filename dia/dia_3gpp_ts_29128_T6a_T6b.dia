@@ -1,8 +1,9 @@
 ;; 3GPP TS 29.128 v17.1.0 T6a/T6b
 
 @id       16777346
-@name     dia_3gpp_ts_29128
+@name     dia_3gpp_ts_29128_T6a_T6b
 @vendor   10415 3gpp
+@prefix   T6a_T6b
 
 @inherits diameter_gen_base_rfc6733
 

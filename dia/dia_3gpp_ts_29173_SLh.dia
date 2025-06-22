@@ -3,6 +3,7 @@
 @id       16777291
 @name     dia_3gpp_ts_29173_SLh
 @vendor   10415 3gpp
+@prefix   SLh
 
 @inherits diameter_gen_base_rfc6733
 
