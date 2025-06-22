@@ -1,4 +1,5 @@
 -module(otc_sctp).
+-behaviour(otc_codec).
 
 -export([spec/0,
          codec/2,

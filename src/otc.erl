@@ -70,7 +70,8 @@
          decode/2,
          decode/3,
          encapsulate/1,
-         encode/1
+         encode/1,
+         encode/2
         ]).
 
 -include_lib("kernel/include/logger.hrl").
@@ -225,41 +226,49 @@ options(Proto, Opts) when is_atom(Proto) ->
     maps:get(Proto, Opts, #{}).
 
 -spec otc:encapsulate(payload()) -> data().
-encapsulate(#{protocol := Proto} = Pdu) ->
-    ?MODULE:Proto(Pdu);
-encapsulate(Pdus) when is_list(Pdus) ->
-    encapsulate({Pdus, <<>>});
-encapsulate({Pdus, Payload}) when is_list(Pdus), is_binary(Payload) ->
+-spec otc:encapsulate(payload(), options()) -> data().
+encapsulate(Pdu) ->
+    encapsulate(Pdu, #{}).
+
+encapsulate(#{protocol := Proto} = Pdu, Opts) ->
+    ?MODULE:Proto(Pdu, options(Proto, Opts));
+encapsulate(Pdus, Opts) when is_list(Pdus) ->
+    encapsulate({Pdus, <<>>}, Opts);
+encapsulate({Pdus, Payload}, Opts) when is_list(Pdus), is_binary(Payload) ->
     lists:foldr(fun (P, Acc) ->
-                        encapsulate({P, Acc})
+                        encapsulate({P, Acc}, Opts)
                 end, Payload, Pdus);
-encapsulate({#{protocol := Proto} = Pdu, Payload}) ->
-    ?MODULE:Proto({Pdu, Payload});
-encapsulate({Proto, Data}) when is_atom(Proto) ->
-    ?MODULE:Proto(Data);
-encapsulate(Data) when is_binary(Data) ->
+encapsulate({#{protocol := Proto} = Pdu, Payload}, Opts) ->
+    ?MODULE:Proto({Pdu, Payload}, options(Proto, Opts));
+encapsulate({Proto, Data}, Opts) when is_atom(Proto) ->
+    ?MODULE:Proto(Data, options(Proto, Opts));
+encapsulate(Data, _Opts) when is_binary(Data) ->
     Data.
 
 -spec otc:encode(payload()) -> {ok, data()} | {error, term()}.
-encode(#{protocol := Proto} = Pdu) ->
-    enc_safe(Proto, Pdu);
-encode(Pdus) when is_list(Pdus) ->
-    encode({Pdus, <<>>});
-encode({Pdus, Payload}) when is_list(Pdus), is_binary(Payload) ->
+-spec otc:encode(payload(), options()) -> {ok, data()} | {error, term()}.
+encode(Pdu) ->
+    encode(Pdu, #{}).
+
+encode(#{protocol := Proto} = Pdu, Opts) ->
+    enc_safe(Proto, Pdu, Opts);
+encode(Pdus, Opts) when is_list(Pdus) ->
+    encode({Pdus, <<>>}, Opts);
+encode({Pdus, Payload}, Opts) when is_list(Pdus), is_binary(Payload) ->
     lists:foldr(fun (P, {ok, Acc}) ->
-                        encode({P, Acc});
+                        encode({P, Acc}, Opts);
                     (_, {error, _} = Err) ->
                         Err
                 end, {ok, Payload}, Pdus);
-encode({#{protocol := Proto} = Pdu, Payload}) ->
-    enc_safe(Proto, {Pdu, Payload});
-encode({Proto, Data}) when is_atom(Proto) ->
-    enc_safe(Proto, Data);
-encode(Data) when is_binary(Data) ->
+encode({#{protocol := Proto} = Pdu, Payload}, Opts) ->
+    enc_safe(Proto, {Pdu, Payload}, Opts);
+encode({Proto, Data}, Opts) when is_atom(Proto) ->
+    enc_safe(Proto, Data, Opts);
+encode(Data, _Opts) when is_binary(Data) ->
     {ok, Data}.
 
-enc_safe(Proto, Pdu) ->
-    try ?MODULE:Proto(Pdu) of
+enc_safe(Proto, Pdu, Opts) ->
+    try ?MODULE:Proto(Pdu, options(Proto, Opts)) of
         B when is_binary(B) ->
             {ok, B}
     catch E:R:S ->

@@ -1,5 +1,4 @@
 -module(otc_tcap).
-
 -behaviour(otc_codec).
 
 -export([spec/0,

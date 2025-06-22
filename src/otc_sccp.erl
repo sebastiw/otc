@@ -6,7 +6,8 @@
          next/1,
          decode/1,
          decode/2,
-         encode/1
+         encode/1,
+         encode/2
         ]).
 
 -deprecated([{decode, 1, "Use decode/2 instead."}]).
@@ -23,10 +24,10 @@ spec() ->
 
 codec(Bin, Opts) when is_binary(Bin) ->
     decode(Bin, Opts);
-codec(Map, _Opts) when is_map(Map) ->
-    encode({Map, <<>>});
-codec({Map, PDU}, _Opts) ->
-    encode({Map, PDU}).
+codec(Map, Opts) when is_map(Map) ->
+    encode({Map, <<>>}, Opts);
+codec({Map, PDU}, Opts) ->
+    encode({Map, PDU}, Opts).
 
 -define(IS_SCCP_MGMT,
         #{routing_indicator := subsystem_number, subsystem_number := management}).
@@ -104,13 +105,16 @@ decode(<<MT:8/big, Rest/binary>>, Opts) ->
             Msg2
     end.
 
-encode({#{message_type := MessageType} = Msg, PDU})
+encode(Msg) ->
+    encode(Msg, #{}).
+
+encode({#{message_type := MessageType} = Msg, PDU}, Opts)
   when ludt =:= MessageType;
        ludts =:= MessageType ->
     MT = compose_message_type(MessageType),
-    Bin = encode_msg(MessageType, Msg#{long_data => PDU}),
+    Bin = encode_msg(MessageType, Msg#{long_data => PDU}, Opts),
     <<MT:8/big, Bin/binary>>;
-encode({#{message_type := MessageType} = Msg, PDU})
+encode({#{message_type := MessageType} = Msg, PDU}, Opts)
     when cr =:= MessageType;
          cc =:= MessageType;
          cref =:= MessageType;
@@ -123,11 +127,11 @@ encode({#{message_type := MessageType} = Msg, PDU})
          xudt =:= MessageType;
          xudts =:= MessageType ->
     MT = compose_message_type(MessageType),
-    Bin = encode_msg(MessageType, Msg#{data => PDU}),
+    Bin = encode_msg(MessageType, Msg#{data => PDU}, Opts),
     <<MT:8/big, Bin/binary>>;
-encode({#{message_type := MessageType} = Msg, _}) ->
+encode({#{message_type := MessageType} = Msg, _}, Opts) ->
     MT = compose_message_type(MessageType),
-    Bin = encode_msg(MessageType, Msg),
+    Bin = encode_msg(MessageType, Msg, Opts),
     <<MT:8/big, Bin/binary>>.
 
 parse_message_type(?SCCP_MSG_TYPE_CR) -> cr;
@@ -536,10 +540,10 @@ separate_fields_test_() ->
 encode_msg(cr,
            #{source_local_reference := SourceLocalReference,
              protocol_class := ProtocolClass,
-             called_party_address := CalledPartyAddress} = Msg) ->
-    SLR = encode_parameter(source_local_reference, SourceLocalReference),
-    PC = encode_parameter(protocol_class, ProtocolClass),
-    CdPA = encode_parameter(called_party_address, CalledPartyAddress),
+             called_party_address := CalledPartyAddress} = Msg, Opts) ->
+    SLR = encode_parameter(source_local_reference, SourceLocalReference, Opts),
+    PC = encode_parameter(protocol_class, ProtocolClass, Opts),
+    CdPA = encode_parameter(called_party_address, CalledPartyAddress, Opts),
     CdPALen = byte_size(CdPA),
     AllowedParameters = [{credit, 3},
                          {calling_party_address, {4, n}},
@@ -547,7 +551,7 @@ encode_msg(cr,
                          {hop_counter, 3},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          CdPALen+2;
@@ -561,16 +565,16 @@ encode_msg(cr,
 encode_msg(cc,
            #{destination_local_reference := DestinationLocalReference,
              source_local_reference := SourceLocalReference,
-             protocol_class := ProtocolClass} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SLR = encode_parameter(source_local_reference, SourceLocalReference),
-    PC = encode_parameter(protocol_class, ProtocolClass),
+             protocol_class := ProtocolClass} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SLR = encode_parameter(source_local_reference, SourceLocalReference, Opts),
+    PC = encode_parameter(protocol_class, ProtocolClass, Opts),
     AllowedParameters = [{credit, 3},
                          {called_party_address, {4, n}},
                          {data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          1;
@@ -582,14 +586,14 @@ encode_msg(cc,
       OptBin/binary>>;
 encode_msg(cref,
            #{destination_local_reference := DestinationLocalReference,
-             refusal_cause := RefusalCause} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    RC = encode_parameter(refusal_cause, RefusalCause),
+             refusal_cause := RefusalCause} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    RC = encode_parameter(refusal_cause, RefusalCause, Opts),
     AllowedParameters = [{called_party_address, {4, n}},
                          {data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          1;
@@ -602,14 +606,14 @@ encode_msg(cref,
 encode_msg(rlsd,
            #{destination_local_reference := DestinationLocalReference,
              source_local_reference := SourceLocalReference,
-             release_cause := ReleaseCause} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SLR = encode_parameter(source_local_reference, SourceLocalReference),
-    RC = encode_parameter(release_cause, ReleaseCause),
+             release_cause := ReleaseCause} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SLR = encode_parameter(source_local_reference, SourceLocalReference, Opts),
+    RC = encode_parameter(release_cause, ReleaseCause, Opts),
     AllowedParameters = [{data, {3, 130}},
                          {importance, 3},
                          {end_of_optional_parameters, 1}],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          1;
@@ -621,24 +625,24 @@ encode_msg(rlsd,
       OptBin/binary>>;
 encode_msg(rlc,
            #{destination_local_reference := DestinationLocalReference,
-             source_local_reference := SourceLocalReference} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SLR = encode_parameter(source_local_reference, SourceLocalReference),
+             source_local_reference := SourceLocalReference} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SLR = encode_parameter(source_local_reference, SourceLocalReference, Opts),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<>>,
     <<DLR/binary, SLR/binary, Pointers/binary,
       OptBin/binary>>;
 encode_msg(dt1,
            #{destination_local_reference := DestinationLocalReference,
              segmenting_reassembling := SegmentingReassembling,
-             data := Data} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SR = encode_parameter(segmenting_reassembling, SegmentingReassembling),
-    D = encode_parameter(data, Data),
+             data := Data} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SR = encode_parameter(segmenting_reassembling, SegmentingReassembling, Opts),
+    D = encode_parameter(data, Data, Opts),
     DLen = byte_size(D),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<(1):8/big>>,
     <<DLR/binary, SR/binary, Pointers/binary,
       DLen:8/big, D/binary,
@@ -646,13 +650,13 @@ encode_msg(dt1,
 encode_msg(dt2,
            #{destination_local_reference := DestinationLocalReference,
              sequencing_segmenting := SequencingSegmenting,
-             data := Data} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SS = encode_parameter(sequencing_segmenting, SequencingSegmenting),
-    D = encode_parameter(data, Data),
+             data := Data} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SS = encode_parameter(sequencing_segmenting, SequencingSegmenting, Opts),
+    D = encode_parameter(data, Data, Opts),
     DLen = byte_size(D),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<(1):8/big>>,
     <<DLR/binary, SS/binary, Pointers/binary,
       DLen:8/big, D/binary,
@@ -660,12 +664,12 @@ encode_msg(dt2,
 encode_msg(ak,
            #{destination_local_reference := DestinationLocalReference,
              receive_sequence_number := ReceiveSequenceNumber,
-             credit := Credit} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    RSN = encode_parameter(receive_sequence_number, ReceiveSequenceNumber),
-    C = encode_parameter(credit, Credit),
+             credit := Credit} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    RSN = encode_parameter(receive_sequence_number, ReceiveSequenceNumber, Opts),
+    C = encode_parameter(credit, Credit, Opts),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<>>,
     <<DLR/binary, RSN/binary, C/binary, Pointers/binary,
       OptBin/binary>>;
@@ -673,15 +677,15 @@ encode_msg(udt,
            #{protocol_class := ProtocolClass,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := D} = Msg) ->
-    PC = encode_parameter(protocol_class, ProtocolClass),
-    CdPA = encode_parameter(called_party_address, CalledPartyAddress),
+             data := D} = Msg, Opts) ->
+    PC = encode_parameter(protocol_class, ProtocolClass, Opts),
+    CdPA = encode_parameter(called_party_address, CalledPartyAddress, Opts),
     CdPALen = byte_size(CdPA),
-    CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
+    CgPA = encode_parameter(calling_party_address, CallingPartyAddress, Opts),
     CgPALen = byte_size(CgPA),
     DLen = byte_size(D),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<(3):8/big, (CdPALen+3):8/big, (CgPALen+CdPALen+3):8/big>>,
     <<PC/binary, Pointers/binary,
       CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, DLen:8/big, D/binary,
@@ -690,68 +694,68 @@ encode_msg(udts,
            #{return_cause := ReturnCause,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := D} = Msg) ->
-    RC = encode_parameter(return_cause, ReturnCause),
-    CdPA = encode_parameter(called_party_address, CalledPartyAddress),
+             data := D} = Msg, Opts) ->
+    RC = encode_parameter(return_cause, ReturnCause, Opts),
+    CdPA = encode_parameter(called_party_address, CalledPartyAddress, Opts),
     CdPALen = byte_size(CdPA),
-    CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
+    CgPA = encode_parameter(calling_party_address, CallingPartyAddress, Opts),
     CgPALen = byte_size(CgPA),
     DLen = byte_size(D),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<(3):8/big, (CdPALen+3):8/big, (CgPALen+CdPALen+3):8/big>>,
     <<RC/binary, Pointers/binary,
       CdPALen:8/big, CdPA/binary, CgPALen:8/big, CgPA/binary, DLen:8/big, D/binary,
       OptBin/binary>>;
 encode_msg(ed,
            #{destination_local_reference := DestinationLocalReference,
-             data := Data} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    D = encode_parameter(data, Data),
+             data := Data} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    D = encode_parameter(data, Data, Opts),
     DLen = byte_size(D),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<(1):8/big>>,
     <<DLR/binary, Pointers/binary,
       DLen:8/big, D/binary,
       OptBin/binary>>;
 encode_msg(ea,
-           #{destination_local_reference := DestinationLocalReference} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
+           #{destination_local_reference := DestinationLocalReference} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<>>,
     <<DLR/binary, Pointers/binary,
       OptBin/binary>>;
 encode_msg(rsr,
            #{destination_local_reference := DestinationLocalReference,
              source_local_reference := SourceLocalReference,
-             reset_cause := ResetCause} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SLR = encode_parameter(source_local_reference, SourceLocalReference),
-    RC = encode_parameter(reset_cause, ResetCause),
+             reset_cause := ResetCause} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SLR = encode_parameter(source_local_reference, SourceLocalReference, Opts),
+    RC = encode_parameter(reset_cause, ResetCause, Opts),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<>>,
     <<DLR/binary, SLR/binary, RC/binary, Pointers/binary,
       OptBin/binary>>;
 encode_msg(rsc,
            #{destination_local_reference := DestinationLocalReference,
-             source_local_reference := SourceLocalReference} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SLR = encode_parameter(source_local_reference, SourceLocalReference),
+             source_local_reference := SourceLocalReference} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SLR = encode_parameter(source_local_reference, SourceLocalReference, Opts),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<>>,
     <<DLR/binary, SLR/binary, Pointers/binary,
       OptBin/binary>>;
 encode_msg(err,
            #{destination_local_reference := DestinationLocalReference,
-             error_cause := ErrorCause} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    EC = encode_parameter(error_cause, ErrorCause),
+             error_cause := ErrorCause} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    EC = encode_parameter(error_cause, ErrorCause, Opts),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<>>,
     <<DLR/binary, EC/binary, Pointers/binary,
       OptBin/binary>>;
@@ -760,14 +764,14 @@ encode_msg(it,
              source_local_reference := SourceLocalReference,
              protocol_class := ProtocolClass,
              sequencing_segmenting := SequencingSegmenting,
-             credit := Credit} = Msg) ->
-    DLR = encode_parameter(destination_local_reference, DestinationLocalReference),
-    SLR = encode_parameter(source_local_reference, SourceLocalReference),
-    PC = encode_parameter(protocol_class, ProtocolClass),
-    SS = encode_parameter(sequencing_segmenting, SequencingSegmenting),
-    C = encode_parameter(credit, Credit),
+             credit := Credit} = Msg, Opts) ->
+    DLR = encode_parameter(destination_local_reference, DestinationLocalReference, Opts),
+    SLR = encode_parameter(source_local_reference, SourceLocalReference, Opts),
+    PC = encode_parameter(protocol_class, ProtocolClass, Opts),
+    SS = encode_parameter(sequencing_segmenting, SequencingSegmenting, Opts),
+    C = encode_parameter(credit, Credit, Opts),
     AllowedParameters = [],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     Pointers = <<>>,
     <<DLR/binary, SLR/binary, PC/binary, SS/binary, C/binary, Pointers/binary,
       OptBin/binary>>;
@@ -776,18 +780,18 @@ encode_msg(xudt,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := D} = Msg) ->
-    PC = encode_parameter(protocol_class, ProtocolClass),
-    HC = encode_parameter(hop_counter, HopCounter),
-    CdPA = encode_parameter(called_party_address, CalledPartyAddress),
+             data := D} = Msg, Opts) ->
+    PC = encode_parameter(protocol_class, ProtocolClass, Opts),
+    HC = encode_parameter(hop_counter, HopCounter, Opts),
+    CdPA = encode_parameter(called_party_address, CalledPartyAddress, Opts),
     CdPALen = byte_size(CdPA),
-    CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
+    CgPA = encode_parameter(calling_party_address, CallingPartyAddress, Opts),
     CgPALen = byte_size(CgPA),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3}
                         |ansi_parameters(#{address_type => ansi})],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          DLen+CgPALen+CdPALen+4;
@@ -803,18 +807,18 @@ encode_msg(xudts,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             data := D} = Msg) ->
-    RC = encode_parameter(return_cause, ReturnCause),
-    HC = encode_parameter(hop_counter, HopCounter),
-    CdPA = encode_parameter(called_party_address, CalledPartyAddress),
+             data := D} = Msg, Opts) ->
+    RC = encode_parameter(return_cause, ReturnCause, Opts),
+    HC = encode_parameter(hop_counter, HopCounter, Opts),
+    CdPA = encode_parameter(called_party_address, CalledPartyAddress, Opts),
     CdPALen = byte_size(CdPA),
-    CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
+    CgPA = encode_parameter(calling_party_address, CallingPartyAddress, Opts),
     CgPALen = byte_size(CgPA),
     DLen = byte_size(D),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3}
                         |ansi_parameters(#{address_type => ansi})],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          DLen+CgPALen+CdPALen+4;
@@ -830,18 +834,18 @@ encode_msg(ludt,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             long_data := LD} = Msg) ->
-    PC = encode_parameter(protocol_class, ProtocolClass),
-    HC = encode_parameter(hop_counter, HopCounter),
-    CdPA = encode_parameter(called_party_address, CalledPartyAddress),
+             long_data := LD} = Msg, Opts) ->
+    PC = encode_parameter(protocol_class, ProtocolClass, Opts),
+    HC = encode_parameter(hop_counter, HopCounter, Opts),
+    CdPA = encode_parameter(called_party_address, CalledPartyAddress, Opts),
     CdPALen = byte_size(CdPA),
-    CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
+    CgPA = encode_parameter(calling_party_address, CallingPartyAddress, Opts),
     CgPALen = byte_size(CgPA),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3}
                         |ansi_parameters(#{address_type => ansi})],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          LDLen+CgPALen+CdPALen+4;
@@ -857,18 +861,18 @@ encode_msg(ludts,
              hop_counter := HopCounter,
              called_party_address := CalledPartyAddress,
              calling_party_address := CallingPartyAddress,
-             long_data := LD} = Msg) ->
-    RC = encode_parameter(return_cause, ReturnCause),
-    HC = encode_parameter(hop_counter, HopCounter),
-    CdPA = encode_parameter(called_party_address, CalledPartyAddress),
+             long_data := LD} = Msg, Opts) ->
+    RC = encode_parameter(return_cause, ReturnCause, Opts),
+    HC = encode_parameter(hop_counter, HopCounter, Opts),
+    CdPA = encode_parameter(called_party_address, CalledPartyAddress, Opts),
     CdPALen = byte_size(CdPA),
-    CgPA = encode_parameter(calling_party_address, CallingPartyAddress),
+    CgPA = encode_parameter(calling_party_address, CallingPartyAddress, Opts),
     CgPALen = byte_size(CgPA),
     LDLen = byte_size(LD),
     AllowedParameters = [{segmentation, 6},
                          {importance, 3}
                         |ansi_parameters(#{address_type => ansi})],
-    OptBin = encode_parameters(Msg, AllowedParameters),
+    OptBin = encode_parameters(Msg, AllowedParameters, Opts),
     OptPointer = case byte_size(OptBin) > 0 of
                      true ->
                          LDLen+CgPALen+CdPALen+4;
@@ -909,22 +913,22 @@ decode_parameters(<<IEI:8/big, Len:8/big, Bin0/binary>>, Os, Acc, Opts) ->
             decode_parameters(Rest, Os, Acc, Opts)
     end.
 
-encode_parameters(Msg, Parameters) ->
-    encode_parameters(Msg, Parameters, <<>>).
+encode_parameters(Msg, Parameters, Opts) ->
+    encode_parameters(Msg, Parameters, Opts, <<>>).
 
-encode_parameters(_, [], Acc) ->
+encode_parameters(_, [], _Opts, Acc) ->
     Acc;
-encode_parameters(_, [{end_of_optional_parameters, _}|_], Acc) when byte_size(Acc) > 0 ->
+encode_parameters(_, [{end_of_optional_parameters, _}|_], _Opts, Acc) when byte_size(Acc) > 0 ->
     <<Acc/binary, ?SCCP_IEI_END_OF_OPTIONAL_PARAMETERS:8/big>>;
-encode_parameters(Msg, [{Name, _}|Os], Acc) when is_map_key(Name, Msg) ->
+encode_parameters(Msg, [{Name, _}|Os], Opts, Acc) when is_map_key(Name, Msg) ->
     V = maps:get(Name, Msg),
-    Bin = encode_parameter(Name, V),
+    Bin = encode_parameter(Name, V, Opts),
     IEI = compose_iei(Name),
     Len = byte_size(Bin),
     NAcc = <<IEI:8/big, Len:8/big, Bin/binary, Acc/binary>>,
-    encode_parameters(Msg, Os, NAcc);
-encode_parameters(Msg, [_|Os], Acc) ->
-    encode_parameters(Msg, Os, Acc).
+    encode_parameters(Msg, Os, Opts, NAcc);
+encode_parameters(Msg, [_|Os], Opts, Acc) ->
+    encode_parameters(Msg, Os, Opts, Acc).
 
 %% Mandatory, taken care of elsewhere:
 %% parse_iei(?SCCP_IEI_DESTINATION_LOCAL_REFERENCE) -> destination_local_reference;
@@ -1308,15 +1312,15 @@ compose_refusal_cause({reserved_international, V}) -> V;
 compose_refusal_cause({reserved_national, V}) -> V;
 compose_refusal_cause({reserved, V}) -> V.
 
-encode_parameter(destination_local_reference, Bin) ->
+encode_parameter(destination_local_reference, Bin, _Opts) ->
     Bin;
-encode_parameter(source_local_reference, Bin) ->
+encode_parameter(source_local_reference, Bin, _Opts) ->
     Bin;
-encode_parameter(called_party_address, Bin) ->
+encode_parameter(called_party_address, Bin, _Opts) ->
     encode_address(Bin);
-encode_parameter(calling_party_address, Bin) ->
+encode_parameter(calling_party_address, Bin, _Opts) ->
     encode_address(Bin);
-encode_parameter(protocol_class, Val) ->
+encode_parameter(protocol_class, Val, _Opts) ->
     case Val of
         #{class := 0} ->
             O = compose_protocol_class_options(Val),
@@ -1329,32 +1333,32 @@ encode_parameter(protocol_class, Val) ->
         #{class := 3} ->
             <<0:4, 2#0011:4>>
     end;
-encode_parameter(segmenting_reassembling, Bin) ->
+encode_parameter(segmenting_reassembling, Bin, _Opts) ->
     Bin;
-encode_parameter(receive_sequence_number, Bin) ->
+encode_parameter(receive_sequence_number, Bin, _Opts) ->
     Bin;
-encode_parameter(sequencing_segmenting, Bin) ->
+encode_parameter(sequencing_segmenting, Bin, _Opts) ->
     Bin;
-encode_parameter(credit, Bin) ->
+encode_parameter(credit, Bin, _Opts) ->
     Bin;
-encode_parameter(release_cause, RC) ->
+encode_parameter(release_cause, RC, _Opts) ->
     V = compose_release_cause(RC),
     <<V:8>>;
-encode_parameter(return_cause, RC) ->
+encode_parameter(return_cause, RC, _Opts) ->
     V = compose_return_cause(RC),
     <<V:8>>;
-encode_parameter(reset_cause, RC) ->
+encode_parameter(reset_cause, RC, _Opts) ->
     V = compose_reset_cause(RC),
     <<V:8>>;
-encode_parameter(error_cause, EC) ->
+encode_parameter(error_cause, EC, _Opts) ->
     V = compose_error_cause(EC),
     <<V:8>>;
-encode_parameter(refusal_cause, RC) ->
+encode_parameter(refusal_cause, RC, _Opts) ->
     V = compose_refusal_cause(RC),
     <<V:8>>;
-encode_parameter(data, Bin) ->
+encode_parameter(data, Bin, _Opts) ->
     Bin;
-encode_parameter(segmentation, V) ->
+encode_parameter(segmentation, V, _Opts) ->
     F = case maps:get(first_segment_indication, V, true) of
             true ->
                 0;
@@ -1366,13 +1370,13 @@ encode_parameter(segmentation, V) ->
     LR = rand:uniform(2#1111)-1,
     LocalRef = maps:get(local_reference, V, LR),
     <<F:1, C:1, 0:2, Rem:4, LocalRef:3/binary>>;
-encode_parameter(hop_counter, HC) ->
+encode_parameter(hop_counter, HC, _Opts) ->
     <<HC:8>>;
-encode_parameter(importance, Importance) ->
+encode_parameter(importance, Importance, _Opts) ->
     <<0:5, Importance:3>>;
-encode_parameter(long_data, Bin) ->
+encode_parameter(long_data, Bin, _Opts) ->
     Bin;
-encode_parameter(intermediate_signaling_network_identification, V) ->
+encode_parameter(intermediate_signaling_network_identification, V, _Opts) ->
     #{counter := Counter,
       network_identifiers := NetworkIDs,
       isni_routing_identificator := RoutingID,
@@ -1394,7 +1398,7 @@ encode_parameter(intermediate_signaling_network_identification, V) ->
     NIDs = binary:list_to_bin(NetworkIDs),
     MI = otc_util:true_to_one(IN),
     <<Counter:3, TI:1, 0:1, IRI:2, MI:1, RCE:TI/binary, NIDs/binary>>;
-encode_parameter(intermediate_network_selection, V) ->
+encode_parameter(intermediate_network_selection, V, _Opts) ->
     #{counter := Counter,
       network_identifiers := NetworkIDs,
       type_of_routing := TypeOfRouting,
@@ -1413,7 +1417,7 @@ encode_parameter(intermediate_network_selection, V) ->
          end,
     NIDs = binary:list_to_bin(NetworkIDs),
     <<Counter:2, 0:2, ToR:2, IT:2, NIDs/binary>>;
-encode_parameter(message_type_interworking, V) ->
+encode_parameter(message_type_interworking, V, _Opts) ->
     #{parameter_can_be_dropped := D,
       original_message_type := OriginalMessageType
      } = V,
