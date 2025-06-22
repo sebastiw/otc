@@ -2,10 +2,12 @@
 -behaviour(otc_codec).
 
 -export([spec/0,
-         codec/1,
+         codec/2,
          next/1,
          decode/1,
-         encode/1
+         decode/2,
+         encode/1,
+         encode/2
         ]).
 
 -include("include/smpp.hrl").
@@ -15,25 +17,31 @@
 spec() ->
     "SMS Forum SMPP V5.0".
 
-codec(Bin) when is_binary(Bin) ->
-    decode(Bin);
-codec(Map) when is_map(Map) ->
-    encode({Map, <<>>});
-codec({Map, PDU}) ->
-    encode({Map, PDU}).
+codec(Bin, Opts) when is_binary(Bin) ->
+    decode(Bin, Opts);
+codec(Map, Opts) when is_map(Map) ->
+    encode({Map, <<>>}, Opts);
+codec({Map, PDU}, Opts) ->
+    encode({Map, PDU}, Opts).
 
 next(_) ->
     '$stop'.
 
 decode(Bin) ->
+    decode(Bin, #{}).
+
+decode(Bin, _Opts) ->
     {Header, Rest} = parse_header(Bin),
     Msg = decode_msg(Header, Rest),
     maps:merge(Header, Msg).
 
-encode({Map, PDU}) ->
-    M = encode(Map),
+encode(Pdu) ->
+    encode(Pdu, #{}).
+
+encode({Map, PDU}, Opts) ->
+    M = encode(Map, Opts),
     <<M/binary, PDU/binary>>;
-encode(Map) ->
+encode(Map, _Opts) ->
     Msg = encode_msg(Map),
     Header = compose_header(Map, Msg),
     <<Header/binary, Msg/binary>>.
@@ -470,7 +478,7 @@ decode_msg(#{command := submit_sm}, Bin) ->
                          {esm_class, 1, integer},
                          {protocol_id, 1, integer},
                          {priority_flag, 1, integer},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {replace_if_present_flag, 1, integer},
@@ -514,7 +522,7 @@ decode_msg(#{command := submit_multi}, Bin) ->
                          {esm_class, 1, integer},
                          {protocol_id, 1, integer},
                          {priority_flag, 1, integer},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {replace_if_present_flag, 1, integer},
@@ -542,7 +550,7 @@ decode_msg(#{command := deliver_sm}, Bin) ->
                          {esm_class, 1, integer},
                          {protocol_id, 1, integer},
                          {priority_flag, 1, integer},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {replace_if_present_flag, 1, integer},
@@ -595,7 +603,7 @@ decode_msg(#{command := replace_sm}, Bin) ->
                          {source_addr_ton, 1, integer},
                          {source_addr_npi, 1, integer},
                          {source_addr, {0, 65}, cstring},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {sm_default_msg_id, 1, integer},
@@ -720,7 +728,7 @@ encode_msg(#{command := submit_sm} = Map) ->
                          {esm_class, 1, integer},
                          {protocol_id, 1, integer},
                          {priority_flag, 1, integer},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {replace_if_present_flag, 1, integer},
@@ -764,7 +772,7 @@ encode_msg(#{command := submit_multi} = Map) ->
                          {esm_class, 1, integer},
                          {protocol_id, 1, integer},
                          {priority_flag, 1, integer},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {replace_if_present_flag, 1, integer},
@@ -792,7 +800,7 @@ encode_msg(#{command := deliver_sm} = Map) ->
                          {esm_class, 1, integer},
                          {protocol_id, 1, integer},
                          {priority_flag, 1, integer},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {replace_if_present_flag, 1, integer},
@@ -845,7 +853,7 @@ encode_msg(#{command := replace_sm} = Map) ->
                          {source_addr_ton, 1, integer},
                          {source_addr_npi, 1, integer},
                          {source_addr, {0, 65}, cstring},
-                         {schedule_delivery_time, {1,17}, cstring},
+                         {scheduled_delivery_time, {1,17}, cstring},
                          {validity_period, {1,17}, cstring},
                          {registered_delivery, 1, integer},
                          {sm_default_msg_id, 1, integer},
@@ -988,18 +996,158 @@ decode_parameter(dest_addr_npi, Value, Acc) ->
     Acc#{dest_addr_npi => parse_npi(Value)};
 decode_parameter(esme_addr_npi, Value, Acc) ->
     Acc#{esme_addr_npi => parse_npi(Value)};
+
+decode_parameter(address_range, Value, Acc) ->
+    Acc#{address_range => Value};
+decode_parameter(data_coding, Value, Acc) ->
+    Acc#{data_coding => parse_data_coding(Value)};
+decode_parameter(destination_addr, Value, Acc) ->
+    Acc#{destination_addr => Value};
+decode_parameter(dest_flag, Value, Acc) ->
+    Acc#{dest_flag => parse_dest_flag(Value)};
+decode_parameter(dl_name, Value, Acc) ->
+    Acc#{dl_name => Value};
+decode_parameter(esme_addr, Value, Acc) ->
+    Acc#{esme_addr => Value};
+decode_parameter(esm_class, Value, Acc) ->
+    <<GS:2, MT:4, MM:2>> = <<Value:8>>,
+    Acc#{esm_class => #{gsm_specific => parse_esm_class_gsm_specific(GS),
+                        message_type => parse_esm_class_message_type(MT),
+                        messaging_mode => parse_esm_class_messaging_mode(MM)
+                       }
+        };
+decode_parameter(interface_version, Value, Acc) ->
+    <<Ma:8, Mi:8>> = <<Value:16>>,
+    Acc#{interface_version => {Ma, Mi}};
+decode_parameter(message_id, Value, Acc) ->
+    Acc#{message_id => Value};
 decode_parameter(message_state, Value, Acc) ->
     Acc#{message_state => parse_message_state(Value)};
+decode_parameter(no_unsuccess, Value, Acc) ->
+    Acc#{no_unsuccess => Value};
+decode_parameter(number_of_dests, Value, Acc) ->
+    Acc#{number_of_dests => Value};
+decode_parameter(password, Value, Acc) ->
+    Acc#{password => Value};
+decode_parameter(priority_flag, Value, Acc) ->
+    Acc#{priority_flag => Value};
+decode_parameter(protocol_id, Value, Acc) ->
+    Acc#{protocol_id => Value};
+decode_parameter(registered_delivery, Value, Acc) ->
+    Acc#{registered_delivery => Value};
 decode_parameter(replace_if_present_flag, Value, Acc) ->
     Acc#{replace_if_present_flag => case Value of
                                         0 -> false;
                                         1 -> true
                                     end
         };
-decode_parameter(Name, Value, Acc) ->
-    Acc#{Name => Value}.
+decode_parameter(scheduled_delivery_time, Value, Acc) ->
+    Acc#{scheduled_delivery_time => Value};
+decode_parameter(validity_period, Value, Acc) ->
+    Acc#{validity_period => Value};
+decode_parameter(final_date, Value, Acc) ->
+    Acc#{final_date => Value};
+decode_parameter(sequence_number, Value, Acc) ->
+    Acc#{sequence_number => Value};
+decode_parameter(service_type, Value, Acc) ->
+    Acc#{service_type => Value};
+decode_parameter(short_message, Value, Acc) ->
+    Acc#{short_message => Value};
+decode_parameter(sm_default_msg_id, Value, Acc) ->
+    Acc#{sm_default_msg_id => Value};
+decode_parameter(sm_length, Value, Acc) ->
+    Acc#{sm_length => Value};
+decode_parameter(source_addr, Value, Acc) ->
+    Acc#{source_addr => Value};
+decode_parameter(system_id, Value, Acc) ->
+    Acc#{system_id => Value};
+decode_parameter(system_type, Value, Acc) ->
+    Acc#{system_type => Value}.
 
-encode_parameter(_Name, Value) ->
+encode_parameter(addr_ton, Value) ->
+    compose_ton(Value);
+encode_parameter(source_addr_ton, Value) ->
+    compose_ton(Value);
+encode_parameter(dest_addr_ton, Value) ->
+    compose_ton(Value);
+encode_parameter(esme_addr_ton, Value) ->
+    compose_ton(Value);
+encode_parameter(addr_npi, Value) ->
+    compose_npi(Value);
+encode_parameter(source_addr_npi, Value) ->
+    compose_npi(Value);
+encode_parameter(dest_addr_npi, Value) ->
+    compose_npi(Value);
+encode_parameter(esme_addr_npi, Value) ->
+    compose_npi(Value);
+encode_parameter(address_range, Value) ->
+    Value;
+encode_parameter(data_coding, Value) ->
+    compose_data_coding(Value);
+encode_parameter(destination_addr, Value) ->
+    Value;
+encode_parameter(dest_flag, Value) ->
+    compose_dest_flag(Value);
+encode_parameter(dl_name, Value) ->
+    Value;
+encode_parameter(esme_addr, Value) ->
+    Value;
+encode_parameter(esm_class, Value) ->
+    #{gsm_specific := GsmSpec,
+      message_type := MessageType,
+      messaging_mode := MessagingMode
+     } = Value,
+    GS = compose_esm_class_gsm_specific(GsmSpec),
+    MT = compose_esm_class_message_type(MessageType),
+    MM = compose_esm_class_messaging_mode(MessagingMode),
+    <<EsmValue:8>> = <<GS:2, MT:4, MM:2>>,
+    EsmValue;
+encode_parameter(interface_version, Value) ->
+    {Ma, Mi} = Value,
+    <<Version:16>> = <<Ma:8, Mi:8>>,
+    Version;
+encode_parameter(message_id, Value) ->
+    Value;
+encode_parameter(message_state, Value) ->
+    compose_message_state(Value);
+encode_parameter(no_unsuccess, Value) ->
+    Value;
+encode_parameter(number_of_dests, Value) ->
+    Value;
+encode_parameter(password, Value) ->
+    Value;
+encode_parameter(priority_flag, Value) ->
+    Value;
+encode_parameter(protocol_id, Value) ->
+    Value;
+encode_parameter(registered_delivery, Value) ->
+    Value;
+encode_parameter(replace_if_present_flag, Value) ->
+    case Value of
+        false -> 0;
+        true -> 1
+    end;
+encode_parameter(scheduled_delivery_time, Value) ->
+    Value;
+encode_parameter(validity_period, Value) ->
+    Value;
+encode_parameter(final_date, Value) ->
+    Value;
+encode_parameter(sequence_number, Value) ->
+    Value;
+encode_parameter(service_type, Value) ->
+    Value;
+encode_parameter(short_message, Value) ->
+    Value;
+encode_parameter(sm_default_msg_id, Value) ->
+    Value;
+encode_parameter(sm_length, Value) ->
+    Value;
+encode_parameter(source_addr, Value) ->
+    Value;
+encode_parameter(system_id, Value) ->
+    Value;
+encode_parameter(system_type, Value) ->
     Value.
 
 decode_tlv(Name, Tag, Value, Acc) ->
@@ -1023,6 +1171,21 @@ parse_ton(2#00000101) ->
 parse_ton(2#00000110) ->
     abbreviated.
 
+compose_ton(unknown) ->
+    2#00000000;
+compose_ton(international) ->
+    2#00000001;
+compose_ton(national) ->
+    2#00000010;
+compose_ton(network_specific) ->
+    2#00000011;
+compose_ton(subscriber_number) ->
+    2#00000100;
+compose_ton(alphanumeric) ->
+    2#00000101;
+compose_ton(abbreviated) ->
+    2#00000110.
+
 parse_npi(2#00000000) ->
     unknown;
 parse_npi(2#00000001) ->
@@ -1044,10 +1207,36 @@ parse_npi(2#00001110) ->
 parse_npi(2#00010010) ->
     wap.
 
+compose_npi(unknown) ->
+    2#00000000;
+compose_npi(isdn) ->
+    2#00000001;
+compose_npi(data) ->
+    2#00000011;
+compose_npi(telex) ->
+    2#00000100;
+compose_npi(land_mobile) ->
+    2#00000110;
+compose_npi(national) ->
+    2#00001000;
+compose_npi(private) ->
+    2#00001001;
+compose_npi(ermes) ->
+    2#00001010;
+compose_npi(internet) ->
+    2#00001110;
+compose_npi(wap) ->
+    2#00010010.
+
 parse_dest_flag(1) ->
     sme_address;
 parse_dest_flag(2) ->
     distribution_list_name.
+
+compose_dest_flag(sme_address) ->
+    1;
+compose_dest_flag(distribution_list_name) ->
+    2.
 
 parse_message_state(0) ->
     scheduled;
@@ -1070,3 +1259,157 @@ parse_message_state(8) ->
 parse_message_state(9) ->
     skipped.
 
+compose_message_state(scheduled) ->
+    0;
+compose_message_state(enroute) ->
+    1;
+compose_message_state(delivered) ->
+    2;
+compose_message_state(expired) ->
+    3;
+compose_message_state(deleted) ->
+    4;
+compose_message_state(undeliverable) ->
+    5;
+compose_message_state(accepted) ->
+    6;
+compose_message_state(unknown) ->
+    7;
+compose_message_state(rejected) ->
+    8;
+compose_message_state(skipped) ->
+    9.
+
+parse_data_coding(2#0000_0000) ->
+    mc_specific;
+parse_data_coding(2#0000_0001) ->
+    ia5;
+parse_data_coding(2#0000_0010 = C) ->
+    {unspecified, C};
+parse_data_coding(2#0000_0011) ->
+    latin1;
+parse_data_coding(2#0000_0100 = C) ->
+    {unspecified, C};
+parse_data_coding(2#0000_0101) ->
+    jis;
+parse_data_coding(2#0000_0110) ->
+    cyrillic;
+parse_data_coding(2#0000_0111) ->
+    latin_hebrew;
+parse_data_coding(2#0000_1000) ->
+    ucs2;
+parse_data_coding(2#0000_1001) ->
+    pictogram;
+parse_data_coding(2#0000_1010) ->
+    music;
+parse_data_coding(2#0000_1011 = C) ->
+    {reserved, C};
+parse_data_coding(2#0000_1100 = C) ->
+    {reserved, C};
+parse_data_coding(2#0000_1101) ->
+    extended_kanji_jis;
+parse_data_coding(2#0000_1110) ->
+    ks_c_5601;
+parse_data_coding(C) when C >= 2#0000_1111; C =<2#1011_1111 ->
+    {reserved, C};
+parse_data_coding(C) when C >= 2#1100_0000; C =< 2#1100_1111 ->
+    {gsm_mwi_control, C};
+parse_data_coding(C) when C >= 2#1101_0000; C =< 2#1101_1111 ->
+    {gsm_mwi_control, C};
+parse_data_coding(C) when C >= 2#1110_0000; C =< 2#1110_1111 ->
+    {reserved, C};
+parse_data_coding(C) when C >= 2#1111_0000; C =< 2#1111_1111 ->
+    {gsm_message_class_control, C}.
+
+compose_data_coding(mc_specific) ->
+    2#0000_0000;
+compose_data_coding(ia5) ->
+    2#0000_0001;
+compose_data_coding({unspecified, C}) ->
+    C;
+compose_data_coding(latin1) ->
+    2#0000_0011;
+compose_data_coding(jis) ->
+    2#0000_0101;
+compose_data_coding(cyrillic) ->
+    2#0000_0110;
+compose_data_coding(latin_hebrew) ->
+    2#0000_0111;
+compose_data_coding(ucs2) ->
+    2#0000_1000;
+compose_data_coding(pictogram) ->
+    2#0000_1001;
+compose_data_coding(music) ->
+    2#0000_1010;
+compose_data_coding({reserved, C}) ->
+    C;
+compose_data_coding(extended_kanji_jis) ->
+    2#0000_1101;
+compose_data_coding(ks_c_5601) ->
+    2#0000_1110;
+compose_data_coding({gsm_mwi_control, C}) ->
+    C;
+compose_data_coding({gsm_message_class_control, C}) ->
+    C.
+
+parse_esm_class_gsm_specific(2#00) ->
+    default;
+parse_esm_class_gsm_specific(2#01) ->
+    datagram;
+parse_esm_class_gsm_specific(2#10) ->
+    forward;
+parse_esm_class_gsm_specific(2#11) ->
+    store_forward.
+
+compose_esm_class_gsm_specific(default) ->
+    2#00;
+compose_esm_class_gsm_specific(datagram) ->
+    2#01;
+compose_esm_class_gsm_specific(forward) ->
+    2#10;
+compose_esm_class_gsm_specific(store_forward) ->
+    2#11.
+
+parse_esm_class_message_type(2#0000) ->
+    default;
+parse_esm_class_message_type(2#0001) ->
+    mc_delivery_receipt;
+parse_esm_class_message_type(2#1000) ->
+    intermediate_delivery_notification;
+parse_esm_class_message_type(2#0010) ->
+    delivery_acknowledgement;
+parse_esm_class_message_type(2#0100) ->
+    user_acknowledgement;
+parse_esm_class_message_type(2#0110) ->
+    conversation_abort.
+
+compose_esm_class_message_type(default) ->
+    2#0000;
+compose_esm_class_message_type(mc_delivery_receipt) ->
+    2#0001;
+compose_esm_class_message_type(intermediate_delivery_notification) ->
+    2#1000;
+compose_esm_class_message_type(delivery_acknowledgement) ->
+    2#0010;
+compose_esm_class_message_type(user_acknowledgement) ->
+    2#0100;
+compose_esm_class_message_type(conversation_abort) ->
+    2#0110.
+
+parse_esm_class_messaging_mode(2#00) ->
+    no_features;
+parse_esm_class_messaging_mode(2#01) ->
+    udhi;
+parse_esm_class_messaging_mode(2#10) ->
+    reply_path;
+parse_esm_class_messaging_mode(2#11) ->
+    udhi_reply_path.
+
+compose_esm_class_messaging_mode(no_features) ->
+    2#00;
+compose_esm_class_messaging_mode(udhi) ->
+    2#01;
+compose_esm_class_messaging_mode(reply_path) ->
+    2#10;
+compose_esm_class_messaging_mode(udhi_reply_path) ->
+    2#11.
