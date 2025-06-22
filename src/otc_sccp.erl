@@ -1316,10 +1316,10 @@ encode_parameter(destination_local_reference, Bin, _Opts) ->
     Bin;
 encode_parameter(source_local_reference, Bin, _Opts) ->
     Bin;
-encode_parameter(called_party_address, Bin, _Opts) ->
-    encode_address(Bin);
-encode_parameter(calling_party_address, Bin, _Opts) ->
-    encode_address(Bin);
+encode_parameter(called_party_address, Bin, Opts) ->
+    encode_address(Bin, Opts);
+encode_parameter(calling_party_address, Bin, Opts) ->
+    encode_address(Bin, Opts);
 encode_parameter(protocol_class, Val, _Opts) ->
     case Val of
         #{class := 0} ->
@@ -1449,6 +1449,8 @@ decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
                           {<<NI:8, NC:8, NCM:8>>, Rest1}
                  end,
     GT = case GTI of
+             2#0000 ->
+                 undefined;
              2#0001 ->
                  %% global title includes translation type,
                  %% numbering plan and encoding scheme
@@ -1559,7 +1561,48 @@ encode_gt_part(#{encoding_scheme := national,
                  address := GT}) ->
     GT.
 
-encode_address(#{routing_indicator := RoutingInd} = Address) ->
+encode_address(Address, #{address_type := ansi}) ->
+    encode_ansi_address(Address);
+encode_address(Address, _Opts) ->
+    encode_itu_address(Address).
+
+encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
+    NR = case maps:get(national_use_indicator, Address, false) of
+             true -> 1;
+             _ -> 0
+         end,
+    {PCI, PCBin} = case maps:get(point_code, Address, undefined) of
+                       undefined ->
+                           {0, <<>>};
+                       PC ->
+                           <<NI:8, NC:8, NCM:8>> = PC,
+                           {1, <<NCM:8, NC:8, NI:8>>}
+                   end,
+    {SSNI, SSNBin} = case maps:get(subsystem_number, Address, undefined) of
+                         undefined -> {0, <<>>};
+                         SSN -> {1, <<(compose_ssn(SSN)):8/big>>}
+                     end,
+    RI = case RoutingInd of
+             subsystem_number -> 1;
+             global_title -> 0
+         end,
+    GlobalTitle = maps:get(global_title, Address, #{}),
+    {GTI, GTBin} = case GlobalTitle of
+                       undefined ->
+                           {2#0000, <<>>};
+                       #{translation_type := TT,
+                         address := GT0} ->
+                           {2#0010, <<TT:8/big, GT0/binary>>};
+                       #{translation_type := TT,
+                         numbering_plan := NP} ->
+                           GT1 = encode_gt_part(GlobalTitle),
+                           EncodingScheme = maps:get(encoding_scheme, GlobalTitle, unknown),
+                           ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
+                           {2#0001, <<TT:8/big, NP:4, ES:4, GT1/binary>>}
+                   end,
+     <<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, PCBin/binary, SSNBin/binary, GTBin/binary>>.
+
+encode_itu_address(#{routing_indicator := RoutingInd} = Address) ->
     NR = case maps:get(national_use_indicator, Address, false) of
              true -> 1;
              _ -> 0
