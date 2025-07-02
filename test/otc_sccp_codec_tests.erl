@@ -269,6 +269,43 @@ xudts_arbitrary_pointers_test() ->
     NewBin = otc_sccp:encode(Val),
     ?assertEqual(Expected, NewBin).
 
+xudts_ansi_test() ->
+    CdPA = <<16#89, 16#07, 16#0E, 16#11, 16#32, 16#54, 16#76, 16#98, 16#00>>,
+    CgPA = <<16#89, 16#06, 16#0E, 16#51, 16#34, 16#12, 16#89, 16#67, 16#05>>,
+
+    D = data(),
+
+    Bin = <<16#11, 16#80, 16#05, 16#04, 16#0D, 16#16, 16#00,
+            16#09, CgPA/binary,
+            16#09, CdPA/binary,
+            16#18, D/binary>>,
+
+    Exp = #{message_type => xudt,
+            calling_party_address =>
+                #{subsystem_number => vlr,
+                  routing_indicator => global_title,
+                  global_title =>
+                      #{address => "11234567890",
+                        translation_type => 14},
+                  national_use_indicator => true,
+                  point_code => undefined},
+            called_party_address =>
+                #{subsystem_number => hlr,
+                  routing_indicator => global_title,
+                  global_title =>
+                      #{address => "15432198765",
+                        translation_type => 14},
+                  national_use_indicator => true,
+                  point_code => undefined},
+            protocol_class => #{options => return_on_error,
+                                class => 0},
+            hop_counter => 5},
+
+    Val = otc_sccp:decode(Bin, #{address_type => ansi}),
+    ?assertEqual({Exp, D}, Val),
+    NewBin = otc_sccp:encode(Val, #{address_type => ansi}),
+    ?assertEqual(Bin, NewBin).
+
 called_party_address() ->
     <<16#12, %% AddressIndicator
       16#08, %% SSN

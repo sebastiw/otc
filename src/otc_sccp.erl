@@ -1462,8 +1462,9 @@ decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
                  %% global title includes translation type
                  %% only
                  <<TT:8/big, GT0/binary>> = Bin2,
+                 Address = decode_ansi_address_part(TT, GT0),
                  #{translation_type => TT,
-                   address => GT0}
+                   address => Address}
          end,
     RoutingInd = case RI of
                      1 -> subsystem_number;
@@ -1498,7 +1499,7 @@ decode_itu_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
                            0 -> even;
                            1 -> odd
                        end,
-                 GT1 = decode_bcd(OEI, GT0),
+                 GT1 = decode_bcd_oe_check(OEI, GT0),
                  #{odd_even_indicator => OEI,
                    nature_of_address_indicator => NI,
                    address => GT1};
@@ -1542,11 +1543,11 @@ decode_gt_part(2#0000, GT) ->
 decode_gt_part(2#0001, GT) ->
     #{encoding_scheme => bcd,
       odd_even_indicator => odd,
-      address => decode_bcd(odd, GT)};
+      address => decode_bcd_oe_check(odd, GT)};
 decode_gt_part(2#0010, GT) ->
     #{encoding_scheme => bcd,
       odd_even_indicator => even,
-      address => decode_bcd(even, GT)};
+      address => decode_bcd_oe_check(even, GT)};
 decode_gt_part(2#0100, GT) ->
     #{encoding_scheme => national,
       address => GT}.
@@ -1592,7 +1593,8 @@ encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
                            {2#0000, <<>>};
                        #{translation_type := TT,
                          address := GT0} ->
-                           {2#0010, <<TT:8/big, GT0/binary>>};
+                           GT1 = encode_ansi_address_part(TT, GT0),
+                           {2#0010, <<TT:8/big, GT1/binary>>};
                        #{translation_type := TT,
                          numbering_plan := NP} ->
                            GT1 = encode_gt_part(GlobalTitle),
@@ -1734,12 +1736,198 @@ compose_ssn({international, SSN}) -> SSN;
 compose_ssn({national, SSN}) -> SSN;
 compose_ssn(expansion) -> 2#11111111.
 
-decode_bcd(even, <<>>) ->
+%% ATIS-1000112.3.2005 Appendix B
+%% Most use GTI = 2#0010 and are BCD encoded.
+decode_ansi_address_part(2#00000001, GTA) ->
+    %% TT = Identification Cards
+    decode_bcd(GTA);
+decode_ansi_address_part(TT, GTA) when 2#00000010 =:= TT; 2#11111101 =:= TT ->
+    %% TT = 14 Digit Telecommunications Calling Cards
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00000011, GTA) ->
+    %% TT = Cellular Nationwide Roaming Service
+    %% contains the MIN (10 digit North American Number Plan number)
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00000100, GTA) ->
+    %% TT = Global Title Address = Point Code
+    %% contains SSN and Point Code
+    <<SSN:8/big, _TT:8, PC:3/binary>> = GTA,
+    #{ssn => parse_ssn(SSN),
+      point_code => PC};
+decode_ansi_address_part(2#00000101, GTA) ->
+    %% TT = Calling Name Delivery
+    %% contains 10 digit North American Numbering Plan (NANP) CgPA.
+    decode_bcd(GTA);
+decode_ansi_address_part(TT, GTA) when 2#00000110 =:= TT; 2#11111011 =:= TT ->
+    %% TT = Call Management
+    %% contains 10 digit North American Numbering Plan (NANP) portable address.
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00000111, GTA) ->
+    %% TT = Message Waiting
+    %% contains 10 digit North American Numbering Plan (NANP) portable address.
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001000, GTA) ->
+    %% TT = SCP-Assisted Call Processing Application
+    %% contains 10-digit US standard number.
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001001, GTA) ->
+    %% TT = National and International Cellular/PCS Roaming
+    %% contains the IMSI (15 digit E.212)
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001010, GTA) ->
+    %% TT = Network Entity Addressing
+    %% contains E.164 number, if CC=1 then 11 digits in total else up to 15.
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001011, GTA) ->
+    %% TT = Internetwork NP Query/Response (Number Portability)
+    %% contains 10 digit North American Numbering Plan (NANP) portable address.
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001100, GTA) ->
+    %% TT = Wireless MIN-Based Short Message Service
+    %% contains the MIN (10 digit North American Number Plan number)
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001101, GTA) ->
+    %% TT = Wireless IMSI-Based Short Message Service
+    %% contains the IMSI (15 digit E.212)
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001110, GTA) ->
+    %% TT = Mobile Subscriber Addressing
+    %% contains E.164 number, if CC=1 then 11 digits in total else up to 15.
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00001111, GTA) ->
+    %% TT = Packet Data Interworking
+    %% contains the IMSI (15 digit E.212)
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00010000, GTA) ->
+    %% TT = Cellular/PCS Interworking
+    %% contains the IMSI (15 digit E.212)
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00010001, GTA) ->
+    %% TT = Mobile Subscriber Message Center Addressing
+    %% contains E.164 number, if CC=1 then 11 digits in total else up to 15.
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00010010, GTA) ->
+    %% TT = ECS Call Routing (Emergency Calling Service)
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00011100, GTA) ->
+    %% TT = 14 Digit Telecommunications Calling Cards - Post-10-digit (NP) GTT
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00011101, GTA) ->
+    %% TT = Calling Name Delivery - Post-10-digit (NP) GTT
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00011110, GTA) ->
+    %% TT = Call Management - Post-10-digit (NP) GTT
+    decode_bcd(GTA);
+decode_ansi_address_part(2#00011111, GTA) ->
+    %% TT = Message Waiting - Post-10-digit (NP) GTT
+    decode_bcd(GTA);
+decode_ansi_address_part(_TT, GTA) ->
+    GTA.
+
+encode_ansi_address_part(2#00000001, GTA) ->
+    %% TT = Identification Cards
+    encode_bcd(GTA);
+encode_ansi_address_part(TT, GTA) when 2#00000010 =:= TT; 2#11111101 =:= TT ->
+    %% TT = 14 Digit Telecommunications Calling Cards
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00000011, GTA) ->
+    %% TT = Cellular Nationwide Roaming Service
+    %% contains the MIN (10 digit North American Number Plan number)
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00000100 = TT, GTA) ->
+    %% TT = Global Title Address = Point Code
+    %% contains SSN and Point Code
+    #{ssn := SSN0,
+      point_code := PC} = GTA,
+    SSN = compose_ssn(SSN0),
+    <<SSN:8/big, TT:8, PC:3/binary>>;
+encode_ansi_address_part(2#00000101, GTA) ->
+    %% TT = Calling Name Delivery
+    %% contains 10 digit North American Numbering Plan (NANP) CgPA.
+    encode_bcd(GTA);
+encode_ansi_address_part(TT, GTA) when 2#00000110 =:= TT; 2#11111011 =:= TT ->
+    %% TT = Call Management
+    %% contains 10 digit North American Numbering Plan (NANP) portable address.
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00000111, GTA) ->
+    %% TT = Message Waiting
+    %% contains 10 digit North American Numbering Plan (NANP) portable address.
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001000, GTA) ->
+    %% TT = SCP-Assisted Call Processing Application
+    %% contains 10-digit US standard number.
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001001, GTA) ->
+    %% TT = National and International Cellular/PCS Roaming
+    %% contains the IMSI (15 digit E.212)
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001010, GTA) ->
+    %% TT = Network Entity Addressing
+    %% contains E.164 number, if CC=1 then 11 digits in total else up to 15.
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001011, GTA) ->
+    %% TT = Internetwork NP Query/Response (Number Portability)
+    %% contains 10 digit North American Numbering Plan (NANP) portable address.
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001100, GTA) ->
+    %% TT = Wireless MIN-Based Short Message Service
+    %% contains the MIN (10 digit North American Number Plan number)
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001101, GTA) ->
+    %% TT = Wireless IMSI-Based Short Message Service
+    %% contains the IMSI (15 digit E.212)
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001110, GTA) ->
+    %% TT = Mobile Subscriber Addressing
+    %% contains E.164 number, if CC=1 then 11 digits in total else up to 15.
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00001111, GTA) ->
+    %% TT = Packet Data Interworking
+    %% contains the IMSI (15 digit E.212)
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00010000, GTA) ->
+    %% TT = Cellular/PCS Interworking
+    %% contains the IMSI (15 digit E.212)
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00010001, GTA) ->
+    %% TT = Mobile Subscriber Message Center Addressing
+    %% contains E.164 number, if CC=1 then 11 digits in total else up to 15.
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00010010, GTA) ->
+    %% TT = ECS Call Routing (Emergency Calling Service)
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00011100, GTA) ->
+    %% TT = 14 Digit Telecommunications Calling Cards - Post-10-digit (NP) GTT
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00011101, GTA) ->
+    %% TT = Calling Name Delivery - Post-10-digit (NP) GTT
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00011110, GTA) ->
+    %% TT = Call Management - Post-10-digit (NP) GTT
+    encode_bcd(GTA);
+encode_ansi_address_part(2#00011111, GTA) ->
+    %% TT = Message Waiting - Post-10-digit (NP) GTT
+    encode_bcd(GTA);
+encode_ansi_address_part(_TT, GTA) ->
+    GTA.
+
+decode_bcd_oe_check(OE, BCD) ->
+    Digits = decode_bcd(BCD),
+    case length(Digits) rem 2 of
+        1 when even =:= OE ->
+            Digits ++ [$0];
+        1 when odd =:= OE ->
+            Digits;
+        0 when even =:= OE ->
+            Digits
+    end.
+
+decode_bcd(<<>>) ->
     [];
-decode_bcd(odd, <<2#0000:4, A:4>>) ->
+decode_bcd(<<2#0000:4, A:4>>) ->
     [decode_bcd_digit(A)];
-decode_bcd(OE, <<B:4, A:4, Rest/binary>>) ->
-    [decode_bcd_digit(A), decode_bcd_digit(B)|decode_bcd(OE, Rest)].
+decode_bcd(<<B:4, A:4, Rest/binary>>) ->
+    [decode_bcd_digit(A), decode_bcd_digit(B)|decode_bcd(Rest)].
 
 encode_bcd([]) ->
     <<>>;
