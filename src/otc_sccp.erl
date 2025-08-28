@@ -1658,7 +1658,7 @@ encode_itu_address(#{routing_indicator := RoutingInd} = Address) ->
                        _ ->
                            {2#0000, <<>>}
                    end,
-    <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, PCBin/binary, SSNBin/binary, GTBin/binary>>.
+    <<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, SSNBin/binary, PCBin/binary, GTBin/binary>>.
 
 compose_encoding_scheme(unknown, _) ->
     2#0000;
