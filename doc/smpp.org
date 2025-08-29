@@ -1,0 +1,1278 @@
+* Overview
+
+  SMS Forum SMPP V5.0
+  Short Message Peer-to-Peer Protocol Specification
+
+* 3.2 General PDU Format
+
+** 3.2.1 PDU Format
+
+#+BEGIN_COMMENT
+| SMPP PDU Field      | Size (Octets) | Type    | Description                                                           |
+|---------------------+---------------+---------+-----------------------------------------------------------------------|
+| command_length      |             4 | Integer | Overall size of PDU including header and body                         |
+| command_id          |             4 | Integer | Identifies the PDU                                                    |
+| command_status      |             4 | Integer | Used to carry a SMPP error code                                       |
+| sequence_number     |             4 | Integer | Used to uniquely identify a SMPP PDU in the context of a SMPP session |
+| Standard Parameters |          var. | mixed   | The Body part of a PDU differs from PDU to                            |
+| TLV Parameters      |          var. | mixed   | PDU and in some cases, there is no body at all                        |
+#+END_COMMENT
+
+* 4 SMPP PDU Definitions
+
+** 4.1 Session Management Operations
+
+*** 4.1.1.1 bind_transmitter Syntax
+
+| Field Name        | Size octets | Type           | M/O |   Ref. |
+|-------------------+-------------+----------------+-----+--------|
+| command_length    |           4 | Integer        | M   |  4.7.4 |
+| command_id        |           4 | Integer        | M   |  4.7.5 |
+| command_status    |           4 | Integer        | M   |  4.7.6 |
+| sequence_number   |           4 | Integer        | M   | 4.7.24 |
+| system_id         |        0-16 | C-Octet String | M   | 4.7.30 |
+| password          |         0-9 | C-Octet String | M   | 4.7.18 |
+| system_type       |        0-13 | C-Octet String | M   | 4.7.31 |
+| interface_version |           1 | Integer        | M   | 4.7.13 |
+| addr_ton          |           1 | Integer        | M   |  4.7.1 |
+| addr_npi          |           1 | Integer        | M   |  4.7.2 |
+| address_range     |        0-41 | C-Octet String | M   |  4.7.3 |
+
+*** 4.1.1.2 bind_transmitter_resp Syntax
+
+| Field Name           | Size octets | Type           | M/O |     Ref. |
+|----------------------+-------------+----------------+-----+----------|
+| command_length       |           4 | Integer        | M   |    4.7.4 |
+| command_id           |           4 | Integer        | M   |    4.7.5 |
+| command_status       |           4 | Integer        | M   |    4.7.6 |
+| sequence_number      |           4 | Integer        | M   |   4.7.24 |
+| system_id            |        0-16 | C-Octet String | M   |   4.7.30 |
+| sc_interface_version |           - | TLV            | O   | 4.8.4.51 |
+
+*** 4.1.1.3 bind_receiver Syntax
+
+| Field Name        | Size octets | Type           | M/O |   Ref. |
+|-------------------+-------------+----------------+-----+--------|
+| command_length    |           4 | Integer        | M   |  4.7.4 |
+| command_id        |           4 | Integer        | M   |  4.7.5 |
+| command_status    |           4 | Integer        | M   |  4.7.6 |
+| sequence_number   |           4 | Integer        | M   | 4.7.24 |
+| system_id         |        0-16 | C-Octet String | M   | 4.7.30 |
+| password          |         0-9 | C-Octet String | M   | 4.7.18 |
+| system_type       |        0-13 | C-Octet String | M   | 4.7.31 |
+| interface_version |           1 | Integer        | M   | 4.7.13 |
+| addr_ton          |           1 | Integer        | M   |  4.7.1 |
+| addr_npi          |           1 | Integer        | M   |  4.7.2 |
+| address_range     |        0-41 | C-Octet String | M   |  4.7.3 |
+
+*** 4.1.1.4 bind_receiver_resp Syntax
+
+| Field Name           | Size octets | Type           | M/O |     Ref. |
+|----------------------+-------------+----------------+-----+----------|
+| command_length       |           4 | Integer        | M   |    4.7.4 |
+| command_id           |           4 | Integer        | M   |    4.7.5 |
+| command_status       |           4 | Integer        | M   |    4.7.6 |
+| sequence_number      |           4 | Integer        | M   |   4.7.24 |
+| system_id            |        0-16 | C-Octet String | M   |   4.7.30 |
+| sc_interface_version |           - | TLV            | O   | 4.8.4.51 |
+
+*** 4.1.1.5 bind_transceiver Syntax
+
+| Field Name        | Size octets | Type           | M/O |   Ref. |
+|-------------------+-------------+----------------+-----+--------|
+| command_length    |           4 | Integer        | M   |  4.7.4 |
+| command_id        |           4 | Integer        | M   |  4.7.5 |
+| command_status    |           4 | Integer        | M   |  4.7.6 |
+| sequence_number   |           4 | Integer        | M   | 4.7.24 |
+| system_id         |        0-16 | C-Octet String | M   | 4.7.30 |
+| password          |         0-9 | C-Octet String | M   | 4.7.18 |
+| system_type       |        0-13 | C-Octet String | M   | 4.7.31 |
+| interface_version |           1 | Integer        | M   | 4.7.13 |
+| addr_ton          |           1 | Integer        | M   |  4.7.1 |
+| addr_npi          |           1 | Integer        | M   |  4.7.2 |
+| address_range     |        0-41 | C-Octet String | M   |  4.7.3 |
+
+*** 4.1.1.6 bind_transceiver_resp Syntax
+
+| Field Name           | Size octets | Type           | M/O |     Ref. |
+|----------------------+-------------+----------------+-----+----------|
+| command_length       |           4 | Integer        | M   |    4.7.4 |
+| command_id           |           4 | Integer        | M   |    4.7.5 |
+| command_status       |           4 | Integer        | M   |    4.7.6 |
+| sequence_number      |           4 | Integer        | M   |   4.7.24 |
+| system_id            |        0-16 | C-Octet String | M   |   4.7.30 |
+| sc_interface_version |           - | TLV            | O   | 4.8.4.51 |
+
+*** 4.1.1.7 outbind Syntax.
+
+| Field Name      | Size octets | Type           | M/O |   Ref. |
+|-----------------+-------------+----------------+-----+--------|
+| command_length  |           4 | Integer        | M   |  4.7.4 |
+| command_id      |           4 | Integer        | M   |  4.7.5 |
+| command_status  |           4 | Integer        | M   |  4.7.6 |
+| sequence_number |           4 | Integer        | M   | 4.7.24 |
+| system_id       |        0-16 | C-Octet String | M   | 4.7.30 |
+| password        |         0-9 | C-Octet String | M   | 4.7.18 |
+
+*** 4.1.1.8 unbind Syntax
+
+| Field Name           | Size octets | Type           | M/O |     Ref. |
+|----------------------+-------------+----------------+-----+----------|
+| command_length       |           4 | Integer        | M   |    4.7.4 |
+| command_id           |           4 | Integer        | M   |    4.7.5 |
+| command_status       |           4 | Integer        | M   |    4.7.6 |
+| sequence_number      |           4 | Integer        | M   |   4.7.24 |
+
+*** 4.1.1.9 unbind_resp Syntax
+
+| Field Name           | Size octets | Type           | M/O |     Ref. |
+|----------------------+-------------+----------------+-----+----------|
+| command_length       |           4 | Integer        | M   |    4.7.4 |
+| command_id           |           4 | Integer        | M   |    4.7.5 |
+| command_status       |           4 | Integer        | M   |    4.7.6 |
+| sequence_number      |           4 | Integer        | M   |   4.7.24 |
+
+*** 4.1.2.1 enquire_link Syntax
+
+| Field Name           | Size octets | Type           | M/O |     Ref. |
+|----------------------+-------------+----------------+-----+----------|
+| command_length       |           4 | Integer        | M   |    4.7.4 |
+| command_id           |           4 | Integer        | M   |    4.7.5 |
+| command_status       |           4 | Integer        | M   |    4.7.6 |
+| sequence_number      |           4 | Integer        | M   |   4.7.24 |
+
+*** 4.1.2.2 enquire_link_resp Syntax
+
+| Field Name           | Size octets | Type           | M/O |     Ref. |
+|----------------------+-------------+----------------+-----+----------|
+| command_length       |           4 | Integer        | M   |    4.7.4 |
+| command_id           |           4 | Integer        | M   |    4.7.5 |
+| command_status       |           4 | Integer        | M   |    4.7.6 |
+| sequence_number      |           4 | Integer        | M   |   4.7.24 |
+
+*** 4.1.3.1 alert_notification Syntax
+
+| Field Name             | Size octets | Type           | M/O |     Ref. |
+|------------------------+-------------+----------------+-----+----------|
+| command_length         |           4 | Integer        | M   |    4.7.4 |
+| command_id             |           4 | Integer        | M   |    4.7.5 |
+| command_status         |           4 | Integer        | M   |    4.7.6 |
+| sequence_number        |           4 | Integer        | M   |   4.7.24 |
+| source_addr_ton        |           1 | Integer        | M   |    4.7.1 |
+| source_addr_npi        |           1 | Integer        | M   |    4.7.2 |
+| source_addr            |        0-65 | C-Octet String | M   |   4.7.29 |
+| esme_addr_ton          |           1 | Integer        | M   |    4.7.1 |
+| esme_addr_npi          |           1 | Integer        | M   |    4.7.2 |
+| esme_addr              |        0-65 | C-Octet String | M   |   4.7.11 |
+| ms_availability_status |           - | TLV            | O   | 4.8.4.39 |
+
+*** 4.1.4.1 generic_nack Syntax
+
+| Field Name             | Size octets | Type           | M/O |     Ref. |
+|------------------------+-------------+----------------+-----+----------|
+| command_length         |           4 | Integer        | M   |    4.7.4 |
+| command_id             |           4 | Integer        | M   |    4.7.5 |
+| command_status         |           4 | Integer        | M   |    4.7.6 |
+| sequence_number        |           4 | Integer        | M   |   4.7.24 |
+
+** 4.2 Message Submission Operations
+
+*** 4.2.1.1 submit_sm Syntax
+
+| Field Name              | Size octets | Type           | M/O |     Ref. |
+|-------------------------+-------------+----------------+-----+----------|
+| command_length          |           4 | Integer        | M   |    4.7.4 |
+| command_id              |           4 | Integer        | M   |    4.7.5 |
+| command_status          |           4 | Integer        | M   |    4.7.6 |
+| sequence_number         |           4 | Integer        | M   |   4.7.24 |
+| service_type            |         0-6 | C-Octet String | M   |   4.7.25 |
+| source_addr_ton         |           1 | Integer        | M   |    4.7.1 |
+| source_addr_npi         |           1 | Integer        | M   |    4.7.2 |
+| source_addr             |        0-65 | C-Octet String | M   |   4.7.29 |
+| dest_addr_ton           |           1 | Integer        | M   |    4.7.1 |
+| dest_addr_npi           |           1 | Integer        | M   |    4.7.2 |
+| destination_addr        |        0-21 | C-Octet String | M   |    4.7.8 |
+| esm_class               |           1 | Integer        | M   |   4.7.12 |
+| protocol_id             |           1 | Integer        | M   |   4.7.20 |
+| priority_flag           |           1 | Integer        | M   |   4.7.19 |
+| schedule_delivery_time  |     1,17    | C-Octet String | M   | 4.7.23.1 |
+| validity_period         |     1,17    | C-Octet String | M   | 4.7.23.2 |
+| registered_delivery     |           1 | Integer        | M   |   4.7.21 |
+| replace_if_present_flag |           1 | Integer        | M   |   4.7.22 |
+| data_coding             |           1 | Integer        | M   |    4.7.7 |
+| sm_default_msg_id       |           1 | Integer        | M   |   4.7.27 |
+| sm_length               |           1 | Integer        | M   |   4.7.28 |
+| short_message           |       0-255 | Octet String   | M   |   4.7.27 |
+| Message Submission TLVs |           - | TLV            |     |    4.2.4 |
+
+*** 4.2.1.2 submit_sm_resp Syntax
+
+| Field Name                       | Size octets | Type           | M/O |   Ref. |
+|----------------------------------+-------------+----------------+-----+--------|
+| command_length                   |           4 | Integer        | M   |  4.7.4 |
+| command_id                       |           4 | Integer        | M   |  4.7.5 |
+| command_status                   |           4 | Integer        | M   |  4.7.6 |
+| sequence_number                  |           4 | Integer        | M   | 4.7.24 |
+| message_id                       |        0-65 | C-Octet String | M   | 4.7.14 |
+| Message Submission Response TLVs |           - | TLV            |     |  4.2.5 |
+
+*** 4.2.2.1 data_sm Syntax
+
+| Field Name              | Size octets | Type           | M/O |   Ref. |
+|-------------------------+-------------+----------------+-----+--------|
+| command_length          |           4 | Integer        | M   |  4.7.4 |
+| command_id              |           4 | Integer        | M   |  4.7.5 |
+| command_status          |           4 | Integer        | M   |  4.7.6 |
+| sequence_number         |           4 | Integer        | M   | 4.7.24 |
+| service_type            |         0-6 | C-Octet String | M   | 4.7.25 |
+| source_addr_ton         |           1 | Integer        | M   |  4.7.1 |
+| source_addr_npi         |           1 | Integer        | M   |  4.7.2 |
+| source_addr             |        0-65 | C-Octet String | M   | 4.7.29 |
+| dest_addr_ton           |           1 | Integer        | M   |  4.7.1 |
+| dest_addr_npi           |           1 | Integer        | M   |  4.7.2 |
+| destination_addr        |        0-21 | C-Octet String | M   |  4.7.8 |
+| esm_class               |           1 | Integer        | M   | 4.7.12 |
+| registered_delivery     |           1 | Integer        | M   | 4.7.21 |
+| data_coding             |           1 | Integer        | M   |  4.7.7 |
+| Message Submission TLVs |           - | TLV            |     |  4.2.4 |
+
+*** 4.2.2.2 data_sm_resp Syntax
+
+| Field Name                       | Size octets | Type           | M/O |   Ref. |
+|----------------------------------+-------------+----------------+-----+--------|
+| command_length                   |           4 | Integer        | M   |  4.7.4 |
+| command_id                       |           4 | Integer        | M   |  4.7.5 |
+| command_status                   |           4 | Integer        | M   |  4.7.6 |
+| sequence_number                  |           4 | Integer        | M   | 4.7.24 |
+| message_id                       |        0-65 | C-Octet String | M   | 4.7.14 |
+| Message Submission Response TLVs |           - | TLV            |     |  4.2.5 |
+
+*** 4.2.3.1 submit_multi Syntax
+
+| Field Name              | Size octets | Type            | M/O |     Ref. |
+|-------------------------+-------------+-----------------+-----+----------|
+| command_length          |           4 | Integer         | M   |    4.7.4 |
+| command_id              |           4 | Integer         | M   |    4.7.5 |
+| command_status          |           4 | Integer         | M   |    4.7.6 |
+| sequence_number         |           4 | Integer         | M   |   4.7.24 |
+| service_type            |         0-6 | C-Octet String  | M   |   4.7.25 |
+| source_addr_ton         |           1 | Integer         | M   |    4.7.1 |
+| source_addr_npi         |           1 | Integer         | M   |    4.7.2 |
+| source_addr             |        0-65 | C-Octet String  | M   |   4.7.29 |
+| number_of_dests         |           1 | Integer         | M   |   4.7.17 |
+| dest_address            |        0-24 | Composite Field |     |          |
+| esm_class               |           1 | Integer         |     |   4.7.12 |
+| protocol_id             |           1 | Integer         |     |   4.7.20 |
+| priority_flag           |           1 | Integer         |     |   4.7.19 |
+| schedule_delivery_time  |        1,17 | C-Octet String  |     | 4.7.23.1 |
+| validity_period         |        1,17 | C-Octet String  | M   | 4.7.23.2 |
+| registered_delivery     |           1 | Integer         | M   |   4.7.21 |
+| replace_if_present_flag |           1 | Integer         | M   |   4.7.22 |
+| data_coding             |           1 | Integer         | M   |    4.7.7 |
+| sm_default_msg_id       |           1 | Integer         | M   |   4.7.27 |
+| sm_length               |           1 | Integer         | M   |   4.7.28 |
+| short_message           |       0-255 | Octet String    | M   |   4.7.27 |
+| Message Submission TLVs |           - | TLV             |     |    4.2.4 |
+
+*** 4.2.3.2 submit_multi_resp Syntax
+
+| Field Name                       | Size octets | Type            | M/O |   Ref. |
+|----------------------------------+-------------+-----------------+-----+--------|
+| command_length                   |           4 | Integer         | M   |  4.7.4 |
+| command_id                       |           4 | Integer         | M   |  4.7.5 |
+| command_status                   |           4 | Integer         | M   |  4.7.6 |
+| sequence_number                  |           4 | Integer         | M   | 4.7.24 |
+| message_id                       |        0-65 | C-Octet String  | M   | 4.7.14 |
+| no_unsuccess                     |           1 | Integer         |     | 4.7.16 |
+| unsuccess_sme                    |        0-27 | Composite Field |     |        |
+| Message Submission Response TLVs |           - | TLV             |     |  4.2.5 |
+
+** 4.3 Message Delivery Operations
+
+*** 4.3.1.1 deliver_sm Syntax
+
+| Field Name                    | Size octets | Type           | M/O |     Ref. |
+|-------------------------------+-------------+----------------+-----+----------|
+| command_length                |           4 | Integer        | M   |    4.7.4 |
+| command_id                    |           4 | Integer        | M   |    4.7.5 |
+| command_status                |           4 | Integer        | M   |    4.7.6 |
+| sequence_number               |           4 | Integer        | M   |   4.7.24 |
+| service_type                  |         0-6 | C-Octet String | M   |   4.7.25 |
+| source_addr_ton               |           1 | Integer        | M   |    4.7.1 |
+| source_addr_npi               |           1 | Integer        | M   |    4.7.2 |
+| source_addr                   |        0-65 | C-Octet String | M   |   4.7.29 |
+| dest_addr_ton                 |           1 | Integer        | M   |    4.7.1 |
+| dest_addr_npi                 |           1 | Integer        | M   |    4.7.2 |
+| destination_addr              |        0-21 | C-Octet String | M   |    4.7.8 |
+| esm_class                     |           1 | Integer        | M   |   4.7.12 |
+| protocol_id                   |           1 | Integer        |     |   4.7.20 |
+| priority_flag                 |           1 | Integer        |     |   4.7.19 |
+| schedule_delivery_time        |        1,17 | C-Octet String |     | 4.7.23.1 |
+| validity_period               |        1,17 | C-Octet String | M   | 4.7.23.2 |
+| registered_delivery           |           1 | Integer        | M   |   4.7.21 |
+| replace_if_present_flag       |           1 | Integer        | M   |   4.7.22 |
+| data_coding                   |           1 | Integer        | M   |    4.7.7 |
+| sm_default_msg_id             |           1 | Integer        | M   |   4.7.27 |
+| sm_length                     |           1 | Integer        | M   |   4.7.28 |
+| short_message                 |       0-255 | Octet String   | M   |   4.7.27 |
+| Message Delivery Request TLVs |           - | TLV            |     |    4.3.3 |
+
+*** 4.3.1.2 deliver_sm_resp Syntax
+
+| Field Name                     | Size octets | Type           | M/O |   Ref. |
+|--------------------------------+-------------+----------------+-----+--------|
+| command_length                 |           4 | Integer        | M   |  4.7.4 |
+| command_id                     |           4 | Integer        | M   |  4.7.5 |
+| command_status                 |           4 | Integer        | M   |  4.7.6 |
+| sequence_number                |           4 | Integer        | M   | 4.7.24 |
+| message_id                     |        0-65 | C-Octet String | M   | 4.7.14 |
+| Message Delivery Response TLVs |           - | TLV            |     |  4.3.4 |
+
+*** 4.3.2 data_sm Operation
+
+See 4.2.2
+
+** 4.4 Message Broadcast Operations
+
+*** 4.4.1.1 broadcast_sm Syntax
+
+| Field Name                      | Size octets | Type           | M/O |     Ref. |
+|---------------------------------+-------------+----------------+-----+----------|
+| command_length                  |           4 | Integer        | M   |    4.7.4 |
+| command_id                      |           4 | Integer        | M   |    4.7.5 |
+| command_status                  |           4 | Integer        | M   |    4.7.6 |
+| sequence_number                 |           4 | Integer        | M   |   4.7.24 |
+| service_type                    |         0-6 | C-Octet String | M   |   4.7.25 |
+| source_addr_ton                 |           1 | Integer        | M   |    4.7.1 |
+| source_addr_npi                 |           1 | Integer        | M   |    4.7.2 |
+| source_addr                     |        0-65 | C-Octet String | M   |   4.7.29 |
+| message_id                      |        0-65 | C-Octet String | M   |   4.7.14 |
+| priority_flag                   |           1 | Integer        |     |   4.7.19 |
+| schedule_delivery_time          |        1,17 | C-Octet String |     | 4.7.23.1 |
+| validity_period                 |        1,17 | C-Octet String | M   | 4.7.23.2 |
+| replace_if_present_flag         |           1 | Integer        | M   |   4.7.22 |
+| data_coding                     |           1 | Integer        | M   |    4.7.7 |
+| sm_default_msg_id               |           1 | Integer        | M   |   4.7.27 |
+| broadcast_area_identifier       |           - | TLV            |     |  4.8.4.4 |
+| broadcast_content_type          |           - | TLV            |     |  4.8.4.8 |
+| broadcast_rep_num               |           - | TLV            |     | 4.8.4.13 |
+| broadcast_frequency_interval    |           - | TLV            |     | 4.8.4.11 |
+| Broadcast Request Optional TLVs |           - | TLV            |     |    4.4.2 |
+
+*** 4.4.1.2 broadcast_sm_resp Syntax
+
+| Field Name                       | Size octets | Type           | M/O |   Ref. |
+|----------------------------------+-------------+----------------+-----+--------|
+| command_length                   |           4 | Integer        | M   |  4.7.4 |
+| command_id                       |           4 | Integer        | M   |  4.7.5 |
+| command_status                   |           4 | Integer        | M   |  4.7.6 |
+| sequence_number                  |           4 | Integer        | M   | 4.7.24 |
+| message_id                       |        0-65 | C-Octet String | M   | 4.7.14 |
+| Broadcast Response Optional TLVs |           - | TLV            |     |  4.4.3 |
+
+** 4.5 Ancillary Submission Operations
+
+*** 4.5.1.1 cancel_sm Syntax
+
+| Field Name       | Size octets | Type           | M/O |   Ref. |
+|------------------+-------------+----------------+-----+--------|
+| command_length   |           4 | Integer        | M   |  4.7.4 |
+| command_id       |           4 | Integer        | M   |  4.7.5 |
+| command_status   |           4 | Integer        | M   |  4.7.6 |
+| sequence_number  |           4 | Integer        | M   | 4.7.24 |
+| service_type     |         0-6 | C-Octet String | M   | 4.7.25 |
+| message_id       |        0-65 | C-Octet String | M   | 4.7.14 |
+| source_addr_ton  |           1 | Integer        | M   |  4.7.1 |
+| source_addr_npi  |           1 | Integer        | M   |  4.7.2 |
+| source_addr      |        0-65 | C-Octet String | M   | 4.7.29 |
+| dest_addr_ton    |           1 | Integer        | M   |  4.7.1 |
+| dest_addr_npi    |           1 | Integer        | M   |  4.7.2 |
+| destination_addr |        0-21 | C-Octet String | M   |  4.7.8 |
+
+*** 4.5.1.2 cancel_sm_resp Syntax
+
+| Field Name             | Size octets | Type           | M/O |     Ref. |
+|------------------------+-------------+----------------+-----+----------|
+| command_length         |           4 | Integer        | M   |    4.7.4 |
+| command_id             |           4 | Integer        | M   |    4.7.5 |
+| command_status         |           4 | Integer        | M   |    4.7.6 |
+| sequence_number        |           4 | Integer        | M   |   4.7.24 |
+
+*** 4.5.2.1 query_sm Syntax
+
+| Field Name      | Size octets | Type           | M/O |   Ref. |
+|-----------------+-------------+----------------+-----+--------|
+| command_length  |           4 | Integer        | M   |  4.7.4 |
+| command_id      |           4 | Integer        | M   |  4.7.5 |
+| command_status  |           4 | Integer        | M   |  4.7.6 |
+| sequence_number |           4 | Integer        | M   | 4.7.24 |
+| message_id      |        0-65 | C-Octet String | M   | 4.7.14 |
+| source_addr_ton |           1 | Integer        | M   |  4.7.1 |
+| source_addr_npi |           1 | Integer        | M   |  4.7.2 |
+| source_addr     |        0-65 | C-Octet String | M   | 4.7.29 |
+
+*** 4.5.2.2 query_sm_resp Syntax
+
+| Field Name      | Size octets | Type           | M/O |     Ref. |
+|-----------------+-------------+----------------+-----+----------|
+| command_length  |           4 | Integer        | M   |    4.7.4 |
+| command_id      |           4 | Integer        | M   |    4.7.5 |
+| command_status  |           4 | Integer        | M   |    4.7.6 |
+| sequence_number |           4 | Integer        | M   |   4.7.24 |
+| message_id      |        0-65 | C-Octet String | M   |   4.7.14 |
+| final_date      |        1,17 | C-Octet String |     | 4.7.23.3 |
+| message_state   |           1 | Integer        |     |   4.7.15 |
+| error_code      |           1 | Integer        |     |          |
+
+*** 4.5.3.1 replace_sm Syntax
+
+| Field Name                       | Size octets | Type           | M/O |     Ref. |
+|----------------------------------+-------------+----------------+-----+----------|
+| command_length                   |           4 | Integer        | M   |    4.7.4 |
+| command_id                       |           4 | Integer        | M   |    4.7.5 |
+| command_status                   |           4 | Integer        | M   |    4.7.6 |
+| sequence_number                  |           4 | Integer        | M   |   4.7.24 |
+| message_id                       |        0-65 | C-Octet String | M   |   4.7.14 |
+| source_addr_ton                  |           1 | Integer        | M   |    4.7.1 |
+| source_addr_npi                  |           1 | Integer        | M   |    4.7.2 |
+| source_addr                      |        0-65 | C-Octet String | M   |   4.7.29 |
+| schedule_delivery_time           |        1,17 | C-Octet String |     | 4.7.23.1 |
+| validity_period                  |        1,17 | C-Octet String | M   | 4.7.23.2 |
+| registered_delivery              |           1 | Integer        | M   |   4.7.21 |
+| sm_default_msg_id                |           1 | Integer        | M   |   4.7.27 |
+| sm_length                        |           1 | Integer        | M   |   4.7.28 |
+| short_message                    |       0-255 | Octet String   | M   |   4.7.27 |
+| Message Replacement Request TLVs |           - | TLV            |     |  4.5.3.3 |
+
+*** 4.5.3.2 replace_sm_resp Syntax
+
+| Field Name             | Size octets | Type           | M/O |     Ref. |
+|------------------------+-------------+----------------+-----+----------|
+| command_length         |           4 | Integer        | M   |    4.7.4 |
+| command_id             |           4 | Integer        | M   |    4.7.5 |
+| command_status         |           4 | Integer        | M   |    4.7.6 |
+| sequence_number        |           4 | Integer        | M   |   4.7.24 |
+
+** 4.6 Ancillary Broadcast Operations
+
+*** 4.6.1.1 query_broadcast_sm Syntax
+
+| Field Name                   | Size octets | Type           | M/O |    Ref. |
+|------------------------------+-------------+----------------+-----+---------|
+| command_length               |           4 | Integer        | M   |   4.7.4 |
+| command_id                   |           4 | Integer        | M   |   4.7.5 |
+| command_status               |           4 | Integer        | M   |   4.7.6 |
+| sequence_number              |           4 | Integer        | M   |  4.7.24 |
+| message_id                   |        0-65 | C-Octet String | M   |  4.7.14 |
+| source_addr_ton              |           1 | Integer        | M   |   4.7.1 |
+| source_addr_npi              |           1 | Integer        | M   |   4.7.2 |
+| source_addr                  |        0-65 | C-Octet String | M   |  4.7.29 |
+| Query Broadcast Request TLVs |           - | TLV            |     | 4.6.1.2 |
+
+*** 4.6.1.3 query_broadcast_sm_resp Syntax
+
+| Field Name                    | Size octets | Type           | M/O |    Ref. |
+|-------------------------------+-------------+----------------+-----+---------|
+| command_length                |           4 | Integer        | M   |   4.7.4 |
+| command_id                    |           4 | Integer        | M   |   4.7.5 |
+| command_status                |           4 | Integer        | M   |   4.7.6 |
+| sequence_number               |           4 | Integer        | M   |  4.7.24 |
+| message_id                    |        0-65 | C-Octet String | M   |  4.7.14 |
+| message_state                 |           1 | Integer        |     |  4.7.15 |
+| broadcast_area_identifier     |           - | TLV            |     | 4.8.4.4 |
+| broadcast_area_success        |           - | TLV            |     | 4.8.4.5 |
+| Query Broadcast Response TLVs |           - | TLV            |     | 4.6.1.4 |
+
+*** 4.6.2.1 cancel_broadcast_sm Syntax
+
+| Field Name      | Size octets | Type           | M/O |   Ref. |
+|-----------------+-------------+----------------+-----+--------|
+| command_length  |           4 | Integer        | M   |  4.7.4 |
+| command_id      |           4 | Integer        | M   |  4.7.5 |
+| command_status  |           4 | Integer        | M   |  4.7.6 |
+| sequence_number |           4 | Integer        | M   | 4.7.24 |
+| service_type    |         0-6 | C-Octet String | M   | 4.7.25 |
+| message_id      |        0-65 | C-Octet String | M   | 4.7.14 |
+| source_addr_ton |           1 | Integer        | M   |  4.7.1 |
+| source_addr_npi |           1 | Integer        | M   |  4.7.2 |
+| source_addr     |        0-65 | C-Octet String | M   | 4.7.29 |
+
+*** 4.6.2.3 cancel_broadcast_sm_resp Syntax
+
+| Field Name             | Size octets | Type           | M/O |     Ref. |
+|------------------------+-------------+----------------+-----+----------|
+| command_length         |           4 | Integer        | M   |    4.7.4 |
+| command_id             |           4 | Integer        | M   |    4.7.5 |
+| command_status         |           4 | Integer        | M   |    4.7.6 |
+| sequence_number        |           4 | Integer        | M   |   4.7.24 |
+
+* 4.7 PDU Field Definitions
+
+** 4.7.1 addr_ton, source_addr_ton, dest_addr_ton, esme_addr_ton
+
+| TON               |    Value |
+|-------------------+----------|
+| Unknown           | 00000000 |
+| International     | 00000001 |
+| National          | 00000010 |
+| Network Specific  | 00000011 |
+| Subscriber Number | 00000100 |
+| Alphanumeric      | 00000101 |
+| Abbreviated       | 00000110 |
+
+** 4.7.2 addr_npi, source_addr_npi, dest_addr_npi, esme_addr_npi
+
+| NPI                                        |    Value |
+|--------------------------------------------+----------|
+| Unknown                                    | 00000000 |
+| ISDN (E163/E164)                           | 00000001 |
+| Data (X.121)                               | 00000011 |
+| Telex (F.69)                               | 00000100 |
+| Land Mobile (E.212)                        | 00000110 |
+| National                                   | 00001000 |
+| Private                                    | 00001001 |
+| ERMES                                      | 00001010 |
+| Internet (IP)                              | 00001110 |
+| WAP Client Id (to be defined by WAP Forum) | 00010010 |
+
+** 4.7.3 address_range
+
+** 4.7.4 command_length
+
+** 4.7.5 command_id
+
+| Command ID               |                   Value |
+|--------------------------+-------------------------|
+| bind_receiver            |              0x00000001 |
+| bind_transmitter         |              0x00000002 |
+| query_sm                 |              0x00000003 |
+| submit_sm                |              0x00000004 |
+| deliver_sm               |              0x00000005 |
+| unbind                   |              0x00000006 |
+| replace_sm               |              0x00000007 |
+| cancel_sm                |              0x00000008 |
+| bind_transceiver         |              0x00000009 |
+| outbind                  |              0x0000000B |
+| enquire_link             |              0x00000015 |
+| submit_multi             |              0x00000021 |
+| alert_notification       |              0x00000102 |
+| data_sm                  |              0x00000103 |
+| broadcast_sm             |              0x00000111 |
+| query_broadcast_sm       |              0x00000112 |
+| cancel_broadcast_sm      |              0x00000113 |
+| generic_nack             |              0x80000000 |
+| bind_receiver_resp       |              0x80000001 |
+| bind_transmitter_resp    |              0x80000002 |
+| query_sm_resp            |              0x80000003 |
+| submit_sm_resp           |              0x80000004 |
+| deliver_sm_resp          |              0x80000005 |
+| unbind_resp              |              0x80000006 |
+| replace_sm_resp          |              0x80000007 |
+| cancel_sm_resp           |              0x80000008 |
+| bind_transceiver_resp    |              0x80000009 |
+| enquire_link_resp        |              0x80000015 |
+| submit_multi_resp        |              0x80000021 |
+| data_sm_resp             |              0x80000103 |
+| broadcast_sm_resp        |              0x80000111 |
+| query_broadcast_sm_resp  |              0x80000112 |
+| cancel_broadcast_sm_resp |              0x80000113 |
+| Reserved for MC Vendor   | 0x00010200 - 0x000102FF |
+| Reserved for MC Vendor   | 0x80010200 - 0x800102FF |
+
+** 4.7.6 command_status, error_status_code
+
+| Command Status Name                    |                 Value |
+|----------------------------------------+-----------------------|
+| ESME_ROK                               |            0x00000000 |
+| ESME_RINVMSGLEN                        |            0x00000001 |
+| ESME_RINVCMDLEN                        |            0x00000002 |
+| ESME_RINVCMDID                         |            0x00000003 |
+| ESME_RINVBNDSTS                        |            0x00000004 |
+| ESME_RALYBND                           |            0x00000005 |
+| ESME_RINVPRTFLG                        |            0x00000006 |
+| ESME_RINVREGDLVFLG                     |            0x00000007 |
+| ESME_RSYSERR                           |            0x00000008 |
+| ESME_RINVSRCADR                        |            0x0000000A |
+| ESME_RINVDSTADR                        |            0x0000000B |
+| ESME_RINVMSGID                         |            0x0000000C |
+| ESME_RBINDFAIL                         |            0x0000000D |
+| ESME_RINVPASWD                         |            0x0000000E |
+| ESME_RINVSYSID                         |            0x0000000F |
+| ESME_RCANCELFAIL                       |            0x00000011 |
+| ESME_RREPLACEFAIL                      |            0x00000013 |
+| ESME_RMSGQFUL                          |            0x00000014 |
+| ESME_RINVSERTYP                        |            0x00000015 |
+| ESME_RINVNUMDESTS                      |            0x00000033 |
+| ESME_RINVDLNAME                        |            0x00000034 |
+| ESME_RINVDESTFLAG                      |            0x00000040 |
+| ESME_RINVSUBREP                        |            0x00000042 |
+| ESME_RINVESMCLASS                      |            0x00000043 |
+| ESME_RCNTSUBDL                         |            0x00000044 |
+| ESME_RSUBMITFAIL                       |            0x00000045 |
+| ESME_RINVSRCTON                        |            0x00000048 |
+| ESME_RINVSRCNPI                        |            0x00000049 |
+| ESME_RINVDSTTON                        |            0x00000050 |
+| ESME_RINVDSTNPI                        |            0x00000051 |
+| ESME_RINVSYSTYP                        |            0x00000053 |
+| ESME_RINVREPFLAG                       |            0x00000054 |
+| ESME_RINVNUMMSGS                       |            0x00000055 |
+| ESME_RTHROTTLED                        |            0x00000058 |
+| ESME_RINVSCHED                         |            0x00000061 |
+| ESME_RINVEXPIRY                        |            0x00000062 |
+| ESME_RINVDFTMSGID                      |            0x00000063 |
+| ESME_RX_T_APPN                         |            0x00000064 |
+| ESME_RX_P_APPN                         |            0x00000065 |
+| ESME_RX_R_APPN                         |            0x00000066 |
+| ESME_RQUERYFAIL                        |            0x00000067 |
+| ESME_RINVTLVSTREAM                     |            0x000000C0 |
+| ESME_RTLVNOTALLWD                      |            0x000000C1 |
+| ESME_RINVTLVLEN                        |            0x000000C2 |
+| ESME_RMISSINGTLV                       |            0x000000C3 |
+| ESME_RINVTLVVAL                        |            0x000000C4 |
+| ESME_RDELIVERYFAILURE                  |            0x000000FE |
+| ESME_RUNKNOWNERR                       |            0x000000FF |
+| ESME_RSERTYPUNAUTH                     |            0x00000100 |
+| ESME_RPROHIBITED                       |            0x00000101 |
+| ESME_RSERTYPUNAVAIL                    |            0x00000102 |
+| ESME_RSERTYPDENIED                     |            0x00000103 |
+| ESME_RINVDCS                           |            0x00000104 |
+| ESME_RINVSRCADDRSUBUNIT                |            0x00000105 |
+| ESME_RINVDSTADDRSUBUNIT                |            0x00000106 |
+| ESME_RINVBCASTFREQINT                  |            0x00000107 |
+| ESME_RINVBCASTALIAS_NAME               |            0x00000108 |
+| ESME_RINVBCASTAREAFMT                  |            0x00000109 |
+| ESME_RINVNUMBCAST_AREAS                |            0x0000010A |
+| ESME_RINVBCASTCNTTYPE                  |            0x0000010B |
+| ESME_RINVBCASTMSGCLASS                 |            0x0000010C |
+| ESME_RBCASTFAIL                        |            0x0000010D |
+| ESME_RBCASTQUERYFAIL                   |            0x0000010E |
+| ESME_RBCASTCANCELFAIL                  |            0x0000010F |
+| ESME_RINVBCAST_REP                     |            0x00000110 |
+| ESME_RINVBCASTSRVGRP                   |            0x00000111 |
+| ESME_RINVBCASTCHANIND                  |            0x00000112 |
+| Reserved for MC vendor specific errors | 0x00000400-0x000004FF |
+
+** 4.7.7 data_coding
+
+** 4.7.8 destination_addr
+
+** 4.7.9 dest_flag
+
+| dest_flag Value | Meaning                |
+|-----------------+------------------------|
+|            0x01 | SME Address            |
+|            0x02 | Distribution List Name |
+
+** 4.7.10 dl_name
+
+** 4.7.11 esme_addr
+
+** 4.7.12 esm_class
+
+** 4.7.13 interface_version
+
+** 4.7.14 message_id
+
+** 4.7.15 message_state
+
+| Message State | Value | Type         |
+|---------------+-------+--------------|
+| SCHEDULED     |     0 | Intermediate |
+| ENROUTE       |     1 | Intermediate |
+| DELIVERED     |     2 | Final        |
+| EXPIRED       |     3 | Final        |
+| DELETED       |     4 | Final        |
+| UNDELIVERABLE |     5 | Final        |
+| ACCEPTED      |     6 | Final        |
+| UNKNOWN       |     7 | N/A          |
+| REJECTED      |     8 | Final        |
+| SKIPPED       |     9 | Final        |
+
+** 4.7.16 no_unsuccess
+
+** 4.7.17 number_of_dests
+
+** 4.7.18 password
+
+** 4.7.19 priority_flag
+
+** 4.7.20 protocol_id
+
+** 4.7.21 registered_delivery
+
+** 4.7.22 replace_if_present_flag
+
+|   Value | Meaning                 |
+|---------+-------------------------|
+|       0 | Don’t replace (default) |
+|       1 | Replace                 |
+| 2 - 255 | Reserved                |
+
+** 4.7.23 scheduled_delivery_time, validity_period, final_date
+
+** 4.7.24 sequence_number
+
+** 4.7.25 service_type
+
+** 4.7.26 short_message
+
+** 4.7.27 sm_default_msg_id
+
+** 4.7.28 sm_length
+
+** 4.7.29 source_addr
+
+** 4.7.30 system_id
+
+** 4.7.31 system_type
+
+* 4.8 PDU TLV Definitions
+
+| Tag                          |  Value | Wireless Network Technology |
+|------------------------------+--------+-----------------------------|
+| dest_addr_subunit            | 0x0005 | GSM                         |
+| dest_network_type            | 0x0006 | Generic                     |
+| dest_bearer_type             | 0x0007 | Generic                     |
+| dest_telematics_id           | 0x0008 | GSM                         |
+| source_addr_subunit          | 0x000D | GSM                         |
+| source_network_type          | 0x000E | Generic                     |
+| source_bearer_type           | 0x000F | Generic                     |
+| source_telematics_id         | 0x0010 | GSM                         |
+| qos_time_to_live             | 0x0017 | Generic                     |
+| payload_type                 | 0x0019 | Generic                     |
+| additional_status_info_text  | 0x001D | Generic                     |
+| receipted_message_id         | 0x001E | Generic                     |
+| ms_msg_wait_facilities       | 0x0030 | GSM                         |
+| privacy_indicator            | 0x0201 | CDMA, TDMA                  |
+| source_subaddress            | 0x0202 | CDMA, TDMA                  |
+| dest_subaddress              | 0x0203 | CDMA, TDMA                  |
+| user_message_reference       | 0x0204 | Generic                     |
+| user_response_code           | 0x0205 | CDMA, TDMA                  |
+| source_port                  | 0x020A | Generic                     |
+| dest_port                    | 0x020B | Generic                     |
+| sar_msg_ref_num              | 0x020C | Generic                     |
+| language_indicator           | 0x020D | CDMA, TDMA                  |
+| sar_total_segments           | 0x020E | Generic                     |
+| sar_segment_seqnum           | 0x020F | Generic                     |
+| sc_interface_version         | 0x0210 | Generic                     |
+| callback_num_pres_ind        | 0x0302 | TDMA                        |
+| callback_num_atag            | 0x0303 | TDMA                        |
+| number_of_messages           | 0x0304 | CDMA                        |
+| callback_num                 | 0x0381 | CDMA, TDMA, GSM, iDEN       |
+| dpf_result                   | 0x0420 | Generic                     |
+| set_dpf                      | 0x0421 | Generic                     |
+| ms_availability_status       | 0x0422 | Generic                     |
+| network_error_code           | 0x0423 | Generic                     |
+| message_payload              | 0x0424 | Generic                     |
+| delivery_failure_reason      | 0x0425 | Generic                     |
+| more_messages_to_send        | 0x0426 | GSM                         |
+| message_state                | 0x0427 | Generic                     |
+| congestion_state             | 0x0428 | Generic                     |
+| ussd_service_op              | 0x0501 | GSM (USSD)                  |
+| broadcast_channel_indicator  | 0x0600 | GSM                         |
+| broadcast_content_type       | 0x0601 | CDMA, TDMA, GSM             |
+| broadcast_content_type_info  | 0x0602 | CDMA, TDMA                  |
+| broadcast_message_class      | 0x0603 | GSM                         |
+| broadcast_rep_num            | 0x0604 | GSM                         |
+| broadcast_frequency_interval | 0x0605 | CDMA, TDMA, GSM             |
+| broadcast_area_identifier    | 0x0606 | CDMA, TDMA, GSM             |
+| broadcast_error_status       | 0x0607 | CDMA, TDMA, GSM             |
+| broadcast_area_success       | 0x0608 | GSM                         |
+| broadcast_end_time           | 0x0609 | CDMA, TDMA, GSM             |
+| broadcast_service_group      | 0x060A | CDMA, TDMA                  |
+| billing_identification       | 0x060B | Generic                     |
+| source_network_id            | 0x060D | Generic                     |
+| dest_network_id              | 0x060E | Generic                     |
+| source_node_id               | 0x060F | Generic                     |
+| dest_node_id                 | 0x0610 | Generic                     |
+| dest_addr_np_resolution      | 0x0611 | CDMA, TDMA (US Only)        |
+| dest_addr_np_information     | 0x0612 | CDMA, TDMA (US Only)        |
+| dest_addr_np_country         | 0x0613 | CDMA, TDMA (US Only)        |
+| display_time                 | 0x1201 | CDMA, TDMA                  |
+| sms_signal                   | 0x1203 | TDMA                        |
+| ms_validity                  | 0x1204 | CDMA, TDMA                  |
+| alert_on_message_delivery    | 0x130C | CDMA                        |
+| its_reply_type               | 0x1380 | CDMA                        |
+| its_session_info             | 0x1383 | CDMA                        |
+
+** 4.8.4.1 additional_status_info_text
+
+** 4.8.4.2 alert_on_message_delivery
+
+0 = Use mobile default alert (Default)
+1 = Use low-priority alert
+2 = Use medium-priority alert
+3 = Use high-priority alert
+
+** 4.8.4.3 billing_identification
+
+** 4.8.4.4 broadcast_area_identifier, failed_broadcast_area_identifier
+
+Octet 1 is used to specify the area format. Ref. 4.8.4.4.1
+The remaining data is used to specify the broadcast area details.
+
+*** 4.8.4.4.1 Broadcast Area Format types
+
+| Format        | Format Value | Size Octets  | Value Type   | Description                                                                                                | Technology |
+|---------------+--------------+--------------+--------------+------------------------------------------------------------------------------------------------------------+------------|
+| alias/name    |         0x00 | Var. Max.100 | Octet String | This field allows specification of an area by name.                                                        | Generic    |
+| ellipsoid_arc |         0x01 | Var. Max.100 | Octet String | This field allows specification of an area as an ellipsoid arc. Ref. [3GPP TS 23.032] Sections: 5.7, 7.3.7 | GSM        |
+| polygon       |         0x02 | Var. Max.100 | Octet String | This field allows specification of an area as a polygon. Ref. [3GPP TS 23.032] Sections: 5.4, 7.3.4        | GSM        |
+
+** 4.8.4.5 broadcast_area_success
+
+0-100 = allowed range
+255 = Information not available
+
+** 4.8.4.6 broadcast_content_type_info
+
+** 4.8.4.7 broadcast_channel_indicator
+
+0 = Basic Broadcast Channel (Default)
+1 = Extended Broadcast Channel
+
+** 4.8.4.8 broadcast_content_type
+
+The first octet is a Type of Network tag indicating the network type.
+Valid Tag values are:
+0 = Generic
+1 = GSM [23041]
+2 = TDMA [IS824][ANSI-41]
+3 = CDMA [IS824][IS637]
+
+Octets 2-3 contain the broadcast content type. The
+following values apply when this is set to 0 (Generic):
+
+Encoding Content Type
+
+|        | System Services                         |
+| 0x0000 | Index                                   |
+| 0x0001 | Emergency Broadcasts                    |
+| 0x0002 | IRDB Download                           |
+|        | News Services                           |
+| 0x0010 | News Flashes                            |
+| 0x0011 | General News (Local)                    |
+| 0x0012 | General News (Regional)                 |
+| 0x0013 | General News (National)                 |
+| 0x0014 | General News (International)            |
+| 0x0015 | Business/Financial News (Local)         |
+| 0x0016 | Business/Financial News (Regional)      |
+| 0x0017 | Business/Financial News (National)      |
+| 0x0018 | Business/Financial News (International) |
+| 0x0019 | Sports News (Local)                     |
+| 0x001A | Sports News (Regional)                  |
+| 0x001B | Sports News (National)                  |
+| 0x001C | Sports News (International)             |
+| 0x001D | Entertainment News (Local)              |
+| 0x001E | Entertainment News (Regional)           |
+| 0x001F | Entertainment News (National)           |
+| 0x0020 | Entertainment News (International)      |
+|        | Subscriber Information Services         |
+| 0x0021 | Medical/Health/Hospitals                |
+| 0x0022 | Doctors                                 |
+| 0x0023 | Pharmacy                                |
+| 0x0030 | Local Traffic/Road Reports              |
+| 0x0031 | Long Distance Traffic/Road Reports      |
+| 0x0032 | Taxis                                   |
+| 0x0033 | Weather                                 |
+| 0x0034 | Local Airport Flight Schedules          |
+| 0x0035 | Restaurants                             |
+| 0x0036 | Lodgings                                |
+| 0x0037 | Retail Directory                        |
+| 0x0038 | Advertisements                          |
+| 0x0038 | Advertisements                          |
+| 0x0039 | Stock Quotes                            |
+| 0x0040 | Employment Opportunities                |
+| 0x0041 | Technology News                         |
+|        | Carrier Information Services            |
+| 0x0070 | District (Base Station Info)            |
+| 0x0071 | Network Information                     |
+|        | Subscriber Care Services                |
+| 0x0080 | Operator Services                       |
+| 0x0081 | Directory Enquiries (National)          |
+| 0x0082 | Directory Enquiries (International)     |
+| 0x0083 | Customer Care (National)                |
+| 0x0084 | Customer Care (International)           |
+| 0x0085 | Local Date/Time/Time Zone               |
+|        | Multi Category Services                 |
+| 0x0100 | Multi Category Services                 |
+
+** 4.8.4.9 broadcast_end_time
+
+This field is encoded in absolute UTC format as specified in Section 4.7.23.4
+
+** 4.8.4.10 broadcast_error_status
+
+The value is one of the SMPP Error Code values as defined in Section 4.7.6
+
+** 4.8.4.11 broadcast _frequency _interval
+
+Octet 1: specifies the Units of Time specified as follows:
+| Encoding | Time Unit                 |
+|----------+---------------------------|
+|     0x00 | As frequently as possible |
+|     0x08 | seconds                   |
+|     0x09 | minutes                   |
+|     0x0A | hours                     |
+|     0x0B | days                      |
+|     0x0C | weeks                     |
+|     0x0D | months                    |
+|     0x0E | years                     |
+
+Octet 2 + Octet 3: specifies the number of the specified time units in
+an unsigned integral format.
+
+** 4.8.4.12 broadcast_message_class
+
+0x00 = No Class Specified (default)
+0x02 = Class 1 (User Defined)
+0x02 = Class 2 (User Defined)
+0x03 = Class 3 (Terminal Equipment)
+
+** 4.8.4.13 broadcast_rep_num
+
+** 4.8.4.14 broadcast_service_group
+
+** 4.8.4.15 callback_num
+
+** 4.8.4.16 callback_num_atag
+
+** 4.8.4.17 callback_num_pres_ind
+
+| Bits | 7......0 |
+|      | 0000ppss |
+
+The Presentation Indicator is encoded in bits 2 and 3 as follows:
+00 = Presentation Allowed
+01 = Presentation Restricted
+10 = Number Not Available
+11 = Reserved
+
+The Screening Indicator is encoded in bits 0 and 1 as follows:
+00 = User provided, not screened
+01 = User provided, verified and passed
+10 = User provided, verified and failed
+11 = Network Provided.
+
+** 4.8.4.18 congestion_state
+
+0 = Idle
+1-29 = Low Load
+30-49 = Medium Load
+50-79 = High Load
+80-90 = Optimum Load
+90-99 = Nearing Congestion
+100 = Congested / Maximum Load
+
+** 4.8.4.19 delivery_failure_reason
+
+0 = Destination unavailable
+1 = Destination Address Invalid (e.g. suspended, no SMS capability, etc.)
+2 = Permanent network error
+3 = Temporary network error
+
+** 4.8.4.20 dest_addr_np_country
+
+** 4.8.4.21 dest_addr_np_information
+
+** 4.8.4.22 dest_addr_np_resolution
+
+0 = query has not been performed (default)
+1 = query has been performed, number not ported
+2 = query has been performed, number ported
+
+** 4.8.4.23 dest_addr_subunit
+
+0x00 = Unknown (default)
+0x01 = MS Display
+0x02 = Mobile Equipment
+0x03 = Smart Card 1 (expected to be SIM if a SIM exists in the MS)
+0x04 = External Unit 1
+
+** 4.8.4.24 dest_bearer_type
+
+0x00 = Unknown
+0x01 = SMS
+0x02 = Circuit Switched Data (CSD)
+0x03 = Packet Data
+0x04 = USSD
+0x05 = CDPD
+0x06 = DataTAC
+0x07 = FLEX/ReFLEX
+0x08 = Cell Broadcast (cell cast)
+
+** 4.8.4.25 dest_network_id
+
+See 4.8.4.56
+
+** 4.8.4.26 dest_network_type
+
+0x00 = Unknown
+0x01 = GSM
+0x02 = ANSI-136/TDMA
+0x03 = IS-95/CDMA
+0x04 = PDC
+0x05 = PHS
+0x06 = iDEN
+0x07 = AMPS
+0x08 = Paging Network
+
+** 4.8.4.27 dest_node_id
+
+** 4.8.4.28 dest_subaddress
+
+See 4.8.4.60 for parameter encoding.
+
+** 4.8.4.29 dest_telematics_id
+
+Octet1 is used to represent the protocol_id field as used by GSM.
+
+See 4.7.20
+
+** 4.8.4.30 dest_port
+
+** 4.8.4.31 display_time
+
+0 = Temporary
+1 = Default (default)
+2 = Invoke
+
+** 4.8.4.32 dpf_result
+
+0 = DPF not set
+1 = DPF set
+
+** 4.8.4.33 its_reply_type
+
+0 = Digit
+1 = Number
+2 = Telephone No.
+3 = Password
+4 = Character Line
+5 = Menu
+6 = Date
+7 = Time
+8 = Continue
+
+** 4.8.4.34 its_session_info
+
+| Bits      | 7......0 |
+|-----------+----------|
+| (octet 1) | SSSSSSSS |
+| (octet 2) | NNNNNNNE |
+
+Octet 1 contains the session number (0 - 255) encoded in binary.
+
+The sequence number of the dialogue unit (as
+assigned by the ESME) within the session is
+encoded in bits 7..1 of octet 2.
+
+The End of Session Indicator indicates the
+message is the end of the conversation session
+and is encoded in bit 0 of octet 2 as follows:
+0 = End of Session Indicator inactive.
+1 = End of Session Indicator active.
+
+** 4.8.4.35 language_indicator
+
+0 = unspecified (default)
+1 = English
+2 = French
+3 = Spanish
+4 = German
+5 = Portuguese
+Refer to [CMT-136] for other values
+
+** 4.8.4.36 message_payload
+
+** 4.8.4.37 message_state
+
+Values as per section 4.7.15
+
+** 4.8.4.38 more_messages_to_send
+
+0 = No more messages to follow
+1 = More messages to follow (default)
+
+** 4.8.4.39 ms_availability_status
+
+0 = Available (Default)
+1 = Denied (e.g. suspended, no SMS capability, etc.)
+2 = Unavailable
+
+** 4.8.4.40 ms_msg_wait_facilities
+
+| Bits | 7......0 |
+|------+----------|
+|      | I00000TT |
+
+The Indicator is encoded in bit 7 as follows:
+0 = Set Indication Inactive
+1 = Set Indication Active
+
+The Type of Message associated with the MWI is encoded in bits 0 and 1 as follows:
+00 = Voicemail Message Waiting
+01 = Fax Message Waiting
+10 = Electronic Mail Message Waiting
+11 = Other Message Waiting
+
+** 4.8.4.41 ms_validity
+
+Octet 1: specifies validity behaviour
+0 = Store Indefinitely (default)
+1 = Power Down
+2 = Valid until Registration Area Changes
+3 = Display Only
+4 = Relative time period (which is specified in the following 3 octets.)
+values 5 to 255 are reserved
+
+Octet 2-4 are optional and when specified, provide
+extended validity information
+
+Octet 2: specifies the Units of Time
+| Encoding    | Time Unit |
+|-------------+-----------|
+| 00 00 00 00 | seconds   |
+| 00 00 00 01 | minutes   |
+| 00 00 00 10 | hours     |
+| 00 00 00 11 | days      |
+| 00 00 01 00 | weeks     |
+| 00 00 01 01 | months    |
+| 00 00 01 10 | years     |
+
+Octet3 + Octet 4: specifies the number of the specified time units in
+an unsigned integer format.
+
+** 4.8.4.42 network_error_code
+
+| Sub-field    | Size | Type    |
+|--------------+------+---------|
+| Network Type |    1 | Integer |
+| Error Code   |    2 | Integer |
+
+The first octet indicates the network type.
+The following values are defined:
+1 = ANSI 136 Access Denied Reason
+2 = IS 95 Access Denied Reason
+3 = GSM
+4 = ANSI 136 Cause Code
+5 = IS 95 Cause Code
+6 = ANSI-41 Error
+7 = SMPP Error
+8 = Message Center Specific
+
+The remaining two octets specify the actual network error code
+appropriate to the network type.
+
+** 4.8.4.43 number_of_messages
+
+0 to 99 = allowed values.
+
+** 4.8.4.44 payload_type
+
+0 = Default.
+In the case of a WAP application, the default higher layer message type is a WDP message. See [15]
+
+1= WCMP message.
+Wireless Control Message Protocol formatted data. See [14] for details.
+
+** 4.8.4.45 privacy_indicator
+
+0 = Privacy Level 0 (Not Restricted) (default)
+1 = Privacy Level 1 (Restricted)
+2 = Privacy Level 2 (Confidential)
+3 = Privacy Level 3 (Secret)
+
+** 4.8.4.46 qos_time_to_live
+
+** 4.8.4.47 receipted_message_id
+
+** 4.8.4.48 sar_msg_ref_num
+
+** 4.8.4.49 sar_segment_seqnum
+
+** 4.8.4.50 sar_total_segments
+
+** 4.8.4.51 sc_interface_version
+
+values as per 4.7.13 (interface_version)
+
+** 4.8.4.52 set_dpf
+
+0 = Setting of DPF for delivery failure to MS not requested
+1 = Setting of DPF for delivery failure requested (default)
+
+** 4.8.4.53 sms_signal
+
+Encoded as per [CMT-136]
+
+** 4.8.4.54 source_addr_subunit
+
+See 4.8.4.23
+
+** 4.8.4.55 source_bearer_type
+
+See 4.8.4.24
+
+** 4.8.4.56 source_network_id
+
+For GSM Networks:
+1 + MCC+ MNC; (1cccnn) Ref. [1]
+
+For TDMA or CDMA Networks:
+2 + MCC+ SID; (2cccsssss) Ref. [12]
+
+For ESME Operators:
+3 + MCC + address type ind. + unique address
+
+The following address type indicators are defined:
+| Type         | Value |
+|--------------+-------|
+| IP Address   |     1 |
+| Alphanumeric |     2 |
+| E.164        |     3 |
+| X.212        |     4 |
+
+** 4.8.4.57 source_network_type
+
+See 4.8.4.26
+
+** 4.8.4.58 source_node_id
+
+** 4.8.4.59 source_port
+
+** 4.8.4.60 source_subaddress
+
+Valid Tag values are:
+00000001 - Reserved
+00000010 - Reserved
+10000000 - NSAP (Even) [ITUT X.213]
+10001000 - NSAP (Odd) [ITUT X.213]
+10100000 - User Specified
+
+The remaining octets contain the subaddress.
+
+** 4.8.4.61 source_telematics_id
+
+See 4.8.4.29
+
+** 4.8.4.62 user_message_reference
+
+** 4.8.4.63 user_response_code
+
+0 to 255 (IS-95 CDMA)
+0 to 15 (CMT-136 TDMA)
+
+** 4.8.4.64 ussd_service_op
+
+0 = PSSD indication
+1 = PSSR indication
+2 = USSR request
+3 = USSN request
+4 to 15 = reserved
+16 = PSSD response
+17 = PSSR response
+18 = USSR confirm
+19 = USSN confirm
+20 to 31 = reserved
+32 to 255 = reserved for vendor specific USSD operations
