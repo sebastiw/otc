@@ -1438,16 +1438,16 @@ decode_address(Bin, _Opts) ->
 
 %% T1.112.3
 decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
-    {SSN, Bin1} = case SSNI of
-                      0 -> {undefined, Bin0};
-                      1 -> <<SSN0:8/big, Rest0/binary>> = Bin0,
-                           {parse_ssn(SSN0), Rest0}
-                  end,
-    {PC, Bin2} = case PCI of
-                     0 -> {undefined, Bin1};
-                     1 -> <<NCM:8, NC:8, NI:8, Rest1/binary>> = Bin1,
-                          {<<NI:8, NC:8, NCM:8>>, Rest1}
+    {PC, Bin1} = case PCI of
+                     0 -> {undefined, Bin0};
+                     1 -> <<NCM:8, NC:8, NI:8, Rest0/binary>> = Bin0,
+                          {<<NI:8, NC:8, NCM:8>>, Rest0}
                  end,
+    {SSN, Bin2} = case SSNI of
+                      0 -> {undefined, Bin1};
+                      1 -> <<SSN0:8/big, Rest1/binary>> = Bin1,
+                           {parse_ssn(SSN0), Rest1}
+                  end,
     GT = case GTI of
              2#0000 ->
                  undefined;
