@@ -23,7 +23,7 @@ udt_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => undefined,
+                  point_code => <<16#1234:16>>,
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -66,7 +66,7 @@ xudt_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => undefined,
+                  point_code => <<16#1234:16>>,
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -114,7 +114,7 @@ xudt_opt_segmentation_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => undefined,
+                  point_code => <<16#1234:16>>,
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -174,7 +174,7 @@ udts_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => undefined,
+                  point_code => <<16#1234:16>>,
                   routing_indicator => global_title,
                   subsystem_number => msc},
             message_type => udts,
@@ -218,7 +218,7 @@ xudts_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => undefined,
+                  point_code => <<16#1234:16>>,
                   routing_indicator => global_title,
                   subsystem_number => msc},
             hop_counter => 15,
@@ -255,7 +255,7 @@ xudts_arbitrary_pointers_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => undefined,
+                  point_code => <<16#1234:16>>,
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -299,7 +299,7 @@ xudts_ansi_test() ->
                       #{address => "11234567890",
                         translation_type => 14},
                   national_use_indicator => true,
-                  point_code => undefined},
+                  point_code => <<16#214365:24>>},
             called_party_address =>
                 #{subsystem_number => hlr,
                   routing_indicator => global_title,
@@ -318,9 +318,10 @@ xudts_ansi_test() ->
     ?assertEqual(Bin, NewBin).
 
 called_party_address_itu() ->
-    <<16#0B, %% Length
-      2#0_0_0100_1_0, %% AddressIndicator (GTI=0100, SSN)
-      16#08, %% SSN
+    <<16#0D, %% Length
+      2#0_0_0100_1_1, %% AddressIndicator (GTI=0100, SSN, PC)
+      16#3412:16, %% PC
+      16#08, %% SSN=MSC
       16#00, %% TT
       16#12, %% NP/ES
       16#04, %% NAI
@@ -328,14 +329,15 @@ called_party_address_itu() ->
 calling_party_address_itu() ->
     <<16#0B, %% Length
       2#0_0_0100_1_0, %% AddressIndicator (GTI=0100, SSN)
-      16#06, %% SSN
+      16#06, %% SSN=HLR
       16#00, %% TT
       16#11, %% NP/ES
       16#08, %% NAI
       16#64, 16#27, 16#89, 16#78, 16#67, 16#06>>.
 called_party_address_ansi() ->
-    <<16#09, %% Length
-      2#1_0_0010_0_1, %% AddressIndicator (NI, GTI=0010, SSN)
+    <<16#0C, %% Length
+      2#1_0_0010_1_1, %% AddressIndicator (NI, GTI=0010, PC, SSN)
+      16#654321:24, %% PC
       16#07, %% SSN
       16#0E, %% TT
       16#11, 16#32, 16#54, 16#76, 16#98, 16#00>>.
