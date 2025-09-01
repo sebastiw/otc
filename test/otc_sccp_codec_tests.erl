@@ -3,15 +3,16 @@
 -include_lib("eunit/include/eunit.hrl").
 
 udt_test() ->
-    CdPA = called_party_address(),
-    CgPA = calling_party_address(),
+    CdPA = called_party_address_itu(),
+    CdPALen = byte_size(CdPA),
+    CgPA = calling_party_address_itu(),
+    CgPALen = byte_size(CgPA),
     D = data(),
 
-    Bin = <<16#09, %% MsgType,
+    Bin = <<16#09, %% MsgType
             16#80, %% ProtocolClass
-            16#03, 16#0e, 16#19, %% Pointers
-            16#0b, CdPA/binary,
-            16#0b, CgPA/binary,
+            16#03, (16#02 + CdPALen), (16#01 + CdPALen + CgPALen), %% Pointers
+            CdPA/binary, CgPA/binary,
             16#18, D/binary>>,
     Exp = #{called_party_address =>
                 #{global_title =>
@@ -46,14 +47,15 @@ udt_test() ->
     ?assertEqual(Bin, NewBin).
 
 xudt_test() ->
-    CdPA = called_party_address(),
-    CgPA = calling_party_address(),
+    CdPA = called_party_address_itu(),
+    CdPALen = byte_size(CdPA),
+    CgPA = calling_party_address_itu(),
+    CgPALen = byte_size(CgPA),
     D = data(),
 
     Bin = <<16#11, 16#81, 16#0f,
-            16#04, 16#0f, 16#1a, 16#00, %% Pointers
-            16#0b, CdPA/binary,
-            16#0b, CgPA/binary,
+            16#04, (16#03 + CdPALen), (16#02 + CdPALen + CgPALen), 16#00, %% Pointers
+            CdPA/binary, CgPA/binary,
             16#18, D/binary>>,
     Exp = #{called_party_address =>
                 #{global_title =>
@@ -89,15 +91,17 @@ xudt_test() ->
     ?assertEqual(Bin, NewBin).
 
 xudt_opt_segmentation_test() ->
-    CdPA = called_party_address(),
-    CgPA = calling_party_address(),
+    CdPA = called_party_address_itu(),
+    CdPALen = byte_size(CdPA),
+    CgPA = calling_party_address_itu(),
+    CgPALen = byte_size(CgPA),
     D = data(),
+    DLen = byte_size(D),
 
     Bin = <<16#11, 16#01, 16#0D,
-            16#04, 16#0F, 16#1A, 16#32, %% pointers
-            16#0B, CdPA/binary,
-            16#0B, CgPA/binary,
-            16#18, D/binary,
+            16#04, (16#03 + CdPALen), (16#02 + CdPALen + CgPALen), (16#01 + CdPALen + CgPALen + DLen + 1), %% pointers
+            CdPA/binary, CgPA/binary,
+            DLen, D/binary,
             16#10, 16#04, 16#01, 16#02, 16#03, 16#04, %% segmentation
             16#00>>, %% end of optional parameters
 
@@ -139,13 +143,15 @@ xudt_opt_segmentation_test() ->
       ?assertEqual(Bin, NewBin).
 
 udts_test() ->
-    CdPA = called_party_address(),
-    CgPA = calling_party_address(),
+    CdPA = called_party_address_itu(),
+    CdPALen = byte_size(CdPA),
+    CgPA = calling_party_address_itu(),
+    CgPALen = byte_size(CgPA),
     D = data(),
 
-    Bin = <<16#0a, 16#01, 16#03, 16#0e, 16#19,
-            16#0b, CgPA/binary,
-            16#0b, CdPA/binary,
+    Bin = <<16#0a, 16#01,
+            16#03, (16#02 + CgPALen), (16#01 + CgPALen + CdPALen),
+            CgPA/binary, CdPA/binary,
             16#18, D/binary>>,
     Exp = #{called_party_address =>
                 #{global_title =>
@@ -180,13 +186,15 @@ udts_test() ->
     ?assertEqual(Bin, NewBin).
 
 xudts_test() ->
-    CdPA = called_party_address(),
-    CgPA = calling_party_address(),
+    CdPA = called_party_address_itu(),
+    CdPALen = byte_size(CdPA),
+    CgPA = calling_party_address_itu(),
+    CgPALen = byte_size(CgPA),
     D = data(),
 
-    Bin = <<16#12, 16#01, 16#0f, 16#04, 16#0f, 16#1a, 16#00,
-            16#0b, CgPA/binary,
-            16#0b, CdPA/binary,
+    Bin = <<16#12, 16#01, 16#0f,
+            16#04, (16#03 + CgPALen), (16#02 + CgPALen + CdPALen), 16#00,
+            CgPA/binary, CdPA/binary,
             16#18, D/binary>>,
 
     Exp = #{called_party_address =>
@@ -224,17 +232,19 @@ xudts_test() ->
 
 xudts_arbitrary_pointers_test() ->
     %% parameters in arbitrary order
-    CdPA = called_party_address(),
-    CgPA = calling_party_address(),
+    CdPA = called_party_address_itu(),
+    CdPALen = byte_size(CdPA),
+    CgPA = calling_party_address_itu(),
+    CgPALen = byte_size(CgPA),
     D = data(),
 
-    Bin = <<16#12, 16#07, 16#0f, 16#10, 16#03, 16#1a, 16#00,
-            16#0b, CgPA/binary,
-            16#0b, CdPA/binary,
+    Bin = <<16#12, 16#07, 16#0f,
+            (16#04 + CgPALen), 16#03, (16#02 + CgPALen + CdPALen), 16#00,
+            CgPA/binary, CdPA/binary,
             16#18, D/binary>>,
-    Expected = <<16#12, 16#07, 16#0f, 16#04, 16#0f, 16#1a, 16#00,
-                 16#0b, CdPA/binary,
-                 16#0b, CgPA/binary,
+    Expected = <<16#12, 16#07, 16#0f,
+                 16#04, (16#03 + CdPALen), (16#02 + CdPALen + CgPALen), 16#00,
+                 CdPA/binary, CgPA/binary,
                  16#18, D/binary>>,
     Exp = #{called_party_address =>
                 #{global_title =>
@@ -270,14 +280,15 @@ xudts_arbitrary_pointers_test() ->
     ?assertEqual(Expected, NewBin).
 
 xudts_ansi_test() ->
-    CdPA = <<16#89, 16#07, 16#0E, 16#11, 16#32, 16#54, 16#76, 16#98, 16#00>>,
-    CgPA = <<16#89, 16#06, 16#0E, 16#51, 16#34, 16#12, 16#89, 16#67, 16#05>>,
-
+    CdPA = called_party_address_ansi(),
+    CdPALen = byte_size(CdPA),
+    CgPA = calling_party_address_ansi(),
+    CgPALen = byte_size(CgPA),
     D = data(),
 
-    Bin = <<16#11, 16#80, 16#05, 16#04, 16#0D, 16#16, 16#00,
-            16#09, CgPA/binary,
-            16#09, CdPA/binary,
+    Bin = <<16#11, 16#80, 16#05,
+            16#04, (16#03 + CgPALen), (16#02 + CgPALen + CdPALen), 16#00,
+            CgPA/binary, CdPA/binary,
             16#18, D/binary>>,
 
     Exp = #{message_type => xudt,
@@ -306,20 +317,35 @@ xudts_ansi_test() ->
     NewBin = otc_sccp:encode(Val, #{address_type => ansi}),
     ?assertEqual(Bin, NewBin).
 
-called_party_address() ->
-    <<16#12, %% AddressIndicator
+called_party_address_itu() ->
+    <<16#0B, %% Length
+      2#0_0_0100_1_0, %% AddressIndicator (GTI=0100, SSN)
       16#08, %% SSN
       16#00, %% TT
       16#12, %% NP/ES
-      16#04, %% NI
+      16#04, %% NAI
       16#64, 16#27, 16#11, 16#22, 16#11, 16#22>>.
-calling_party_address() ->
-    <<16#12, %% AddressIndicator
+calling_party_address_itu() ->
+    <<16#0B, %% Length
+      2#0_0_0100_1_0, %% AddressIndicator (GTI=0100, SSN)
       16#06, %% SSN
       16#00, %% TT
       16#11, %% NP/ES
-      16#08, %% NI
+      16#08, %% NAI
       16#64, 16#27, 16#89, 16#78, 16#67, 16#06>>.
+called_party_address_ansi() ->
+    <<16#09, %% Length
+      2#1_0_0010_0_1, %% AddressIndicator (NI, GTI=0010, SSN)
+      16#07, %% SSN
+      16#0E, %% TT
+      16#11, 16#32, 16#54, 16#76, 16#98, 16#00>>.
+calling_party_address_ansi() ->
+    <<16#09, %% Length
+      2#1_0_0010_0_1, %% AddressIndicator (NI, GTI=0010, SSN)
+      16#06, %% SSN
+      16#0E, %% TT
+      16#51, 16#34, 16#12, 16#89, 16#67, 16#05>>.
+
 data() ->
     <<16#01, 16#02, 16#03, 16#04, 16#05, 16#06, 16#07, 16#08,
       16#09, 16#0a, 16#0b, 16#0c, 16#0d, 16#0e, 16#0f, 16#10,
