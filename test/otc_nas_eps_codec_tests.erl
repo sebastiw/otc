@@ -3,7 +3,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 plain_attach_request_test_() ->
-    Bin = hexstream_to_binary(<<"0741710809101000001000100620200000000000040201d011">>),
+    Bin = binary:decode_hex(<<"0741710809101000001000100620200000000000040201d011">>),
     Map1 = #{protocol => nas_eps,
              security_header_type => plain_nas_message,
              protocol_discriminator => eps_mobility_management_messages},
@@ -31,20 +31,20 @@ plain_attach_request_test_() ->
     ].
 
 integrity_attach_request_test_() ->
-    Bin = hexstream_to_binary(<<"17be27ab2e3a0741610bf644f05180000ac0000c0305f"
-                                "070c0401100270233d011d12720808021100100001081"
-                                "0600000000830600000000000d00000a00000500001000"
-                                "5244f05100015c0a003103e5e03e11034f18a640080402"
-                                "600000021f005d0103e0c1">>),
-    Bin2 = hexstream_to_binary(<<"0233d011d12720808021100100001081"
-                                 "0600000000830600000000000d00000a00000500001000"
-                               >>),
+    Bin = binary:decode_hex(<<"17be27ab2e3a0741610bf644f05180000ac0000c0305f"
+                              "070c0401100270233d011d12720808021100100001081"
+                              "0600000000830600000000000d00000a00000500001000"
+                              "5244f05100015c0a003103e5e03e11034f18a640080402"
+                              "600000021f005d0103e0c1">>),
+    Bin2 = binary:decode_hex(<<"0233d011d12720808021100100001081"
+                               "0600000000830600000000000d00000a00000500001000"
+                             >>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected},
     Map2 = #{protocol => nas_eps_emm,
              sequence_number => <<58>>,
-             message_authentication_code => hexstream_to_binary(<<"be27ab2e">>)},
+             message_authentication_code => binary:decode_hex(<<"be27ab2e">>)},
     Map3 = #{protocol => nas_eps,
              protocol_discriminator =>
                  eps_mobility_management_messages,
@@ -85,8 +85,8 @@ integrity_attach_request_test_() ->
     ].
 
 plain_authentication_request_test_() ->
-    Bin = hexstream_to_binary(<<"075206a73180283e95708d1c6141a545b68a"
-                                "45100aa0a855812680002863ebdc835cec7c">>),
+    Bin = binary:decode_hex(<<"075206a73180283e95708d1c6141a545b68a"
+                              "45100aa0a855812680002863ebdc835cec7c">>),
     Map1 = #{protocol => nas_eps,
              security_header_type => plain_nas_message,
              protocol_discriminator => eps_mobility_management_messages},
@@ -94,15 +94,15 @@ plain_authentication_request_test_() ->
              message_type => authentication_request,
              nas_key_set_identifierasme => 6,
              authentication_parameter_rand_eps_challenge =>
-                 hexstream_to_binary(<<"a73180283e95708d1c6141a545b68a45">>),
+                 binary:decode_hex(<<"a73180283e95708d1c6141a545b68a45">>),
              authentication_parameter_autn_eps_challenge =>
-                 hexstream_to_binary(<<"0aa0a855812680002863ebdc835cec7c">>)},
+                 binary:decode_hex(<<"0aa0a855812680002863ebdc835cec7c">>)},
     [?_assertEqual({ok, [Map1, Map2]}, otc:decode(nas_eps, Bin)),
      ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2]))
     ].
 
 plain_authentication_response_test_() ->
-    Bin = hexstream_to_binary(<<"17f908e12d3c075308373f4dcdb2e7769b">>),
+    Bin = binary:decode_hex(<<"17f908e12d3c075308373f4dcdb2e7769b">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected},
@@ -121,34 +121,34 @@ plain_authentication_response_test_() ->
     ].
 
 security_mode_command_test_() ->
-    Bin = hexstream_to_binary(<<"37685cc2d900075d010605f070c04070">>),
+    Bin = binary:decode_hex(<<"37685cc2d900075d010605f070c04070">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected_eps_security},
     Map2 = #{protocol => nas_eps_emm,
              sequence_number => <<0>>,
-             message_authentication_code => hexstream_to_binary(<<"685cc2d9">>)},
+             message_authentication_code => binary:decode_hex(<<"685cc2d9">>)},
     Map3 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => plain_nas_message},
     Map4 = #{protocol => nas_eps_emm,
              message_type => security_mode_command,
              nas_key_set_identifier => 6,
-             replayed_ue_security_capabilities => hexstream_to_binary(<<"f070c04070">>),
+             replayed_ue_security_capabilities => binary:decode_hex(<<"f070c04070">>),
              selected_nas_security_algorithms => <<1>>},
     [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
      ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))
     ].
 
 security_mode_complete_test_() ->
-    Bin = hexstream_to_binary(<<"47cd4d049b00075e">>),
+    Bin = binary:decode_hex(<<"47cd4d049b00075e">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type =>
                  integrity_protected_ciphered_eps_security},
     Map2 = #{protocol => nas_eps_emm,
              sequence_number => <<0>>,
-             message_authentication_code => hexstream_to_binary(<<"cd4d049b">>)},
+             message_authentication_code => binary:decode_hex(<<"cd4d049b">>)},
     Map3 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => plain_nas_message},
@@ -159,12 +159,12 @@ security_mode_complete_test_() ->
     ].
 
 esm_information_request_test_() ->
-    Bin = hexstream_to_binary(<<"2745d8f29b010233d9">>),
+    Bin = binary:decode_hex(<<"2745d8f29b010233d9">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected_ciphered},
     Map2 = #{protocol => nas_eps_emm,
-             message_authentication_code => hexstream_to_binary(<<"45d8f29b0">>),
+             message_authentication_code => binary:decode_hex(<<"45d8f29b">>),
              sequence_number => <<1>>},
     Map3 = #{protocol => nas_eps,
              eps_bearer_identity => 0,
@@ -177,13 +177,13 @@ esm_information_request_test_() ->
     ].
 
 esm_information_response_test_() ->
-    Bin = hexstream_to_binary(<<"270bef195a010233da280908696e7465726e6574">>),
+    Bin = binary:decode_hex(<<"270bef195a010233da280908696e7465726e6574">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected_ciphered},
     Map2 = #{protocol => nas_eps_emm,
              sequence_number => <<1>>,
-             message_authentication_code => hexstream_to_binary(<<"0bef195a">>)},
+             message_authentication_code => binary:decode_hex(<<"0bef195a">>)},
     Map3 = #{protocol => nas_eps,
              eps_bearer_identity => 0,
              protocol_discriminator => eps_session_management_messages},
@@ -196,19 +196,19 @@ esm_information_response_test_() ->
     ].
 
 attach_accept_test_() ->
-    Bin = hexstream_to_binary(<<"27118d83930207420149062044f051000100725233c10"
-                                "1091c08696e7465726e6574066d6e63303135066d6363"
-                                "343430046770727305010a0802615d0100301023911f9"
-                                "396fefe764bffff00f700f7003203843401005e04fefe"
-                                "f7f7272780000d0401010101000d04010000018021100"
-                                "300001081060101010183060100000100100205dc500b"
-                                "f644f05180000ac0000e0359496401015e0106">>),
-    Bin3 = hexstream_to_binary(<<"5233c10"
-                                 "1091c08696e7465726e6574066d6e63303135066d6363"
-                                 "343430046770727305010a0802615d0100301023911f9"
-                                 "396fefe764bffff00f700f7003203843401005e04fefe"
-                                 "f7f7272780000d0401010101000d04010000018021100"
-                                 "300001081060101010183060100000100100205dc">>),
+    Bin = binary:decode_hex(<<"27118d83930207420149062044f051000100725233c10"
+                              "1091c08696e7465726e6574066d6e63303135066d6363"
+                              "343430046770727305010a0802615d0100301023911f9"
+                              "396fefe764bffff00f700f7003203843401005e04fefe"
+                              "f7f7272780000d0401010101000d04010000018021100"
+                              "300001081060101010183060100000100100205dc500b"
+                              "f644f05180000ac0000e0359496401015e0106">>),
+    Bin3 = binary:decode_hex(<<"5233c10"
+                               "1091c08696e7465726e6574066d6e63303135066d6363"
+                               "343430046770727305010a0802615d0100301023911f9"
+                               "396fefe764bffff00f700f7003203843401005e04fefe"
+                               "f7f7272780000d0401010101000d04010000018021100"
+                               "300001081060101010183060100000100100205dc">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected_ciphered},
@@ -258,8 +258,8 @@ attach_accept_test_() ->
     ].
 
 activate_default_eps_bearer_context_accept_test_() ->
-    Bin = hexstream_to_binary(<<"2714573c4602074300035200c2">>),
-    Bin3 = hexstream_to_binary(<<"5200c2">>),
+    Bin = binary:decode_hex(<<"2714573c4602074300035200c2">>),
+    Bin3 = binary:decode_hex(<<"5200c2">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected_ciphered},
@@ -287,9 +287,9 @@ activate_default_eps_bearer_context_accept_test_() ->
     ].
 
 pdn_connectivity_request_test_() ->
-    Bin = hexstream_to_binary(<<"27ed17dacc030234d031280403696d732729808021100"
-                                "1000010810600000000830600000000000d0000030000"
-                                "0100000c00000a00000500001000">>),
+    Bin = binary:decode_hex(<<"27ed17dacc030234d031280403696d732729808021100"
+                              "1000010810600000000830600000000000d0000030000"
+                              "0100000c00000a00000500001000">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected_ciphered},
@@ -313,7 +313,7 @@ pdn_connectivity_request_test_() ->
     ].
 
 pdn_connectivity_reject_test_() ->
-    Bin = hexstream_to_binary(<<"27b31470a6030234d11a3701b6">>),
+    Bin = binary:decode_hex(<<"27b31470a6030234d11a3701b6">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => integrity_protected_ciphered},
@@ -333,7 +333,7 @@ pdn_connectivity_reject_test_() ->
     ].
 
 service_request_test_() ->
-    Bin = hexstream_to_binary(<<"c7c4c952">>),
+    Bin = binary:decode_hex(<<"c7c4c952">>),
     Map1 = #{protocol => nas_eps,
              protocol_discriminator => eps_mobility_management_messages,
              security_header_type => service_request},
@@ -346,8 +346,29 @@ service_request_test_() ->
     ].
 
 invalid_message_test() ->
-    Bin = hexstream_to_binary(<<"deadbeef">>),
+    Bin = binary:decode_hex(<<"deadbeef">>),
     ?assertError({case_clause, extension_of_PD}, otc_nas_eps:decode(Bin)).
 
-hexstream_to_binary(In) ->
-    list_to_binary([binary_to_integer(<<A, B>>, 16) || <<A, B>> <= In]).
+nas_eps_emm_test_() ->
+    Bin = binary:decode_hex(<<"17F1E1AF1B1E07453B0BF634F211800188E008A408">>),
+    Map1 = #{protocol => nas_eps,
+             security_header_type => integrity_protected,
+             protocol_discriminator =>
+                 eps_mobility_management_messages},
+    Map2 = #{protocol => nas_eps_emm,
+             sequence_number => <<30>>,
+             message_authentication_code => <<"ñá¯\e">>},
+    Map3 = #{protocol => nas_eps,
+             security_header_type => plain_nas_message,
+             protocol_discriminator =>
+                 eps_mobility_management_messages},
+    Map4 = #{protocol => nas_eps_emm,
+             direction => ue_originated,
+             message_type => detach_request,
+             nas_key_set_identifier => 3,
+             eps_mobile_identity =>
+                 <<246,52,242,17,128,1,136,224,8,164,8>>,
+             detach_type => 11},
+    [?_assertEqual({ok, [Map1, Map2, Map3, Map4]}, otc:decode(nas_eps, Bin)),
+     ?_assertEqual({ok, Bin}, otc:encode([Map1, Map2, Map3, Map4]))].
+
