@@ -82,24 +82,24 @@
                   | nas_eps | nas_eps_emm | nas_eps_esm
                   | gtpv1c | gtpv2c | sgsap.
 
-next({sctp_ppi, V}) -> otc_sctp_ppi:next(V);
-next({sctp, V}) -> otc_sctp:next(V);
-next({m2pa, V}) -> otc_m2pa:next(V);
-next({m3ua, V}) -> otc_m3ua:next(V);
-next({mtp3, V}) -> otc_mtp3:next(V);
-next({sccp, V}) -> otc_sccp:next(V);
-next({sccp_mgmt, V}) -> otc_sccp_mgmt:next(V);
-next({tcap, V}) -> otc_tcap:next(V);
-next({map, V}) -> otc_map:next(V);
-next({nas_eps, V}) -> otc_nas_eps:next(V);
-next({nas_eps_emm, V}) -> otc_nas_eps_emm:next(V);
-next({nas_eps_esm, V}) -> otc_nas_eps_esm:next(V);
-next({nas_5gs, V}) -> otc_nas_5gs:next(V);
-next({nas_5gs_5gmm, V}) -> otc_nas_5gs_5gmm:next(V);
-next({nas_5gs_5gsm, V}) -> otc_nas_5gs_5gsm:next(V);
-next({gtpv1c, V}) -> otc_gtpv1c:next(V);
-next({gtpv2c, V}) -> otc_gtpv2c:next(V);
-next({sgsap, V}) -> otc_sgsap:next(V).
+callback_module(sctp_ppi) -> otc_sctp_ppi;
+callback_module(sctp) -> otc_sctp;
+callback_module(m2pa) -> otc_m2pa;
+callback_module(m3ua) -> otc_m3ua;
+callback_module(mtp3) -> otc_mtp3;
+callback_module(sccp) -> otc_sccp;
+callback_module(sccp_mgmt) -> otc_sccp_mgmt;
+callback_module(tcap) -> otc_tcap;
+callback_module(map) -> otc_map;
+callback_module(nas_eps) -> otc_nas_eps;
+callback_module(nas_eps_emm) -> otc_nas_eps_emm;
+callback_module(nas_eps_esm) -> otc_nas_eps_esm;
+callback_module(nas_5gs) -> otc_nas_5gs;
+callback_module(nas_5gs_5gmm) -> otc_nas_5gs_5gmm;
+callback_module(nas_5gs_5gsm) -> otc_nas_5gs_5gsm;
+callback_module(gtpv1c) -> otc_gtpv1c;
+callback_module(gtpv2c) -> otc_gtpv2c;
+callback_module(sgsap) -> otc_sgsap.
 
 sctp_ppi(PPI) -> sctp_ppi(PPI, #{}).
 sctp(D) -> sctp(D, #{}).
@@ -203,14 +203,17 @@ decode(Proto, Data, Opts) when is_atom(Proto) ->
 decode_next({Proto, Data}, Headers, Opts) ->
     try ?MODULE:Proto(Data, options(Proto, Opts)) of
         {Header, Payload} when is_map(Header) ->
+            NewHeader = Header#{protocol => Proto},
             case next({Proto, Header}, Opts) of
                 '$stop' ->
-                    {ok, {lists:reverse([Header#{protocol => Proto}|Headers]), Payload}};
+                    {ok, {lists:reverse([NewHeader|Headers]), Payload}};
                 {ok, Next} ->
-                    decode_next({Next, Payload}, [Header#{protocol => Proto}|Headers], Opts)
+                    next_opts({Next, NewHeader}, Opts),
+                    decode_next({Next, Payload}, [NewHeader|Headers], Opts)
             end;
         Header when is_map(Header) ->
-            {ok, lists:reverse([Header#{protocol => Proto}|Headers])}
+            NewHeader = Header#{protocol => Proto},
+            {ok, lists:reverse([NewHeader|Headers])}
     catch E:R:S ->
             ?LOG_ERROR(#{E => R, stack => S}),
             {error, lists:reverse(Headers), Data}
@@ -218,12 +221,42 @@ decode_next({Proto, Data}, Headers, Opts) ->
 
 next({Proto, _Header}, #{stop_after := Proto}) ->
     '$stop';
-next({Proto, Header}, _) ->
-    next({Proto, Header}).
+next({Proto, V}, _) ->
+    Module = callback_module(Proto),
+    Module:next(V).
+
+next_opts({Proto, PrevHeader}, Opts) ->
+    UserOpts = options(Proto, Opts),
+    propagated_options({Proto, PrevHeader}, UserOpts).
+
+propagated_options({Proto, PrevHeader}, UserOpts) ->
+    Module = callback_module(Proto),
+    case erlang:function_exported(Module, propagated_options, 2) of
+        true ->
+            Module:propagated_options(PrevHeader, UserOpts);
+        false ->
+            UserOpts
+    end.
 
 -spec options(protocol(), options()) -> options().
-options(Proto, Opts) when is_atom(Proto) ->
-    maps:get(Proto, Opts, #{}).
+%%% Inherits options for sub protocols/modules if they are not
+%%% explicitly specified by the user.
+%%% e.g. lets the sccp_mgmt layer inherit the options from sccp layer.
+options(Proto, Opts) when is_atom(Proto), is_map(Opts), is_map_key(Proto, Opts) ->
+    maps:get(Proto, Opts);
+options(sccp_mgmt, Opts) ->
+    options(sccp, Opts);
+options(nas_eps_emm, Opts) ->
+    options(nas_eps, Opts);
+options(nas_eps_esm, Opts) ->
+    options(nas_eps, Opts);
+options(nas_5gs_5gmm, Opts) ->
+    options(nas_5gs, Opts);
+options(nas_5gs_5gsm, Opts) ->
+    options(nas_5gs, Opts);
+options(Proto, Opts) when is_atom(Proto), is_map(Opts) ->
+    %% No options found
+    #{}.
 
 -spec otc:encapsulate(payload()) -> data().
 -spec otc:encapsulate(payload(), options()) -> data().
