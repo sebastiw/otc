@@ -186,14 +186,17 @@
 
 *** 8.2.11.2 Detach request UE terminated detach
 
- | IEI | Information Element             | Type/Reference             | Presence | Format | Length |
- |-----+---------------------------------+----------------------------+----------+--------+--------|
- |     | Protocol discriminator          | Protocol discriminator 9.2 | M        | V      | 1/2    |
- |     | Security header type            | Security header type 9.3.1 | M        | V      | 1/2    |
- |     | Detach request message identity | Message type 9.8           | M        | V      | 1      |
- |     | Detach type                     | Detach type 9.9.3.7        | M        | V      | 1/2    |
- |     | Spare half octet                | Spare half octet 9.9.2.9   | M        | V      | 1/2    |
- |  53 | EMM cause                       | EMM cause 9.9.3.9          | O        | TV     | 2      |
+ | IEI | Information Element             | Type/Reference                       | Presence | Format | Length |
+ |-----+---------------------------------+--------------------------------------+----------+--------+--------|
+ |     | Protocol discriminator          | Protocol discriminator 9.2           | M        | V      |    1/2 |
+ |     | Security header type            | Security header type 9.3.1           | M        | V      |    1/2 |
+ |     | Detach request message identity | Message type 9.8                     | M        | V      |      1 |
+ |     | Detach type                     | Detach type 9.9.3.7                  | M        | V      |    1/2 |
+ |     | Spare half octet                | Spare half octet 9.9.2.9             | M        | V      |    1/2 |
+ |  53 | EMM cause                       | EMM cause 9.9.3.9                    | O        | TV     |      2 |
+ |  1C | Lower bound timer value         | GPRS timer 3 9.9.3.16B               | O        | TLV    |      3 |
+ |  1D | forbidden roaming list          | Tracking area identity list 9.9.3.33 | O        | TLV    |   9-98 |
+ |  1E | forbidden provision list        | Tracking area identity list 9.9.3.33 | O        | TLV    |   9-98 |
 
 *** 8.2.12 Downlink NAS Transport
 
