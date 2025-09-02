@@ -73,6 +73,48 @@
   `OTC_NO_ASN1=true`, `OTC_NO_DIA=true` before compiling otc (not that
   the value doesn't matter).
 
+* Options
+
+  Options are given as a map.
+
+  Parameters:
+
+  stop_after - the value is given as an atom; the protocol after which
+               to stop decoding. If not given, will try to decode as
+               much as possible.
+
+  Protocol - where Protocol is the atom name of the codec, e.g. m2pa, mtp3,
+             sccp, nas_eps, sgsap, gtpv1_c, gtpv2_c.
+             The Value should be the option map for the specified Protocol.
+
+#+BEGIN_SRC erlang
+  otc:codec({m3ua, Bin}, #{stop_after => sccp, sccp => #{address_type => ansi}}).
+#+END_SRC
+
+** sccp options
+
+   Parameters:
+
+   address_type - used to determine if the SCCP address is ANSI or ITU
+                  formatted. Default is ITU.
+
+#+BEGIN_SRC erlang
+   #{address_type => ansi}
+#+END_SRC
+
+** nas_eps options
+
+   Parameters:
+
+   direction - used to determine if the message is UE originating or
+               UE terminating, which is needed for for instance detach-requests.
+               Without this option OTC will try to determine it itself.
+
+#+BEGIN_SRC erlang
+   #{direction := 'id-downlinkNASTransport' | 'id-uplinkNASTransport'}
+#+END_SRC
+
+
 * Linguistics
 
   decode - function that converts from binary format to an Erlang map
