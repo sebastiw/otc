@@ -221,7 +221,7 @@ decode_next({Proto, Data}, Headers, Opts) ->
 
 next({Proto, _Header}, #{stop_after := Proto}) ->
     '$stop';
-next({Proto, Header}, _) ->
+next({Proto, V}, _) ->
     Module = callback_module(Proto),
     Module:next(V).
 
