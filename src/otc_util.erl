@@ -18,7 +18,8 @@
          true_to_one/1,
          zero_to_true/1,
          true_to_zero/1,
-         write_to_pcap/2
+         write_to_pcap/2,
+         write_to_pcap/3
         ]).
 
 -include_lib("eunit/include/eunit.hrl").
@@ -145,16 +146,19 @@ gsm_packed_test() ->
     ?assertEqual(binary:decode_hex(<<"E779FB56768F01">>), encode_gsm_packed("gsm7enc")),
     ?assertEqual(<<79,234,16>>, encode_gsm_packed("OTC")).
 
-write_to_pcap(Filename, {[LowestLayer|_], _} = Tuple) ->
-  {ok, Bin} = otc:encode(Tuple),
-  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer), #{}),
-  write_to_pcap(Filename, PPI, Bin);
-write_to_pcap(Filename, [LowestLayer|_] = List) ->
-  {ok, Bin} = otc:encode(List),
-  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer), #{}),
-  write_to_pcap(Filename, PPI, Bin).
+write_to_pcap(Filename, Tuple) ->
+    write_to_pcap(Filename, Tuple, #{}).
 
-write_to_pcap(Filename, PPI, Bin) ->
+write_to_pcap(Filename, {[LowestLayer|_], _} = Tuple, Opts) ->
+  {ok, Bin} = otc:encode(Tuple, Opts),
+  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer), Opts),
+  write_bin_to_pcap(Filename, PPI, Bin);
+write_to_pcap(Filename, [LowestLayer|_] = List, Opts) ->
+  {ok, Bin} = otc:encode(List, Opts),
+  PPI = otc_sctp_ppi:codec(maps:get(protocol, LowestLayer), Opts),
+  write_bin_to_pcap(Filename, PPI, Bin).
+
+write_bin_to_pcap(Filename, PPI, Bin) ->
   DataChunk = <<16#28024345:32, %% TSN
                 0:16, 0:16, %% Stream identifier, sequence number
                 PPI:32, %% PPI
