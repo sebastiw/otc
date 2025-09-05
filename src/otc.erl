@@ -59,7 +59,8 @@
          nas_5gs_5gsm/1,
          gtpv1c/1,
          gtpv2c/1,
-         sgsap/1
+         sgsap/1,
+         smpp/1
         ]).
 
 %% General functions
@@ -80,7 +81,7 @@
 
 -type protocol() :: sctp_ppi | sctp | m3ua | m2pa | mtp3 | sccp | sccp_mgmt | tcap | map
                   | nas_eps | nas_eps_emm | nas_eps_esm
-                  | gtpv1c | gtpv2c | sgsap.
+                  | gtpv1c | gtpv2c | sgsap | smpp.
 
 callback_module(sctp_ppi) -> otc_sctp_ppi;
 callback_module(sctp) -> otc_sctp;
@@ -99,7 +100,8 @@ callback_module(nas_5gs_5gmm) -> otc_nas_5gs_5gmm;
 callback_module(nas_5gs_5gsm) -> otc_nas_5gs_5gsm;
 callback_module(gtpv1c) -> otc_gtpv1c;
 callback_module(gtpv2c) -> otc_gtpv2c;
-callback_module(sgsap) -> otc_sgsap.
+callback_module(sgsap) -> otc_sgsap;
+callback_module(smpp) -> otc_smpp.
 
 sctp_ppi(PPI) -> sctp_ppi(PPI, #{}).
 sctp(D) -> sctp(D, #{}).
@@ -119,6 +121,7 @@ nas_5gs_5gsm(D) -> nas_5gs_5gsm(D, #{}).
 gtpv1c(D) -> gtpv1c(D, #{}).
 gtpv2c(D) -> gtpv2c(D, #{}).
 sgsap(D) -> sgsap(D, #{}).
+smpp(D) -> smpp(D, #{}).
 
 sctp_ppi(PPI, Opts) -> otc_sctp_ppi:codec(PPI, Opts).
 sctp(D, Opts) -> otc_sctp:codec(D, Opts).
@@ -138,6 +141,7 @@ nas_5gs_5gsm(D, Opts) -> otc_nas_5gs_5gsm:codec(D, Opts).
 gtpv1c(D, Opts) -> otc_gtpv1c:codec(D, Opts).
 gtpv2c(D, Opts) -> otc_gtpv2c:codec(D, Opts).
 sgsap(D, Opts) -> otc_sgsap:codec(D, Opts).
+smpp(D, Opts) -> otc_smpp:codec(D, Opts).
 
 %% General functions -----------------------------------------------------------
 
