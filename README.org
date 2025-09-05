@@ -144,6 +144,7 @@
 | SGSAP   | 3GPP TS 29.118 v17.0.0        | X      | X      |                                   | Parameters might be binary decoded (i.e. passthrough) |
 | GTPv1-C | 3GPP TS 29.060 v17.3.0        | X      | X      |                                   | Parameters might be binary decoded (i.e. passthrough) |
 | GTPv2-C | 3GPP TS 29.274 v17.7.0        | X      | X      |                                   | Parameters might be binary decoded (i.e. passthrough) |
+| SMPP    | SMS Forum SMPP V5.0           | x      | x      |                                   | Parameters might be binary decoded (i.e. passthrough) |
 
 * Diameter interfaces
 
