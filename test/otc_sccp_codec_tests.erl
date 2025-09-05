@@ -337,8 +337,8 @@ calling_party_address_itu() ->
 called_party_address_ansi() ->
     <<16#0C, %% Length
       2#1_0_0010_1_1, %% AddressIndicator (NI, GTI=0010, PC, SSN)
-      16#654321:24, %% PC
       16#07, %% SSN
+      16#654321:24, %% PC
       16#0E, %% TT
       16#11, 16#32, 16#54, 16#76, 16#98, 16#00>>.
 calling_party_address_ansi() ->
