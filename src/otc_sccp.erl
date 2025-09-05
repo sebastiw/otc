@@ -1438,16 +1438,16 @@ decode_address(Bin, _Opts) ->
 
 %% T1.112.3
 decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
-    {PC, Bin1} = case PCI of
-                     0 -> {undefined, Bin0};
-                     1 -> <<NCM:8, NC:8, NI:8, Rest0/binary>> = Bin0,
-                          {<<NI:8, NC:8, NCM:8>>, Rest0}
-                 end,
-    {SSN, Bin2} = case SSNI of
-                      0 -> {undefined, Bin1};
-                      1 -> <<SSN0:8/big, Rest1/binary>> = Bin1,
-                           {parse_ssn(SSN0), Rest1}
+    {SSN, Bin1} = case SSNI of
+                      0 -> {undefined, Bin0};
+                      1 -> <<SSN0:8/big, Rest0/binary>> = Bin0,
+                           {parse_ssn(SSN0), Rest0}
                   end,
+    {PC, Bin2} = case PCI of
+                     0 -> {undefined, Bin1};
+                     1 -> <<NCM:8, NC:8, NI:8, Rest1/binary>> = Bin1,
+                          {<<NI:8, NC:8, NCM:8>>, Rest1}
+                 end,
     GT = case GTI of
              2#0000 ->
                  undefined;
@@ -1572,6 +1572,10 @@ encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
              true -> 1;
              _ -> 0
          end,
+    {SSNI, SSNBin} = case maps:get(subsystem_number, Address, undefined) of
+                         undefined -> {0, <<>>};
+                         SSN -> {1, <<(compose_ssn(SSN)):8/big>>}
+                     end,
     {PCI, PCBin} = case maps:get(point_code, Address, undefined) of
                        undefined ->
                            {0, <<>>};
@@ -1579,10 +1583,6 @@ encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
                            <<NI:8, NC:8, NCM:8>> = PC,
                            {1, <<NCM:8, NC:8, NI:8>>}
                    end,
-    {SSNI, SSNBin} = case maps:get(subsystem_number, Address, undefined) of
-                         undefined -> {0, <<>>};
-                         SSN -> {1, <<(compose_ssn(SSN)):8/big>>}
-                     end,
     RI = case RoutingInd of
              subsystem_number -> 1;
              global_title -> 0
@@ -1602,7 +1602,7 @@ encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
                            ES = compose_encoding_scheme(EncodingScheme, GlobalTitle),
                            {2#0001, <<TT:8/big, NP:4, ES:4, GT1/binary>>}
                    end,
-     <<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, PCBin/binary, SSNBin/binary, GTBin/binary>>.
+     <<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, SSNBin/binary, PCBin/binary, GTBin/binary>>.
 
 encode_itu_address(#{routing_indicator := RoutingInd} = Address) ->
     NR = case maps:get(national_use_indicator, Address, false) of
