@@ -18,7 +18,8 @@
          true_to_one/1,
          zero_to_true/1,
          true_to_zero/1,
-         format_point_code/2,
+         parse_point_code/2,
+         compose_point_code/2,
          write_to_pcap/2,
          write_to_pcap/3
         ]).
@@ -148,24 +149,78 @@ gsm_packed_test_() ->
      ?_assertEqual(binary:decode_hex(<<"E779FB56768F01">>), encode_gsm_packed("gsm7enc")),
      ?_assertEqual(<<79,234,16>>, encode_gsm_packed("OTC"))].
 
-format_point_code(888, #ansi_pc{} = PC) ->
+
+%% Point Code formatting
+%%
+%% ANSI can either be represented as 8-8-8 (i.e. N-C-M Network-Cluster-Member)
+%% or as a decimal or hexadecimal integer.
+%% ITU can be represented as 3-8-3 (i.e. Z-R-SP Zone-Region-Signalling Point)
+%% or as a decimal or hexadecimal integer.
+-spec parse_point_code(string(), #{address_type := ansi}) -> ansi_point_code();
+                      (string(), _) -> itu_point_code();
+                      (integer(), #{address_type := ansi}) -> ansi_point_code();
+                      (integer(), _) -> itu_point_code().
+parse_point_code(Int, #{address_type := ansi}) when is_integer(Int) ->
+    #ansi_pc{network = (Int band 16#FF0000) bsr 16,
+             cluster = (Int band 16#00FF00) bsr 8,
+             member = Int band 16#0000FF};
+parse_point_code(Int, _Opts) when is_integer(Int) ->
+    #itu_pc{zone = (Int band 2#00_111_000_00000_000) bsr 11,
+            region = (Int band 2#00_000_111_11111_000) bsr 3,
+            signalling_point = Int band 2#00_000_000_00000_111};
+parse_point_code(Str, #{address_type := ansi}) when is_list(Str) ->
+    case string:tokens(Str, "-") of
+        [NStr, CStr, MStr] ->
+            {N, []} = string:to_integer(NStr),
+            {C, []} = string:to_integer(CStr),
+            {M, []} = string:to_integer(MStr),
+            #ansi_pc{network = N, cluster = C, member = M};
+        _ ->
+            {error, invalid_format}
+    end;
+parse_point_code(Str, _Opts) when is_list(Str) ->
+    case string:tokens(Str, "-") of
+        [ZStr, RStr, SStr] ->
+            {Z, []} = string:to_integer(ZStr),
+            {R, []} = string:to_integer(RStr),
+            {S, []} = string:to_integer(SStr),
+            #itu_pc{zone = Z, region = R, signalling_point = S};
+        _ ->
+            {error, invalid_format}
+    end.
+
+-spec compose_point_code(Format :: 383, PC :: itu_point_code()) -> string();
+                        (Format :: 888, PC :: ansi_point_code()) -> string();
+                        (Format :: integer, PC :: itu_point_code() | ansi_point_code()) -> integer().
+compose_point_code(888, #ansi_pc{} = PC) ->
     #ansi_pc{network = N, cluster = C, member = M} = PC,
     io_lib:format("~B-~B-~B", [N, C, M]);
-format_point_code(383, #itu_pc{} = PC) ->
+compose_point_code(383, #itu_pc{} = PC) ->
     #itu_pc{zone = Z, region = R, signalling_point = S} = PC,
     io_lib:format("~B-~B-~B", [Z, R, S]);
-format_point_code(integer, #ansi_pc{} = PC) ->
+compose_point_code(integer, #ansi_pc{} = PC) ->
     #ansi_pc{network = N, cluster = C, member = M} = PC,
-    floor(N * math:pow(2, 16) + C * math:pow(2, 8) + M);
-format_point_code(integer, #itu_pc{} = PC) ->
+    ((N bsl 16) band 16#FF0000) + ((C bsl 8) band 16#00FF00) + (M band 16#0000FF);
+compose_point_code(integer, #itu_pc{} = PC) ->
     #itu_pc{zone = Z, region = R, signalling_point = S} = PC,
-    floor(Z * math:pow(2, 11) + R * math:pow(2, 3) + S).
+    ((Z bsl 11) band 2#00_111_00000000_000) + ((R bsl 3) band 2#00_000_11111111_000) + (S band 2#00_000_00000000_111).
 
-format_point_code_test_() ->
-    [?_assertEqual("100-40-3", format_point_code(888, #ansi_pc{network = 100, cluster = 40, member = 3})),
-     ?_assertEqual("2-243-3", format_point_code(383, #itu_pc{zone = 2, region = 243, signalling_point = 3})),
-     ?_assertEqual(6563843, format_point_code(integer, #ansi_pc{network = 100, cluster = 40, member = 3})),
-     ?_assertEqual(16#179B, format_point_code(integer, #itu_pc{zone = 2, region = 243, signalling_point = 3}))
+compose_point_code_test_() ->
+    [?_assertEqual("100-40-3", compose_point_code(888, #ansi_pc{network = 100, cluster = 40, member = 3})),
+     ?_assertEqual("2-243-3", compose_point_code(383, #itu_pc{zone = 2, region = 243, signalling_point = 3})),
+     ?_assertEqual(6563843, compose_point_code(integer, #ansi_pc{network = 100, cluster = 40, member = 3})),
+     ?_assertEqual(16#179B, compose_point_code(integer, #itu_pc{zone = 2, region = 243, signalling_point = 3}))
+    ].
+
+parse_point_code_test_() ->
+    [?_assertEqual(#ansi_pc{network = 100, cluster = 40, member = 3},
+                   parse_point_code("100-40-3", #{address_type => ansi})),
+     ?_assertEqual(#itu_pc{zone = 2, region = 243, signalling_point = 3},
+                   parse_point_code("2-243-3", #{})),
+     ?_assertEqual(#ansi_pc{network = 100, cluster = 40, member = 3},
+                   parse_point_code(6563843, #{address_type => ansi})),
+     ?_assertEqual(#itu_pc{zone = 2, region = 243, signalling_point = 3},
+                   parse_point_code(16#179B, #{}))
     ].
 
 write_to_pcap(Filename, Tuple) ->

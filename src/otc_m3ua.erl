@@ -5,14 +5,18 @@
          codec/2,
          next/1,
          decode/1,
-         encode/1,
-         normalize_point_code_mask/1,
-         decode_point_code/1,
-         encode_point_code/1]).
+         encode/1
+        ]).
+
+-export([normalize_point_code_mask/1,
+         decode_pc/1,
+         encode_pc/1]).
 
 -include("include/m3ua.hrl").
 -include("include/mtp3.hrl").
 -include("include/point_code.hrl").
+
+-include_lib("eunit/include/eunit.hrl").
 
 spec() ->
     "IETF RFC 4666 September 2006".
@@ -486,8 +490,8 @@ decode_parameter({routing_context = Name, _, _, SM}, Bin, Acc, _Opts) ->
     update_params(Name, SM, RCs, Acc);
 decode_parameter({protocol_data = Name, _, _, SM}, <<PDH:12/binary, UPD/binary>>, Acc, Opts) ->
     <<OPC:4/binary, DPC:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>> = PDH,
-    PD = #{originating_point_code => decode_point_code(OPC, Opts),
-           destination_point_code => decode_point_code(DPC, Opts),
+    PD = #{originating_point_code => decode_pc(OPC, Opts),
+           destination_point_code => decode_pc(DPC, Opts),
            service_indicator => parse_user_identity(SI),
            network_indicator => parse_network_indicator(NI),
            message_priority => MP,
@@ -498,7 +502,7 @@ decode_parameter({protocol_data = Name, _, _, SM}, <<PDH:12/binary, UPD/binary>>
 decode_parameter({correlation_id = Name, _, _, SM}, <<CI:32/big>>, Acc, _Opts) ->
     update_params(Name, SM, CI, Acc);
 decode_parameter({affected_point_code = Name, _, _, SM}, Bin, Acc, Opts) ->
-    APCs = [decode_point_code(PCBin, Opts) || <<PCBin:4/binary>> <= Bin],
+    APCs = [decode_pc(PCBin, Opts) || <<PCBin:4/binary>> <= Bin],
     update_params(Name, SM, APCs, Acc);
 decode_parameter({info_string = Name, _, _, SM}, Bin, Acc, _Opts) ->
     update_params(Name, SM, Bin, Acc);
@@ -542,14 +546,14 @@ decode_parameter({traffic_mode_type = Name, _, _, SM}, <<TMT:32/big>>, Acc, _Opt
         end,
     update_params(Name, SM, V, Acc);
 decode_parameter({destination_point_code = Name, _, _, SM}, PCBin, Acc, Opts) ->
-    PC = decode_point_code(PCBin, Opts),
+    PC = decode_pc(PCBin, Opts),
     update_params(Name, SM, PC, Acc);
 decode_parameter({service_indicators = Name, _, _, SM}, Bin, Acc, _Opts) ->
     SIs = [parse_user_identity(SI) || <<SI:8/big>> <= Bin],
     V = lists:dropwhile(fun ({reserved, 0}) -> true; (_) -> false end, lists:reverse(SIs)),
     update_params(Name, SM, lists:reverse(V), Acc);
 decode_parameter({originating_point_code_list = Name, _, _, SM}, Bin, Acc, Opts) ->
-    OPCs = [decode_point_code(PC, Opts) || <<PC:4/binary>> <= Bin],
+    OPCs = [decode_pc(PC, Opts) || <<PC:4/binary>> <= Bin],
     update_params(Name, SM, OPCs, Acc);
 decode_parameter({registration_result = Name, _, _, SM}, Bin, Acc, Opts) ->
     AllowedParameters = [{local_rk_identifier, 16#020a, mandatory, single},
@@ -665,14 +669,14 @@ encode_parameter(protocol_data, V, Opts) ->
     } = V,
     SI = compose_user_identity(ServiceInd),
     NI = compose_network_indicator(NetworkInd),
-    OPCBin = encode_point_code(OPC, Opts),
-    DPCBin = encode_point_code(DPC, Opts),
+    OPCBin = encode_pc(OPC, Opts),
+    DPCBin = encode_pc(DPC, Opts),
     PDH = <<OPCBin:4/binary, DPCBin:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>>,
     <<PDH:12/binary, UPD/binary>>;
 encode_parameter(correlation_id, CI, _Opts) ->
     <<CI:32/big>>;
 encode_parameter(affected_point_code, APCs, Opts) ->
-    V = [encode_point_code(APC, Opts) || APC <- APCs],
+    V = [encode_pc(APC, Opts) || APC <- APCs],
     binary:list_to_bin(V);
 encode_parameter(info_string, V, _Opts) ->
     V;
@@ -715,12 +719,12 @@ encode_parameter(traffic_mode_type, V, _Opts) ->
           end,
     <<TMT:32/big>>;
 encode_parameter(destination_point_code, PC, Opts) ->
-    encode_point_code(PC, Opts);
+    encode_pc(PC, Opts);
 encode_parameter(service_indicators, SIs, _Opts) ->
     V = [<<(compose_user_identity(SI)):8/big>> || SI <- SIs],
     binary:list_to_bin(V);
 encode_parameter(originating_point_code_list, OPCs, Opts) ->
-    V = [encode_point_code(OPC, Opts) || OPC <- OPCs],
+    V = [encode_pc(OPC, Opts) || OPC <- OPCs],
     binary:list_to_bin(V);
 encode_parameter(registration_result, V, Opts) ->
     AllowedParameters = [{local_rk_identifier, 16#020a, mandatory, single},
@@ -847,52 +851,72 @@ compose_network_indicator(national) -> ?MTP3_NETIND_NATIONAL;
 compose_network_indicator(national_spare) -> ?MTP3_NETIND_NATIONAL_SPARE;
 compose_network_indicator({reserved, R}) -> R.
 
-
 -spec normalize_point_code_mask(itu_point_code() | ansi_point_code()) -> [itu_point_code() | ansi_point_code()].
-%% Take a point code with a mask and return the individual point codes
+%% The Mask field can be used to identify a contiguous range of
+%% Affected Destination Point Codes
+%% The Mask parameter is an integer representing a bit mask that can
+%% be applied to the related Affected PC field.
+%% For example, a mask of "8" indicates that the last eight bits of
+%% the PC are "wildcarded".
 normalize_point_code_mask(#itu_pc{mask = Mask} = PC) ->
-    PCBin = encode_point_code(PC),
-    normalize_point_code_mask(Mask, PCBin, #{});
+    PCInt = otc_util:compose_point_code(integer, PC),
+    normalize_point_code_mask(Mask, PCInt, #{});
 normalize_point_code_mask(#ansi_pc{mask = Mask} = PC) ->
-    PCBin = encode_point_code(PC),
-    normalize_point_code_mask(Mask, PCBin, #{}).
+    PCInt = otc_util:compose_point_code(integer, PC),
+    normalize_point_code_mask(Mask, PCInt, #{}).
 
-normalize_point_code_mask(Mask, PCbin, Opts) ->
+normalize_point_code_mask(Mask, PCInt, Opts) ->
     MaskBits = trunc(math:pow(2, Mask) - 1),
-    LowPC = PCbin band (trunc(math:pow(2, 24) - 1) bxor MaskBits),
-    HighPC = PCbin bor MaskBits,
-    [decode_point_code(<<0:8, PC:24/big>>, Opts) || PC <- lists:seq(LowPC, HighPC)].
+    LowPC = PCInt band (trunc(math:pow(2, 24) - 1) bxor MaskBits),
+    HighPC = PCInt bor MaskBits,
+    [decode_pc(<<0:8, PC:24/big>>, Opts) || PC <- lists:seq(LowPC, HighPC)].
 
--spec decode_point_code(binary()) -> itu_point_code() | ansi_point_code().
-decode_point_code(Bin) ->
-    decode_point_code(Bin, #{}).
+normalize_point_code_mask_itu_test_() ->
+    ITUPC = #itu_pc{mask = 4, zone = 7, region = 16#FF, signalling_point = 7},
+    IPCs = normalize_point_code_mask(ITUPC),
+    [?_assertEqual(16, length(IPCs)), %% last 4 bits masked = 16 addresses
+     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FE, signalling_point = 0}, decode_pc(encode_pc(lists:nth(1, IPCs)), #{point_code => record})),
+     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FF, signalling_point = 7}, decode_pc(encode_pc(lists:nth(16, IPCs)), #{point_code => record}))
+    ].
 
-decode_point_code(<<Mask:8, 0:10, Zone:3, Region:8, SP:3>>, #{point_code := record}) ->
+normalize_point_code_mask_ansi_test_() ->
+    ANSIPC = #ansi_pc{mask = 4, network = 255, cluster = 255, member = 255},
+    APCs = normalize_point_code_mask(ANSIPC),
+    [?_assertEqual(16, length(APCs)), %% last 4 bits masked = 16 addresses
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#F0}, decode_pc(encode_pc(lists:nth(1, APCs)), #{point_code => record})),
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FF}, decode_pc(encode_pc(lists:nth(16, APCs)), #{point_code => record}))
+    ].
+
+-spec decode_pc(binary()) -> itu_point_code() | ansi_point_code().
+decode_pc(Bin) ->
+    decode_pc(Bin, #{}).
+
+decode_pc(<<Mask:8, 0:10, Zone:3, Region:8, SP:3>>, #{point_code := record}) ->
     #itu_pc{mask = Mask,
             zone = Zone,
             region = Region,
             signalling_point = SP
            };
-decode_point_code(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{point_code := record}) ->
+decode_pc(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{point_code := record}) ->
     #ansi_pc{mask = Mask,
              network = Network,
              cluster = Cluster,
              member = Member
             };
-decode_point_code(<<Mask:1/binary, 0:8, PC:2/binary>>, _Opts) ->
+decode_pc(<<Mask:1/binary, 0:8, PC:2/binary>>, _Opts) ->
     {Mask, PC};
-decode_point_code(<<Mask:1/binary, PC:3/binary>>, _Opts) ->
+decode_pc(<<Mask:1/binary, PC:3/binary>>, _Opts) ->
     {Mask, PC}.
 
--spec encode_point_code(itu_point_code() | ansi_point_code()) -> binary().
-encode_point_code(PC) ->
-    encode_point_code(PC, #{}).
+-spec encode_pc(itu_point_code() | ansi_point_code()) -> binary().
+encode_pc(PC) ->
+    encode_pc(PC, #{}).
 
-encode_point_code({Mask, <<PC:2/binary>>}, _Opts) ->
+encode_pc({Mask, <<PC:2/binary>>}, _Opts) ->
     <<Mask:1/binary, 0:8, PC/binary>>;
-encode_point_code({Mask, PC}, _Opts) ->
+encode_pc({Mask, PC}, _Opts) ->
     <<Mask:1/binary, PC/binary>>;
-encode_point_code(#itu_pc{mask = Mask, zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
+encode_pc(#itu_pc{mask = Mask, zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
     <<Mask:8, 0:10, Zone:3, Region:8, SP:3>>;
-encode_point_code(#ansi_pc{mask = Mask, network = Network, cluster = Cluster, member = Member}, _Opts) ->
+encode_pc(#ansi_pc{mask = Mask, network = Network, cluster = Cluster, member = Member}, _Opts) ->
     <<Mask:8, Network:8, Cluster:8, Member:8>>.
