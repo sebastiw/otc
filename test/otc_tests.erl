@@ -1,5 +1,7 @@
 -module(otc_tests).
 
+-include("include/point_code.hrl").
+
 -include_lib("eunit/include/eunit.hrl").
 
 decode_m3ua_no_payload_test() ->
@@ -41,8 +43,14 @@ decode_m3ua_sccp_payload_test() ->
              message_class => transfer,
              protocol_data =>
                  #{service_indicator => sccp,
-                   originating_point_code => <<0,0,5,4>>,
-                   destination_point_code => <<0,0,53,167>>,
+                   originating_point_code => #itu_pc{mask = 0,
+                                                     zone = 0,
+                                                     region = 16#A0,
+                                                     signalling_point = 4},
+                   destination_point_code => #itu_pc{mask = 0,
+                                                     zone = 6,
+                                                     region = 16#B4,
+                                                     signalling_point = 7},
                    network_indicator => national_spare,
                    message_priority => 0,
                    signalling_link_selection => 8}},
@@ -84,7 +92,8 @@ decode_m3ua_sccp_payload_test() ->
                    application_context_name => 'shortMsgMO-RelayContext-v3',
                    supported_versions => [version1]},
              otid => <<"721001B3">>},
-    Msg = otc:decode(m3ua, M3uaBin),
+    Msg = otc:decode(m3ua, M3uaBin, #{m3ua => #{point_code => record},
+                                      sccp => #{point_code => record}}),
     ?assertMatch({ok, [M3ua, Sccp, Tcap]}, Msg),
     NewBin = otc:encode({[M3ua, Sccp], TcapBin}),
     ?assertEqual({ok, M3uaBin}, NewBin).
@@ -96,7 +105,7 @@ udt_scmg_test() ->
              16#01>>, %% SSN
     ScMgBin = <<16#03, %% SCMG MsgType
                 16#06, %% Affected SSN
-                16#12, 16#34, %% Affected PC
+                16#34, 16#12, %% Affected PC
                 16#00>>, %% Subsystem multiplicity indicator
     SccpBin = <<16#09, %% SCCP MsgType,
                 16#80, %% ProtocolClass
@@ -121,11 +130,13 @@ udt_scmg_test() ->
              protocol_class => #{class => 0, options => return_on_error}},
     ScMg = #{protocol => sccp_mgmt,
              format_identifier => status_test,
-             affected_point_code => <<18,52>>,
+             affected_point_code => #itu_pc{zone = 2,
+                                            region = 70,
+                                            signalling_point = 4},
              affected_subsystem_number => hlr,
              subsystem_multiplicity_indicator => 0
             },
-    Val = otc:decode(sccp, SccpBin),
+    Val = otc:decode(sccp, SccpBin, #{sccp => #{point_code => record}}),
     ?assertEqual({ok, [Sccp, ScMg]}, Val),
     NewBin = otc:encode([Sccp, ScMg]),
     ?assertEqual({ok, SccpBin}, NewBin).

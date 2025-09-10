@@ -13,10 +13,14 @@
 -deprecated([{decode, 1, "Use decode/2 instead."}]).
 
 -export([parse_ssn/1,
-         compose_ssn/1
+         compose_ssn/1,
+         decode_pc/2,
+         encode_pc/2
         ]).
 
 -include("include/sccp.hrl").
+-include("include/point_code.hrl").
+
 -include_lib("eunit/include/eunit.hrl").
 
 spec() ->
@@ -1431,13 +1435,13 @@ encode_parameter(message_type_interworking, V, _Opts) ->
           end,
     <<0:1, Drop:1, 0:3, OMT:3>>.
 
-decode_address(Bin, #{address_type := ansi}) ->
-    decode_ansi_address(Bin);
-decode_address(Bin, _Opts) ->
-    decode_itu_address(Bin).
+decode_address(Bin, #{address_type := ansi} = Opts) ->
+    decode_ansi_address(Bin, Opts);
+decode_address(Bin, Opts) ->
+    decode_itu_address(Bin, Opts).
 
 %% T1.112.3
-decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
+decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>, Opts) ->
     {SSN, Bin1} = case SSNI of
                       0 -> {undefined, Bin0};
                       1 -> <<SSN0:8/big, Rest0/binary>> = Bin0,
@@ -1445,8 +1449,8 @@ decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
                   end,
     {PC, Bin2} = case PCI of
                      0 -> {undefined, Bin1};
-                     1 -> <<NCM:8, NC:8, NI:8, Rest1/binary>> = Bin1,
-                          {<<NI:8, NC:8, NCM:8>>, Rest1}
+                     1 -> <<PCBin:3/binary, Rest1/binary>> = Bin1,
+                          {decode_pc(PCBin, Opts), Rest1}
                  end,
     GT = case GTI of
              2#0000 ->
@@ -1477,11 +1481,11 @@ decode_ansi_address(<<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, Bin0/binary>>) ->
       point_code => PC
      }.
 
-decode_itu_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>) ->
+decode_itu_address(<<NR:1, RI:1, GTI:4, SSNI:1, PCI:1, Bin0/binary>>, Opts) ->
     {PC, Bin1} = case PCI of
                      0 -> {undefined, Bin0};
-                     1 -> <<LSB:8, 0:2, MSB:6, Rest0/binary>> = Bin0,
-                          {<<0:2, MSB:6, LSB:8>>, Rest0}
+                     1 -> <<PCBin:2/binary, Rest0/binary>> = Bin0,
+                          {decode_pc(PCBin, Opts), Rest0}
                  end,
     {SSN, Bin2} = case SSNI of
                       0 -> {undefined, Bin1};
@@ -1562,12 +1566,12 @@ encode_gt_part(#{encoding_scheme := national,
                  address := GT}) ->
     GT.
 
-encode_address(Address, #{address_type := ansi}) ->
-    encode_ansi_address(Address);
-encode_address(Address, _Opts) ->
-    encode_itu_address(Address).
+encode_address(Address, #{address_type := ansi} = Opts) ->
+    encode_ansi_address(Address, Opts);
+encode_address(Address, Opts) ->
+    encode_itu_address(Address, Opts).
 
-encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
+encode_ansi_address(#{routing_indicator := RoutingInd} = Address, Opts) ->
     NR = case maps:get(national_use_indicator, Address, false) of
              true -> 1;
              _ -> 0
@@ -1580,8 +1584,7 @@ encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
                        undefined ->
                            {0, <<>>};
                        PC ->
-                           <<NI:8, NC:8, NCM:8>> = PC,
-                           {1, <<NCM:8, NC:8, NI:8>>}
+                           {1, encode_pc(PC, Opts)}
                    end,
     RI = case RoutingInd of
              subsystem_number -> 1;
@@ -1604,7 +1607,7 @@ encode_ansi_address(#{routing_indicator := RoutingInd} = Address) ->
                    end,
      <<NR:1, RI:1, GTI:4, PCI:1, SSNI:1, SSNBin/binary, PCBin/binary, GTBin/binary>>.
 
-encode_itu_address(#{routing_indicator := RoutingInd} = Address) ->
+encode_itu_address(#{routing_indicator := RoutingInd} = Address, Opts) ->
     NR = case maps:get(national_use_indicator, Address, false) of
              true -> 1;
              _ -> 0
@@ -1613,8 +1616,7 @@ encode_itu_address(#{routing_indicator := RoutingInd} = Address) ->
                        undefined ->
                            {0, <<>>};
                        PC ->
-                           <<0:2, MSB:6, LSB:8>> = PC,
-                           {1, <<LSB:8, 0:2, MSB:6>>}
+                           {1, encode_pc(PC, Opts)}
                    end,
     {SSNI, SSNBin} = case maps:get(subsystem_number, Address, undefined) of
                          undefined -> {0, <<>>};
@@ -1980,3 +1982,23 @@ encode_bcd_digit(D) when D =:= $D; D =:= $d -> 2#1101;
 encode_bcd_digit(E) when E =:= $E; E =:= $e -> 2#1110;
 encode_bcd_digit(F) when F =:= $F; F =:= $f -> 2#1111;
 encode_bcd_digit(D) when D >= $0, D =< $9   -> D - $0.
+
+decode_pc(<<NCM:8, NC:8, NI:8>>, #{point_code := record, address_type := ansi} = _Opts) ->
+    #ansi_pc{network = NI, cluster = NC, member = NCM};
+decode_pc(<<NCM:8, NC:8, NI:8>>, #{address_type := ansi} = _Opts) ->
+    <<NI:8, NC:8, NCM:8>>;
+decode_pc(<<LSB:8, 0:2, MSB:6>>, #{point_code := record}) ->
+    <<_:2, Zone:3, Region:8, SP:3>> = <<0:2, MSB:6, LSB:8>>,
+    #itu_pc{zone = Zone, region = Region, signalling_point = SP};
+decode_pc(<<LSB:8, 0:2, MSB:6>>, _Opts) ->
+    <<0:2, MSB:6, LSB:8>>.
+
+encode_pc(#ansi_pc{network = NI, cluster = NC, member = NCM}, _Opts) ->
+    <<NCM:8, NC:8, NI:8>>;
+encode_pc(#itu_pc{zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
+    <<0:2, MSB:6, LSB:8>> = <<0:2, Zone:3, Region:8, SP:3>>,
+    <<LSB:8, 0:2, MSB:6>>;
+encode_pc(<<NI:8, NC:8, NCM:8>>, _Opts) ->
+    <<NCM:8, NC:8, NI:8>>;
+encode_pc(<<0:2, MSB:6, LSB:8>>, _Opts) ->
+    <<LSB:8, 0:2, MSB:6>>.

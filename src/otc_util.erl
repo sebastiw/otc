@@ -18,11 +18,13 @@
          true_to_one/1,
          zero_to_true/1,
          true_to_zero/1,
+         format_point_code/2,
          write_to_pcap/2,
          write_to_pcap/3
         ]).
 
 -include_lib("eunit/include/eunit.hrl").
+-include("include/point_code.hrl").
 
 %% "telephony binary coded decimal"
 %% TS 29.002, type TBCD-STRING
@@ -139,12 +141,32 @@ zero_to_true(1) -> false.
 true_to_zero(true) -> 0;
 true_to_zero(false) -> 1.
 
-gsm_packed_test() ->
-    ?assertEqual("abcdef", decode_gsm_packed(<<97,241,152,92,54,3>>)),
-    ?assertEqual(<<97,241,152,92,54,3>>, encode_gsm_packed("abcdef")),
-    ?assertEqual("gsm7enc", decode_gsm_packed(binary:decode_hex(<<"E779FB56768F01">>))),
-    ?assertEqual(binary:decode_hex(<<"E779FB56768F01">>), encode_gsm_packed("gsm7enc")),
-    ?assertEqual(<<79,234,16>>, encode_gsm_packed("OTC")).
+gsm_packed_test_() ->
+    [?_assertEqual("abcdef", decode_gsm_packed(<<97,241,152,92,54,3>>)),
+     ?_assertEqual(<<97,241,152,92,54,3>>, encode_gsm_packed("abcdef")),
+     ?_assertEqual("gsm7enc", decode_gsm_packed(binary:decode_hex(<<"E779FB56768F01">>))),
+     ?_assertEqual(binary:decode_hex(<<"E779FB56768F01">>), encode_gsm_packed("gsm7enc")),
+     ?_assertEqual(<<79,234,16>>, encode_gsm_packed("OTC"))].
+
+format_point_code(888, #ansi_pc{} = PC) ->
+    #ansi_pc{network = N, cluster = C, member = M} = PC,
+    io_lib:format("~B-~B-~B", [N, C, M]);
+format_point_code(383, #itu_pc{} = PC) ->
+    #itu_pc{zone = Z, region = R, signalling_point = S} = PC,
+    io_lib:format("~B-~B-~B", [Z, R, S]);
+format_point_code(integer, #ansi_pc{} = PC) ->
+    #ansi_pc{network = N, cluster = C, member = M} = PC,
+    floor(N * math:pow(2, 16) + C * math:pow(2, 8) + M);
+format_point_code(integer, #itu_pc{} = PC) ->
+    #itu_pc{zone = Z, region = R, signalling_point = S} = PC,
+    floor(Z * math:pow(2, 11) + R * math:pow(2, 3) + S).
+
+format_point_code_test_() ->
+    [?_assertEqual("100-40-3", format_point_code(888, #ansi_pc{network = 100, cluster = 40, member = 3})),
+     ?_assertEqual("2-243-3", format_point_code(383, #itu_pc{zone = 2, region = 243, signalling_point = 3})),
+     ?_assertEqual(6563843, format_point_code(integer, #ansi_pc{network = 100, cluster = 40, member = 3})),
+     ?_assertEqual(16#179B, format_point_code(integer, #itu_pc{zone = 2, region = 243, signalling_point = 3}))
+    ].
 
 write_to_pcap(Filename, Tuple) ->
     write_to_pcap(Filename, Tuple, #{}).
