@@ -10,7 +10,9 @@
 
 -export([normalize_point_code_mask/1,
          decode_pc/1,
-         encode_pc/1]).
+         decode_pc/2,
+         encode_pc/1,
+         encode_pc/2]).
 
 -include("include/m3ua.hrl").
 -include("include/mtp3.hrl").
