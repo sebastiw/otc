@@ -1,20 +1,22 @@
 -module(otc_mtp3_codec_tests).
 
+-include("include/point_code.hrl").
+
 -include_lib("eunit/include/eunit.hrl").
 
 mgmt_xco_test() ->
     Bin = <<16#c0, 16#79, 16#da, 16#10, 16#0c, 16#31, 16#00, 16#07,
             16#00>>,
-    Exp = #{destination_point_code => 6777,
+    Exp = #{destination_point_code => #itu_pc{zone = 3, region = 79, signalling_point = 1},
             national_use_spare => 0,
             network_indicator => national_spare,
-            originating_point_code => 12355,
+            originating_point_code => #itu_pc{zone = 6, region = 8, signalling_point = 3},
             payload =>
                 #{forward_sequence_number => 1792,
                   message_type => extended_changeover_order},
             service_indicator => mgmt,
             signalling_link_selection => 0},
-    Val = otc_mtp3:decode(Bin),
+    Val = otc_mtp3:decode(Bin, #{point_code => record}),
     ?assertEqual(Exp, Val),
     NewBin = otc_mtp3:encode(Val),
     ?assertEqual(Bin, NewBin).

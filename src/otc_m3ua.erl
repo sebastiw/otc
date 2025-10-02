@@ -891,7 +891,7 @@ normalize_point_code_mask_ansi_test_() ->
 
 -spec decode_pc(binary()) -> itu_point_code() | ansi_point_code().
 decode_pc(Bin) ->
-    decode_pc(Bin, #{}).
+    decode_pc(Bin, #{point_code => record}).
 
 decode_pc(<<Mask:8, 0:10, Zone:3, Region:8, SP:3>>, #{point_code := record}) ->
     #itu_pc{mask = Mask,
@@ -912,7 +912,7 @@ decode_pc(<<Mask:1/binary, PC:3/binary>>, _Opts) ->
 
 -spec encode_pc(itu_point_code() | ansi_point_code()) -> binary().
 encode_pc(PC) ->
-    encode_pc(PC, #{}).
+    encode_pc(PC, #{point_code => record}).
 
 encode_pc({Mask, <<PC:2/binary>>}, _Opts) ->
     <<Mask:1/binary, 0:8, PC/binary>>;
