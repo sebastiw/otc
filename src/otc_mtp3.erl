@@ -77,10 +77,8 @@ encode(#{network_indicator := NetworkInd, service_indicator := ServiceInd} = Msg
     NI = compose_network_indicator(NetworkInd),
     NU = maps:get(national_use_spare, Msg, 2#00),
     SI = compose_service_indicator(ServiceInd),
-    OPC = encode_pc(OPC0, Opts),
-    DPC = encode_pc(DPC0, Opts),
-    RL0 = encode_routing_label(SLS, OPC, DPC, Opts),
-    Bin = encode_msg(ServiceInd, Msg),
+    RL0 = encode_routing_label(SLS, OPC0, DPC0, Opts),
+    Bin = encode_msg(ServiceInd, Msg, Opts),
     <<NI:2/big, NU:2/big, SI:4/big, RL0/binary, Bin/binary>>.
 
 parse_service_indicator(?MTP3_SERVIND_MGMT) -> mgmt;
@@ -128,11 +126,11 @@ encode_routing_label(SLS, OPC0, DPC0, #{address_type := ansi} = Opts) ->
     OPC = encode_pc(OPC0, Opts),
     DPC = encode_pc(DPC0, Opts),
     %% Routing Label is in reverse byte order
-    <<RL:56/little>> = <<SLS:8, OPC:24, DPC:24>>,
+    <<RL:56/little>> = <<SLS:8, OPC:3/binary, DPC:3/binary>>,
     <<RL:56/big>>;
 encode_routing_label(SLS, OPC0, DPC0, Opts) ->
-    OPC = encode_pc(OPC0, Opts),
-    DPC = encode_pc(DPC0, Opts),
+    <<OPC:14, _:2>> = encode_pc(OPC0, Opts),
+    <<DPC:14, _:2>> = encode_pc(DPC0, Opts),
     %% Routing Label is in reverse byte order
     <<RL:32/little>> = <<SLS:4, OPC:14, DPC:14>>,
     <<RL:32/big>>.
@@ -154,11 +152,11 @@ decode_msg(maint, Bin, Opts) -> %% Q.707
 decode_msg(_, Bin, _Opts) ->
     #{payload => Bin}.
 
-encode_msg(mgmt, #{payload := Msg}) -> %% Q.704
-    encode_mgmt(Msg);
-encode_msg(maint, #{payload := Msg}) -> %% Q.707
-    encode_maint(Msg);
-encode_msg(_, #{payload := Bin}) ->
+encode_msg(mgmt, #{payload := Msg}, Opts) -> %% Q.704
+    encode_mgmt(Msg, Opts);
+encode_msg(maint, #{payload := Msg}, Opts) -> %% Q.707
+    encode_maint(Msg, Opts);
+encode_msg(_, #{payload := Bin}, _Opts) ->
     Bin.
 
 decode_mgmt(<<?MTP3_MGMT_H1_CHM_COO:4, ?MTP3_MGMT_H0_CHM:4, Bin/binary>>, _Opts) ->
@@ -201,22 +199,22 @@ decode_mgmt(<<?MTP3_MGMT_H1_TFM_TFP:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>, Opts) 
     <<DPC:14, _:2>> = Bin,
     #{message_type => transfer_prohibited,
       destination_point_code => decode_pc(DPC, Opts)};
-decode_mgmt(<<?MTP3_MGMT_H1_TFM_TFR:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>, _Opts) ->
+decode_mgmt(<<?MTP3_MGMT_H1_TFM_TFR:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>, Opts) ->
     <<DPC:14, _:2>> = Bin,
     #{message_type => transfer_restricted,
-      destination_point_code => DPC};
-decode_mgmt(<<?MTP3_MGMT_H1_TFM_TFA:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>, _Opts) ->
+      destination_point_code => decode_pc(DPC, Opts)};
+decode_mgmt(<<?MTP3_MGMT_H1_TFM_TFA:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>, Opts) ->
     <<DPC:14, _:2>> = Bin,
     #{message_type => transfer_allowed,
-      destination_point_code => decode_pc(DPC, #{})};
-decode_mgmt(<<?MTP3_MGMT_H1_RSM_RST:4, ?MTP3_MGMT_H0_RSM:4, Bin/binary>>, _Opts) ->
+      destination_point_code => decode_pc(DPC, Opts)};
+decode_mgmt(<<?MTP3_MGMT_H1_RSM_RST:4, ?MTP3_MGMT_H0_RSM:4, Bin/binary>>, Opts) ->
     <<DPC:14, _:2>> = Bin,
     #{message_type => route_set_test_prohibited,
-      destination_point_code => decode_pc(DPC, #{})};
-decode_mgmt(<<?MTP3_MGMT_H1_RSM_RSR:4, ?MTP3_MGMT_H0_RSM:4, Bin/binary>>, _Opts) ->
+      destination_point_code => decode_pc(DPC, Opts)};
+decode_mgmt(<<?MTP3_MGMT_H1_RSM_RSR:4, ?MTP3_MGMT_H0_RSM:4, Bin/binary>>, Opts) ->
     <<DPC:14, _:2>> = Bin,
     #{message_type => route_set_test_restricted,
-      destination_point_code => DPC};
+      destination_point_code => decode_pc(DPC, Opts)};
 decode_mgmt(<<?MTP3_MGMT_H1_MIM_LIN:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>, _Opts) ->
     <<>> = Bin,
     #{message_type => link_inhibit};
@@ -257,118 +255,119 @@ decode_mgmt(<<?MTP3_MGMT_H1_DLM_CNS:4, ?MTP3_MGMT_H0_DLM:4, Bin/binary>>, _Opts)
 decode_mgmt(<<?MTP3_MGMT_H1_DLM_CNP:4, ?MTP3_MGMT_H0_DLM:4, Bin/binary>>, _Opts) ->
     <<>> = Bin,
     #{message_type => connection_not_possible};
-decode_mgmt(<<?MTP3_MGMT_H1_UFC_UPU:4, ?MTP3_MGMT_H0_UFC:4, Bin/binary>>, _Opts) ->
+decode_mgmt(<<?MTP3_MGMT_H1_UFC_UPU:4, ?MTP3_MGMT_H0_UFC:4, Bin/binary>>, Opts) ->
     <<DPC:14, _:2, UPID:4, UC:4>> = Bin,
     UnavailabilityCause = parse_unavailability_cause(UC),
     #{message_type => user_part_unavailable,
-      destination_point_code => DPC,
+      destination_point_code => decode_pc(DPC, Opts),
       user_part_id => UPID,
       unavailability_cause => UnavailabilityCause
      }.
 
 encode_mgmt(#{message_type := changeover_order,
-              forward_sequence_number := FSN}) ->
+              forward_sequence_number := FSN}, _Opts) ->
     Bin = <<FSN:7, 0:1>>,
     <<?MTP3_MGMT_H1_CHM_COO:4, ?MTP3_MGMT_H0_CHM:4, Bin/binary>>;
 encode_mgmt(#{message_type := changeover_ack,
-              forward_sequence_number := FSN}) ->
+              forward_sequence_number := FSN}, _Opts) ->
     Bin = <<FSN:7, 0:1>>,
     <<?MTP3_MGMT_H1_CHM_COA:4, ?MTP3_MGMT_H0_CHM:4, Bin/binary>>;
 encode_mgmt(#{message_type := extended_changeover_order,
-              forward_sequence_number := FSN}) ->
+              forward_sequence_number := FSN}, _Opts) ->
     Bin = <<FSN:24>>,
     <<?MTP3_MGMT_H1_CHM_XCO:4, ?MTP3_MGMT_H0_CHM:4, Bin/binary>>;
 encode_mgmt(#{message_type := extended_changeover_ack,
-              forward_sequence_number := FSN}) ->
+              forward_sequence_number := FSN}, _Opts) ->
     Bin = <<FSN:24>>,
     <<?MTP3_MGMT_H1_CHM_XCA:4, ?MTP3_MGMT_H0_CHM:4, Bin/binary>>;
 encode_mgmt(#{message_type := changeback_declaration,
-              changeback_code := CBC}) ->
+              changeback_code := CBC}, _Opts) ->
     Bin = <<CBC:8>>,
     <<?MTP3_MGMT_H1_CHM_CBD:4, ?MTP3_MGMT_H0_CHM:4, Bin/binary>>;
 encode_mgmt(#{message_type := changeback_ack,
-              changeback_code := CBC}) ->
+              changeback_code := CBC}, _Opts) ->
     Bin = <<CBC:8>>,
     <<?MTP3_MGMT_H1_CHM_CBA:4, ?MTP3_MGMT_H0_CHM:4, Bin/binary>>;
-encode_mgmt(#{message_type := emergency_changeover}) ->
+encode_mgmt(#{message_type := emergency_changeover}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_ECM_ECO:4, ?MTP3_MGMT_H0_ECM:4, Bin/binary>>;
-encode_mgmt(#{message_type := emergency_changeover_ack}) ->
+encode_mgmt(#{message_type := emergency_changeover_ack}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_ECM_ECA:4, ?MTP3_MGMT_H0_ECM:4, Bin/binary>>;
-encode_mgmt(#{message_type := route_congestion_test}) ->
+encode_mgmt(#{message_type := route_congestion_test}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_FCM_RCT:4, ?MTP3_MGMT_H0_FCM:4, Bin/binary>>;
-encode_mgmt(#{message_type := transfer_controlled}) ->
+encode_mgmt(#{message_type := transfer_controlled}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_FCM_TFC:4, ?MTP3_MGMT_H0_FCM:4, Bin/binary>>;
 encode_mgmt(#{message_type := transfer_prohibited,
-              destination_point_code := DPC}) ->
-    Bin = <<DPC:14, 0:2>>,
+              destination_point_code := DPC}, Opts) ->
+    Bin = encode_pc(DPC, Opts),
     <<?MTP3_MGMT_H1_TFM_TFP:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>;
 encode_mgmt(#{message_type := transfer_restricted,
-              destination_point_code := DPC}) ->
-    Bin = <<DPC:14, 0:2>>,
+              destination_point_code := DPC}, Opts) ->
+    Bin = encode_pc(DPC, Opts),
     <<?MTP3_MGMT_H1_TFM_TFR:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>;
 encode_mgmt(#{message_type := transfer_allowed,
-              destination_point_code := DPC}) ->
-    Bin = <<DPC:14, 0:2>>,
+              destination_point_code := DPC}, Opts) ->
+    Bin = encode_pc(DPC, Opts),
     <<?MTP3_MGMT_H1_TFM_TFA:4, ?MTP3_MGMT_H0_TFM:4, Bin/binary>>;
 encode_mgmt(#{message_type := route_set_test_prohibited,
-              destination_point_code := DPC}) ->
-    Bin = <<DPC:14, 0:2>>,
+              destination_point_code := DPC}, Opts) ->
+    Bin = encode_pc(DPC, Opts),
     <<?MTP3_MGMT_H1_RSM_RST:4, ?MTP3_MGMT_H0_RSM:4, Bin/binary>>;
 encode_mgmt(#{message_type := route_set_test_restricted,
-              destination_point_code := DPC}) ->
-    Bin = <<DPC:14, 0:2>>,
+              destination_point_code := DPC}, Opts) ->
+    Bin = encode_pc(DPC, Opts),
     <<?MTP3_MGMT_H1_RSM_RSR:4, ?MTP3_MGMT_H0_RSM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_inhibit}) ->
+encode_mgmt(#{message_type := link_inhibit}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LIN:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_uninhibit}) ->
+encode_mgmt(#{message_type := link_uninhibit}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LUN:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_inhibit_ack}) ->
+encode_mgmt(#{message_type := link_inhibit_ack}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LIA:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_uninhibit_ack}) ->
+encode_mgmt(#{message_type := link_uninhibit_ack}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LUA:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_inhibit_denied}) ->
+encode_mgmt(#{message_type := link_inhibit_denied}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LID:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_force_uninhibit}) ->
+encode_mgmt(#{message_type := link_force_uninhibit}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LFU:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_local_inhibit_test}) ->
+encode_mgmt(#{message_type := link_local_inhibit_test}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LLT:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := link_remote_inhibit_test}) ->
+encode_mgmt(#{message_type := link_remote_inhibit_test}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_MIM_LRT:4, ?MTP3_MGMT_H0_MIM:4, Bin/binary>>;
-encode_mgmt(#{message_type := traffic_restart_allowed}) ->
+encode_mgmt(#{message_type := traffic_restart_allowed}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_TRM_TRA:4, ?MTP3_MGMT_H0_TRM:4, Bin/binary>>;
 encode_mgmt(#{message_type := data_link_connection_order,
-              signalling_data_link_id := SDLID}) ->
+              signalling_data_link_id := SDLID}, _Opts) ->
     Bin = <<SDLID:12, 0:4>>,
     <<?MTP3_MGMT_H1_DLM_DLC:4, ?MTP3_MGMT_H0_DLM:4, Bin/binary>>;
-encode_mgmt(#{message_type := connection_successful}) ->
+encode_mgmt(#{message_type := connection_successful}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_DLM_CSS:4, ?MTP3_MGMT_H0_DLM:4, Bin/binary>>;
-encode_mgmt(#{message_type := connection_not_successful}) ->
+encode_mgmt(#{message_type := connection_not_successful}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_DLM_CNS:4, ?MTP3_MGMT_H0_DLM:4, Bin/binary>>;
-encode_mgmt(#{message_type := connection_not_possible}) ->
+encode_mgmt(#{message_type := connection_not_possible}, _Opts) ->
     Bin = <<>>,
     <<?MTP3_MGMT_H1_DLM_CNP:4, ?MTP3_MGMT_H0_DLM:4, Bin/binary>>;
 encode_mgmt(#{message_type := user_part_unavailable,
               destination_point_code := DPC,
               user_part_id := UPID,
               unavailability_cause := UnavailabilityCause
-             }) ->
+             }, _Opts) ->
     UC = compose_unavailability_cause(UnavailabilityCause),
-    Bin = <<DPC:14, 0:2, UPID:4, UC:4>>,
+    BinPC = encode_pc(DPC),
+    Bin = <<BinPC/binary, UPID:4, UC:4>>,
     <<?MTP3_MGMT_H1_UFC_UPU:4, ?MTP3_MGMT_H0_UFC:4, Bin/binary>>.
 
 parse_unavailability_cause(?MTP3_UPU_CAUSE_UNKNOWN) -> unknown;
@@ -391,12 +390,12 @@ decode_maint(<<?MTP3_MAINT_H1_TEST_SLTA:4, ?MTP3_MAINT_H0_TEST:4, Bin/binary>>, 
       test_pattern => TP}.
 
 encode_maint(#{message_type := signalling_link_test,
-               test_pattern := TP}) ->
+               test_pattern := TP}, _Opts) ->
     L = byte_size(TP),
     Bin = <<L:4, 0:4, TP/binary>>,
     <<?MTP3_MAINT_H1_TEST_SLTM:4, ?MTP3_MAINT_H0_TEST:4, Bin/binary>>;
 encode_maint(#{message_type := signalling_link_test_ack,
-               test_pattern := TP}) ->
+               test_pattern := TP}, _Opts) ->
     L = byte_size(TP),
     Bin = <<L:4, 0:4, TP/binary>>,
     <<?MTP3_MAINT_H1_TEST_SLTA:4, ?MTP3_MAINT_H0_TEST:4, Bin/binary>>.
@@ -405,12 +404,18 @@ encode_maint(#{message_type := signalling_link_test_ack,
 decode_pc(PC) ->
     decode_pc(PC, #{point_code => record}).
 
-decode_pc(PC, #{point_code := record, address_type := ansi} = _Opts) ->
-    <<NCM:8, NC:8, NI:8>> = <<PC:24>>,
+decode_pc(PC, #{address_type := ansi} = Opts) when is_integer(PC) ->
+    decode_pc(<<PC:24>>, Opts);
+decode_pc(PC, Opts) when is_integer(PC) ->
+    decode_pc(<<PC:14, 0:2>>, Opts);
+decode_pc(<<NCM:8, NC:8, NI:8>>, #{point_code := record, address_type := ansi} = _Opts) ->
     #ansi_pc{network = NI, cluster = NC, member = NCM};
-decode_pc(PC, #{point_code := record} = _Opts) ->
-    <<Zone:3, Region:8, SP:3>> = <<PC:14>>,
+decode_pc(<<Zone:3, Region:8, SP:3, _:2>>, #{point_code := record} = _Opts) ->
     #itu_pc{zone = Zone, region = Region, signalling_point = SP};
+decode_pc(<<PC:24>>, _Opts) ->
+    PC;
+decode_pc(<<PC:14, _:2>>, _Opts) ->
+    PC;
 decode_pc(PC, _Opts) when is_integer(PC) ->
     PC.
 
@@ -418,10 +423,10 @@ encode_pc(PC) ->
     encode_pc(PC, #{point_code => record}).
 
 encode_pc(#itu_pc{zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
-    <<PC:14>> = <<Zone:3, Region:8, SP:3>>,
-    PC;
+    <<Zone:3, Region:8, SP:3, 0:2>>;
 encode_pc(#ansi_pc{network = NI, cluster = NC, member = NCM}, _Opts) ->
-    <<PC:24>> = <<NCM:8, NC:8, NI:8>>,
-    PC;
+    <<NCM:8, NC:8, NI:8>>;
+encode_pc(PC, #{address_type := ansi} = _Opts) when is_integer(PC) ->
+    <<PC:24>>;
 encode_pc(PC, _Opts) when is_integer(PC) ->
-    PC.
+    <<PC:14, 0:2>>.
