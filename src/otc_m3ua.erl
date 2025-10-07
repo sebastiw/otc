@@ -899,7 +899,7 @@ decode_pc(<<Mask:8, 0:10, Zone:3, Region:8, SP:3>>, #{point_code := record}) ->
             region = Region,
             signalling_point = SP
            };
-decode_pc(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{point_code := record}) ->
+decode_pc(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{point_code := record, address_type := ansi}) ->
     #ansi_pc{mask = Mask,
              network = Network,
              cluster = Cluster,
@@ -907,7 +907,7 @@ decode_pc(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{point_code := record}) -
             };
 decode_pc(<<Mask:1/binary, 0:8, PC:2/binary>>, _Opts) ->
     {Mask, PC};
-decode_pc(<<Mask:1/binary, PC:3/binary>>, _Opts) ->
+decode_pc(<<Mask:1/binary, PC:3/binary>>, #{address_type := ansi} = _Opts) ->
     {Mask, PC}.
 
 -spec encode_pc(itu_point_code() | ansi_point_code()) -> binary().
