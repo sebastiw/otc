@@ -9,6 +9,7 @@
         ]).
 
 -export([normalize_point_code_mask/1,
+         normalize_point_code_mask/2,
          decode_pc/1,
          decode_pc/2,
          encode_pc/1,
@@ -860,12 +861,15 @@ compose_network_indicator({reserved, R}) -> R.
 %% be applied to the related Affected PC field.
 %% For example, a mask of "8" indicates that the last eight bits of
 %% the PC are "wildcarded".
-normalize_point_code_mask(#itu_pc{mask = Mask} = PC) ->
+normalize_point_code_mask(PC) ->
+    normalize_point_code_mask(PC, #{}).
+
+normalize_point_code_mask(#itu_pc{mask = Mask} = PC, Opts) ->
     PCInt = otc_util:compose_point_code(integer, PC),
-    normalize_point_code_mask(Mask, PCInt, #{});
-normalize_point_code_mask(#ansi_pc{mask = Mask} = PC) ->
+    normalize_point_code_mask(Mask, PCInt, Opts);
+normalize_point_code_mask(#ansi_pc{mask = Mask} = PC, Opts) ->
     PCInt = otc_util:compose_point_code(integer, PC),
-    normalize_point_code_mask(Mask, PCInt, #{}).
+    normalize_point_code_mask(Mask, PCInt, Opts).
 
 normalize_point_code_mask(Mask, PCInt, Opts) ->
     MaskBits = trunc(math:pow(2, Mask) - 1),
