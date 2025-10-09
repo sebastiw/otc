@@ -8,7 +8,7 @@ scmg_sst_test() ->
             16#12, 16#34, %% Affected PC
             16#00>>, %% Subsystem multiplicity indicator
     Exp = #{format_identifier => status_test,
-            affected_point_code => <<18,52>>,
+            affected_point_code => <<52,18>>,
             affected_subsystem_number => hlr,
             subsystem_multiplicity_indicator => 0
            },

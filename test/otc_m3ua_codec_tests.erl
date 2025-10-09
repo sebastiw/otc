@@ -5,7 +5,7 @@
 m3ua_ssnm_duna_test() ->
     Bin = <<16#01,16#00,16#02,16#01,16#00,16#00,16#00,16#10,
             16#00,16#12,16#00,16#08,16#00,16#00,16#05,16#04>>,
-    Exp = #{affected_point_code => [{<<0>>,<<0,5,4>>}],
+    Exp = #{affected_point_code => [{<<0>>, <<5,4>>}],
             message_class => ssnm,
             message_type => duna},
     Val = otc_m3ua:decode(Bin),
@@ -16,7 +16,7 @@ m3ua_ssnm_duna_test() ->
 m3ua_ssnm_dava_test() ->
     Bin = <<16#01,16#00,16#02,16#02,16#00,16#00,16#00,16#10,
             16#00,16#12,16#00,16#08,16#00,16#00,16#05,16#04>>,
-    Exp = #{affected_point_code => [{<<0>>,<<0,5,4>>}],
+    Exp = #{affected_point_code => [{<<0>>,<<5,4>>}],
             message_class => ssnm,
             message_type => dava},
     Val = otc_m3ua:decode(Bin),
@@ -104,10 +104,10 @@ m3ua_transfer_data_tcap_empty_begin_test() ->
     Exp = #{message_class => transfer,
             message_type => data,
             protocol_data =>
-                #{destination_point_code => <<0,0,53,167>>,
+                #{destination_point_code => {<<0>>, <<53,167>>},
                   message_priority => 0,
                   network_indicator => national_spare,
-                  originating_point_code => <<0,0,5,4>>,
+                  originating_point_code => {<<0>>, <<5,4>>},
                   service_indicator => sccp,
                   signalling_link_selection => 8
                  }},
@@ -136,10 +136,10 @@ m3ua_transfer_data_tcap_empty_continue_test() ->
     Exp = #{message_class => transfer,
             message_type => data,
             protocol_data =>
-                #{destination_point_code => <<0,0,5,4>>,
+                #{destination_point_code => {<<0>>, <<5,4>>},
                   message_priority => 0,
                   network_indicator => national_spare,
-                  originating_point_code => <<0,0,53,167>>,
+                  originating_point_code => {<<0>>, <<53,167>>},
                   service_indicator => sccp,
                   signalling_link_selection => 196
                  }},
@@ -163,10 +163,10 @@ m3ua_transfer_data_tcap_abort_test() ->
     Exp = #{message_class => transfer,
             message_type => data,
             protocol_data =>
-                #{destination_point_code => <<0,0,5,4>>,
+                #{destination_point_code => {<<0>>, <<5,4>>},
                   message_priority => 0,
                   network_indicator => national_spare,
-                  originating_point_code => <<0,0,53,167>>,
+                  originating_point_code => {<<0>>, <<53,167>>},
                   service_indicator => sccp,
                   signalling_link_selection => 238
                  }},

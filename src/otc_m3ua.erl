@@ -5,22 +5,31 @@
          codec/2,
          next/1,
          decode/1,
-         encode/1,
-         decode_point_code/1,
-         encode_point_code/1]).
+         encode/1
+        ]).
+
+-export([normalize_point_code_mask/1,
+         normalize_point_code_mask/2,
+         decode_pc/1,
+         decode_pc/2,
+         encode_pc/1,
+         encode_pc/2]).
 
 -include("include/m3ua.hrl").
 -include("include/mtp3.hrl").
+-include("include/point_code.hrl").
+
+-include_lib("eunit/include/eunit.hrl").
 
 spec() ->
     "IETF RFC 4666 September 2006".
 
-codec(Bin, _Opts) when is_binary(Bin) ->
-    decode(Bin);
-codec(Map, _Opts) when is_map(Map) ->
-    encode({Map, <<>>});
-codec({Map, PDU}, _Opts) when is_map(Map), is_binary(PDU) ->
-    encode({Map, PDU}).
+codec(Bin, Opts) when is_binary(Bin) ->
+    decode(Bin, Opts);
+codec(Map, Opts) when is_map(Map) ->
+    encode({Map, <<>>}, Opts);
+codec({Map, PDU}, Opts) when is_map(Map), is_binary(PDU) ->
+    encode({Map, PDU}, Opts).
 
 -type subproto() :: sccp | tup | isup | broadband_isup |
                     satellite_isup |
@@ -32,11 +41,12 @@ codec({Map, PDU}, _Opts) when is_map(Map), is_binary(PDU) ->
 next(#{protocol_data := #{service_indicator := SI}}) -> {ok, SI};
 next(_) -> '$stop'.
 
--type itu_point_code() :: {itu, integer(), integer(), integer()}.
--type ansi_point_code() :: {ansi, integer(), integer(), integer()}.
-
 -spec decode(binary()) -> map().
-decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) ->
+decode(Bin) ->
+    decode(Bin, #{}).
+
+-spec decode(binary(), map()) -> map().
+decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>, Opts) ->
     %% 0                   1                   2                   3
     %% 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     %% +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -50,7 +60,7 @@ decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) -
     MT = parse_message_type(MC, MessageType),
     ValLen = Len - 8,                 % Remove version, reserved, mc, mt, length
     <<Bin:ValLen/binary>> = Remain,
-    {ok, Msg} = decode_msg(MC, MT, Bin),
+    {ok, Msg} = decode_msg(MC, MT, Bin, Opts),
     case Msg#{message_type => MT, message_class => MC} of
         #{protocol_data := PD} = Msg2 ->
             {UPD, PD2} = maps:take(user_protocol_data, PD),
@@ -59,14 +69,17 @@ decode(<<1:8, _:8, MessageClass:8, MessageType:8, Len:32/big, Remain/binary>>) -
             Msg2
     end.
 
-encode({#{protocol_data := PD} = Msg, UDP}) ->
-    encode(Msg#{protocol_data => PD#{user_protocol_data => UDP}});
-encode({Msg, _UDP}) ->
-    encode(Msg);
-encode(#{message_type := MessageType, message_class := MessageClass} = Msg) ->
+encode(Map) ->
+    encode(Map, #{}).
+
+encode({#{protocol_data := PD} = Msg, UDP}, Opts) ->
+    encode(Msg#{protocol_data => PD#{user_protocol_data => UDP}}, Opts);
+encode({Msg, _UDP}, Opts) ->
+    encode(Msg, Opts);
+encode(#{message_type := MessageType, message_class := MessageClass} = Msg, Opts) ->
     MC = compose_message_class(MessageClass),
     MT = compose_message_type(MessageClass, MessageType),
-    Bin = encode_msg(MessageClass, MessageType, Msg),
+    Bin = encode_msg(MessageClass, MessageType, Msg, Opts),
     Len = byte_size(Bin) + 8,
     <<1:8, 0:8, MC:8, MT:8, Len:32/big, Bin/binary>>.
 
@@ -132,35 +145,35 @@ compose_message_type(rkm, reg_rsp) -> ?M3UA_RKM_TYPE_REG_RSP;
 compose_message_type(rkm, dereg_req) -> ?M3UA_RKM_TYPE_DEREG_REQ;
 compose_message_type(rkm, dereg_rsp) -> ?M3UA_RKM_TYPE_DEREG_RSP.
 
-decode_msg(transfer, data, Bin) ->
+decode_msg(transfer, data, Bin, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {protocol_data, 16#0210, mandatory, single},
                          {correlation_id, 16#0013, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(ssnm, duna, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(ssnm, duna, Bin, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(ssnm, dava, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(ssnm, dava, Bin, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(ssnm, daud, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(ssnm, daud, Bin, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(ssnm, scon, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(ssnm, scon, Bin, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
@@ -168,131 +181,131 @@ decode_msg(ssnm, scon, Bin) ->
                          {congestion_indications, 16#0205, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(ssnm, dupu, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(ssnm, dupu, Bin, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {user_and_cause, 16#0204, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(ssnm, drst, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(ssnm, drst, Bin, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(aspsm, aspup, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(aspsm, aspup, Bin, Opts) ->
     AllowedParameters = [{asp_identifier, 16#0011, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(aspsm, aspup_ack, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(aspsm, aspup_ack, Bin, Opts) ->
     AllowedParameters = [{asp_identifier, 16#0011, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(aspsm, aspdn, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(aspsm, aspdn, Bin, Opts) ->
     AllowedParameters = [{info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(aspsm, aspdn_ack, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(aspsm, aspdn_ack, Bin, Opts) ->
     AllowedParameters = [{info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(aspsm, beat, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(aspsm, beat, Bin, Opts) ->
     AllowedParameters = [{heartbeat_data, 16#0009, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(aspsm, beat_ack, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(aspsm, beat_ack, Bin, Opts) ->
     AllowedParameters = [{heartbeat_data, 16#0009, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(rkm, reg_req, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(rkm, reg_req, Bin, Opts) ->
     AllowedParameters = [{routing_key, 16#0207, mandatory, multiple}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(rkm, reg_rsp, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(rkm, reg_rsp, Bin, Opts) ->
     AllowedParameters = [{registration_result, 16#0208, mandatory, multiple}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(rkm, dereg_req, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(rkm, dereg_req, Bin, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, mandatory, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(rkm, dereg_rsp, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(rkm, dereg_rsp, Bin, Opts) ->
     AllowedParameters = [{deregistration_result, 16#0209, mandatory, multiple}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(asptm, aspac, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(asptm, aspac, Bin, Opts) ->
     AllowedParameters = [{traffic_mode_type, 16#000b, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(asptm, aspac_ack, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(asptm, aspac_ack, Bin, Opts) ->
     AllowedParameters = [{traffic_mode_type, 16#000b, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(asptm, aspia, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(asptm, aspia, Bin, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(asptm, aspia_ack, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(asptm, aspia_ack, Bin, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(mgmt, err, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(mgmt, err, Bin, Opts) ->
     AllowedParameters = [{error_code, 16#000c, mandatory, single},
                          {routing_context, 16#0006, conditional, single},
                          {network_appearance, 16#0200, conditional, single},
                          {affected_point_code, 16#0012, conditional, single},
                          {diagnostic_information, 16#0007, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters);
-decode_msg(mgmt, ntfy, Bin) ->
+    decode_parameters(Bin, AllowedParameters, Opts);
+decode_msg(mgmt, ntfy, Bin, Opts) ->
     AllowedParameters = [{status, 16#000d, mandatory, single},
                          {asp_identifier, 16#0011, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    decode_parameters(Bin, AllowedParameters).
+    decode_parameters(Bin, AllowedParameters, Opts).
 
-encode_msg(transfer, data, Msg) ->
+encode_msg(transfer, data, Msg, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {protocol_data, 16#0210, mandatory, single},
                          {correlation_id, 16#0013, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(ssnm, duna, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(ssnm, duna, Msg, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(ssnm, dava, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(ssnm, dava, Msg, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(ssnm, daud, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(ssnm, daud, Msg, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(ssnm, scon, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(ssnm, scon, Msg, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
@@ -300,118 +313,118 @@ encode_msg(ssnm, scon, Msg) ->
                          {congestion_indications, 16#0205, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(ssnm, dupu, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(ssnm, dupu, Msg, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {user_and_cause, 16#0204, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(ssnm, drst, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(ssnm, drst, Msg, Opts) ->
     AllowedParameters = [{network_appearance, 16#0200, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {affected_point_code, 16#0012, mandatory, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(aspsm, aspup, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(aspsm, aspup, Msg, Opts) ->
     AllowedParameters = [{asp_identifier, 16#0011, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(aspsm, aspup_ack, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(aspsm, aspup_ack, Msg, Opts) ->
     AllowedParameters = [{asp_identifier, 16#0011, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(aspsm, aspdn, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(aspsm, aspdn, Msg, Opts) ->
     AllowedParameters = [{info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(aspsm, aspdn_ack, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(aspsm, aspdn_ack, Msg, Opts) ->
     AllowedParameters = [{info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(aspsm, beat, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(aspsm, beat, Msg, Opts) ->
     AllowedParameters = [{heartbeat_data, 16#0009, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(aspsm, beat_ack, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(aspsm, beat_ack, Msg, Opts) ->
     AllowedParameters = [{heartbeat_data, 16#0009, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(rkm, reg_req, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(rkm, reg_req, Msg, Opts) ->
     AllowedParameters = [{routing_key, 16#0207, mandatory, multiple}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(rkm, reg_rsp, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(rkm, reg_rsp, Msg, Opts) ->
     AllowedParameters = [{registration_result, 16#0208, mandatory, multiple}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(rkm, dereg_req, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(rkm, dereg_req, Msg, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, mandatory, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(rkm, dereg_rsp, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(rkm, dereg_rsp, Msg, Opts) ->
     AllowedParameters = [{deregistration_result, 16#0209, mandatory, multiple}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(asptm, aspac, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(asptm, aspac, Msg, Opts) ->
     AllowedParameters = [{traffic_mode_type, 16#000b, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(asptm, aspac_ack, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(asptm, aspac_ack, Msg, Opts) ->
     AllowedParameters = [{traffic_mode_type, 16#000b, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(asptm, aspia, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(asptm, aspia, Msg, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(asptm, aspia_ack, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(asptm, aspia_ack, Msg, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(mgmt, err, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(mgmt, err, Msg, Opts) ->
     AllowedParameters = [{error_code, 16#000c, mandatory, single},
                          {routing_context, 16#0006, conditional, single},
                          {network_appearance, 16#0200, conditional, single},
                          {affected_point_code, 16#0012, conditional, single},
                          {diagnostic_information, 16#0007, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters);
-encode_msg(mgmt, ntfy, Msg) ->
+    encode_parameters(Msg, AllowedParameters, Opts);
+encode_msg(mgmt, ntfy, Msg, Opts) ->
     AllowedParameters = [{status, 16#000d, mandatory, single},
                          {asp_identifier, 16#0011, optional, single},
                          {routing_context, 16#0006, optional, single},
                          {info_string, 16#0004, optional, single}
                         ],
-    encode_parameters(Msg, AllowedParameters).
+    encode_parameters(Msg, AllowedParameters, Opts).
 
-decode_parameters(Bin, AllowedParameters) ->
-    Ps = decode_parameters(Bin, AllowedParameters, #{}),
+decode_parameters(Bin, AllowedParameters, Opts) ->
+    Ps = decode_parameters(Bin, AllowedParameters, #{}, Opts),
     verify_mandatory_exist(Ps, AllowedParameters).
 
-decode_parameters(<<>>, _, Acc) ->
+decode_parameters(<<>>, _, Acc, _Opts) ->
     Acc;
-decode_parameters(Bin, AllowedParameters, Acc) ->
+decode_parameters(Bin, AllowedParameters, Acc, Opts) ->
     {Tag, BinValue, Rest} = take_parameter(Bin),
 
     case lists:keytake(Tag, 2, AllowedParameters) of
         {value, {_, _, _, single} = T, APs} ->
-            NAcc = decode_parameter(T, BinValue, Acc),
-            decode_parameters(Rest, APs, NAcc);
+            NAcc = decode_parameter(T, BinValue, Acc, Opts),
+            decode_parameters(Rest, APs, NAcc, Opts);
         {value, {_, _, _, multiple} = T, APs} ->
-            NAcc = decode_parameter(T, BinValue, Acc),
-            decode_parameters(Rest, [T|APs], NAcc)
+            NAcc = decode_parameter(T, BinValue, Acc, Opts),
+            decode_parameters(Rest, [T|APs], NAcc, Opts)
     end.
 
 verify_mandatory_exist(Ps, []) ->
@@ -421,29 +434,29 @@ verify_mandatory_exist(Ps, [{N, _, mandatory, _}|_]) when not is_map_key(N, Ps) 
 verify_mandatory_exist(Ps, [_|Rest]) ->
     verify_mandatory_exist(Ps, Rest).
 
-encode_parameters(Msg, AllowedParameters) ->
-    encode_parameters(Msg, lists:reverse(AllowedParameters), <<>>).
+encode_parameters(Msg, AllowedParameters, Opts) ->
+    encode_parameters(Msg, lists:reverse(AllowedParameters), <<>>, Opts).
 
-encode_parameters(_, [], Acc) ->
+encode_parameters(_, [], Acc, _Opts) ->
     Acc;
-encode_parameters(Msg, [Param|AllowedParameters], Acc) ->
+encode_parameters(Msg, [Param|AllowedParameters], Acc, Opts) ->
     case Param of
         {Name, Tag, _, single} when is_map_key(Name, Msg) ->
             #{Name := V} = Msg,
-            Value = encode_parameter(Name, V),
+            Value = encode_parameter(Name, V, Opts),
             NAcc = wrap_param(Tag, Value, Acc),
-            encode_parameters(Msg, AllowedParameters, NAcc);
+            encode_parameters(Msg, AllowedParameters, NAcc, Opts);
         {Name, Tag, _, multiple} when is_map_key(Name, Msg) ->
             #{Name := Vs} = Msg,
             Bin = lists:foldl(fun (V, Acc2) ->
-                                      Value = encode_parameter(Name, V),
+                                      Value = encode_parameter(Name, V, Opts),
                                       wrap_param(Tag, Value, Acc2)
                               end, <<>>, Vs),
-            encode_parameters(Msg, AllowedParameters, Bin);
+            encode_parameters(Msg, AllowedParameters, Bin, Opts);
         {Name, _, mandatory, _} when not is_map_key(Name, Msg) ->
             throw({mandatory_missing, Name});
          _ ->
-            encode_parameters(Msg, AllowedParameters, Acc)
+            encode_parameters(Msg, AllowedParameters, Acc, Opts)
     end.
 
 wrap_param(Tag, Value, Acc) ->
@@ -471,17 +484,17 @@ take_parameter(<<Tag:16/big, Len:16/big, Bin1/binary>>) ->
     <<Value:ValLen/binary, 0:PadLen/integer-unit:8, Rest/binary>> = Bin1,
     {Tag, Value, Rest}.
 
-decode_parameter({network_appearance = Name, _, _, SM}, <<NA:32/big>>, Acc) ->
+decode_parameter({network_appearance = Name, _, _, SM}, <<NA:32/big>>, Acc, _Opts) ->
     update_params(Name, SM, NA, Acc);
-decode_parameter({routing_context = Name, _, _, SM}, <<RC:32/big>>, Acc) ->
+decode_parameter({routing_context = Name, _, _, SM}, <<RC:32/big>>, Acc, _Opts) ->
     update_params(Name, SM, RC, Acc);
-decode_parameter({routing_context = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({routing_context = Name, _, _, SM}, Bin, Acc, _Opts) ->
     RCs = [RC || <<RC:32/big>> <= Bin],
     update_params(Name, SM, RCs, Acc);
-decode_parameter({protocol_data = Name, _, _, SM}, <<PDH:12/binary, UPD/binary>>, Acc) ->
+decode_parameter({protocol_data = Name, _, _, SM}, <<PDH:12/binary, UPD/binary>>, Acc, Opts) ->
     <<OPC:4/binary, DPC:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>> = PDH,
-    PD = #{originating_point_code => OPC,
-           destination_point_code => DPC,
+    PD = #{originating_point_code => decode_pc(OPC, Opts),
+           destination_point_code => decode_pc(DPC, Opts),
            service_indicator => parse_user_identity(SI),
            network_indicator => parse_network_indicator(NI),
            message_priority => MP,
@@ -489,18 +502,18 @@ decode_parameter({protocol_data = Name, _, _, SM}, <<PDH:12/binary, UPD/binary>>
            user_protocol_data => UPD
           },
     update_params(Name, SM, PD, Acc);
-decode_parameter({correlation_id = Name, _, _, SM}, <<CI:32/big>>, Acc) ->
+decode_parameter({correlation_id = Name, _, _, SM}, <<CI:32/big>>, Acc, _Opts) ->
     update_params(Name, SM, CI, Acc);
-decode_parameter({affected_point_code = Name, _, _, SM}, Bin, Acc) ->
-    APCs = [{Mask, PC} || <<Mask:1/binary, PC:3/binary>> <= Bin],
+decode_parameter({affected_point_code = Name, _, _, SM}, Bin, Acc, Opts) ->
+    APCs = [decode_pc(PCBin, Opts) || <<PCBin:4/binary>> <= Bin],
     update_params(Name, SM, APCs, Acc);
-decode_parameter({info_string = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({info_string = Name, _, _, SM}, Bin, Acc, _Opts) ->
     update_params(Name, SM, Bin, Acc);
-decode_parameter({concerned_destination = Name, _, _, SM}, <<_R:1/binary, PC:3/binary>>, Acc) ->
+decode_parameter({concerned_destination = Name, _, _, SM}, <<_R:1/binary, PC:3/binary>>, Acc, _Opts) ->
     update_params(Name, SM, PC, Acc);
-decode_parameter({congestion_indications = Name, _, _, SM}, <<_R:3/binary, CL:8/big>>, Acc) ->
+decode_parameter({congestion_indications = Name, _, _, SM}, <<_R:3/binary, CL:8/big>>, Acc, _Opts) ->
     update_params(Name, SM, CL, Acc);
-decode_parameter({user_and_cause = Name, _, _, SM}, <<Cause:16/big, User:16/big>>, Acc) ->
+decode_parameter({user_and_cause = Name, _, _, SM}, <<Cause:16/big, User:16/big>>, Acc, _Opts) ->
     C = case Cause of
             1 -> unequipped_remote_user;
             2 -> inaccessible_remote_user;
@@ -510,11 +523,11 @@ decode_parameter({user_and_cause = Name, _, _, SM}, <<Cause:16/big, User:16/big>
     V = #{unavailability_cause => C,
           mtp3_user_identity => U},
     update_params(Name, SM, V, Acc);
-decode_parameter({asp_identifier = Name, _, _, SM}, <<ID:32/big>>, Acc) ->
+decode_parameter({asp_identifier = Name, _, _, SM}, <<ID:32/big>>, Acc, _Opts) ->
     update_params(Name, SM, ID, Acc);
-decode_parameter({heartbeat_data = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({heartbeat_data = Name, _, _, SM}, Bin, Acc, _Opts) ->
     update_params(Name, SM, Bin, Acc);
-decode_parameter({routing_key = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({routing_key = Name, _, _, SM}, Bin, Acc, Opts) ->
     AllowedParameters = [{local_rk_identifier, 16#020a, mandatory, single},
                          {routing_context, 16#0006, optional, single},
                          {traffic_mode_type, 16#000b, optional, single},
@@ -523,11 +536,11 @@ decode_parameter({routing_key = Name, _, _, SM}, Bin, Acc) ->
                          {service_indicators, 16#020c, optional, multiple},
                          {originating_point_code_list, 16#020e, optional, multiple}
                         ],
-    V = decode_parameters(Bin, AllowedParameters, #{}),
+    V = decode_parameters(Bin, AllowedParameters, #{}, Opts),
     update_params(Name, SM, V, Acc);
-decode_parameter({local_rk_identifier = Name, _, _, SM}, <<LRKI:32/big>>, Acc) ->
+decode_parameter({local_rk_identifier = Name, _, _, SM}, <<LRKI:32/big>>, Acc, _Opts) ->
     update_params(Name, SM, LRKI, Acc);
-decode_parameter({traffic_mode_type = Name, _, _, SM}, <<TMT:32/big>>, Acc) ->
+decode_parameter({traffic_mode_type = Name, _, _, SM}, <<TMT:32/big>>, Acc, _Opts) ->
     V = case TMT of
             1 -> override;
             2 -> loadshare;
@@ -535,23 +548,24 @@ decode_parameter({traffic_mode_type = Name, _, _, SM}, <<TMT:32/big>>, Acc) ->
             _ -> unsupported
         end,
     update_params(Name, SM, V, Acc);
-decode_parameter({destination_point_code = Name, _, _, SM}, <<Mask:1/binary, PC:3/binary>>, Acc) ->
-    update_params(Name, SM, {Mask, PC}, Acc);
-decode_parameter({service_indicators = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({destination_point_code = Name, _, _, SM}, PCBin, Acc, Opts) ->
+    PC = decode_pc(PCBin, Opts),
+    update_params(Name, SM, PC, Acc);
+decode_parameter({service_indicators = Name, _, _, SM}, Bin, Acc, _Opts) ->
     SIs = [parse_user_identity(SI) || <<SI:8/big>> <= Bin],
     V = lists:dropwhile(fun ({reserved, 0}) -> true; (_) -> false end, lists:reverse(SIs)),
     update_params(Name, SM, lists:reverse(V), Acc);
-decode_parameter({originating_point_code_list = Name, _, _, SM}, Bin, Acc) ->
-    OPCs = [{Mask, PC} || <<Mask:1/binary, PC:3/binary>> <= Bin],
+decode_parameter({originating_point_code_list = Name, _, _, SM}, Bin, Acc, Opts) ->
+    OPCs = [decode_pc(PC, Opts) || <<PC:4/binary>> <= Bin],
     update_params(Name, SM, OPCs, Acc);
-decode_parameter({registration_result = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({registration_result = Name, _, _, SM}, Bin, Acc, Opts) ->
     AllowedParameters = [{local_rk_identifier, 16#020a, mandatory, single},
                          {registration_status, 16#0212, mandatory, single},
                          {routing_context, 16#0006, optional, single}
                         ],
-    V = decode_parameters(Bin, AllowedParameters, #{}),
+    V = decode_parameters(Bin, AllowedParameters, #{}, Opts),
     update_params(Name, SM, V, Acc);
-decode_parameter({registration_status = Name, _, _, SM}, <<S:32/big>>, Acc) ->
+decode_parameter({registration_status = Name, _, _, SM}, <<S:32/big>>, Acc, _Opts) ->
     V = case S of
             0 -> successfully_registered;
             1 -> {error, unknown};
@@ -569,13 +583,13 @@ decode_parameter({registration_status = Name, _, _, SM}, <<S:32/big>>, Acc) ->
             _ -> unsupported
         end,
     update_params(Name, SM, V, Acc);
-decode_parameter({deregistration_result = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({deregistration_result = Name, _, _, SM}, Bin, Acc, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, mandatory, single},
                          {deregistration_status, 16#0213, mandatory, single}
                         ],
-    V = decode_parameters(Bin, AllowedParameters, #{}),
+    V = decode_parameters(Bin, AllowedParameters, #{}, Opts),
     update_params(Name, SM, V, Acc);
-decode_parameter({deregistration_status = Name, _, _, SM}, <<S:32/big>>, Acc) ->
+decode_parameter({deregistration_status = Name, _, _, SM}, <<S:32/big>>, Acc, _Opts) ->
     V = case S of
             0 -> successfully_deregistered;
             1 -> {error, unknown};
@@ -585,7 +599,7 @@ decode_parameter({deregistration_status = Name, _, _, SM}, <<S:32/big>>, Acc) ->
             5 -> {error, asp_currently_active_for_routing_context}
         end,
     update_params(Name, SM, V, Acc);
-decode_parameter({error_code = Name, _, _, SM}, <<E:32/big>>, Acc) ->
+decode_parameter({error_code = Name, _, _, SM}, <<E:32/big>>, Acc, _Opts) ->
     V = case E of
             16#01 -> invalid_version;
             16#03 -> unsupported_message_class;
@@ -608,9 +622,9 @@ decode_parameter({error_code = Name, _, _, SM}, <<E:32/big>>, Acc) ->
             _ -> unsupported
         end,
     update_params(Name, SM, V, Acc);
-decode_parameter({diagnostic_information = Name, _, _, SM}, Bin, Acc) ->
+decode_parameter({diagnostic_information = Name, _, _, SM}, Bin, Acc, _Opts) ->
     update_params(Name, SM, Bin, Acc);
-decode_parameter({status = Name, _, _, SM}, <<ST:16/big, SI:16/big>>, Acc) ->
+decode_parameter({status = Name, _, _, SM}, <<ST:16/big, SI:16/big>>, Acc, _Opts) ->
     V = case ST of
             1 ->
                 I = case SI of
@@ -640,14 +654,14 @@ update_params(Name, multiple, V, Acc) ->
     maps:update_with(Name, fun (Vs) -> [V|Vs] end, [V], Acc).
 
 
-encode_parameter(network_appearance, NA) ->
+encode_parameter(network_appearance, NA, _Opts) ->
     <<NA:32/big>>;
-encode_parameter(routing_context, RCs) when is_list(RCs) ->
+encode_parameter(routing_context, RCs, _Opts) when is_list(RCs) ->
     V = [<<RC:32/big>> || RC <- RCs],
     binary:list_to_bin(V);
-encode_parameter(routing_context, RC) ->
+encode_parameter(routing_context, RC, _Opts) ->
     <<RC:32/big>>;
-encode_parameter(protocol_data, V) ->
+encode_parameter(protocol_data, V, Opts) ->
    #{originating_point_code := OPC,
      destination_point_code := DPC,
      service_indicator := ServiceInd,
@@ -658,20 +672,22 @@ encode_parameter(protocol_data, V) ->
     } = V,
     SI = compose_user_identity(ServiceInd),
     NI = compose_network_indicator(NetworkInd),
-    PDH = <<OPC:4/binary, DPC:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>>,
+    OPCBin = encode_pc(OPC, Opts),
+    DPCBin = encode_pc(DPC, Opts),
+    PDH = <<OPCBin:4/binary, DPCBin:4/binary, SI:8/big, NI:8/big, MP:8/big, SLS:8/big>>,
     <<PDH:12/binary, UPD/binary>>;
-encode_parameter(correlation_id, CI) ->
+encode_parameter(correlation_id, CI, _Opts) ->
     <<CI:32/big>>;
-encode_parameter(affected_point_code, APCs) ->
-    V = [<<Mask:1/binary, PC:3/binary>> || {Mask, PC} <- APCs],
+encode_parameter(affected_point_code, APCs, Opts) ->
+    V = [encode_pc(APC, Opts) || APC <- APCs],
     binary:list_to_bin(V);
-encode_parameter(info_string, V) ->
+encode_parameter(info_string, V, _Opts) ->
     V;
-encode_parameter(concerned_destination, PC) ->
+encode_parameter(concerned_destination, PC, _Opts) ->
     <<0:8, PC:3/binary>>;
-encode_parameter(congestion_indications, CL) ->
+encode_parameter(congestion_indications, CL, _Opts) ->
     <<0:24, CL:8/big>>;
-encode_parameter(user_and_cause, V) ->
+encode_parameter(user_and_cause, V, _Opts) ->
     #{unavailability_cause := Cause,
       mtp3_user_identity := User
      } = V,
@@ -682,11 +698,11 @@ encode_parameter(user_and_cause, V) ->
         end,
     U = compose_user_identity(User),
     <<C:16/big, U:16/big>>;
-encode_parameter(asp_identifier, ID) ->
+encode_parameter(asp_identifier, ID, _Opts) ->
     <<ID:32/big>>;
-encode_parameter(heartbeat_data, V) ->
+encode_parameter(heartbeat_data, V, _Opts) ->
     V;
-encode_parameter(routing_key, V) ->
+encode_parameter(routing_key, V, Opts) ->
     AllowedParameters = [{local_rk_identifier, 16#020a, mandatory, single},
                          {routing_context, 16#0006, optional, single},
                          {traffic_mode_type, 16#000b, optional, single},
@@ -695,31 +711,31 @@ encode_parameter(routing_key, V) ->
                          {service_indicators, 16#020c, optional, multiple},
                          {originating_point_code_list, 16#020e, optional, multiple}
                         ],
-    encode_parameters(V, AllowedParameters);
-encode_parameter(local_rk_identifier, LRKI) ->
+    encode_parameters(V, AllowedParameters, Opts);
+encode_parameter(local_rk_identifier, LRKI, _Opts) ->
     <<LRKI:32/big>>;
-encode_parameter(traffic_mode_type, V) ->
+encode_parameter(traffic_mode_type, V, _Opts) ->
     TMT = case V of
               override -> 1;
               loadshare -> 2;
               broadcast -> 3
           end,
     <<TMT:32/big>>;
-encode_parameter(destination_point_code, {Mask, PC}) ->
-    <<Mask:1/binary, PC:3/binary>>;
-encode_parameter(service_indicators, SIs) ->
+encode_parameter(destination_point_code, PC, Opts) ->
+    encode_pc(PC, Opts);
+encode_parameter(service_indicators, SIs, _Opts) ->
     V = [<<(compose_user_identity(SI)):8/big>> || SI <- SIs],
     binary:list_to_bin(V);
-encode_parameter(originating_point_code_list, OPCs) ->
-    V = [<<Mask:1/binary, PC:3/binary>> || {Mask, PC} <- OPCs],
+encode_parameter(originating_point_code_list, OPCs, Opts) ->
+    V = [encode_pc(OPC, Opts) || OPC <- OPCs],
     binary:list_to_bin(V);
-encode_parameter(registration_result, V) ->
+encode_parameter(registration_result, V, Opts) ->
     AllowedParameters = [{local_rk_identifier, 16#020a, mandatory, single},
                          {registration_status, 16#0212, mandatory, single},
                          {routing_context, 16#0006, optional, single}
                         ],
-    encode_parameters(V, AllowedParameters);
-encode_parameter(registration_status, V) ->
+    encode_parameters(V, AllowedParameters, Opts);
+encode_parameter(registration_status, V, _Opts) ->
     S = case V of
             successfully_registered ->                                0;
             {error, unknown} ->                                       1;
@@ -736,12 +752,12 @@ encode_parameter(registration_status, V) ->
             {error, routing_key_already_registered} ->                12
         end,
     <<S:32/big>>;
-encode_parameter(deregistration_result, V) ->
+encode_parameter(deregistration_result, V, Opts) ->
     AllowedParameters = [{routing_context, 16#0006, mandatory, single},
                          {deregistration_status, 16#0213, mandatory, single}
                         ],
-    encode_parameters(V, AllowedParameters);
-encode_parameter(deregistration_status, V) ->
+    encode_parameters(V, AllowedParameters, Opts);
+encode_parameter(deregistration_status, V, _Opts) ->
     S = case V of
             successfully_deregistered ->                         0;
             {error, unknown} ->                                  1;
@@ -751,7 +767,7 @@ encode_parameter(deregistration_status, V) ->
             {error, asp_currently_active_for_routing_context} -> 5
         end,
     <<S:32/big>>;
-encode_parameter(error_code, V) ->
+encode_parameter(error_code, V, _Opts) ->
     E = case V of
             invalid_version ->               16#01;
             unsupported_message_class ->     16#03;
@@ -773,9 +789,9 @@ encode_parameter(error_code, V) ->
             no_configured_as_for_asp ->      16#1a
         end,
     <<E:32/big>>;
-encode_parameter(diagnostic_information, V) ->
+encode_parameter(diagnostic_information, V, _Opts) ->
     V;
-encode_parameter(status, V) ->
+encode_parameter(status, V, _Opts) ->
     ST = case V of
              #{status_type := application_server_state_change} ->
                  1;
@@ -838,24 +854,75 @@ compose_network_indicator(national) -> ?MTP3_NETIND_NATIONAL;
 compose_network_indicator(national_spare) -> ?MTP3_NETIND_NATIONAL_SPARE;
 compose_network_indicator({reserved, R}) -> R.
 
--spec decode_point_code({binary(), binary()}) -> [itu_point_code() | ansi_point_code()].
-decode_point_code({<<Mask:8/big>>, <<PCbin:24/big>>}) ->
+-spec normalize_point_code_mask(itu_point_code() | ansi_point_code()) -> [itu_point_code() | ansi_point_code()].
+%% The Mask field can be used to identify a contiguous range of
+%% Affected Destination Point Codes
+%% The Mask parameter is an integer representing a bit mask that can
+%% be applied to the related Affected PC field.
+%% For example, a mask of "8" indicates that the last eight bits of
+%% the PC are "wildcarded".
+normalize_point_code_mask(PC) ->
+    normalize_point_code_mask(PC, #{}).
+
+normalize_point_code_mask(#itu_pc{mask = Mask} = PC, Opts) ->
+    PCInt = otc_util:compose_point_code(integer, PC),
+    normalize_point_code_mask(Mask, PCInt, Opts);
+normalize_point_code_mask(#ansi_pc{mask = Mask} = PC, Opts) ->
+    PCInt = otc_util:compose_point_code(integer, PC),
+    normalize_point_code_mask(Mask, PCInt, Opts#{address_type => ansi}).
+
+normalize_point_code_mask(Mask, PCInt, Opts) ->
     MaskBits = trunc(math:pow(2, Mask) - 1),
-    LowPC = PCbin band (trunc(math:pow(2, 24) - 1) bxor MaskBits),
-    HighPC = PCbin bor MaskBits,
-    [decode_pc(<<PC:24/big>>) || PC <- lists:seq(LowPC, HighPC)].
+    LowPC = PCInt band (trunc(math:pow(2, 24) - 1) bxor MaskBits),
+    HighPC = PCInt bor MaskBits,
+    [decode_pc(<<0:8, PC:24/big>>, Opts) || PC <- lists:seq(LowPC, HighPC)].
 
-decode_pc(<<0:10, Zone:3, Region:8, SP:3>>) ->         % ITU 14-bits
-    {itu, Zone, Region, SP};
-decode_pc(<<Network:8, Cluster:8, Member:8>>) ->       % ANSI 24-bits
-    {ansi, Network, Cluster, Member}.
+normalize_point_code_mask_itu_test_() ->
+    ITUPC = #itu_pc{mask = 4, zone = 7, region = 16#FF, signalling_point = 7},
+    IPCs = normalize_point_code_mask(ITUPC),
+    [?_assertEqual(16, length(IPCs)), %% last 4 bits masked = 16 addresses
+     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FE, signalling_point = 0}, decode_pc(encode_pc(lists:nth(1, IPCs)), #{point_code => record})),
+     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FF, signalling_point = 7}, decode_pc(encode_pc(lists:nth(16, IPCs)), #{point_code => record}))
+    ].
 
--spec encode_point_code(itu_point_code() | ansi_point_code()) -> binary().
-encode_point_code(PC) when is_tuple(PC) ->
-    encode_point_code(0, PC).
+normalize_point_code_mask_ansi_test_() ->
+    ANSIPC = #ansi_pc{mask = 4, network = 255, cluster = 255, member = 255},
+    APCs = normalize_point_code_mask(ANSIPC),
+    [?_assertEqual(16, length(APCs)), %% last 4 bits masked = 16 addresses
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#F0}, decode_pc(encode_pc(lists:nth(1, APCs)), #{point_code => record, address_type => ansi})),
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FF}, decode_pc(encode_pc(lists:nth(16, APCs)), #{point_code => record, address_type => ansi}))
+    ].
 
-encode_point_code(Mask, {itu, Zone, Region, SP}) ->
+-spec decode_pc(binary()) -> itu_point_code() | ansi_point_code().
+decode_pc(Bin) ->
+    decode_pc(Bin, #{point_code => record}).
+
+decode_pc(<<Mask:8, 0:10, Zone:3, Region:8, SP:3>>, #{point_code := record}) ->
+    #itu_pc{mask = Mask,
+            zone = Zone,
+            region = Region,
+            signalling_point = SP
+           };
+decode_pc(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{point_code := record, address_type := ansi}) ->
+    #ansi_pc{mask = Mask,
+             network = Network,
+             cluster = Cluster,
+             member = Member
+            };
+decode_pc(<<Mask:1/binary, 0:8, PC:2/binary>>, _Opts) ->
+    {Mask, PC};
+decode_pc(<<Mask:1/binary, PC:3/binary>>, #{address_type := ansi} = _Opts) ->
+    {Mask, PC}.
+
+-spec encode_pc(itu_point_code() | ansi_point_code()) -> binary().
+encode_pc(PC) ->
+    encode_pc(PC, #{point_code => record}).
+
+encode_pc({Mask, <<PC:2/binary>>}, _Opts) ->
+    <<Mask:1/binary, 0:8, PC/binary>>;
+encode_pc({Mask, PC}, _Opts) ->
+    <<Mask:1/binary, PC/binary>>;
+encode_pc(#itu_pc{mask = Mask, zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
     <<Mask:8, 0:10, Zone:3, Region:8, SP:3>>;
-encode_point_code(Mask, {ansi, Network, Cluster, Member}) ->
-    Mask = 0,
+encode_pc(#ansi_pc{mask = Mask, network = Network, cluster = Cluster, member = Member}, _Opts) ->
     <<Mask:8, Network:8, Cluster:8, Member:8>>.
