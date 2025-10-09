@@ -869,7 +869,7 @@ normalize_point_code_mask(#itu_pc{mask = Mask} = PC, Opts) ->
     normalize_point_code_mask(Mask, PCInt, Opts);
 normalize_point_code_mask(#ansi_pc{mask = Mask} = PC, Opts) ->
     PCInt = otc_util:compose_point_code(integer, PC),
-    normalize_point_code_mask(Mask, PCInt, Opts).
+    normalize_point_code_mask(Mask, PCInt, Opts#{address_type => ansi}).
 
 normalize_point_code_mask(Mask, PCInt, Opts) ->
     MaskBits = trunc(math:pow(2, Mask) - 1),
@@ -889,8 +889,8 @@ normalize_point_code_mask_ansi_test_() ->
     ANSIPC = #ansi_pc{mask = 4, network = 255, cluster = 255, member = 255},
     APCs = normalize_point_code_mask(ANSIPC),
     [?_assertEqual(16, length(APCs)), %% last 4 bits masked = 16 addresses
-     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#F0}, decode_pc(encode_pc(lists:nth(1, APCs)), #{point_code => record})),
-     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FF}, decode_pc(encode_pc(lists:nth(16, APCs)), #{point_code => record}))
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#F0}, decode_pc(encode_pc(lists:nth(1, APCs)), #{point_code => record, address_type => ansi})),
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FF}, decode_pc(encode_pc(lists:nth(16, APCs)), #{point_code => record, address_type => ansi}))
     ].
 
 -spec decode_pc(binary()) -> itu_point_code() | ansi_point_code().
