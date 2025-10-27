@@ -18,7 +18,7 @@ codec(Map, _Opts) when is_map(Map) ->
 next(_) -> {ok, nas_5gs}.
 
 decode({plain_5gs_nas_message, <<MT:8/big, OIE/binary>>}) ->
-    MsgType = otc_nas_eps:parse_msg_type(MT),
+    MsgType = otc_nas_5gs:parse_msg_type(MT),
     Msg = decode_5gmm_msg(MsgType, OIE),
     Msg#{message_type => MsgType};
 decode({service_request, Bin}) ->
