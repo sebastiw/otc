@@ -173,8 +173,8 @@ mgmt_upu_test() ->
             payload =>
                 #{destination_point_code => #itu_pc{zone = 2, region = 43, signalling_point = 4},
                   message_type => user_part_unavailable,
-                  user_part_id => 3,
-                  unavailability_cause => unequipped},
+                  user_part_id => sccp,
+                  unavailability_cause => unequipped_remote_user},
             service_indicator => mgmt,
             signalling_link_selection => 0},
     Val = otc_mtp3:decode(Bin, #{point_code => record}),
