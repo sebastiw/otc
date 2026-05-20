@@ -372,17 +372,17 @@ encode_mgmt(#{message_type := user_part_unavailable,
     <<?MTP3_MGMT_H1_UFC_UPU:4, ?MTP3_MGMT_H0_UFC:4, Bin/binary>>.
 
 parse_unavailability_cause(?MTP3_UPU_CAUSE_UNKNOWN) -> unknown;
-parse_unavailability_cause(?MTP3_UPU_CAUSE_UNEQUIPPED) -> unequipped_remote_user;
-parse_unavailability_cause(?MTP3_UPU_CAUSE_INACCESSIBLE) -> inaccessible_remote_user.
+parse_unavailability_cause(?MTP3_UPU_CAUSE_UNEQUIPPED_REMOTE_USER) -> unequipped_remote_user;
+parse_unavailability_cause(?MTP3_UPU_CAUSE_INACCESSIBLE_REMOTE_USER) -> inaccessible_remote_user.
 
 compose_unavailability_cause(unknown) -> ?MTP3_UPU_CAUSE_UNKNOWN;
-compose_unavailability_cause(unequipped_remote_user) -> ?MTP3_UPU_CAUSE_UNEQUIPPED;
-compose_unavailability_cause(inaccessible_remote_user) -> ?MTP3_UPU_CAUSE_INACCESSIBLE.
+compose_unavailability_cause(unequipped_remote_user) -> ?MTP3_UPU_CAUSE_UNEQUIPPED_REMOTE_USER;
+compose_unavailability_cause(inaccessible_remote_user) -> ?MTP3_UPU_CAUSE_INACCESSIBLE_REMOTE_USER.
 
 parse_user_part_id(?MTP3_SERVIND_SCCP) -> sccp;
 parse_user_part_id(?MTP3_SERVIND_TUP) -> tup;
 parse_user_part_id(?MTP3_SERVIND_ISUP) -> isup;
-parse_user_part_id(?MTP3_SERVIND_DUP_CALL) -> dup_call;
+parse_user_part_id(?MTP3_SERVIND_DUP_CALL) -> dup;
 parse_user_part_id(?MTP3_SERVIND_MTP_TEST) -> mtp_test;
 parse_user_part_id(?MTP3_SERVIND_BROADBAND_ISUP) -> broadband_isup;
 parse_user_part_id(?MTP3_SERVIND_SATELLITE_ISUP) -> satellite_isup;
@@ -391,7 +391,7 @@ parse_user_part_id(R) -> {reserved, R}.
 compose_user_part_id(sccp) -> ?MTP3_SERVIND_SCCP;
 compose_user_part_id(tup) -> ?MTP3_SERVIND_TUP;
 compose_user_part_id(isup) -> ?MTP3_SERVIND_ISUP;
-compose_user_part_id(dup_call) -> ?MTP3_SERVIND_DUP_CALL;
+compose_user_part_id(dup) -> ?MTP3_SERVIND_DUP_CALL;
 compose_user_part_id(mtp_test) -> ?MTP3_SERVIND_MTP_TEST;
 compose_user_part_id(broadband_isup) -> ?MTP3_SERVIND_BROADBAND_ISUP;
 compose_user_part_id(satellite_isup) -> ?MTP3_SERVIND_SATELLITE_ISUP;
