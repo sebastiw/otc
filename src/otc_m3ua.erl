@@ -10,6 +10,7 @@
 
 -export([normalize_point_code_mask/1,
          normalize_point_code_mask/2,
+         compare_pcs/2,
          decode_pc/1,
          decode_pc/2,
          encode_pc/1,
@@ -861,6 +862,10 @@ compose_network_indicator({reserved, R}) -> R.
 %% be applied to the related Affected PC field.
 %% For example, a mask of "8" indicates that the last eight bits of
 %% the PC are "wildcarded".
+%%
+%% Beware larger masks will result in higher memory consumption.
+%%
+%% This function will probably be deprecated in the future.
 normalize_point_code_mask(PC) ->
     normalize_point_code_mask(PC, #{}).
 
@@ -871,6 +876,8 @@ normalize_point_code_mask(#ansi_pc{mask = Mask} = PC, Opts) ->
     PCInt = otc_util:compose_point_code(integer, PC),
     normalize_point_code_mask(Mask, PCInt, Opts#{address_type => ansi}).
 
+normalize_point_code_mask(Mask, PCInt, Opts) when Mask >= 24 ->
+    normalize_point_code_mask(24, PCInt, Opts);
 normalize_point_code_mask(Mask, PCInt, Opts) ->
     MaskBits = trunc(math:pow(2, Mask) - 1),
     LowPC = PCInt band (trunc(math:pow(2, 24) - 1) bxor MaskBits),
@@ -892,6 +899,156 @@ normalize_point_code_mask_ansi_test_() ->
      ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#F0}, decode_pc(encode_pc(lists:nth(1, APCs)), #{point_code => record, address_type => ansi})),
      ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FF}, decode_pc(encode_pc(lists:nth(16, APCs)), #{point_code => record, address_type => ansi}))
     ].
+
+-spec compare_pcs(Specific :: itu_point_code(), MaybeWithMask :: itu_point_code()) -> boolean();
+                 (Specific :: ansi_point_code(), MaybeWithMask :: ansi_point_code()) -> boolean().
+compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{mask = 0} = PC2) ->
+    PC1 == PC2;
+compare_pcs(_PC1, #itu_pc{mask = M} = _PC2) when M > 24 ->
+    %% Due to double precision floating point numbers in Erlang we
+    %% cannot compare point codes with masks greater than or equal to
+    %% 54 bits. 24 bits also include the full point code range even if
+    %% it's non-ITU format.
+    true;
+compare_pcs(_PC1, #ansi_pc{mask = M} = _PC2) when M > 24 ->
+    %% Due to double precision floating point numbers in Erlang we
+    %% cannot compare point codes with masks greater than or equal to
+    %% 54 bits. 24 bits also include the full point code range even if
+    %% it's non-ITU format.
+    true;
+compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{} = PC2) ->
+    PC1Int = otc_util:compose_point_code(integer, PC1),
+    PC2Int = otc_util:compose_point_code(integer, PC2),
+    MaskBits = trunc(math:pow(2, PC2#itu_pc.mask) - 1),
+    LowPC = PC2Int band (2#1111_1111_1111_1111_1111_1111 bxor MaskBits),
+    HighPC = PC2Int bor MaskBits,
+    (PC1Int >= LowPC) andalso (PC1Int =< HighPC);
+compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{mask = 0} = PC2) ->
+    PC1 == PC2;
+compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{} = PC2) ->
+    PC1Int = otc_util:compose_point_code(integer, PC1),
+    PC2Int = otc_util:compose_point_code(integer, PC2),
+    MaskBits = trunc(math:pow(2, PC2#ansi_pc.mask) - 1),
+    LowPC = PC2Int band (2#1111_1111_1111_1111_1111_1111 bxor MaskBits),
+    HighPC = PC2Int bor MaskBits,
+    (PC1Int >= LowPC) andalso (PC1Int =< HighPC);
+compare_pcs(_, _) ->
+    false.
+
+compare_pcs_0bit_mask_test_() ->
+    %% exact mask = 1 address
+    IMASK = #itu_pc{mask = 0, zone = 7, region = 16#FF, signalling_point = 6},
+    AMASK = #ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FE},
+    IPC = #itu_pc{zone = 7, region = 16#FF},
+    APC = #ansi_pc{network = 16#FF, cluster = 16#FF},
+    [{"ITU PC 16#3FFD outside range of Mask (0)",
+      ?_assertEqual(false, compare_pcs(IPC#itu_pc{signalling_point = 5}, IMASK))},
+     {"ITU PC 16#3FFE within range of Mask (0)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{signalling_point = 6}, IMASK))},
+     {"ITU PC 16#3FFF outside range of Mask (0)",
+      ?_assertEqual(false, compare_pcs(IPC#itu_pc{signalling_point = 7}, IMASK))},
+     {"ANSI PC 16#FFFFFD outside range of Mask (0)",
+      ?_assertEqual(false, compare_pcs(APC#ansi_pc{member = 16#FD}, AMASK))},
+     {"ANSI PC 16#FFFFFE within range of Mask (0)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FE}, AMASK))},
+     {"ANSI PC 16#FFFFFF outside range of Mask (0)",
+      ?_assertEqual(false, compare_pcs(APC#ansi_pc{member = 16#FF}, AMASK))}
+    ].
+
+compare_pcs_4bit_mask_test_() ->
+    %% last 4 bits masked = 16 addresses
+    IMASK = #itu_pc{mask = 4, zone = 7, region = 16#FF, signalling_point = 7},
+    AMASK = #ansi_pc{mask = 4, network = 16#FF, cluster = 16#FF, member = 16#FF},
+    IPC = #itu_pc{zone = 7},
+    APC = #ansi_pc{network = 16#FF, cluster = 16#FF},
+    [{"ITU PC 16#3FEF outside range of Mask (2^4)",
+      ?_assertEqual(false, compare_pcs(IPC#itu_pc{region = 16#FD, signalling_point = 7}, IMASK))},
+     {"ITU PC 16#3FF0 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 0}, IMASK))},
+     {"ITU PC 16#3FF1 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 1}, IMASK))},
+     {"ITU PC 16#3FF2 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 2}, IMASK))},
+     {"ITU PC 16#3FF3 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 3}, IMASK))},
+     {"ITU PC 16#3FF4 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 4}, IMASK))},
+     {"ITU PC 16#3FF5 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 5}, IMASK))},
+     {"ITU PC 16#3FF6 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 6}, IMASK))},
+     {"ITU PC 16#3FF7 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FE, signalling_point = 7}, IMASK))},
+     {"ITU PC 16#3FF8 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 0}, IMASK))},
+     {"ITU PC 16#3FF9 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 1}, IMASK))},
+     {"ITU PC 16#3FFA within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 2}, IMASK))},
+     {"ITU PC 16#3FFB within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 3}, IMASK))},
+     {"ITU PC 16#3FFC within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 4}, IMASK))},
+     {"ITU PC 16#3FFD within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 5}, IMASK))},
+     {"ITU PC 16#3FFE within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 6}, IMASK))},
+     {"ITU PC 16#3FFF within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(IPC#itu_pc{region = 16#FF, signalling_point = 7}, IMASK))},
+     {"ANSI PC 16#FFFFEF outside range of Mask (2^4)",
+      ?_assertEqual(false, compare_pcs(APC#ansi_pc{member = 16#EF}, AMASK))},
+     {"ANSI PC 16#FFFFF0 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F0}, AMASK))},
+     {"ANSI PC 16#FFFFF1 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F1}, AMASK))},
+     {"ANSI PC 16#FFFFF2 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F2}, AMASK))},
+     {"ANSI PC 16#FFFFF3 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F3}, AMASK))},
+     {"ANSI PC 16#FFFFF4 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F4}, AMASK))},
+     {"ANSI PC 16#FFFFF5 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F5}, AMASK))},
+     {"ANSI PC 16#FFFFF6 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F6}, AMASK))},
+     {"ANSI PC 16#FFFFF7 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F7}, AMASK))},
+     {"ANSI PC 16#FFFFF8 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F8}, AMASK))},
+     {"ANSI PC 16#FFFFF9 within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#F9}, AMASK))},
+     {"ANSI PC 16#FFFFFA within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FA}, AMASK))},
+     {"ANSI PC 16#FFFFFB within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FB}, AMASK))},
+     {"ANSI PC 16#FFFFFC within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FC}, AMASK))},
+     {"ANSI PC 16#FFFFFD within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FD}, AMASK))},
+     {"ANSI PC 16#FFFFFE within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FE}, AMASK))},
+     {"ANSI PC 16#FFFFFF within range of Mask (2^4)",
+      ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FF}, AMASK))}
+    ].
+
+compare_pcs_all_bit_mask_test_() ->
+    %% Masks more than ITU-address pc
+    IMASK = #itu_pc{mask = 16#FF, zone = 7, region = 16#FF, signalling_point = 7},
+    AMASK = #ansi_pc{mask = 16#FF, network = 16#FF, cluster = 16#FF, member = 16#FF},
+    [{"ITU PC 16#0000 within range of Mask (2^255)",
+      ?_assertEqual(true, compare_pcs(#itu_pc{zone = 0, region = 16#00, signalling_point = 0}, IMASK))},
+     {"ITU PC 16#3000 within range of Mask (2^255)",
+      ?_assertEqual(true, compare_pcs(#itu_pc{zone = 7, region = 16#E0, signalling_point = 1}, IMASK))},
+     {"ITU PC 16#3FFF within range of Mask (2^255)",
+      ?_assertEqual(true, compare_pcs(#itu_pc{zone = 7, region = 16#FF, signalling_point = 7}, IMASK))},
+     {"ANSI PC 16#000000 within range of Mask (2^255)",
+      ?_assertEqual(true, compare_pcs(#ansi_pc{network = 16#00, cluster = 16#00, member = 16#00}, AMASK))},
+     {"ANSI PC 16#FF0000 within range of Mask (2^255)",
+      ?_assertEqual(true, compare_pcs(#ansi_pc{network = 16#FF, cluster = 16#00, member = 16#00}, AMASK))},
+     {"ANSI PC 16#FFFFFF within range of Mask (2^255)",
+      ?_assertEqual(true, compare_pcs(#ansi_pc{network = 16#FF, cluster = 16#FF, member = 16#FF}, AMASK))}
+    ].
+
 
 -spec decode_pc(binary()) -> itu_point_code() | ansi_point_code().
 decode_pc(Bin) ->
