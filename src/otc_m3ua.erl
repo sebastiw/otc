@@ -904,6 +904,8 @@ normalize_point_code_mask_ansi_test_() ->
                  (Specific :: ansi_point_code(), MaybeWithMask :: ansi_point_code()) -> boolean().
 compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{mask = 0} = PC2) ->
     PC1 == PC2;
+compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{mask = 0} = PC2) ->
+    PC1 == PC2;
 compare_pcs(_PC1, #itu_pc{mask = M} = _PC2) when M > 14 ->
     %% Due to double precision floating point numbers in Erlang we
     %% cannot compare point codes with masks greater than or equal to
@@ -920,7 +922,7 @@ compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{} = PC2) ->
     PC1Int = otc_util:compose_point_code(integer, PC1),
     PC2Int = otc_util:compose_point_code(integer, PC2),
     MaskBits = trunc(math:pow(2, PC2#itu_pc.mask) - 1),
-    LowPC = PC2Int band (2#1111_1111_1111_1111_1111_1111 bxor MaskBits),
+    LowPC = PC2Int band (2#11_1111_1111_1111 bxor MaskBits),
     HighPC = PC2Int bor MaskBits,
     (PC1Int >= LowPC) andalso (PC1Int =< HighPC);
 compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{mask = 0} = PC2) ->
