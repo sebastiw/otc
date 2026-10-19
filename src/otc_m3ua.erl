@@ -904,17 +904,17 @@ normalize_point_code_mask_ansi_test_() ->
                  (Specific :: ansi_point_code(), MaybeWithMask :: ansi_point_code()) -> boolean().
 compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{mask = 0} = PC2) ->
     PC1 == PC2;
-compare_pcs(_PC1, #itu_pc{mask = M} = _PC2) when M > 24 ->
+compare_pcs(_PC1, #itu_pc{mask = M} = _PC2) when M > 14 ->
     %% Due to double precision floating point numbers in Erlang we
     %% cannot compare point codes with masks greater than or equal to
-    %% 54 bits. 24 bits also include the full point code range even if
-    %% it's non-ITU format.
+    %% 54 bits. 14 bits include the full point code range of ITU point
+    %% codes.
     true;
 compare_pcs(_PC1, #ansi_pc{mask = M} = _PC2) when M > 24 ->
     %% Due to double precision floating point numbers in Erlang we
     %% cannot compare point codes with masks greater than or equal to
-    %% 54 bits. 24 bits also include the full point code range even if
-    %% it's non-ITU format.
+    %% 54 bits. 24 bits include the full point code range of ANSI
+    %% point codes.
     true;
 compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{} = PC2) ->
     PC1Int = otc_util:compose_point_code(integer, PC1),
