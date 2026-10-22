@@ -18,6 +18,9 @@ jobs:
           - otp: "27.1.2"
             rebar3: "3.22.1"
             os: ubuntu-24.04
+          - otp: "29.1.2"
+            rebar3: "3.28.0"
+            os: ubuntu-26.04
     env:
       OTC_NO_DIA: true
     steps:
@@ -27,3 +30,4 @@ jobs:
           otp-version: ${{matrix.erlang.otp}}
           rebar3-version: ${{matrix.erlang.rebar3}}
       - run: rebar3 eunit
+      - run: rebar3 dialyzer
