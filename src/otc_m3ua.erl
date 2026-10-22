@@ -907,12 +907,6 @@ compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{mask = 0} = PC2) ->
     PC1 == PC2;
 compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{mask = 0} = PC2) ->
     PC1 == PC2;
-compare_pcs(#itu_pc{mask = 0}, #itu_pc{mask = M} = _PC2) when M > 14 ->
-    %% 14 bits include the full point code range of ITU point codes.
-    true;
-compare_pcs(#ansi_pc{mask = 0}, #ansi_pc{mask = M} = _PC2) when M > 24 ->
-    %% 24 bits include the full point code range of ANSI point codes.
-    true;
 compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{} = PC2) ->
     PC1Int = otc_util:compose_point_code(integer, PC1),
     PC2Int = otc_util:compose_point_code(integer, PC2),
@@ -926,13 +920,14 @@ compare_pcs(PC1Int, PC2Int) when is_integer(PC1Int), is_integer(PC2Int) ->
     PC2Mask = (PC2Int bsr 24),
     compare_pcs(24, PC1Int, PC2Int, PC2Mask).
 
+compare_pcs(BitsInPC, _PC1Int, _PC2Int, PC2Mask) when PC2Mask > BitsInPC ->
+    %% The mask is larger than the point code, so it matches all point codes.
+    true;
 compare_pcs(BitsInPC, PC1Int, PC2Int, PC2Mask) when is_integer(PC1Int), is_integer(PC2Int) ->
     MaskForPC = (1 bsl BitsInPC) - 1,
-    MaskBits = (1 bsl PC2Mask) - 1,
-    LowPC = (PC2Int band MaskForPC) band (MaskForPC bxor MaskBits),
-    HighPC = (PC2Int band MaskForPC) bor MaskBits,
-    PC1 = PC1Int band MaskForPC,
-    (PC1 >= LowPC) andalso (PC1 =< HighPC).
+    PC1 = (PC1Int band MaskForPC),
+    PC2 = (PC2Int band MaskForPC),
+    (PC2 bsr PC2Mask) == (PC1 bsr PC2Mask).
 
 compare_pcs_0bit_mask_test_() ->
     %% exact mask = 1 address
