@@ -972,8 +972,6 @@ encode_parameters([{Name, Length, tlv}|Ts], Map, Acc) ->
 
 extract_cstring(Bin) ->
     case string:split(Bin, <<0>>) of
-        [] ->
-            {<<>>, <<>>};
         [A] ->
             {A, <<>>};
         [A, Rest] ->
