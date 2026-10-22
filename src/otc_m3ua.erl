@@ -901,41 +901,38 @@ normalize_point_code_mask_ansi_test_() ->
     ].
 
 -spec compare_pcs(Specific :: itu_point_code(), MaybeWithMask :: itu_point_code()) -> boolean();
-                 (Specific :: ansi_point_code(), MaybeWithMask :: ansi_point_code()) -> boolean().
+                 (Specific :: ansi_point_code(), MaybeWithMask :: ansi_point_code()) -> boolean();
+                 (Specific :: integer(), MaybeWithMask :: integer()) -> boolean().
 compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{mask = 0} = PC2) ->
     PC1 == PC2;
 compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{mask = 0} = PC2) ->
     PC1 == PC2;
-compare_pcs(_PC1, #itu_pc{mask = M} = _PC2) when M > 14 ->
-    %% Due to double precision floating point numbers in Erlang we
-    %% cannot compare point codes with masks greater than or equal to
-    %% 54 bits. 14 bits include the full point code range of ITU point
-    %% codes.
+compare_pcs(#itu_pc{mask = 0}, #itu_pc{mask = M} = _PC2) when M > 14 ->
+    %% 14 bits include the full point code range of ITU point codes.
     true;
-compare_pcs(_PC1, #ansi_pc{mask = M} = _PC2) when M > 24 ->
-    %% Due to double precision floating point numbers in Erlang we
-    %% cannot compare point codes with masks greater than or equal to
-    %% 54 bits. 24 bits include the full point code range of ANSI
-    %% point codes.
+compare_pcs(#ansi_pc{mask = 0}, #ansi_pc{mask = M} = _PC2) when M > 24 ->
+    %% 24 bits include the full point code range of ANSI point codes.
     true;
 compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{} = PC2) ->
     PC1Int = otc_util:compose_point_code(integer, PC1),
     PC2Int = otc_util:compose_point_code(integer, PC2),
-    MaskBits = trunc(math:pow(2, PC2#itu_pc.mask) - 1),
-    LowPC = PC2Int band (2#11_1111_1111_1111 bxor MaskBits),
-    HighPC = PC2Int bor MaskBits,
-    (PC1Int >= LowPC) andalso (PC1Int =< HighPC);
-compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{mask = 0} = PC2) ->
-    PC1 == PC2;
+    compare_pcs(14, PC1Int, PC2Int, PC2#itu_pc.mask);
 compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{} = PC2) ->
     PC1Int = otc_util:compose_point_code(integer, PC1),
     PC2Int = otc_util:compose_point_code(integer, PC2),
-    MaskBits = trunc(math:pow(2, PC2#ansi_pc.mask) - 1),
-    LowPC = PC2Int band (2#1111_1111_1111_1111_1111_1111 bxor MaskBits),
-    HighPC = PC2Int bor MaskBits,
-    (PC1Int >= LowPC) andalso (PC1Int =< HighPC);
-compare_pcs(_, _) ->
-    false.
+    compare_pcs(24, PC1Int, PC2Int, PC2#ansi_pc.mask);
+compare_pcs(PC1Int, PC2Int) when is_integer(PC1Int), is_integer(PC2Int) ->
+    %% We cannot tell if ITU or ANSI, use 24 bit masks.
+    PC2Mask = (PC2Int bsr 24),
+    compare_pcs(24, PC1Int, PC2Int, PC2Mask).
+
+compare_pcs(BitsInPC, PC1Int, PC2Int, PC2Mask) when is_integer(PC1Int), is_integer(PC2Int) ->
+    MaskForPC = (1 bsl BitsInPC) - 1,
+    MaskBits = (1 bsl PC2Mask) - 1,
+    LowPC = (PC2Int band MaskForPC) band (MaskForPC bxor MaskBits),
+    HighPC = (PC2Int band MaskForPC) bor MaskBits,
+    PC1 = PC1Int band MaskForPC,
+    (PC1 >= LowPC) andalso (PC1 =< HighPC).
 
 compare_pcs_0bit_mask_test_() ->
     %% exact mask = 1 address
@@ -1031,6 +1028,26 @@ compare_pcs_4bit_mask_test_() ->
       ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FE}, AMASK))},
      {"ANSI PC 16#FFFFFF within range of Mask (2^4)",
       ?_assertEqual(true, compare_pcs(APC#ansi_pc{member = 16#FF}, AMASK))}
+    ].
+
+compare_pcs_20bit_mask_test_() ->
+    %% last 20 bits masked ~= 1M addresses
+    IMASK = #itu_pc{mask = 20, zone = 5, region = 85, signalling_point = 2}, %% 2#101_01010101_010
+    AMASK = #ansi_pc{mask = 20, network = 170, cluster = 170, member = 170}, %% 2#10101010_10101010_10101010
+    IntMask1 = 2#10100_00000000_00101010_10101010,
+    IntMask2 = 2#10100_10101010_10101010_10101010,
+    [{"ITU PC 2#0101_01010101_01 within range of Mask (2^20)",
+      ?_assertEqual(true, compare_pcs(#itu_pc{mask = 0, zone = 2, region = 170, signalling_point = 5}, IMASK))},
+     {"ANSI PC 2#1010_0101_01010101_01010101 within range of Mask (2^20)",
+      ?_assertEqual(true, compare_pcs(#ansi_pc{mask = 0, network = 165, cluster = 85, member = 85}, AMASK))},
+     {"ANSI PC 2#1011_0101_01010101_01010101 outside range of Mask (2^20)",
+      ?_assertEqual(false, compare_pcs(#ansi_pc{mask = 0, network = 181, cluster = 85, member = 85}, AMASK))},
+     {"Numeric PC 2#0101_01010101_01 within range of Mask (2^20)",
+      ?_assertEqual(true, compare_pcs(2#0101_01010101_01, IntMask1))},
+     {"Numeric PC 2#1010_0101_01010101_01010101 within range of Mask (2^20)",
+      ?_assertEqual(true, compare_pcs(2#1010_0101_01010101_01010101, IntMask2))},
+     {"Numeric PC 2#1011_0101_01010101_01010101 outside range of Mask (2^20)",
+      ?_assertEqual(false, compare_pcs(2#1011_0101_01010101_01010101, IntMask2))}
     ].
 
 compare_pcs_all_bit_mask_test_() ->
