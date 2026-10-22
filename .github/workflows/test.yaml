@@ -24,7 +24,7 @@ jobs:
     env:
       OTC_NO_DIA: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{matrix.erlang.otp}}
