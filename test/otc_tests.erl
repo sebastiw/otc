@@ -92,8 +92,7 @@ decode_m3ua_sccp_payload_test() ->
                    application_context_name => 'shortMsgMO-RelayContext-v3',
                    supported_versions => [version1]},
              otid => <<"721001B3">>},
-    Msg = otc:decode(m3ua, M3uaBin, #{m3ua => #{point_code => record},
-                                      sccp => #{point_code => record}}),
+    Msg = otc:decode(m3ua, M3uaBin, #{}),
     ?assertMatch({ok, [M3ua, Sccp, Tcap]}, Msg),
     NewBin = otc:encode({[M3ua, Sccp], TcapBin}),
     ?assertEqual({ok, M3uaBin}, NewBin).
@@ -136,7 +135,7 @@ udt_scmg_test() ->
              affected_subsystem_number => hlr,
              subsystem_multiplicity_indicator => 0
             },
-    Val = otc:decode(sccp, SccpBin, #{sccp => #{point_code => record}}),
+    Val = otc:decode(sccp, SccpBin, #{}),
     ?assertEqual({ok, [Sccp, ScMg]}, Val),
     NewBin = otc:encode([Sccp, ScMg]),
     ?assertEqual({ok, SccpBin}, NewBin).

@@ -888,16 +888,16 @@ normalize_point_code_mask_itu_test_() ->
     ITUPC = #itu_pc{mask = 4, zone = 7, region = 16#FF, signalling_point = 7},
     IPCs = normalize_point_code_mask(ITUPC),
     [?_assertEqual(16, length(IPCs)), %% last 4 bits masked = 16 addresses
-     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FE, signalling_point = 0}, decode_pc(encode_pc(lists:nth(1, IPCs)), #{point_code => record})),
-     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FF, signalling_point = 7}, decode_pc(encode_pc(lists:nth(16, IPCs)), #{point_code => record}))
+     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FE, signalling_point = 0}, decode_pc(encode_pc(lists:nth(1, IPCs)), #{})),
+     ?_assertEqual(#itu_pc{mask = 0, zone = 7, region = 16#FF, signalling_point = 7}, decode_pc(encode_pc(lists:nth(16, IPCs)), #{}))
     ].
 
 normalize_point_code_mask_ansi_test_() ->
     ANSIPC = #ansi_pc{mask = 4, network = 255, cluster = 255, member = 255},
     APCs = normalize_point_code_mask(ANSIPC),
     [?_assertEqual(16, length(APCs)), %% last 4 bits masked = 16 addresses
-     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#F0}, decode_pc(encode_pc(lists:nth(1, APCs)), #{point_code => record, address_type => ansi})),
-     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FF}, decode_pc(encode_pc(lists:nth(16, APCs)), #{point_code => record, address_type => ansi}))
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#F0}, decode_pc(encode_pc(lists:nth(1, APCs)), #{address_type => ansi})),
+     ?_assertEqual(#ansi_pc{mask = 0, network = 16#FF, cluster = 16#FF, member = 16#FF}, decode_pc(encode_pc(lists:nth(16, APCs)), #{address_type => ansi}))
     ].
 
 -spec compare_pcs(Specific :: itu_point_code(), MaybeWithMask :: itu_point_code()) -> boolean();
@@ -1066,33 +1066,25 @@ compare_pcs_all_bit_mask_test_() ->
 
 -spec decode_pc(binary()) -> itu_point_code() | ansi_point_code().
 decode_pc(Bin) ->
-    decode_pc(Bin, #{point_code => record}).
+    decode_pc(Bin, #{}).
 
-decode_pc(<<Mask:8, 0:10, Zone:3, Region:8, SP:3>>, #{point_code := record}) ->
+decode_pc(<<Mask:8, 0:10, Zone:3, Region:8, SP:3>>, #{}) ->
     #itu_pc{mask = Mask,
             zone = Zone,
             region = Region,
             signalling_point = SP
            };
-decode_pc(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{point_code := record, address_type := ansi}) ->
+decode_pc(<<Mask:8, Network:8, Cluster:8, Member:8>>, #{address_type := ansi}) ->
     #ansi_pc{mask = Mask,
              network = Network,
              cluster = Cluster,
              member = Member
-            };
-decode_pc(<<Mask:1/binary, 0:8, PC:2/binary>>, _Opts) ->
-    {Mask, PC};
-decode_pc(<<Mask:1/binary, PC:3/binary>>, #{address_type := ansi} = _Opts) ->
-    {Mask, PC}.
+            }.
 
 -spec encode_pc(itu_point_code() | ansi_point_code()) -> binary().
 encode_pc(PC) ->
-    encode_pc(PC, #{point_code => record}).
+    encode_pc(PC, #{}).
 
-encode_pc({Mask, <<PC:2/binary>>}, _Opts) ->
-    <<Mask:1/binary, 0:8, PC/binary>>;
-encode_pc({Mask, PC}, _Opts) ->
-    <<Mask:1/binary, PC/binary>>;
 encode_pc(#itu_pc{mask = Mask, zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
     <<Mask:8, 0:10, Zone:3, Region:8, SP:3>>;
 encode_pc(#ansi_pc{mask = Mask, network = Network, cluster = Cluster, member = Member}, _Opts) ->

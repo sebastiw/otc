@@ -1983,22 +1983,14 @@ encode_bcd_digit(E) when E =:= $E; E =:= $e -> 2#1110;
 encode_bcd_digit(F) when F =:= $F; F =:= $f -> 2#1111;
 encode_bcd_digit(D) when D >= $0, D =< $9   -> D - $0.
 
-decode_pc(<<NCM:8, NC:8, NI:8>>, #{point_code := record, address_type := ansi} = _Opts) ->
-    #ansi_pc{network = NI, cluster = NC, member = NCM};
 decode_pc(<<NCM:8, NC:8, NI:8>>, #{address_type := ansi} = _Opts) ->
-    <<NI:8, NC:8, NCM:8>>;
-decode_pc(<<LSB:8, 0:2, MSB:6>>, #{point_code := record}) ->
+    #ansi_pc{network = NI, cluster = NC, member = NCM};
+decode_pc(<<LSB:8, 0:2, MSB:6>>, #{}) ->
     <<_:2, Zone:3, Region:8, SP:3>> = <<0:2, MSB:6, LSB:8>>,
-    #itu_pc{zone = Zone, region = Region, signalling_point = SP};
-decode_pc(<<LSB:8, 0:2, MSB:6>>, _Opts) ->
-    <<0:2, MSB:6, LSB:8>>.
+    #itu_pc{zone = Zone, region = Region, signalling_point = SP}.
 
 encode_pc(#ansi_pc{network = NI, cluster = NC, member = NCM}, _Opts) ->
     <<NCM:8, NC:8, NI:8>>;
 encode_pc(#itu_pc{zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
     <<0:2, MSB:6, LSB:8>> = <<0:2, Zone:3, Region:8, SP:3>>,
-    <<LSB:8, 0:2, MSB:6>>;
-encode_pc(<<NI:8, NC:8, NCM:8>>, _Opts) ->
-    <<NCM:8, NC:8, NI:8>>;
-encode_pc(<<0:2, MSB:6, LSB:8>>, _Opts) ->
     <<LSB:8, 0:2, MSB:6>>.
