@@ -1,6 +1,7 @@
 -module(otc_sccp_codec_tests).
 
 -include_lib("eunit/include/eunit.hrl").
+-include("include/point_code.hrl").
 
 udt_test() ->
     CdPA = called_party_address_itu(),
@@ -23,7 +24,7 @@ udt_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => <<16#1234:16>>,
+                  point_code => #itu_pc{zone = 2, region = 70, signalling_point = 4},
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -66,7 +67,7 @@ xudt_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => <<16#1234:16>>,
+                  point_code => #itu_pc{zone = 2, region = 70, signalling_point = 4},
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -114,7 +115,7 @@ xudt_opt_segmentation_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => <<16#1234:16>>,
+                  point_code => #itu_pc{zone = 2, region = 70, signalling_point = 4},
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -174,7 +175,7 @@ udts_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => <<16#1234:16>>,
+                  point_code => #itu_pc{zone = 2, region = 70, signalling_point = 4},
                   routing_indicator => global_title,
                   subsystem_number => msc},
             message_type => udts,
@@ -218,7 +219,7 @@ xudts_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => <<16#1234:16>>,
+                  point_code => #itu_pc{zone = 2, region = 70, signalling_point = 4},
                   routing_indicator => global_title,
                   subsystem_number => msc},
             hop_counter => 15,
@@ -255,7 +256,7 @@ xudts_arbitrary_pointers_test() ->
                         odd_even_indicator => even,
                         translation_type => 0},
                   national_use_indicator => false,
-                  point_code => <<16#1234:16>>,
+                  point_code => #itu_pc{zone = 2, region = 70, signalling_point = 4},
                   routing_indicator => global_title,
                   subsystem_number => msc},
             calling_party_address =>
@@ -299,7 +300,7 @@ xudts_ansi_test() ->
                       #{address => "11234567890",
                         translation_type => 14},
                   national_use_indicator => true,
-                  point_code => <<16#214365:24>>},
+                  point_code => #ansi_pc{network = 16#21, cluster = 16#43, member = 16#65}},
             called_party_address =>
                 #{subsystem_number => hlr,
                   routing_indicator => global_title,

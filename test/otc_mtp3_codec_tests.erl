@@ -28,7 +28,7 @@ mgmt_xco_test() ->
                   message_type => extended_changeover_order},
             service_indicator => mgmt,
             signalling_link_selection => 0},
-    Val = otc_mtp3:decode(Bin, #{point_code => record}),
+    Val = otc_mtp3:decode(Bin, #{}),
     ?assertEqual(Exp, Val),
     NewBin = otc_mtp3:encode(Val),
     ?assertEqual(Bin, NewBin).
@@ -48,10 +48,10 @@ mgmt_cbd_test() ->
     %%     .... 0001 = H0 (Message Group): Changeover and changeback messages (0x1)
     %%     0101 .... = H1 (Message): Changeback-declaration signal (0x5)
     %%     Change Back Code: 10
-    Exp = #{destination_point_code => 6777,
+    Exp = #{destination_point_code => #itu_pc{zone = 2#011, region = 2#0100_1111, signalling_point = 2#001},
             national_use_spare => 0,
             network_indicator => national_spare,
-            originating_point_code => 12355,
+            originating_point_code => #itu_pc{zone = 2#110, region = 2#0000_1000, signalling_point = 2#011},
             payload =>
                 #{changeback_code => 10,
                   message_type => changeback_declaration},
@@ -86,7 +86,7 @@ mgmt_coo_test() ->
                   message_type => changeover_order},
             service_indicator => mgmt,
             signalling_link_selection => 0},
-    Val = otc_mtp3:decode(Bin, #{point_code => record}),
+    Val = otc_mtp3:decode(Bin, #{}),
     ?assertEqual(Exp, Val),
     NewBin = otc_mtp3:encode(Val),
     ?assertEqual(Bin, NewBin).
@@ -115,7 +115,7 @@ mgmt_tfp_test() ->
                   message_type => transfer_prohibited},
             service_indicator => mgmt,
             signalling_link_selection => 0},
-    Val = otc_mtp3:decode(Bin, #{point_code => record}),
+    Val = otc_mtp3:decode(Bin, #{}),
     ?assertEqual(Exp, Val),
     NewBin = otc_mtp3:encode(Val),
     ?assertEqual(Bin, NewBin).
@@ -144,7 +144,7 @@ mgmt_dlc_test() ->
                   message_type => data_link_connection_order},
             service_indicator => mgmt,
             signalling_link_selection => 0},
-    Val = otc_mtp3:decode(Bin, #{point_code => record}),
+    Val = otc_mtp3:decode(Bin, #{}),
     ?assertEqual(Exp, Val),
     NewBin = otc_mtp3:encode(Val),
     ?assertEqual(Bin, NewBin).
@@ -177,7 +177,7 @@ mgmt_upu_test() ->
                   unavailability_cause => unequipped_remote_user},
             service_indicator => mgmt,
             signalling_link_selection => 0},
-    Val = otc_mtp3:decode(Bin, #{point_code => record}),
+    Val = otc_mtp3:decode(Bin, #{}),
     ?assertEqual(Exp, Val),
     NewBin = otc_mtp3:encode(Val),
     ?assertEqual(Bin, NewBin).
@@ -199,10 +199,10 @@ maint_sltm_test() ->
     %%     0001 .... = H1 (Message): Signalling link test message (0x1)
     %%     1111 .... = Test length: 15
     %%     Test pattern: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    Exp = #{destination_point_code => 6777,
+    Exp = #{destination_point_code => #itu_pc{zone = 2#011, region = 2#0100_1111, signalling_point = 2#001},
             national_use_spare => 0,
             network_indicator => national_spare,
-            originating_point_code => 12355,
+            originating_point_code => #itu_pc{zone = 2#110, region = 2#0000_1000, signalling_point = 2#011},
             payload =>
                 #{test_pattern => TP,
                   message_type => signalling_link_test},
@@ -230,10 +230,10 @@ maint_slta_test() ->
     %%     0010 .... = H1 (Message): Signalling link test acknowledgement message (0x2)
     %%     1111 .... = Test length: 15
     %%     Test pattern: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    Exp = #{destination_point_code => 12355,
+    Exp = #{destination_point_code => #itu_pc{zone = 2#110, region = 2#0000_1000, signalling_point = 2#011},
             national_use_spare => 0,
             network_indicator => national_spare,
-            originating_point_code => 6777,
+            originating_point_code => #itu_pc{zone = 2#011, region = 2#0100_1111, signalling_point = 2#001},
             payload =>
                 #{test_pattern => TP,
                   message_type => signalling_link_test_ack},

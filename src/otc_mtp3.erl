@@ -136,7 +136,7 @@ encode_routing_label(SLS, OPC0, DPC0, Opts) ->
     <<RL:32/big>>.
 
 routing_label_test_() ->
-    Opts = #{point_code => record},
+    Opts = #{},
     SLS = 7,
     OPC = otc_util:parse_point_code(1234, Opts),
     DPC = otc_util:parse_point_code(5678, Opts),
@@ -421,34 +421,24 @@ encode_maint(#{message_type := signalling_link_test_ack,
 
 
 decode_pc(PC) ->
-    decode_pc(PC, #{point_code => record}).
+    decode_pc(PC, #{}).
 
 decode_pc(PC, #{address_type := ansi} = Opts) when is_integer(PC) ->
     decode_pc(<<PC:24>>, Opts);
 decode_pc(PC, Opts) when is_integer(PC) ->
     decode_pc(<<0:2, PC:14>>, Opts);
-decode_pc(<<NCM:8, NC:8, NI:8>>, #{point_code := record, address_type := ansi} = _Opts) ->
+decode_pc(<<NCM:8, NC:8, NI:8>>, #{address_type := ansi} = _Opts) ->
     #ansi_pc{network = NI, cluster = NC, member = NCM};
-decode_pc(<<_:2, Zone:3, Region:8, SP:3>>, #{point_code := record} = _Opts) ->
-    #itu_pc{zone = Zone, region = Region, signalling_point = SP};
-decode_pc(<<PC:24>>, _Opts) ->
-    PC;
-decode_pc(<<_:2, PC:14>>, _Opts) ->
-    PC;
-decode_pc(PC, _Opts) when is_integer(PC) ->
-    PC.
+decode_pc(<<_:2, Zone:3, Region:8, SP:3>>, #{} = _Opts) ->
+    #itu_pc{zone = Zone, region = Region, signalling_point = SP}.
 
 encode_pc(PC) ->
-    encode_pc(PC, #{point_code => record}).
+    encode_pc(PC, #{}).
 
 encode_pc(#itu_pc{zone = Zone, region = Region, signalling_point = SP}, _Opts) ->
     <<0:2, Zone:3, Region:8, SP:3>>;
 encode_pc(#ansi_pc{network = NI, cluster = NC, member = NCM}, _Opts) ->
-    <<NCM:8, NC:8, NI:8>>;
-encode_pc(PC, #{address_type := ansi} = _Opts) when is_integer(PC) ->
-    <<PC:24>>;
-encode_pc(PC, _Opts) when is_integer(PC) ->
-    <<0:2, PC:14>>.
+    <<NCM:8, NC:8, NI:8>>.
 
 swap_bytes(<<B1:8, R/binary>>) ->
     <<(swap_bytes(R))/binary, B1:8>>;
