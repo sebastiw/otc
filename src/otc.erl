@@ -220,7 +220,7 @@ decode_next({Proto, Data}, Headers, Opts) ->
             {ok, lists:reverse([NewHeader|Headers])}
     catch E:R:S ->
             ?LOG_ERROR(#{E => R, stack => S}),
-            {error, lists:reverse(Headers), Data}
+            {error, lists:reverse(Headers), {Proto, Data}}
     end.
 
 next({Proto, _Header}, #{stop_after := Proto}) ->
