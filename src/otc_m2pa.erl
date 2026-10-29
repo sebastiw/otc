@@ -85,9 +85,14 @@ decode_msg(user_data, Data) ->
 decode_msg(link_status, <<State:32/big>>) ->
     #{link_status => parse_link_status(State)};
 decode_msg(link_status, <<State:32/big, Filler/binary>>) ->
-    proving_normal = parse_link_status(State),
-    #{link_status => proving_normal,
-      link_status_filler => Filler}.
+    case parse_link_status(State) of
+        proving_normal ->
+            #{link_status => proving_normal,
+              link_status_filler => Filler};
+        proving_emergency ->
+            #{link_status => proving_emergency,
+              link_status_filler => Filler}
+    end.
 
 encode_msg(user_data, _, <<>>) ->
     <<>>;
@@ -103,6 +108,9 @@ encode_msg(link_status, Msg, _) ->
     LS = compose_link_status(LinkStatus),
     case LinkStatus of
         proving_normal ->
+            Filler = maps:get(link_status_filler, Msg, <<>>),
+            <<LS:32/big, Filler/binary>>;
+        proving_emergency ->
             Filler = maps:get(link_status_filler, Msg, <<>>),
             <<LS:32/big, Filler/binary>>;
         _ ->

@@ -60,6 +60,22 @@ link_status_proving_normal_test() ->
     NewBin = otc_m2pa:encode(Val),
     ?assertEqual(Bin, NewBin).
 
+link_status_proving_emergency_filler_test() ->
+    Bin = <<16#01, 16#00, 16#0b, 16#02, 16#00, 16#00, 16#00, 16#16,
+            16#00, 16#ff, 16#ff, 16#ff, 16#00, 16#ff, 16#ff, 16#ff,
+            16#00, 16#00, 16#00, 16#03, 16#12, 16#34>>,
+    Exp = #{backward_sequence_number => 16777215,
+            forward_sequence_number => 16777215,
+            link_status => proving_emergency,
+            link_status_filler => <<16#12, 16#34>>,
+            message_class => m2pa,
+            message_type => link_status
+           },
+    Val = otc_m2pa:decode(Bin),
+    ?assertEqual(Exp, Val),
+    NewBin = otc_m2pa:encode(Val),
+    ?assertEqual(Bin, NewBin).
+
 link_status_ready_test() ->
     Bin = <<16#01, 16#00, 16#0b, 16#02, 16#00, 16#00, 16#00, 16#14,
             16#00, 16#ff, 16#ff, 16#ff, 16#00, 16#ff, 16#ff, 16#ff,
