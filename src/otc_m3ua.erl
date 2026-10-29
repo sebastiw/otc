@@ -902,7 +902,7 @@ normalize_point_code_mask_ansi_test_() ->
 
 -spec compare_pcs(Specific :: itu_point_code(), MaybeWithMask :: itu_point_code()) -> boolean();
                  (Specific :: ansi_point_code(), MaybeWithMask :: ansi_point_code()) -> boolean();
-                 (Specific :: integer(), MaybeWithMask :: integer()) -> boolean().
+                 (Specific :: non_neg_integer(), MaybeWithMask :: non_neg_integer()) -> boolean().
 compare_pcs(#itu_pc{mask = 0} = PC1, #itu_pc{mask = 0} = PC2) ->
     PC1 == PC2;
 compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{mask = 0} = PC2) ->
@@ -915,7 +915,7 @@ compare_pcs(#ansi_pc{mask = 0} = PC1, #ansi_pc{} = PC2) ->
     PC1Int = otc_util:compose_point_code(integer, PC1),
     PC2Int = otc_util:compose_point_code(integer, PC2),
     compare_pcs(24, PC1Int, PC2Int, PC2#ansi_pc.mask);
-compare_pcs(PC1Int, PC2Int) when is_integer(PC1Int), is_integer(PC2Int) ->
+compare_pcs(PC1Int, PC2Int) when is_integer(PC1Int), is_integer(PC2Int), PC1Int =< 16#FFFFFF ->
     %% We cannot tell if ITU or ANSI, use 24 bit masks.
     PC2Mask = (PC2Int bsr 24),
     compare_pcs(24, PC1Int, PC2Int, PC2Mask).

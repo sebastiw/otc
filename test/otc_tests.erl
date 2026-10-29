@@ -97,6 +97,81 @@ decode_m3ua_sccp_payload_test() ->
     NewBin = otc:encode({[M3ua, Sccp], TcapBin}),
     ?assertEqual({ok, M3uaBin}, NewBin).
 
+decode_m3ua_error_payload_test() ->
+    TcapBin = <<16#01,16#02,16#03,16#04,
+                16#05,16#06,16#07,16#08,
+                16#09,16#0A,16#0B,16#0c,
+                16#0D,16#0E,16#0F,16#10,
+                16#11,16#12,16#13,16#14,
+                16#15,16#16,16#17,16#18,
+                16#19,16#1A,16#1B,16#1C,
+                16#1D,16#1E,16#1F,16#20,
+                16#21,16#22,16#23,16#24,
+                16#25,16#26,16#27,16#28>>,
+    SccpBin = <<16#11,16#80,16#0F,16#04,
+                16#0F,16#1A,16#00,16#0B,
+                16#12,16#08,16#00,16#11,
+                16#04,16#64,16#77,16#77,
+                16#77,16#77,16#07,16#0B,
+                16#12,16#08,16#00,16#11,
+                16#04,16#64,16#77,16#77,
+                16#77,16#77,16#07,16#28,
+                TcapBin/binary>>,
+
+    M3uaBin = <<16#01,16#00,16#01,16#01,16#00,16#00,16#00,16#60,
+                16#02,16#10,16#00,16#58,16#00,16#00,16#05,16#04,
+                16#00,16#00,16#35,16#a7,16#03,16#03,16#00,16#08,
+                SccpBin/binary>>,
+
+    M3ua = #{protocol => m3ua,
+             message_type => data,
+             message_class => transfer,
+             protocol_data =>
+                 #{service_indicator => sccp,
+                   originating_point_code => #itu_pc{mask = 0,
+                                                     zone = 0,
+                                                     region = 16#A0,
+                                                     signalling_point = 4},
+                   destination_point_code => #itu_pc{mask = 0,
+                                                     zone = 6,
+                                                     region = 16#B4,
+                                                     signalling_point = 7},
+                   network_indicator => national_spare,
+                   message_priority => 0,
+                   signalling_link_selection => 8}},
+    Sccp = #{protocol => sccp,
+             message_type => xudt,
+             called_party_address =>
+                 #{subsystem_number => msc,
+                   routing_indicator => global_title,
+                   global_title =>
+                       #{address => "46777777777",
+                         nature_of_address_indicator => 4,
+                         numbering_plan => 1,
+                         translation_type => 0,
+                         odd_even_indicator => odd,
+                         encoding_scheme => bcd},
+                   national_use_indicator => false,
+                   point_code => undefined},
+             calling_party_address =>
+                 #{subsystem_number => msc,
+                   routing_indicator => global_title,
+                   global_title =>
+                       #{address => "46777777777",
+                         nature_of_address_indicator => 4,
+                         numbering_plan => 1,
+                         translation_type => 0,
+                         odd_even_indicator => odd,
+                         encoding_scheme => bcd},
+                   national_use_indicator => false,
+                   point_code => undefined},
+             protocol_class => #{options => return_on_error,class => 0},
+             hop_counter => 15},
+    logger:set_module_level(otc, none),
+    Msg = otc:decode(m3ua, M3uaBin, #{}),
+    logger:unset_module_level(otc),
+    ?assertMatch({error, [M3ua, Sccp], {tcap, TcapBin}}, Msg).
+
 udt_scmg_test() ->
     CdPA = <<16#42, %% AddressIndicator
              16#01>>, %% SSN
