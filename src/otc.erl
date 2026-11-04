@@ -227,12 +227,11 @@ decode_next({Proto, Data}, Headers, Opts) ->
 next({Proto, _Header}, #{stop_after := Proto}) ->
     '$stop';
 next({Proto, V}, _) ->
-    Module = callback_module(Proto),
-    case erlang:function_exported(Module, next, 1) of
-        true ->
-            Module:next(V);
-        false ->
-            '$stop'
+    case callback_module(Proto) of
+        undefined ->
+            '$stop';
+        Module ->
+            Module:next(V)
     end.
 
 next_opts({Proto, PrevHeader}, Opts) ->
