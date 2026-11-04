@@ -101,7 +101,8 @@ callback_module(nas_5gs_5gsm) -> otc_nas_5gs_5gsm;
 callback_module(gtpv1c) -> otc_gtpv1c;
 callback_module(gtpv2c) -> otc_gtpv2c;
 callback_module(sgsap) -> otc_sgsap;
-callback_module(smpp) -> otc_smpp.
+callback_module(smpp) -> otc_smpp;
+callback_module(_) -> undefined.
 
 sctp_ppi(PPI) -> sctp_ppi(PPI, #{}).
 sctp(D) -> sctp(D, #{}).
@@ -227,7 +228,12 @@ next({Proto, _Header}, #{stop_after := Proto}) ->
     '$stop';
 next({Proto, V}, _) ->
     Module = callback_module(Proto),
-    Module:next(V).
+    case erlang:function_exported(Module, next, 0) of
+        true ->
+            Module:next(V);
+        false ->
+            '$stop'
+    end.
 
 next_opts({Proto, PrevHeader}, Opts) ->
     UserOpts = options(Proto, Opts),
