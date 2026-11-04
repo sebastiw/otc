@@ -228,7 +228,7 @@ next({Proto, _Header}, #{stop_after := Proto}) ->
     '$stop';
 next({Proto, V}, _) ->
     Module = callback_module(Proto),
-    case erlang:function_exported(Module, next, 0) of
+    case erlang:function_exported(Module, next, 1) of
         true ->
             Module:next(V);
         false ->
