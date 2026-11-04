@@ -39,7 +39,7 @@ codec({Map, PDU}, Opts) when is_map(Map), is_binary(PDU) ->
                     gateway_control_protocol.
 
 -spec next(map()) -> '$stop' | {ok, subproto()}.
-next(#{protocol_data := #{service_indicator := SI}}) -> {ok, SI};
+next(#{protocol_data := #{service_indicator := sccp}}) -> {ok, sccp};
 next(_) -> '$stop'.
 
 -spec decode(binary()) -> map().
